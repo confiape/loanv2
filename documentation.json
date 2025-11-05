@@ -1,0 +1,564 @@
+{
+    "pipes": [],
+    "interfaces": [
+        {
+            "name": "AccordionItem",
+            "id": "interface-AccordionItem-57249cc6aacb43f52683848d432fd7e27320b9e99140e0ad72d7fa28f1726ce034efedf15c284731e6eee11e3c8d1604f0c2095712921df88bcbeedbb10c5a83",
+            "file": "src/app/shared/components/accordion/accordion.ts",
+            "deprecated": false,
+            "deprecationMessage": "",
+            "type": "interface",
+            "sourceCode": "import { Component, input, output, signal, ChangeDetectionStrategy } from '@angular/core';\nimport { CommonModule } from '@angular/common';\n\nexport interface AccordionItem {\n  id: string;\n  title: string;\n  content: string;\n}\n\n@Component({\n  selector: 'app-accordion',\n  standalone: true,\n  imports: [CommonModule],\n  templateUrl: './accordion.html',\n  styleUrl: './accordion.css',\n  changeDetection: ChangeDetectionStrategy.OnPush,\n  host: {\n    class: 'block'\n  }\n})\nexport class Accordion {\n  readonly items = input<AccordionItem[]>([]);\n  readonly allowMultiple = input(false);\n  readonly itemSelected = output<string>();\n\n  readonly expandedItems = signal<Set<string>>(new Set());\n\n  toggleItem(itemId: string): void {\n    const updated = new Set(this.expandedItems());\n\n    if (!this.allowMultiple()) {\n      updated.clear();\n    }\n\n    if (updated.has(itemId)) {\n      updated.delete(itemId);\n    } else {\n      updated.add(itemId);\n    }\n\n    this.expandedItems.set(updated);\n    this.itemSelected.emit(itemId);\n  }\n\n  isExpanded(itemId: string): boolean {\n    return this.expandedItems().has(itemId);\n  }\n}\n",
+            "properties": [
+                {
+                    "name": "content",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "indexKey": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 7
+                },
+                {
+                    "name": "id",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "indexKey": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 5
+                },
+                {
+                    "name": "title",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "indexKey": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 6
+                }
+            ],
+            "indexSignatures": [],
+            "kind": 172,
+            "methods": [],
+            "extends": []
+        }
+    ],
+    "injectables": [],
+    "guards": [],
+    "interceptors": [],
+    "classes": [],
+    "directives": [],
+    "components": [
+        {
+            "name": "Accordion",
+            "id": "component-Accordion-57249cc6aacb43f52683848d432fd7e27320b9e99140e0ad72d7fa28f1726ce034efedf15c284731e6eee11e3c8d1604f0c2095712921df88bcbeedbb10c5a83",
+            "file": "src/app/shared/components/accordion/accordion.ts",
+            "changeDetection": "ChangeDetectionStrategy.OnPush",
+            "encapsulation": [],
+            "entryComponents": [],
+            "host": {},
+            "inputs": [],
+            "outputs": [],
+            "providers": [],
+            "selector": "app-accordion",
+            "styleUrls": [],
+            "styles": [],
+            "templateUrl": [
+                "./accordion.html"
+            ],
+            "viewProviders": [],
+            "hostDirectives": [],
+            "inputsClass": [
+                {
+                    "name": "allowMultiple",
+                    "defaultValue": "false",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "indexKey": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 23,
+                    "modifierKind": [
+                        148
+                    ],
+                    "required": false
+                },
+                {
+                    "name": "items",
+                    "defaultValue": "[]",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "AccordionItem[]",
+                    "indexKey": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 22,
+                    "modifierKind": [
+                        148
+                    ],
+                    "required": false
+                }
+            ],
+            "outputsClass": [
+                {
+                    "name": "itemSelected",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "indexKey": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 24,
+                    "modifierKind": [
+                        148
+                    ],
+                    "required": false
+                }
+            ],
+            "propertiesClass": [
+                {
+                    "name": "expandedItems",
+                    "defaultValue": "signal<Set<string>>(new Set())",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "unknown",
+                    "indexKey": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 26,
+                    "modifierKind": [
+                        148
+                    ]
+                }
+            ],
+            "methodsClass": [
+                {
+                    "name": "isExpanded",
+                    "args": [
+                        {
+                            "name": "itemId",
+                            "type": "string",
+                            "deprecated": false,
+                            "deprecationMessage": ""
+                        }
+                    ],
+                    "optional": false,
+                    "returnType": "boolean",
+                    "typeParameters": [],
+                    "line": 45,
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "jsdoctags": [
+                        {
+                            "name": "itemId",
+                            "type": "string",
+                            "deprecated": false,
+                            "deprecationMessage": "",
+                            "tagName": {
+                                "text": "param"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "toggleItem",
+                    "args": [
+                        {
+                            "name": "itemId",
+                            "type": "string",
+                            "deprecated": false,
+                            "deprecationMessage": ""
+                        }
+                    ],
+                    "optional": false,
+                    "returnType": "void",
+                    "typeParameters": [],
+                    "line": 28,
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "jsdoctags": [
+                        {
+                            "name": "itemId",
+                            "type": "string",
+                            "deprecated": false,
+                            "deprecationMessage": "",
+                            "tagName": {
+                                "text": "param"
+                            }
+                        }
+                    ]
+                }
+            ],
+            "deprecated": false,
+            "deprecationMessage": "",
+            "hostBindings": [],
+            "hostListeners": [],
+            "standalone": true,
+            "imports": [
+                {
+                    "name": "CommonModule",
+                    "type": "module"
+                }
+            ],
+            "description": "",
+            "rawdescription": "\n",
+            "type": "component",
+            "sourceCode": "import { Component, input, output, signal, ChangeDetectionStrategy } from '@angular/core';\nimport { CommonModule } from '@angular/common';\n\nexport interface AccordionItem {\n  id: string;\n  title: string;\n  content: string;\n}\n\n@Component({\n  selector: 'app-accordion',\n  standalone: true,\n  imports: [CommonModule],\n  templateUrl: './accordion.html',\n  styleUrl: './accordion.css',\n  changeDetection: ChangeDetectionStrategy.OnPush,\n  host: {\n    class: 'block'\n  }\n})\nexport class Accordion {\n  readonly items = input<AccordionItem[]>([]);\n  readonly allowMultiple = input(false);\n  readonly itemSelected = output<string>();\n\n  readonly expandedItems = signal<Set<string>>(new Set());\n\n  toggleItem(itemId: string): void {\n    const updated = new Set(this.expandedItems());\n\n    if (!this.allowMultiple()) {\n      updated.clear();\n    }\n\n    if (updated.has(itemId)) {\n      updated.delete(itemId);\n    } else {\n      updated.add(itemId);\n    }\n\n    this.expandedItems.set(updated);\n    this.itemSelected.emit(itemId);\n  }\n\n  isExpanded(itemId: string): boolean {\n    return this.expandedItems().has(itemId);\n  }\n}\n",
+            "styleUrl": "./accordion.css",
+            "assetsDirs": [],
+            "styleUrlsData": "",
+            "stylesData": "",
+            "extends": [],
+            "templateData": "<div class=\"accordion-container\">\n  @for (item of items(); let last = $last) {\n    <h2 [id]=\"'accordion-heading-' + item.id\" class=\"accordion-header\">\n      <button\n        type=\"button\"\n        class=\"flex items-center justify-between w-full p-5 font-medium text-gray-500 border border-b-0 border-gray-200 rounded-t-xl focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:border-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 gap-3 transition-colors\"\n        [class.!rounded-none]=\"!$first\"\n        [class.!border-b]=\"last\"\n        [attr.data-accordion-target]=\"'#accordion-body-' + item.id\"\n        [attr.aria-expanded]=\"isExpanded(item.id)\"\n        [attr.aria-controls]=\"'accordion-body-' + item.id\"\n        (click)=\"toggleItem(item.id)\">\n        <span>{{ item.title }}</span>\n        <svg\n          class=\"w-3 h-3 shrink-0 transition-transform\"\n          [class.rotate-180]=\"isExpanded(item.id)\"\n          aria-hidden=\"true\"\n          xmlns=\"http://www.w3.org/2000/svg\"\n          fill=\"none\"\n          viewBox=\"0 0 10 6\">\n          <path\n            stroke=\"currentColor\"\n            stroke-linecap=\"round\"\n            stroke-linejoin=\"round\"\n            stroke-width=\"2\"\n            d=\"M9 5 5 1 1 5\" />\n        </svg>\n      </button>\n    </h2>\n    <div\n      [id]=\"'accordion-body-' + item.id\"\n      class=\"overflow-hidden transition-all duration-300\"\n      [class.hidden]=\"!isExpanded(item.id)\"\n      [attr.aria-labelledby]=\"'accordion-heading-' + item.id\">\n      <div class=\"p-5 border border-b-0 border-gray-200 dark:border-gray-700 dark:bg-gray-900 text-gray-500 dark:text-gray-400\"\n        [class.!border-b]=\"last\">\n        {{ item.content }}\n      </div>\n    </div>\n  }\n</div>\n"
+        },
+        {
+            "name": "App",
+            "id": "component-App-45cc1cdb857831034b921dbba55e9f0f5c2f3a266939d7aa546a5d760e558b120186536f923292db2a64b87983a95c6cdee2fa2676a72d0b5f60fb4e351234fc",
+            "file": "src/app/app.ts",
+            "encapsulation": [],
+            "entryComponents": [],
+            "inputs": [],
+            "outputs": [],
+            "providers": [],
+            "selector": "app-root",
+            "styleUrls": [],
+            "styles": [],
+            "templateUrl": [
+                "./app.html"
+            ],
+            "viewProviders": [],
+            "hostDirectives": [],
+            "inputsClass": [],
+            "outputsClass": [],
+            "propertiesClass": [
+                {
+                    "name": "title",
+                    "defaultValue": "signal('loan')",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "unknown",
+                    "indexKey": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 11,
+                    "modifierKind": [
+                        124,
+                        148
+                    ]
+                }
+            ],
+            "methodsClass": [],
+            "deprecated": false,
+            "deprecationMessage": "",
+            "hostBindings": [],
+            "hostListeners": [],
+            "standalone": false,
+            "imports": [
+                {
+                    "name": "RouterOutlet"
+                }
+            ],
+            "description": "",
+            "rawdescription": "\n",
+            "type": "component",
+            "sourceCode": "import { Component, signal } from '@angular/core';\nimport { RouterOutlet } from '@angular/router';\n\n@Component({\n  selector: 'app-root',\n  imports: [RouterOutlet],\n  templateUrl: './app.html',\n  styleUrl: './app.css'\n})\nexport class App {\n  protected readonly title = signal('loan');\n}\n",
+            "styleUrl": "./app.css",
+            "assetsDirs": [],
+            "styleUrlsData": "",
+            "stylesData": "",
+            "extends": [],
+            "templateData": "<div>\n  <div class=\"bg-bg-primary text-text-primary\"></div>\n</div>\n\n<router-outlet></router-outlet>\n"
+        }
+    ],
+    "modules": [],
+    "miscellaneous": {
+        "variables": [
+            {
+                "name": "appConfig",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/app.config.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "ApplicationConfig",
+                "defaultValue": "{\n  providers: [\n    provideBrowserGlobalErrorListeners(),\n    provideZonelessChangeDetection(),\n    provideRouter(routes)\n  ]\n}"
+            },
+            {
+                "name": "createLightDarkComparison",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/stories/story-helpers.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "unknown",
+                "defaultValue": "(componentTag: string, bindings = ''): string => `\n  <div style=\"display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh;\">\n    <!-- Light Mode -->\n    <div style=\"background-color: #f9fafb; position: relative; border-right: 2px solid #000; padding: 2rem;\">\n      <div style=\"position: absolute; top: 1rem; left: 50%; transform: translateX(-50%); z-index: 100; background: white; padding: 0.5rem 1rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: bold;\">\n        Light Mode\n      </div>\n      <${componentTag}\n        ${bindings}\n      />\n    </div>\n\n    <!-- Dark Mode -->\n    <div class=\"dark\" style=\"background-color: #1f2937; position: relative; padding: 2rem;\">\n      <div style=\"position: absolute; top: 1rem; left: 50%; transform: translateX(-50%); z-index: 100; background: #374151; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.3); font-weight: bold;\">\n        Dark Mode\n      </div>\n      <${componentTag}\n        ${bindings}\n      />\n    </div>\n  </div>\n`",
+                "rawdescription": "Helper utilities for Storybook stories\nCreates consistent Light vs Dark mode comparisons",
+                "description": "<p>Helper utilities for Storybook stories\nCreates consistent Light vs Dark mode comparisons</p>\n"
+            },
+            {
+                "name": "createLightDarkRender",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/stories/story-helpers.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "unknown",
+                "defaultValue": "(componentTag: string, bindings: string) => {\n  return (args: Record<string, unknown>) => ({\n    props: args,\n    template: createLightDarkComparison(componentTag, bindings),\n  });\n}",
+                "rawdescription": "Creates a standard render function for stories with Light/Dark comparison",
+                "description": "<p>Creates a standard render function for stories with Light/Dark comparison</p>\n"
+            },
+            {
+                "name": "createVariantComparison",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/stories/story-helpers.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "unknown",
+                "defaultValue": "(\n  componentTag: string,\n  variants: string[],\n  baseBindings = '',\n): string => `\n  <div style=\"min-height: 100vh;\">\n    <!-- Light Mode Variants -->\n    <div style=\"background-color: #f9fafb; padding: 2rem 0 1rem 0;\">\n      <h2 style=\"text-align: center; margin-bottom: 1.5rem; font-size: 1.25rem; font-weight: bold; color: #111827;\">\n        Light Mode - All Variants\n      </h2>\n      <div style=\"display: grid; grid-template-columns: repeat(${variants.length}, 1fr); gap: 2rem; justify-content: center; max-width: 1200px; margin: 0 auto; padding: 0 2rem;\">\n        ${variants\n          .map(\n            (variant) => `\n        <div style=\"position: relative;\">\n          <div style=\"position: absolute; top: -1.5rem; left: 50%; transform: translateX(-50%); background: white; padding: 0.25rem 0.75rem; border-radius: 0.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); font-size: 0.75rem; font-weight: 600; white-space: nowrap;\">\n            ${variant}\n          </div>\n          <${componentTag}\n            [variant]=\"'${variant.toLowerCase()}'\"\n            ${baseBindings}\n          />\n        </div>\n        `,\n          )\n          .join('')}\n      </div>\n    </div>\n\n    <!-- Dark Mode Variants -->\n    <div class=\"dark\" style=\"background-color: #1f2937; padding: 2rem 0 1rem 0;\">\n      <h2 style=\"text-align: center; margin-bottom: 1.5rem; font-size: 1.25rem; font-weight: bold; color: white;\">\n        Dark Mode - All Variants\n      </h2>\n      <div style=\"display: grid; grid-template-columns: repeat(${variants.length}, 1fr); gap: 2rem; justify-content: center; max-width: 1200px; margin: 0 auto; padding: 0 2rem;\">\n        ${variants\n          .map(\n            (variant) => `\n        <div style=\"position: relative;\">\n          <div style=\"position: absolute; top: -1.5rem; left: 50%; transform: translateX(-50%); background: #374151; color: white; padding: 0.25rem 0.75rem; border-radius: 0.25rem; box-shadow: 0 2px 4px rgba(0,0,0,0.3); font-size: 0.75rem; font-weight: 600; white-space: nowrap;\">\n            ${variant}\n          </div>\n          <${componentTag}\n            [variant]=\"'${variant.toLowerCase()}'\"\n            ${baseBindings}\n          />\n        </div>\n        `,\n          )\n          .join('')}\n      </div>\n    </div>\n  </div>\n`",
+                "rawdescription": "Creates a template for comparing all variants in a 3x2 grid (Light + Dark)",
+                "description": "<p>Creates a template for comparing all variants in a 3x2 grid (Light + Dark)</p>\n"
+            },
+            {
+                "name": "generateBindings",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/stories/story-helpers.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "unknown",
+                "defaultValue": "(props: Record<string, unknown>): string => {\n  return Object.entries(props)\n    .map(([key, value]) => {\n      if (typeof value === 'string') {\n        return `[${key}]=\"${key}\"`;\n      }\n      return `[${key}]=\"${key}\"`;\n    })\n    .join('\\n        ');\n}",
+                "rawdescription": "Helper to generate common Angular bindings string",
+                "description": "<p>Helper to generate common Angular bindings string</p>\n"
+            },
+            {
+                "name": "routes",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/app.routes.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Routes",
+                "defaultValue": "[]"
+            },
+            {
+                "name": "wrapInLightDarkComparison",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/stories/story-helpers.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "unknown",
+                "defaultValue": "(template: string): string => `\n  <div style=\"display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh;\">\n    <!-- Light Mode -->\n    <div style=\"background-color: #f9fafb; position: relative; border-right: 2px solid #000; padding: 2rem;\">\n      <div style=\"position: absolute; top: 1rem; left: 50%; transform: translateX(-50%); z-index: 100; background: white; padding: 0.5rem 1rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: bold;\">\n        Light Mode\n      </div>\n      ${template}\n    </div>\n\n    <!-- Dark Mode -->\n    <div class=\"dark\" style=\"background-color: #1f2937; position: relative; padding: 2rem;\">\n      <div style=\"position: absolute; top: 1rem; left: 50%; transform: translateX(-50%); z-index: 100; background: #374151; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.3); font-weight: bold;\">\n        Dark Mode\n      </div>\n      ${template}\n    </div>\n  </div>\n`",
+                "rawdescription": "Wraps any template in a Light/Dark comparison layout\nUsed for complex components with custom templates (like modals)",
+                "description": "<p>Wraps any template in a Light/Dark comparison layout\nUsed for complex components with custom templates (like modals)</p>\n"
+            }
+        ],
+        "functions": [],
+        "typealiases": [],
+        "enumerations": [],
+        "groupedVariables": {
+            "src/app/app.config.ts": [
+                {
+                    "name": "appConfig",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/app.config.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "ApplicationConfig",
+                    "defaultValue": "{\n  providers: [\n    provideBrowserGlobalErrorListeners(),\n    provideZonelessChangeDetection(),\n    provideRouter(routes)\n  ]\n}"
+                }
+            ],
+            "src/stories/story-helpers.ts": [
+                {
+                    "name": "createLightDarkComparison",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/stories/story-helpers.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "unknown",
+                    "defaultValue": "(componentTag: string, bindings = ''): string => `\n  <div style=\"display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh;\">\n    <!-- Light Mode -->\n    <div style=\"background-color: #f9fafb; position: relative; border-right: 2px solid #000; padding: 2rem;\">\n      <div style=\"position: absolute; top: 1rem; left: 50%; transform: translateX(-50%); z-index: 100; background: white; padding: 0.5rem 1rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: bold;\">\n        Light Mode\n      </div>\n      <${componentTag}\n        ${bindings}\n      />\n    </div>\n\n    <!-- Dark Mode -->\n    <div class=\"dark\" style=\"background-color: #1f2937; position: relative; padding: 2rem;\">\n      <div style=\"position: absolute; top: 1rem; left: 50%; transform: translateX(-50%); z-index: 100; background: #374151; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.3); font-weight: bold;\">\n        Dark Mode\n      </div>\n      <${componentTag}\n        ${bindings}\n      />\n    </div>\n  </div>\n`",
+                    "rawdescription": "Helper utilities for Storybook stories\nCreates consistent Light vs Dark mode comparisons",
+                    "description": "<p>Helper utilities for Storybook stories\nCreates consistent Light vs Dark mode comparisons</p>\n"
+                },
+                {
+                    "name": "createLightDarkRender",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/stories/story-helpers.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "unknown",
+                    "defaultValue": "(componentTag: string, bindings: string) => {\n  return (args: Record<string, unknown>) => ({\n    props: args,\n    template: createLightDarkComparison(componentTag, bindings),\n  });\n}",
+                    "rawdescription": "Creates a standard render function for stories with Light/Dark comparison",
+                    "description": "<p>Creates a standard render function for stories with Light/Dark comparison</p>\n"
+                },
+                {
+                    "name": "createVariantComparison",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/stories/story-helpers.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "unknown",
+                    "defaultValue": "(\n  componentTag: string,\n  variants: string[],\n  baseBindings = '',\n): string => `\n  <div style=\"min-height: 100vh;\">\n    <!-- Light Mode Variants -->\n    <div style=\"background-color: #f9fafb; padding: 2rem 0 1rem 0;\">\n      <h2 style=\"text-align: center; margin-bottom: 1.5rem; font-size: 1.25rem; font-weight: bold; color: #111827;\">\n        Light Mode - All Variants\n      </h2>\n      <div style=\"display: grid; grid-template-columns: repeat(${variants.length}, 1fr); gap: 2rem; justify-content: center; max-width: 1200px; margin: 0 auto; padding: 0 2rem;\">\n        ${variants\n          .map(\n            (variant) => `\n        <div style=\"position: relative;\">\n          <div style=\"position: absolute; top: -1.5rem; left: 50%; transform: translateX(-50%); background: white; padding: 0.25rem 0.75rem; border-radius: 0.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); font-size: 0.75rem; font-weight: 600; white-space: nowrap;\">\n            ${variant}\n          </div>\n          <${componentTag}\n            [variant]=\"'${variant.toLowerCase()}'\"\n            ${baseBindings}\n          />\n        </div>\n        `,\n          )\n          .join('')}\n      </div>\n    </div>\n\n    <!-- Dark Mode Variants -->\n    <div class=\"dark\" style=\"background-color: #1f2937; padding: 2rem 0 1rem 0;\">\n      <h2 style=\"text-align: center; margin-bottom: 1.5rem; font-size: 1.25rem; font-weight: bold; color: white;\">\n        Dark Mode - All Variants\n      </h2>\n      <div style=\"display: grid; grid-template-columns: repeat(${variants.length}, 1fr); gap: 2rem; justify-content: center; max-width: 1200px; margin: 0 auto; padding: 0 2rem;\">\n        ${variants\n          .map(\n            (variant) => `\n        <div style=\"position: relative;\">\n          <div style=\"position: absolute; top: -1.5rem; left: 50%; transform: translateX(-50%); background: #374151; color: white; padding: 0.25rem 0.75rem; border-radius: 0.25rem; box-shadow: 0 2px 4px rgba(0,0,0,0.3); font-size: 0.75rem; font-weight: 600; white-space: nowrap;\">\n            ${variant}\n          </div>\n          <${componentTag}\n            [variant]=\"'${variant.toLowerCase()}'\"\n            ${baseBindings}\n          />\n        </div>\n        `,\n          )\n          .join('')}\n      </div>\n    </div>\n  </div>\n`",
+                    "rawdescription": "Creates a template for comparing all variants in a 3x2 grid (Light + Dark)",
+                    "description": "<p>Creates a template for comparing all variants in a 3x2 grid (Light + Dark)</p>\n"
+                },
+                {
+                    "name": "generateBindings",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/stories/story-helpers.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "unknown",
+                    "defaultValue": "(props: Record<string, unknown>): string => {\n  return Object.entries(props)\n    .map(([key, value]) => {\n      if (typeof value === 'string') {\n        return `[${key}]=\"${key}\"`;\n      }\n      return `[${key}]=\"${key}\"`;\n    })\n    .join('\\n        ');\n}",
+                    "rawdescription": "Helper to generate common Angular bindings string",
+                    "description": "<p>Helper to generate common Angular bindings string</p>\n"
+                },
+                {
+                    "name": "wrapInLightDarkComparison",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/stories/story-helpers.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "unknown",
+                    "defaultValue": "(template: string): string => `\n  <div style=\"display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh;\">\n    <!-- Light Mode -->\n    <div style=\"background-color: #f9fafb; position: relative; border-right: 2px solid #000; padding: 2rem;\">\n      <div style=\"position: absolute; top: 1rem; left: 50%; transform: translateX(-50%); z-index: 100; background: white; padding: 0.5rem 1rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: bold;\">\n        Light Mode\n      </div>\n      ${template}\n    </div>\n\n    <!-- Dark Mode -->\n    <div class=\"dark\" style=\"background-color: #1f2937; position: relative; padding: 2rem;\">\n      <div style=\"position: absolute; top: 1rem; left: 50%; transform: translateX(-50%); z-index: 100; background: #374151; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.3); font-weight: bold;\">\n        Dark Mode\n      </div>\n      ${template}\n    </div>\n  </div>\n`",
+                    "rawdescription": "Wraps any template in a Light/Dark comparison layout\nUsed for complex components with custom templates (like modals)",
+                    "description": "<p>Wraps any template in a Light/Dark comparison layout\nUsed for complex components with custom templates (like modals)</p>\n"
+                }
+            ],
+            "src/app/app.routes.ts": [
+                {
+                    "name": "routes",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/app.routes.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Routes",
+                    "defaultValue": "[]"
+                }
+            ]
+        },
+        "groupedFunctions": {},
+        "groupedEnumerations": {},
+        "groupedTypeAliases": {}
+    },
+    "routes": {
+        "name": "<root>",
+        "kind": "module",
+        "children": []
+    },
+    "coverage": {
+        "count": 50,
+        "status": "medium",
+        "files": [
+            {
+                "filePath": "src/app/app.config.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "appConfig",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/app.routes.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "routes",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/app.ts",
+                "type": "component",
+                "linktype": "component",
+                "name": "App",
+                "coveragePercent": 0,
+                "coverageCount": "0/2",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/shared/components/accordion/accordion.ts",
+                "type": "component",
+                "linktype": "component",
+                "name": "Accordion",
+                "coveragePercent": 0,
+                "coverageCount": "0/7",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/shared/components/accordion/accordion.ts",
+                "type": "interface",
+                "linktype": "interface",
+                "name": "AccordionItem",
+                "coveragePercent": 0,
+                "coverageCount": "0/4",
+                "status": "low"
+            },
+            {
+                "filePath": "src/stories/story-helpers.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "createLightDarkComparison",
+                "coveragePercent": 100,
+                "coverageCount": "1/1",
+                "status": "very-good"
+            },
+            {
+                "filePath": "src/stories/story-helpers.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "createLightDarkRender",
+                "coveragePercent": 100,
+                "coverageCount": "1/1",
+                "status": "very-good"
+            },
+            {
+                "filePath": "src/stories/story-helpers.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "createVariantComparison",
+                "coveragePercent": 100,
+                "coverageCount": "1/1",
+                "status": "very-good"
+            },
+            {
+                "filePath": "src/stories/story-helpers.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "generateBindings",
+                "coveragePercent": 100,
+                "coverageCount": "1/1",
+                "status": "very-good"
+            },
+            {
+                "filePath": "src/stories/story-helpers.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "wrapInLightDarkComparison",
+                "coveragePercent": 100,
+                "coverageCount": "1/1",
+                "status": "very-good"
+            }
+        ]
+    }
+}

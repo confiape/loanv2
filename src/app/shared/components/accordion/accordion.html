@@ -1,0 +1,41 @@
+<div class="accordion-container">
+  @for (item of items(); let last = $last) {
+    <h2 [id]="'accordion-heading-' + item.id" class="accordion-header">
+      <button
+        type="button"
+        class="flex items-center justify-between w-full p-5 font-medium text-gray-500 border border-b-0 border-gray-200 rounded-t-xl focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:border-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 gap-3 transition-colors"
+        [class.!rounded-none]="!$first"
+        [class.!border-b]="last"
+        [attr.data-accordion-target]="'#accordion-body-' + item.id"
+        [attr.aria-expanded]="isExpanded(item.id)"
+        [attr.aria-controls]="'accordion-body-' + item.id"
+        (click)="toggleItem(item.id)">
+        <span>{{ item.title }}</span>
+        <svg
+          class="w-3 h-3 shrink-0 transition-transform"
+          [class.rotate-180]="isExpanded(item.id)"
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 10 6">
+          <path
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M9 5 5 1 1 5" />
+        </svg>
+      </button>
+    </h2>
+    <div
+      [id]="'accordion-body-' + item.id"
+      class="overflow-hidden transition-all duration-300"
+      [class.hidden]="!isExpanded(item.id)"
+      [attr.aria-labelledby]="'accordion-heading-' + item.id">
+      <div class="p-5 border border-b-0 border-gray-200 dark:border-gray-700 dark:bg-gray-900 text-gray-500 dark:text-gray-400"
+        [class.!border-b]="last">
+        {{ item.content }}
+      </div>
+    </div>
+  }
+</div>

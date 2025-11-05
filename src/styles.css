@@ -1,0 +1,78 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Tema de variables */
+@theme inline {
+  /* Backgrounds */
+  --color-bg-primary: var(--bg-primary);
+  --color-bg-secondary: var(--bg-secondary);
+  --color-bg-surface: var(--bg-surface);
+
+  /* Text */
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+
+  /* Borders */
+  --color-border: var(--border);
+
+  /* Brand */
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+
+  /* States */
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-error: var(--error);
+
+  /* Overlay */
+  --color-overlay: var(--overlay);
+}
+
+/* Valores reales */
+@layer base {
+  :root {
+    /* Light mode */
+    --bg-primary: #ffffff;
+    --bg-secondary: #f9fafb;
+    --bg-surface: #f3f4f6;
+
+    --text-primary: #111827;
+    --text-secondary: #6b7280;
+
+    --border: #e5e7eb;
+
+    --accent: #2563eb;
+    --accent-hover: #1d4ed8;
+
+    --success: #16a34a;
+    --warning: #eab308;
+    --error: #dc2626;
+
+    --overlay: rgba(0, 0, 0, 0.4);
+  }
+
+  .dark {
+    /* Dark mode */
+    --bg-primary: #0f172a;
+    --bg-secondary: #1e293b;
+    --bg-surface: #334155;
+
+    --text-primary: #f9fafb;
+    --text-secondary: #cbd5e1;
+
+    --border: #475569;
+
+    --accent: #60a5fa;
+    --accent-hover: #3b82f6;
+
+    --success: #22c55e;
+    --warning: #facc15;
+    --error: #f87171;
+
+    --overlay: rgba(255, 255, 255, 0.1);
+  }
+
+  body {
+    @apply bg-bg-primary text-text-primary transition-colors duration-300;
+  }
+}
