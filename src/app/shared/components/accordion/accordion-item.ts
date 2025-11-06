@@ -1,4 +1,4 @@
-import { Component, input, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy, inject, viewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Accordion } from './accordion';
 
@@ -10,11 +10,13 @@ import { Accordion } from './accordion';
     <div class="accordion-item-wrapper">
       <h2 class="accordion-heading">
         <button
+          #accordionButton
           type="button"
           class="flex items-center justify-between w-full p-5 font-medium rtl:text-right text-text-secondary border border-b-0 border-border rounded-t-xl focus:ring-4 focus:ring-bg-surface border-border text-text-secondary hover:bg-bg-surface gap-3 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           [class.!rounded-none]="isNotFirst()"
           [class.!border-b]="isLast()"
           [attr.aria-expanded]="isExpanded()"
+          [attr.id]="'accordion-button-' + id()"
           (click)="onToggle()"
           (keydown)="onKeyDown($event)"
           [disabled]="disabled()">
@@ -54,7 +56,8 @@ export class AccordionItemComponent {
   readonly disabled = input(false);
   readonly expanded = input(false);
 
-  private accordion = inject(Accordion);
+  private readonly accordion = inject(Accordion);
+  private readonly buttonRef = viewChild<ElementRef<HTMLButtonElement>>('accordionButton');
 
   isExpanded(): boolean {
     return this.accordion.isExpanded(this.id());
@@ -76,5 +79,12 @@ export class AccordionItemComponent {
 
   onKeyDown(event: KeyboardEvent): void {
     this.accordion.onKeyDown(event, this.id());
+  }
+
+  focusButton(): void {
+    const button = this.buttonRef();
+    if (button) {
+      button.nativeElement.focus();
+    }
   }
 }

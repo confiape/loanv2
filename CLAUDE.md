@@ -20,8 +20,26 @@ When rules seem to conflict, **prefer consistency within a file** over strict ad
 * Prefer **type inference** when obvious; be explicit otherwise.
 * Avoid `any`; use `unknown` for uncertain types.
 * Use **readonly**, `const`, and interfaces for clear, immutable contracts.
-* Follow [Google’s TypeScript Style Guide](https://google.github.io/styleguide/tsguide.html).
+* Follow [Google's TypeScript Style Guide](https://google.github.io/styleguide/tsguide.html).
 * Keep code **lint-clean** and **formatted** (ESLint + Prettier).
+
+### Module Path Aliases
+
+* **Always use the `@loan` alias** for imports within the project.
+* Never use relative paths like `../../../../` for internal imports.
+
+**Examples:**
+
+```ts
+// ✅ Correct - using @loan alias
+import { wrapInLightDarkComparison } from '@loan/stories/story-helpers';
+import { UserService } from '@loan/services/user.service';
+import { Button } from '@loan/shared/components/button';
+
+// ❌ Incorrect - relative paths
+import { wrapInLightDarkComparison } from '../../../../stories/story-helpers';
+import { UserService } from '../../../services/user.service';
+```
 
 ---
 
@@ -229,6 +247,9 @@ src/
 ### 📖 Storybook
 
 * Use **Storybook** for component docs and visual regression.
+* **Story files location**: Place stories in `src/stories/` mirroring the component path.
+  * Example: Component at `src/app/shared/components/accordion/accordion.ts`
+  * Story at: `src/stories/app/shared/components/accordion/accordion.stories.ts`
 * Read [`stories.md`](stories.md) before creating or editing stories.
 
 ---

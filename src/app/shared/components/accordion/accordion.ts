@@ -99,18 +99,15 @@ export class Accordion {
 
       if (event.key === 'ArrowDown' && currentIndex < items.length - 1) {
         const nextItem = items[currentIndex + 1];
-        this.focusButton(nextItem.id());
+        this.focusItem(nextItem);
       } else if (event.key === 'ArrowUp' && currentIndex > 0) {
         const prevItem = items[currentIndex - 1];
-        this.focusButton(prevItem.id());
+        this.focusItem(prevItem);
       }
     }
   }
 
-  private focusButton(itemId: string): void {
-    const button = document.querySelector(
-      `button[aria-expanded][aria-expanded="${this.isExpanded(itemId)}"]`
-    ) as HTMLButtonElement;
-    button?.focus();
+  private focusItem(item: AccordionItemComponent): void {
+    item.focusButton();
   }
 }
