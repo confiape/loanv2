@@ -218,6 +218,79 @@ src/
   ```
 * Prefer `[class]` / `[style]` bindings over `ngClass` / `ngStyle`.
 
+### Test IDs for E2E Testing
+
+All components **must** support `data-testid` attributes for Playwright e2e tests:
+
+* Use `HostAttributeToken` to read `data-testid` from the host element
+* The host `data-testid` acts as a **prefix** for all child elements
+* Each internal element gets a **suffix** appended to the prefix
+* If no `data-testid` is provided on the host, **no test IDs are rendered** (null)
+
+**Implementation Pattern:**
+
+```typescript
+import { HostAttributeToken, inject, computed } from '@angular/core';
+
+const DATA_TESTID = new HostAttributeToken('data-testid');
+
+@Component({
+  selector: 'app-example',
+  template: `
+    <div [attr.data-testid]="wrapperTestId()">
+      <label [attr.data-testid]="labelTestId()">Label</label>
+      <input [attr.data-testid]="inputTestId()" />
+      <button [attr.data-testid]="buttonTestId()">Submit</button>
+    </div>
+  `,
+  host: {
+    '[attr.data-testid]': 'componentTestId()'
+  }
+})
+export class Example {
+  private readonly hostTestId = inject(DATA_TESTID, { optional: true });
+
+  readonly componentTestId = computed(() =>
+    this.hostTestId ? `${this.hostTestId}-example` : null
+  );
+
+  readonly wrapperTestId = computed(() =>
+    this.hostTestId ? `${this.hostTestId}-wrapper` : null
+  );
+
+  readonly labelTestId = computed(() =>
+    this.hostTestId ? `${this.hostTestId}-label` : null
+  );
+
+  readonly inputTestId = computed(() =>
+    this.hostTestId ? `${this.hostTestId}-input` : null
+  );
+
+  readonly buttonTestId = computed(() =>
+    this.hostTestId ? `${this.hostTestId}-button` : null
+  );
+}
+```
+
+**Usage:**
+
+```html
+<app-example data-testid="signup-form" />
+```
+
+Generates:
+- `signup-form-example`
+- `signup-form-wrapper`
+- `signup-form-label`
+- `signup-form-input`
+- `signup-form-button`
+
+**Important:**
+* Always use `computed()` for test IDs
+* Always check if `hostTestId` exists before generating test IDs
+* Return `null` when no test ID is needed (not an empty string)
+* See [`docs/playwright-testids.md`](docs/playwright-testids.md) for complete component reference
+
 ---
 
 ## 11. Performance & Accessibility

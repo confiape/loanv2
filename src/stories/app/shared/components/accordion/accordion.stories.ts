@@ -1,10 +1,13 @@
 import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
 import { fn } from 'storybook/test';
-import { Accordion } from './accordion';
-import { AccordionItemComponent } from './accordion-item';
-import { AccordionItemHeaderComponent } from './accordion-item-header';
-import { AccordionItemContentComponent } from './accordion-item-content';
+
 import { wrapInLightDarkComparison } from '@loan/stories/story-helpers';
+import {
+  Accordion,
+  AccordionItemComponent,
+  AccordionItemContentComponent,
+  AccordionItemHeaderComponent
+} from '@loan/app/shared/components/accordion';
 
 
 const meta: Meta<Accordion> = {
