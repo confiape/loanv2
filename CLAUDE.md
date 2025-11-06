@@ -301,39 +301,6 @@ Generates:
 * Maintain **ARIA roles**, labels, and keyboard navigation.
 * Avoid unnecessary re-rendering by using **signals** and **computed** values efficiently.
 
----
-
-## 12. Testing & Documentation
-
-### 🧪 Unit Tests
-
-* Use **Vitest** or **Jasmine**.
-* Test **signals**, **computed**, and **inject()** logic directly.
-* Read [`unit-test.md`](unit-test.md) before writing new tests.
-
-### 🎭 Playwright
-
-* Use **Playwright** for end-to-end and visual tests.
-* Keep tests small and idempotent.
-* Read [`playwright.md`](playwright.md) before adding or updating tests.
-
-### 📖 Storybook
-
-* Use **Storybook** for component docs and visual regression.
-* **Story files location**: Place stories in `src/stories/` mirroring the component path.
-  * Example: Component at `src/app/shared/components/accordion/accordion.ts`
-  * Story at: `src/stories/app/shared/components/accordion/accordion.stories.ts`
-* Read [`stories.md`](stories.md) before creating or editing stories.
-
----
-
-## 13. Internal Docs Policy
-
-* Each feature folder must include a short `README.md`.
-* Document all **public APIs**, **inputs/outputs**, and **signals**.
-* Keep Storybook and testing documentation in sync with implementation.
-
----
 
 ## ✅ Summary
 
