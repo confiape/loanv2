@@ -1,10 +1,11 @@
-import { Component, input, output, signal, computed, ChangeDetectionStrategy } from '@angular/core';
+import { Component, input, output, signal, computed, ChangeDetectionStrategy, contentChildren } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { AccordionItemComponent } from './accordion-item';
 
 export interface AccordionItem {
   id: string;
   title: string;
-  content: string;
+  content?: string;
   disabled?: boolean;
   expanded?: boolean;
 }
@@ -13,8 +14,7 @@ export interface AccordionItem {
   selector: 'app-accordion',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './accordion.html',
-  styleUrl: './accordion.css',
+  template: '<ng-content></ng-content>',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: 'block'
@@ -25,34 +25,55 @@ export class Accordion {
   readonly allowMultiple = input(false);
   readonly itemSelected = output<string>();
 
-  readonly userExpandedItems = signal<Set<string>>(new Set());
+  readonly contentItems = contentChildren(AccordionItemComponent);
+
+  readonly userExpandedItems = signal<Set<string> | null>(null);
 
   readonly expandedItems = computed(() => {
     const userExpanded = this.userExpandedItems();
-    const initialExpanded = this.items()
-      .filter(item => item.expanded)
-      .map(item => item.id);
 
-    return userExpanded.size > 0
-      ? userExpanded
-      : new Set(initialExpanded);
+    // If user has interacted, use their selection
+    if (userExpanded !== null) {
+      return userExpanded;
+    }
+
+    // Otherwise, use initial expanded state from inputs
+    const initialExpanded = this.getInitialExpanded();
+    return new Set(initialExpanded);
   });
 
-  toggleItem(itemId: string): void {
-    const item = this.items().find(i => i.id === itemId);
+  private getInitialExpanded(): string[] {
+    const items = this.contentItems();
+    if (items.length > 0) {
+      return items
+        .filter(item => item.expanded())
+        .map(item => item.id());
+    }
+    return this.items().filter(item => item.expanded).map(item => item.id);
+  }
 
-    if (item?.disabled) {
+  getContentItems(): readonly AccordionItemComponent[] {
+    return this.contentItems();
+  }
+
+  toggleItem(itemId: string): void {
+    const contentItem = this.contentItems().find(i => i.id() === itemId);
+
+    if (contentItem?.disabled()) {
       return;
+    }
+
+    // Initialize user expanded items on first interaction if not already done
+    if (this.userExpandedItems() === null) {
+      this.userExpandedItems.set(new Set(this.getInitialExpanded()));
     }
 
     const updated = new Set(this.expandedItems());
     const isCurrentlyExpanded = updated.has(itemId);
 
     if (isCurrentlyExpanded) {
-      // Si está expandido, simplemente ciérralo
       updated.delete(itemId);
     } else {
-      // Si no está expandido, cierra los demás si no permitimos múltiples
       if (!this.allowMultiple()) {
         updated.clear();
       }
@@ -73,15 +94,15 @@ export class Accordion {
       event.preventDefault();
     } else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
       event.preventDefault();
-      const items = this.items();
-      const currentIndex = items.findIndex(i => i.id === itemId);
+      const items = this.contentItems();
+      const currentIndex = items.findIndex(i => i.id() === itemId);
 
       if (event.key === 'ArrowDown' && currentIndex < items.length - 1) {
         const nextItem = items[currentIndex + 1];
-        this.focusButton(nextItem.id);
+        this.focusButton(nextItem.id());
       } else if (event.key === 'ArrowUp' && currentIndex > 0) {
         const prevItem = items[currentIndex - 1];
-        this.focusButton(prevItem.id);
+        this.focusButton(prevItem.id());
       }
     }
   }

@@ -1,5 +1,34 @@
-<div>
-  <div class="bg-bg-surface text-text-primary"></div>
+<div class="p-8">
+  <h1 class="text-2xl font-bold mb-8">Accordion Test - ng-content Mode</h1>
+
+  <app-accordion [allowMultiple]="false" (itemSelected)="onItemSelected($event)">
+    <app-accordion-item id="1" [expanded]="true">
+      <app-accordion-item-header>What is Flowbite?</app-accordion-item-header>
+      <app-accordion-item-content>
+        <p class="mb-2">Flowbite is an open-source library of interactive components built on top of Tailwind CSS including buttons, dropdowns, modals, navbars, and more.</p>
+        <p>Check out this guide to learn how to get started and start developing websites even faster with components on top of Tailwind CSS.</p>
+      </app-accordion-item-content>
+    </app-accordion-item>
+
+    <app-accordion-item id="2">
+      <app-accordion-item-header>Is there a Figma file available?</app-accordion-item-header>
+      <app-accordion-item-content>
+        <p class="mb-2">Flowbite is first conceptualized and designed using the Figma software so everything you see in the library has a design equivalent in our Figma file.</p>
+        <p>Check out the Figma design system based on the utility classes from Tailwind CSS and components from Flowbite.</p>
+      </app-accordion-item-content>
+    </app-accordion-item>
+
+    <app-accordion-item id="3">
+      <app-accordion-item-header>What are the differences?</app-accordion-item-header>
+      <app-accordion-item-content>
+        <p class="mb-2">The main difference is that the core components from Flowbite are open source under the MIT license, whereas Tailwind UI is a paid product.</p>
+        <ul class="list-disc pl-5 space-y-1">
+          <li>Feature 1</li>
+          <li>Feature 2</li>
+        </ul>
+      </app-accordion-item-content>
+    </app-accordion-item>
+  </app-accordion>
 </div>
 
 <router-outlet></router-outlet>

@@ -1,5 +1,5 @@
 <div class="accordion-collapse">
-  @for (item of items(); let first = $first; let last = $last; track item.id) {
+  @for (item of computedItems(); let first = $first; let last = $last; track item.id) {
     <h2 class="accordion-heading">
       <button
         type="button"
@@ -32,8 +32,17 @@
       [class.hidden]="!isExpanded(item.id)">
       <div class="p-5 border border-b-0 border-border text-text-secondary"
            [class.!border-b]="last">
-        {{ item.content }}
+        @if (getContentItem(item.id); as contentComp) {
+          <!-- Content from app-accordion-item is projected here via ng-content -->
+        } @else if (item.content) {
+          {{ item.content }}
+        }
       </div>
     </div>
   }
+</div>
+
+<!-- Hidden ng-content for capturing app-accordion-item children -->
+<div style="display: none;">
+  <ng-content></ng-content>
 </div>

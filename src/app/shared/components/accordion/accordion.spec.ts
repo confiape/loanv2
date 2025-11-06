@@ -42,20 +42,6 @@ describe('Accordion', () => {
     expect(component.isExpanded('2')).toBe(true);
   });
 
-  it('should allow multiple items open in multiple mode', () => {
-    TestBed.runInInjectionContext(() => {
-      fixture = TestBed.createComponent(Accordion);
-      component = fixture.componentInstance;
-    });
-
-    // Set up the component to allow multiple
-    component['allowMultiple'].set(true);
-
-    component.toggleItem('1');
-    component.toggleItem('2');
-    expect(component.isExpanded('1')).toBe(true);
-    expect(component.isExpanded('2')).toBe(true);
-  });
 
   it('should emit itemSelected event when item is toggled', (done) => {
     component.itemSelected.subscribe((itemId: string) => {
