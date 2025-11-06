@@ -44,6 +44,29 @@ await expect(page.getByTestId('email-error-message')).toBeVisible();
 
 ---
 
+### Button
+
+**Location:** `src/app/shared/components/button/`
+
+| Test ID | Element |
+|---------|---------|
+| `{prefix}` | Native `<button>` element |
+| `{prefix}-content` | Slot content wrapper (label + icons) |
+| `{prefix}-spinner` | Loading indicator container |
+
+**Example:**
+```html
+<app-button data-testid="primary-cta">
+  Continue
+</app-button>
+```
+```typescript
+await page.getByTestId('primary-cta').click();
+await page.getByTestId('primary-cta-spinner').waitFor({ state: 'hidden' });
+```
+
+---
+
 ### Accordion
 
 **Location:** `src/app/shared/components/accordion/`
