@@ -1,19 +1,19 @@
-<div class="accordion-container">
-  @for (item of items(); let last = $last) {
-    <h2 [id]="'accordion-heading-' + item.id" class="accordion-header">
+<div class="accordion-collapse">
+  @for (item of items(); let first = $first; let last = $last; track item.id) {
+    <h2 class="accordion-heading">
       <button
         type="button"
-        class="flex items-center justify-between w-full p-5 font-medium text-gray-500 border border-b-0 border-gray-200 rounded-t-xl focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:border-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 gap-3 transition-colors"
-        [class.!rounded-none]="!$first"
+        class="flex items-center justify-between w-full p-5 font-medium rtl:text-right text-text-secondary border border-b-0 border-border rounded-t-xl focus:ring-4 focus:ring-bg-surface border-border text-text-secondary hover:bg-bg-surface gap-3 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        [class.!rounded-none]="!first"
         [class.!border-b]="last"
-        [attr.data-accordion-target]="'#accordion-body-' + item.id"
         [attr.aria-expanded]="isExpanded(item.id)"
-        [attr.aria-controls]="'accordion-body-' + item.id"
-        (click)="toggleItem(item.id)">
+        (click)="toggleItem(item.id)"
+        (keydown)="onKeyDown($event, item.id)"
+        [disabled]="item.disabled">
         <span>{{ item.title }}</span>
         <svg
-          class="w-3 h-3 shrink-0 transition-transform"
-          [class.rotate-180]="isExpanded(item.id)"
+          class="w-3 h-3 rotate-180 shrink-0 transition-transform"
+          [class.!rotate-0]="isExpanded(item.id)"
           aria-hidden="true"
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -23,17 +23,15 @@
             stroke-linecap="round"
             stroke-linejoin="round"
             stroke-width="2"
-            d="M9 5 5 1 1 5" />
+            d="M9 5 5 1 1 5"/>
         </svg>
       </button>
     </h2>
     <div
-      [id]="'accordion-body-' + item.id"
-      class="overflow-hidden transition-all duration-300"
-      [class.hidden]="!isExpanded(item.id)"
-      [attr.aria-labelledby]="'accordion-heading-' + item.id">
-      <div class="p-5 border border-b-0 border-gray-200 dark:border-gray-700 dark:bg-gray-900 text-gray-500 dark:text-gray-400"
-        [class.!border-b]="last">
+      class="accordion-body"
+      [class.hidden]="!isExpanded(item.id)">
+      <div class="p-5 border border-b-0 border-border text-text-secondary"
+           [class.!border-b]="last">
         {{ item.content }}
       </div>
     </div>

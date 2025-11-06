@@ -1,8 +1,7 @@
 import { Meta, StoryObj } from '@storybook/angular';
-
-import { Accordion, AccordionItem } from './accordion';
-import {fn} from 'storybook/test';
-import {createLightDarkComparison, wrapInLightDarkComparison} from '../../../../stories/story-helpers';
+import { fn } from 'storybook/test';
+import { Accordion, AccordionItem } from '@loan/app/shared/components/accordion/accordion';
+import { createLightDarkComparison, wrapInLightDarkComparison } from '@loan/stories/story-helpers';
 
 
 const meta: Meta<Accordion> = {

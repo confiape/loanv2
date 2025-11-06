@@ -143,7 +143,7 @@ export const AllVariants: Story = {
 | `number`  | Values, progress, steps  |
 | `color`   | Theme visualization only |
 
-Use `fn()` from `@storybook/test` to mock events:
+Use `fn()` from `storybook/test` to mock events:
 
 ```ts
 args: { onClick: fn() },

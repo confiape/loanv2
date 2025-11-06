@@ -3,12 +3,12 @@
     "interfaces": [
         {
             "name": "AccordionItem",
-            "id": "interface-AccordionItem-57249cc6aacb43f52683848d432fd7e27320b9e99140e0ad72d7fa28f1726ce034efedf15c284731e6eee11e3c8d1604f0c2095712921df88bcbeedbb10c5a83",
+            "id": "interface-AccordionItem-8e06a1bc4f5a5b4175e552bf743ed1ebdeeadf07fcc194351fe4e806424fa6251ca4151c9dd3e3cf8b1c58e1640c6d1d2a21a31b9e13435fade52877861ee257",
             "file": "src/app/shared/components/accordion/accordion.ts",
             "deprecated": false,
             "deprecationMessage": "",
             "type": "interface",
-            "sourceCode": "import { Component, input, output, signal, ChangeDetectionStrategy } from '@angular/core';\nimport { CommonModule } from '@angular/common';\n\nexport interface AccordionItem {\n  id: string;\n  title: string;\n  content: string;\n}\n\n@Component({\n  selector: 'app-accordion',\n  standalone: true,\n  imports: [CommonModule],\n  templateUrl: './accordion.html',\n  styleUrl: './accordion.css',\n  changeDetection: ChangeDetectionStrategy.OnPush,\n  host: {\n    class: 'block'\n  }\n})\nexport class Accordion {\n  readonly items = input<AccordionItem[]>([]);\n  readonly allowMultiple = input(false);\n  readonly itemSelected = output<string>();\n\n  readonly expandedItems = signal<Set<string>>(new Set());\n\n  toggleItem(itemId: string): void {\n    const updated = new Set(this.expandedItems());\n\n    if (!this.allowMultiple()) {\n      updated.clear();\n    }\n\n    if (updated.has(itemId)) {\n      updated.delete(itemId);\n    } else {\n      updated.add(itemId);\n    }\n\n    this.expandedItems.set(updated);\n    this.itemSelected.emit(itemId);\n  }\n\n  isExpanded(itemId: string): boolean {\n    return this.expandedItems().has(itemId);\n  }\n}\n",
+            "sourceCode": "import { Component, input, output, signal, computed, ChangeDetectionStrategy } from '@angular/core';\nimport { CommonModule } from '@angular/common';\n\nexport interface AccordionItem {\n  id: string;\n  title: string;\n  content: string;\n  disabled?: boolean;\n  expanded?: boolean;\n}\n\n@Component({\n  selector: 'app-accordion',\n  standalone: true,\n  imports: [CommonModule],\n  templateUrl: './accordion.html',\n  styleUrl: './accordion.css',\n  changeDetection: ChangeDetectionStrategy.OnPush,\n  host: {\n    class: 'block'\n  }\n})\nexport class Accordion {\n  readonly items = input<AccordionItem[]>([]);\n  readonly allowMultiple = input(false);\n  readonly itemSelected = output<string>();\n\n  readonly userExpandedItems = signal<Set<string>>(new Set());\n\n  readonly expandedItems = computed(() => {\n    const userExpanded = this.userExpandedItems();\n    const initialExpanded = this.items()\n      .filter(item => item.expanded)\n      .map(item => item.id);\n\n    return userExpanded.size > 0\n      ? userExpanded\n      : new Set(initialExpanded);\n  });\n\n  toggleItem(itemId: string): void {\n    const item = this.items().find(i => i.id === itemId);\n\n    if (item?.disabled) {\n      return;\n    }\n\n    const updated = new Set(this.expandedItems());\n    const isCurrentlyExpanded = updated.has(itemId);\n\n    if (isCurrentlyExpanded) {\n      // Si está expandido, simplemente ciérralo\n      updated.delete(itemId);\n    } else {\n      // Si no está expandido, cierra los demás si no permitimos múltiples\n      if (!this.allowMultiple()) {\n        updated.clear();\n      }\n      updated.add(itemId);\n    }\n\n    this.userExpandedItems.set(updated);\n    this.itemSelected.emit(itemId);\n  }\n\n  isExpanded(itemId: string): boolean {\n    return this.expandedItems().has(itemId);\n  }\n\n  onKeyDown(event: KeyboardEvent, itemId: string): void {\n    if (event.key === 'Escape') {\n      this.userExpandedItems.set(new Set());\n      event.preventDefault();\n    } else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {\n      event.preventDefault();\n      const items = this.items();\n      const currentIndex = items.findIndex(i => i.id === itemId);\n\n      if (event.key === 'ArrowDown' && currentIndex < items.length - 1) {\n        const nextItem = items[currentIndex + 1];\n        this.focusButton(nextItem.id);\n      } else if (event.key === 'ArrowUp' && currentIndex > 0) {\n        const prevItem = items[currentIndex - 1];\n        this.focusButton(prevItem.id);\n      }\n    }\n  }\n\n  private focusButton(itemId: string): void {\n    const button = document.querySelector(\n      `button[aria-expanded][aria-expanded=\"${this.isExpanded(itemId)}\"]`\n    ) as HTMLButtonElement;\n    button?.focus();\n  }\n}\n",
             "properties": [
                 {
                     "name": "content",
@@ -19,6 +19,26 @@
                     "optional": false,
                     "description": "",
                     "line": 7
+                },
+                {
+                    "name": "disabled",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "boolean",
+                    "indexKey": "",
+                    "optional": true,
+                    "description": "",
+                    "line": 8
+                },
+                {
+                    "name": "expanded",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "boolean",
+                    "indexKey": "",
+                    "optional": true,
+                    "description": "",
+                    "line": 9
                 },
                 {
                     "name": "id",
@@ -55,7 +75,7 @@
     "components": [
         {
             "name": "Accordion",
-            "id": "component-Accordion-57249cc6aacb43f52683848d432fd7e27320b9e99140e0ad72d7fa28f1726ce034efedf15c284731e6eee11e3c8d1604f0c2095712921df88bcbeedbb10c5a83",
+            "id": "component-Accordion-8e06a1bc4f5a5b4175e552bf743ed1ebdeeadf07fcc194351fe4e806424fa6251ca4151c9dd3e3cf8b1c58e1640c6d1d2a21a31b9e13435fade52877861ee257",
             "file": "src/app/shared/components/accordion/accordion.ts",
             "changeDetection": "ChangeDetectionStrategy.OnPush",
             "encapsulation": [],
@@ -81,7 +101,7 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 23,
+                    "line": 25,
                     "modifierKind": [
                         148
                     ],
@@ -96,7 +116,7 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 22,
+                    "line": 24,
                     "modifierKind": [
                         148
                     ],
@@ -112,7 +132,7 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 24,
+                    "line": 26,
                     "modifierKind": [
                         148
                     ],
@@ -122,6 +142,20 @@
             "propertiesClass": [
                 {
                     "name": "expandedItems",
+                    "defaultValue": "computed(() => {\n    const userExpanded = this.userExpandedItems();\n    const initialExpanded = this.items()\n      .filter(item => item.expanded)\n      .map(item => item.id);\n\n    return userExpanded.size > 0\n      ? userExpanded\n      : new Set(initialExpanded);\n  })",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "unknown",
+                    "indexKey": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 30,
+                    "modifierKind": [
+                        148
+                    ]
+                },
+                {
+                    "name": "userExpandedItems",
                     "defaultValue": "signal<Set<string>>(new Set())",
                     "deprecated": false,
                     "deprecationMessage": "",
@@ -129,13 +163,44 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 26,
+                    "line": 28,
                     "modifierKind": [
                         148
                     ]
                 }
             ],
             "methodsClass": [
+                {
+                    "name": "focusButton",
+                    "args": [
+                        {
+                            "name": "itemId",
+                            "type": "string",
+                            "deprecated": false,
+                            "deprecationMessage": ""
+                        }
+                    ],
+                    "optional": false,
+                    "returnType": "void",
+                    "typeParameters": [],
+                    "line": 89,
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "modifierKind": [
+                        123
+                    ],
+                    "jsdoctags": [
+                        {
+                            "name": "itemId",
+                            "type": "string",
+                            "deprecated": false,
+                            "deprecationMessage": "",
+                            "tagName": {
+                                "text": "param"
+                            }
+                        }
+                    ]
+                },
                 {
                     "name": "isExpanded",
                     "args": [
@@ -149,10 +214,53 @@
                     "optional": false,
                     "returnType": "boolean",
                     "typeParameters": [],
-                    "line": 45,
+                    "line": 66,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "jsdoctags": [
+                        {
+                            "name": "itemId",
+                            "type": "string",
+                            "deprecated": false,
+                            "deprecationMessage": "",
+                            "tagName": {
+                                "text": "param"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "onKeyDown",
+                    "args": [
+                        {
+                            "name": "event",
+                            "type": "KeyboardEvent",
+                            "deprecated": false,
+                            "deprecationMessage": ""
+                        },
+                        {
+                            "name": "itemId",
+                            "type": "string",
+                            "deprecated": false,
+                            "deprecationMessage": ""
+                        }
+                    ],
+                    "optional": false,
+                    "returnType": "void",
+                    "typeParameters": [],
+                    "line": 70,
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "jsdoctags": [
+                        {
+                            "name": "event",
+                            "type": "KeyboardEvent",
+                            "deprecated": false,
+                            "deprecationMessage": "",
+                            "tagName": {
+                                "text": "param"
+                            }
+                        },
                         {
                             "name": "itemId",
                             "type": "string",
@@ -177,7 +285,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 28,
+                    "line": 41,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "jsdoctags": [
@@ -207,13 +315,13 @@
             "description": "",
             "rawdescription": "\n",
             "type": "component",
-            "sourceCode": "import { Component, input, output, signal, ChangeDetectionStrategy } from '@angular/core';\nimport { CommonModule } from '@angular/common';\n\nexport interface AccordionItem {\n  id: string;\n  title: string;\n  content: string;\n}\n\n@Component({\n  selector: 'app-accordion',\n  standalone: true,\n  imports: [CommonModule],\n  templateUrl: './accordion.html',\n  styleUrl: './accordion.css',\n  changeDetection: ChangeDetectionStrategy.OnPush,\n  host: {\n    class: 'block'\n  }\n})\nexport class Accordion {\n  readonly items = input<AccordionItem[]>([]);\n  readonly allowMultiple = input(false);\n  readonly itemSelected = output<string>();\n\n  readonly expandedItems = signal<Set<string>>(new Set());\n\n  toggleItem(itemId: string): void {\n    const updated = new Set(this.expandedItems());\n\n    if (!this.allowMultiple()) {\n      updated.clear();\n    }\n\n    if (updated.has(itemId)) {\n      updated.delete(itemId);\n    } else {\n      updated.add(itemId);\n    }\n\n    this.expandedItems.set(updated);\n    this.itemSelected.emit(itemId);\n  }\n\n  isExpanded(itemId: string): boolean {\n    return this.expandedItems().has(itemId);\n  }\n}\n",
+            "sourceCode": "import { Component, input, output, signal, computed, ChangeDetectionStrategy } from '@angular/core';\nimport { CommonModule } from '@angular/common';\n\nexport interface AccordionItem {\n  id: string;\n  title: string;\n  content: string;\n  disabled?: boolean;\n  expanded?: boolean;\n}\n\n@Component({\n  selector: 'app-accordion',\n  standalone: true,\n  imports: [CommonModule],\n  templateUrl: './accordion.html',\n  styleUrl: './accordion.css',\n  changeDetection: ChangeDetectionStrategy.OnPush,\n  host: {\n    class: 'block'\n  }\n})\nexport class Accordion {\n  readonly items = input<AccordionItem[]>([]);\n  readonly allowMultiple = input(false);\n  readonly itemSelected = output<string>();\n\n  readonly userExpandedItems = signal<Set<string>>(new Set());\n\n  readonly expandedItems = computed(() => {\n    const userExpanded = this.userExpandedItems();\n    const initialExpanded = this.items()\n      .filter(item => item.expanded)\n      .map(item => item.id);\n\n    return userExpanded.size > 0\n      ? userExpanded\n      : new Set(initialExpanded);\n  });\n\n  toggleItem(itemId: string): void {\n    const item = this.items().find(i => i.id === itemId);\n\n    if (item?.disabled) {\n      return;\n    }\n\n    const updated = new Set(this.expandedItems());\n    const isCurrentlyExpanded = updated.has(itemId);\n\n    if (isCurrentlyExpanded) {\n      // Si está expandido, simplemente ciérralo\n      updated.delete(itemId);\n    } else {\n      // Si no está expandido, cierra los demás si no permitimos múltiples\n      if (!this.allowMultiple()) {\n        updated.clear();\n      }\n      updated.add(itemId);\n    }\n\n    this.userExpandedItems.set(updated);\n    this.itemSelected.emit(itemId);\n  }\n\n  isExpanded(itemId: string): boolean {\n    return this.expandedItems().has(itemId);\n  }\n\n  onKeyDown(event: KeyboardEvent, itemId: string): void {\n    if (event.key === 'Escape') {\n      this.userExpandedItems.set(new Set());\n      event.preventDefault();\n    } else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {\n      event.preventDefault();\n      const items = this.items();\n      const currentIndex = items.findIndex(i => i.id === itemId);\n\n      if (event.key === 'ArrowDown' && currentIndex < items.length - 1) {\n        const nextItem = items[currentIndex + 1];\n        this.focusButton(nextItem.id);\n      } else if (event.key === 'ArrowUp' && currentIndex > 0) {\n        const prevItem = items[currentIndex - 1];\n        this.focusButton(prevItem.id);\n      }\n    }\n  }\n\n  private focusButton(itemId: string): void {\n    const button = document.querySelector(\n      `button[aria-expanded][aria-expanded=\"${this.isExpanded(itemId)}\"]`\n    ) as HTMLButtonElement;\n    button?.focus();\n  }\n}\n",
             "styleUrl": "./accordion.css",
             "assetsDirs": [],
             "styleUrlsData": "",
             "stylesData": "",
             "extends": [],
-            "templateData": "<div class=\"accordion-container\">\n  @for (item of items(); let last = $last) {\n    <h2 [id]=\"'accordion-heading-' + item.id\" class=\"accordion-header\">\n      <button\n        type=\"button\"\n        class=\"flex items-center justify-between w-full p-5 font-medium text-gray-500 border border-b-0 border-gray-200 rounded-t-xl focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:border-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 gap-3 transition-colors\"\n        [class.!rounded-none]=\"!$first\"\n        [class.!border-b]=\"last\"\n        [attr.data-accordion-target]=\"'#accordion-body-' + item.id\"\n        [attr.aria-expanded]=\"isExpanded(item.id)\"\n        [attr.aria-controls]=\"'accordion-body-' + item.id\"\n        (click)=\"toggleItem(item.id)\">\n        <span>{{ item.title }}</span>\n        <svg\n          class=\"w-3 h-3 shrink-0 transition-transform\"\n          [class.rotate-180]=\"isExpanded(item.id)\"\n          aria-hidden=\"true\"\n          xmlns=\"http://www.w3.org/2000/svg\"\n          fill=\"none\"\n          viewBox=\"0 0 10 6\">\n          <path\n            stroke=\"currentColor\"\n            stroke-linecap=\"round\"\n            stroke-linejoin=\"round\"\n            stroke-width=\"2\"\n            d=\"M9 5 5 1 1 5\" />\n        </svg>\n      </button>\n    </h2>\n    <div\n      [id]=\"'accordion-body-' + item.id\"\n      class=\"overflow-hidden transition-all duration-300\"\n      [class.hidden]=\"!isExpanded(item.id)\"\n      [attr.aria-labelledby]=\"'accordion-heading-' + item.id\">\n      <div class=\"p-5 border border-b-0 border-gray-200 dark:border-gray-700 dark:bg-gray-900 text-gray-500 dark:text-gray-400\"\n        [class.!border-b]=\"last\">\n        {{ item.content }}\n      </div>\n    </div>\n  }\n</div>\n"
+            "templateData": "<div class=\"accordion-collapse\">\n  @for (item of items(); let first = $first; let last = $last; track item.id) {\n    <h2 class=\"accordion-heading\">\n      <button\n        type=\"button\"\n        class=\"flex items-center justify-between w-full p-5 font-medium rtl:text-right text-text-secondary border border-b-0 border-border rounded-t-xl focus:ring-4 focus:ring-bg-surface border-border text-text-secondary hover:bg-bg-surface gap-3 transition-colors disabled:opacity-50 disabled:cursor-not-allowed\"\n        [class.!rounded-none]=\"!first\"\n        [class.!border-b]=\"last\"\n        [attr.aria-expanded]=\"isExpanded(item.id)\"\n        (click)=\"toggleItem(item.id)\"\n        (keydown)=\"onKeyDown($event, item.id)\"\n        [disabled]=\"item.disabled\">\n        <span>{{ item.title }}</span>\n        <svg\n          class=\"w-3 h-3 rotate-180 shrink-0 transition-transform\"\n          [class.!rotate-0]=\"isExpanded(item.id)\"\n          aria-hidden=\"true\"\n          xmlns=\"http://www.w3.org/2000/svg\"\n          fill=\"none\"\n          viewBox=\"0 0 10 6\">\n          <path\n            stroke=\"currentColor\"\n            stroke-linecap=\"round\"\n            stroke-linejoin=\"round\"\n            stroke-width=\"2\"\n            d=\"M9 5 5 1 1 5\"/>\n        </svg>\n      </button>\n    </h2>\n    <div\n      class=\"accordion-body\"\n      [class.hidden]=\"!isExpanded(item.id)\">\n      <div class=\"p-5 border border-b-0 border-border text-text-secondary\"\n           [class.!border-b]=\"last\">\n        {{ item.content }}\n      </div>\n    </div>\n  }\n</div>\n"
         },
         {
             "name": "App",
@@ -271,7 +379,7 @@
             "styleUrlsData": "",
             "stylesData": "",
             "extends": [],
-            "templateData": "<div>\n  <div class=\"bg-bg-primary text-text-primary\"></div>\n</div>\n\n<router-outlet></router-outlet>\n"
+            "templateData": "<div>\n  <div class=\"bg-bg-surface text-text-primary\"></div>\n</div>\n\n<router-outlet></router-outlet>\n"
         }
     ],
     "modules": [],
@@ -497,7 +605,7 @@
                 "linktype": "component",
                 "name": "Accordion",
                 "coveragePercent": 0,
-                "coverageCount": "0/7",
+                "coverageCount": "0/10",
                 "status": "low"
             },
             {
@@ -506,7 +614,7 @@
                 "linktype": "interface",
                 "name": "AccordionItem",
                 "coveragePercent": 0,
-                "coverageCount": "0/4",
+                "coverageCount": "0/6",
                 "status": "low"
             },
             {

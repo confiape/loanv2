@@ -28,48 +28,48 @@
   --color-overlay: var(--overlay);
 }
 
-/* Valores reales */
+/* Valores reales mapeados a variables nativas de Tailwind */
 @layer base {
   :root {
-    /* Light mode */
-    --bg-primary: #ffffff;
-    --bg-secondary: #f9fafb;
-    --bg-surface: #f3f4f6;
+    /* Light mode - Tailwind gray palette */
+    --bg-primary: var(--color-white);
+    --bg-secondary: var(--color-gray-50);
+    --bg-surface: var(--color-gray-50);
 
-    --text-primary: #111827;
-    --text-secondary: #6b7280;
+    --text-primary: var(--color-gray-900);
+    --text-secondary: var(--color-gray-500);
 
-    --border: #e5e7eb;
+    --border: var(--color-gray-200);
 
-    --accent: #2563eb;
-    --accent-hover: #1d4ed8;
+    --accent: var(--color-blue-600);
+    --accent-hover: var(--color-blue-700);
 
-    --success: #16a34a;
-    --warning: #eab308;
-    --error: #dc2626;
+    --success: var(--color-green-600);
+    --warning: var(--color-yellow-500);
+    --error: var(--color-red-600);
 
-    --overlay: rgba(0, 0, 0, 0.4);
+    --overlay: rgb(0 0 0 / 0.4);
   }
 
   .dark {
-    /* Dark mode */
-    --bg-primary: #0f172a;
-    --bg-secondary: #1e293b;
-    --bg-surface: #334155;
+    /* Dark mode - Tailwind gray palette */
+    --bg-primary: var(--color-slate-900);
+    --bg-secondary: var(--color-slate-800);
+    --bg-surface: var(--color-gray-900);
 
-    --text-primary: #f9fafb;
-    --text-secondary: #cbd5e1;
+    --text-primary: var(--color-gray-50);
+    --text-secondary: var(--color-gray-400);
 
-    --border: #475569;
+    --border: var(--color-gray-700);
 
-    --accent: #60a5fa;
-    --accent-hover: #3b82f6;
+    --accent: var(--color-blue-400);
+    --accent-hover: var(--color-blue-500);
 
-    --success: #22c55e;
-    --warning: #facc15;
-    --error: #f87171;
+    --success: var(--color-green-500);
+    --warning: var(--color-yellow-400);
+    --error: var(--color-red-400);
 
-    --overlay: rgba(255, 255, 255, 0.1);
+    --overlay: rgb(255 255 255 / 0.1);
   }
 
   body {
