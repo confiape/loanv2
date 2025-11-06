@@ -12,6 +12,7 @@ import {
   HostAttributeToken,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ConnectedPosition, OverlayModule } from '@angular/cdk/overlay';
 import {
   DropdownCheckboxChangeEvent,
   DropdownCheckboxItem,
@@ -34,7 +35,7 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
 @Component({
   selector: 'app-dropdown',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, OverlayModule],
   templateUrl: './dropdown.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
@@ -74,7 +75,9 @@ export class Dropdown {
   readonly activePath = signal<string[]>([]);
   readonly searchTerm = signal('');
   readonly panelHovering = signal(false);
+  readonly triggerHovering = signal(false);
   private readonly checkboxState = signal<Record<string, boolean>>({});
+  private hoverCloseTimeout: ReturnType<typeof setTimeout> | null = null;
 
   constructor() {
     effect(() => {
@@ -144,18 +147,40 @@ export class Dropdown {
     return false;
   });
 
-  // Host listeners
-  @HostListener('document:click', ['$event'])
-  handleDocumentClick(event: Event) {
-    if (!this.isOpen()) {
-      return;
-    }
-    if (this.host.nativeElement.contains(event.target as Node)) {
-      return;
-    }
-    this.close();
-  }
+  readonly overlayPositions = computed<ConnectedPosition[]>(() => {
+    const placement = this.placement();
+    const isTop = placement.startsWith('top');
+    const isEnd = placement.endsWith('end');
+    const verticalOffset = isTop ? -8 : 8;
 
+    const primary: ConnectedPosition = {
+      originX: isEnd ? 'end' : 'start',
+      originY: isTop ? 'top' : 'bottom',
+      overlayX: isEnd ? 'end' : 'start',
+      overlayY: isTop ? 'bottom' : 'top',
+      offsetY: verticalOffset,
+    };
+
+    const horizontalFlip: ConnectedPosition = {
+      originX: isEnd ? 'start' : 'end',
+      originY: isTop ? 'top' : 'bottom',
+      overlayX: isEnd ? 'start' : 'end',
+      overlayY: isTop ? 'bottom' : 'top',
+      offsetY: verticalOffset,
+    };
+
+    const verticalFlip: ConnectedPosition = {
+      originX: isEnd ? 'end' : 'start',
+      originY: isTop ? 'bottom' : 'top',
+      overlayX: isEnd ? 'end' : 'start',
+      overlayY: isTop ? 'top' : 'bottom',
+      offsetY: -verticalOffset,
+    };
+
+    return [primary, horizontalFlip, verticalFlip];
+  });
+
+  // Host listeners
   @HostListener('document:keydown.escape')
   handleEscape() {
     if (this.isOpen()) {
@@ -238,14 +263,6 @@ export class Dropdown {
     return 'text-text-primary';
   }
 
-  isPlacementEndAligned(): boolean {
-    return this.placement() === 'bottom-end' || this.placement() === 'top-end';
-  }
-
-  isPlacementTop(): boolean {
-    return this.placement() === 'top-start' || this.placement() === 'top-end';
-  }
-
   buildPath(path: string[], sectionId: string, id: string): string[] {
     return [...path, sectionId, id];
   }
@@ -273,15 +290,20 @@ export class Dropdown {
   }
 
   handleHostMouseEnter() {
-    if (this.openStrategy() === 'hover') {
-      this.open();
+    if (this.openStrategy() !== 'hover') {
+      return;
     }
+    this.triggerHovering.set(true);
+    this.clearHoverCloseTimeout();
+    this.open();
   }
 
   handleHostMouseLeave() {
-    if (this.openStrategy() === 'hover' && !this.panelHovering()) {
-      this.close();
+    if (this.openStrategy() !== 'hover') {
+      return;
     }
+    this.triggerHovering.set(false);
+    this.scheduleHoverClose();
   }
 
   onTriggerKeydown(event: KeyboardEvent) {
@@ -295,6 +317,20 @@ export class Dropdown {
         this.open();
       }
     }
+  }
+
+  onPanelMouseEnter() {
+    this.panelHovering.set(true);
+    this.clearHoverCloseTimeout();
+  }
+
+  onPanelMouseLeave() {
+    this.panelHovering.set(false);
+    this.scheduleHoverClose();
+  }
+
+  onOverlayOutsideClick(_event: MouseEvent) {
+    this.close();
   }
 
   openSubmenu(path: string[]) {
@@ -377,14 +413,18 @@ export class Dropdown {
     if (this.isOpen()) {
       return;
     }
+    this.clearHoverCloseTimeout();
     this.isOpen.set(true);
     this.openChange.emit(true);
   }
 
-  private close() {
+  close() {
     if (!this.isOpen()) {
       return;
     }
+    this.clearHoverCloseTimeout();
+    this.panelHovering.set(false);
+    this.triggerHovering.set(false);
     this.isOpen.set(false);
     this.openChange.emit(false);
   }
@@ -394,6 +434,25 @@ export class Dropdown {
       this.close();
     } else {
       this.open();
+    }
+  }
+
+  private scheduleHoverClose() {
+    if (this.openStrategy() !== 'hover') {
+      return;
+    }
+    this.clearHoverCloseTimeout();
+    this.hoverCloseTimeout = setTimeout(() => {
+      if (!this.triggerHovering() && !this.panelHovering()) {
+        this.close();
+      }
+    }, 80);
+  }
+
+  private clearHoverCloseTimeout() {
+    if (this.hoverCloseTimeout) {
+      clearTimeout(this.hoverCloseTimeout);
+      this.hoverCloseTimeout = null;
     }
   }
 }

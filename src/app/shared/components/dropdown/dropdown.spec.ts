@@ -1,11 +1,14 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
+import { OverlayContainer } from '@angular/cdk/overlay';
 import { Dropdown } from './dropdown';
 import { DropdownSection } from './dropdown.types';
 
 describe('Dropdown', () => {
   let fixture: ComponentFixture<Dropdown>;
   let component: Dropdown;
+  let overlayContainer: OverlayContainer;
+  let overlayElement: HTMLElement;
 
   const baseSections: DropdownSection[] = [
     {
@@ -35,6 +38,13 @@ describe('Dropdown', () => {
     component = fixture.componentInstance;
     fixture.componentRef.setInput('sections', baseSections);
     fixture.detectChanges();
+
+    overlayContainer = TestBed.inject(OverlayContainer);
+    overlayElement = overlayContainer.getContainerElement();
+  });
+
+  afterEach(() => {
+    overlayContainer.ngOnDestroy();
   });
 
   it('should create', () => {
@@ -49,13 +59,13 @@ describe('Dropdown', () => {
     trigger?.dispatchEvent(new MouseEvent('click'));
     fixture.detectChanges();
 
-    const panel = compiled.querySelector('.shadow-lg');
+    const panel = overlayElement.querySelector('.shadow-lg');
     expect(panel).toBeTruthy();
 
     trigger?.dispatchEvent(new MouseEvent('click'));
     fixture.detectChanges();
 
-    const closedPanel = compiled.querySelector('.shadow-lg');
+    const closedPanel = overlayElement.querySelector('.shadow-lg');
     expect(closedPanel).toBeFalsy();
   });
 
@@ -70,7 +80,7 @@ describe('Dropdown', () => {
     trigger?.dispatchEvent(new MouseEvent('click'));
     fixture.detectChanges();
 
-    const itemButton = compiled.querySelector(
+    const itemButton = overlayElement.querySelector(
       'ul li button'
     ) as HTMLButtonElement;
     itemButton?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
@@ -108,12 +118,12 @@ describe('Dropdown', () => {
     compiled.querySelector('button')?.dispatchEvent(new MouseEvent('click'));
     fixture.detectChanges();
 
-    const searchInput = compiled.querySelector('input') as HTMLInputElement;
+    const searchInput = overlayElement.querySelector('input') as HTMLInputElement;
     searchInput.value = 'ear';
     searchInput.dispatchEvent(new Event('input'));
     fixture.detectChanges();
 
-    const items = compiled.querySelectorAll('ul li button');
+    const items = overlayElement.querySelectorAll('ul li button');
     expect(items.length).toBe(1);
     expect(items[0]?.textContent?.trim()).toBe('Earnings');
   });

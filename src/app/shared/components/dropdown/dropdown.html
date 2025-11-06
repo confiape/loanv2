@@ -1,10 +1,12 @@
 <div
-  class="relative inline-flex"
+  class="inline-flex"
   [class.w-full]="trigger().fullWidth"
   (mouseenter)="handleHostMouseEnter()"
   (mouseleave)="handleHostMouseLeave()"
 >
   <button
+    #overlayOrigin="cdkOverlayOrigin"
+    cdkOverlayOrigin
     type="button"
     [attr.data-testid]="triggerTestId()"
     [attr.aria-expanded]="isOpen()"
@@ -44,25 +46,26 @@
     </span>
   </button>
 
-  @if (isOpen()) {
+  <ng-template
+    cdkConnectedOverlay
+    [cdkConnectedOverlayOrigin]="overlayOrigin"
+    [cdkConnectedOverlayOpen]="isOpen()"
+    [cdkConnectedOverlayPositions]="overlayPositions()"
+    [cdkConnectedOverlayHasBackdrop]="openStrategy() === 'click'"
+    [cdkConnectedOverlayBackdropClass]="'cdk-overlay-transparent-backdrop'"
+    (overlayOutsideClick)="onOverlayOutsideClick($event)"
+    (backdropClick)="close()"
+    (detach)="close()"
+  >
     <div
-      class="absolute z-20 mt-2"
-      [class.end-0]="isPlacementEndAligned()"
-      [class.start-0]="!isPlacementEndAligned()"
-      [class.mb-2]="isPlacementTop()"
-      [class.mt-2]="!isPlacementTop()"
-      [class.bottom-full]="isPlacementTop()"
-      [class.top-full]="!isPlacementTop()"
+      class="rounded-lg border border-border bg-bg-primary shadow-lg"
+      [style.width.px]="panelWidthPx()"
+      [style.maxHeight.px]="panelMaxHeightPx()"
+      [attr.data-testid]="panelTestId()"
+      [class.overflow-y-auto]="shouldScroll()"
+      (mouseenter)="onPanelMouseEnter()"
+      (mouseleave)="onPanelMouseLeave()"
     >
-      <div
-        class="rounded-lg border border-border bg-bg-primary shadow-lg"
-        [style.width.px]="panelWidthPx()"
-        [style.maxHeight.px]="panelMaxHeightPx()"
-        [attr.data-testid]="panelTestId()"
-        [class.overflow-y-auto]="shouldScroll()"
-        (mouseenter)="panelHovering.set(true)"
-        (mouseleave)="panelHovering.set(false)"
-      >
         <!-- Header -->
         @if (header()) {
           <div class="px-4 py-3 border-b border-border">
@@ -140,8 +143,7 @@
           </div>
         }
       </div>
-    </div>
-  }
+</ng-template>
 </div>
 
 <!-- Icon template -->
