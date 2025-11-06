@@ -72,3 +72,66 @@ await expect(page.getByTestId('email-error-message')).toBeVisible();
 await page.getByTestId('faq-button-shipping').click();
 await expect(page.getByTestId('faq-body-shipping')).toBeVisible();
 ```
+
+---
+
+### InputNumber
+
+**Location:** `src/app/shared/components/input-number/`
+
+| Test ID | Element |
+|---------|---------|
+| `{prefix}-wrapper` | Main container |
+| `{prefix}-label` | Label element |
+| `{prefix}-input` | Input field (type=number) |
+| `{prefix}-prefix-icon` | Icon at start |
+| `{prefix}-buttons` | Increment/decrement buttons container |
+| `{prefix}-increment` | Increment button (+) |
+| `{prefix}-decrement` | Decrement button (-) |
+| `{prefix}-help-text` | Help message |
+| `{prefix}-success-message` | Success message |
+| `{prefix}-error-message` | Error message |
+
+**Example:**
+```html
+<app-input-number data-testid="quantity" [label]="'Quantity'" [min]="1" [max]="100" />
+```
+```typescript
+await page.getByTestId('quantity-input').fill('50');
+await page.getByTestId('quantity-increment').click();
+await expect(page.getByTestId('quantity-input')).toHaveValue('51');
+await page.getByTestId('quantity-decrement').click();
+await expect(page.getByTestId('quantity-input')).toHaveValue('50');
+```
+
+---
+
+### Select
+
+**Location:** `src/app/shared/components/select/`
+
+| Test ID | Element |
+|---------|---------|
+| `{prefix}-wrapper` | Main container |
+| `{prefix}-label` | Label element |
+| `{prefix}-select` | Select dropdown element |
+| `{prefix}-help-text` | Help message |
+| `{prefix}-success-message` | Success message |
+| `{prefix}-error-message` | Error message |
+
+**Example:**
+```html
+<app-select
+  data-testid="country"
+  [label]="'Country'"
+  [options]="[
+    { value: 'US', label: 'United States' },
+    { value: 'CA', label: 'Canada' }
+  ]"
+/>
+```
+```typescript
+await page.getByTestId('country-select').selectOption('US');
+await expect(page.getByTestId('country-select')).toHaveValue('US');
+await expect(page.getByTestId('country-label')).toBeVisible();
+```

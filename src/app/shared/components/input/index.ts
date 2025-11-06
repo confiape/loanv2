@@ -1,1 +1,2 @@
-export { Input, type InputSize, type InputType, type ValidationState } from './input';
+export { Input, type InputType } from './input';
+export { type InputSize, type ValidationState } from './input-helpers';
