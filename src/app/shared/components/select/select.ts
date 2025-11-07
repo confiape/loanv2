@@ -192,10 +192,10 @@ export class Select implements ControlValueAccessor {
 
     // Validation state colors
     if (state === 'success') {
-      classes += ' bg-bg-success-light border-success text-success';
+      classes += ' bg-bg-success border-success text-success';
       classes += ' focus:ring-success focus:border-success';
     } else if (state === 'error') {
-      classes += ' bg-bg-error-light border-error text-error';
+      classes += ' bg-bg-error border-error text-error';
       classes += ' focus:ring-error focus:border-error';
     } else if (disabled) {
       classes += ' bg-bg-disabled border-border text-text-secondary cursor-not-allowed';

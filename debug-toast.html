@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Toast Debug</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+  <h1 class="text-2xl font-bold mb-4">Toast Position Test</h1>
+
+  <div class="bg-white p-4 rounded">
+    <p>This is content that should NOT move when toasts appear</p>
+    <button onclick="addToast()" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
+      Add Toast
+    </button>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container" class="fixed z-[9999] flex flex-col gap-2 pointer-events-none top-4 right-4">
+    <!-- Toasts go here -->
+  </div>
+
+  <script>
+    let toastCount = 0;
+    function addToast() {
+      toastCount++;
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = 'flex items-center w-full max-w-xs p-4 rounded-lg shadow-lg border pointer-events-auto bg-white border-blue-300';
+      toast.innerHTML = `
+        <div class="text-sm">Toast #${toastCount}</div>
+        <button onclick="this.parentElement.remove()" class="ms-auto text-gray-500">X</button>
+      `;
+      container.appendChild(toast);
+
+      // Auto remove after 3s
+      setTimeout(() => toast.remove(), 3000);
+    }
+  </script>
+</body>
+</html>

@@ -2,14 +2,17 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { DialogModule, DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { Modal, ModalData } from './modal';
+import { vi } from 'vitest';
 
 describe('Modal', () => {
   let fixture: ComponentFixture<Modal>;
   let component: Modal;
-  let mockDialogRef: jasmine.SpyObj<DialogRef>;
+  let mockDialogRef: any;
 
   beforeEach(async () => {
-    mockDialogRef = jasmine.createSpyObj('DialogRef', ['close']);
+    mockDialogRef = {
+      close: vi.fn(),
+    };
 
     await TestBed.configureTestingModule({
       imports: [Modal, DialogModule],
@@ -104,7 +107,9 @@ describe('Modal with data', () => {
   };
 
   beforeEach(async () => {
-    const mockDialogRef = jasmine.createSpyObj('DialogRef', ['close']);
+    const mockDialogRef = {
+      close: vi.fn(),
+    };
 
     await TestBed.configureTestingModule({
       imports: [Modal, DialogModule],

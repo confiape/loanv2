@@ -33,7 +33,6 @@ describe('ModalFooter', () => {
     const footer = fixture.nativeElement.querySelector('div');
     expect(footer.className).toContain('p-4');
     expect(footer.className).toContain('md:p-5');
-    expect(footer.className).toContain('border-gray-200');
-    expect(footer.className).toContain('dark:border-gray-600');
+    expect(footer.className).toContain('border-border');
   });
 });

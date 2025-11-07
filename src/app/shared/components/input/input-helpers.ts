@@ -58,10 +58,10 @@ export function getInputClasses(
 
   // Validation state colors
   if (validationState === 'success') {
-    classes += ' bg-bg-success-light border-success text-success placeholder-success';
+    classes += ' bg-bg-success border-success text-success placeholder-success';
     classes += ' focus:ring-success focus:border-success';
   } else if (validationState === 'error') {
-    classes += ' bg-bg-error-light border-error text-error placeholder-error';
+    classes += ' bg-bg-error border-error text-error placeholder-error';
     classes += ' focus:ring-error focus:border-error';
   } else if (disabled) {
     classes += ' bg-bg-disabled border-border text-text-secondary cursor-not-allowed';

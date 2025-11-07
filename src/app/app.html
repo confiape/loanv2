@@ -1,53 +1,136 @@
 <div class="min-h-screen bg-bg-primary p-8">
   <div class="max-w-4xl mx-auto">
-    <h1 class="text-3xl font-bold text-text-primary mb-8">Modal Component Demo</h1>
+    <h1 class="text-3xl font-bold text-text-primary mb-8">Alert & Toast Components</h1>
 
-    <!-- Modal Examples -->
+    <!-- Alert Examples -->
     <div class="space-y-6 mb-12">
       <div class="bg-bg-surface border border-border rounded-lg p-6">
-        <h2 class="text-xl font-semibold text-text-primary mb-4">Modal Examples</h2>
+        <h2 class="text-xl font-semibold text-text-primary mb-4">Alert (Static)</h2>
         <p class="text-text-secondary mb-4">
-          Click the buttons below to see different modal variations.
+          Alerts are inline components that live in the document flow.
+        </p>
+
+        <div class="space-y-4">
+          <app-alert [variant]="'info'" [title]="'Info alert!'">
+            This is an informational message.
+          </app-alert>
+
+          <app-alert [variant]="'success'" [title]="'Success!'" [withBorder]="true">
+            Your changes have been saved successfully.
+          </app-alert>
+
+          <app-alert
+            [variant]="'error'"
+            [title]="'Error!'"
+            [dismissible]="true"
+            (dismissed)="dismissAlert()"
+          >
+            There was an error. You can dismiss this alert by clicking the X.
+          </app-alert>
+
+          <app-alert [variant]="'warning'" [title]="'Warning!'" [withBorder]="true">
+            Please review the information before proceeding.
+          </app-alert>
+
+          <app-alert [variant]="'neutral'" [showIcon]="false">
+            Simple message without icon or title.
+          </app-alert>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Examples -->
+    <div class="space-y-6">
+      <div class="bg-bg-surface border border-border rounded-lg p-6">
+        <h2 class="text-xl font-semibold text-text-primary mb-4">Toast (Dynamic)</h2>
+        <p class="text-text-secondary mb-4">
+          Toasts appear temporarily in the corner and auto-dismiss after a few seconds.
         </p>
 
         <div class="flex flex-wrap gap-4">
-          <app-button (buttonClick)="openTermsModal()">Open Terms Modal (2xl)</app-button>
-
-          <app-button [tone]="'danger'" (buttonClick)="openConfirmModal()">
-            Open Confirm Modal (md, non-dismissible)
+          <app-button (buttonClick)="showToastInfo()">Show Info Toast</app-button>
+          <app-button [tone]="'success'" (buttonClick)="showToastSuccess()">
+            Show Success Toast
+          </app-button>
+          <app-button [tone]="'danger'" (buttonClick)="showToastError()">
+            Show Error Toast
+          </app-button>
+          <app-button [tone]="'warning'" (buttonClick)="showToastWarning()">
+            Show Warning Toast
           </app-button>
         </div>
       </div>
+    </div>
 
-      <!-- Features -->
+    <!-- Button Group Examples -->
+    <div class="space-y-6 mt-12">
       <div class="bg-bg-surface border border-border rounded-lg p-6">
-        <h2 class="text-xl font-semibold text-text-primary mb-4">Features</h2>
-        <ul class="list-disc list-inside space-y-2 text-text-secondary">
-          <li> Multiple sizes: sm, md, lg, xl, 2xl</li>
-          <li> Dismissible (click outside to close) or non-dismissible</li>
-          <li> Composable: Header, Body, Footer components</li>
-          <li> Dark mode support with design tokens</li>
-          <li> Keyboard navigation (ESC to close when dismissible)</li>
-          <li> Focus trap for accessibility</li>
-          <li> Integrates with your Button component</li>
-        </ul>
-      </div>
+        <h2 class="text-xl font-semibold text-text-primary mb-4">Button Group</h2>
+        <p class="text-text-secondary mb-4">
+          Group related buttons together with shared borders.
+        </p>
 
-      <!-- Usage Example -->
-      <div class="bg-bg-surface border border-border rounded-lg p-6">
-        <h2 class="text-xl font-semibold text-text-primary mb-4">Quick Usage</h2>
-        <pre
-          class="bg-bg-disabled text-text-primary p-4 rounded text-sm overflow-x-auto"
-        ><code>// 1. Inject the service
-constructor(private modalService: ModalService) {{ '{}' }}
+        <div class="space-y-6">
+          <div>
+            <h3 class="text-sm font-medium text-text-primary mb-2">Default</h3>
+            <app-button-group [variant]="'default'">
+              <app-button-group-button
+                [position]="'first'"
+                [variant]="'default'"
+                (buttonClick)="onButtonGroupClick('Profile')"
+              >
+                Profile
+              </app-button-group-button>
+              <app-button-group-button
+                [position]="'middle'"
+                [variant]="'default'"
+                (buttonClick)="onButtonGroupClick('Settings')"
+              >
+                Settings
+              </app-button-group-button>
+              <app-button-group-button
+                [position]="'last'"
+                [variant]="'default'"
+                (buttonClick)="onButtonGroupClick('Messages')"
+              >
+                Messages
+              </app-button-group-button>
+            </app-button-group>
+          </div>
 
-// 2. Open a modal
-openMyModal() {{ '{' }}
-  this.modalService.open(MyModalComponent);
-{{ '}' }}</code></pre>
+          <div>
+            <h3 class="text-sm font-medium text-text-primary mb-2">Outline</h3>
+            <app-button-group [variant]="'outline'">
+              <app-button-group-button
+                [position]="'first'"
+                [variant]="'outline'"
+                (buttonClick)="onButtonGroupClick('Profile')"
+              >
+                Profile
+              </app-button-group-button>
+              <app-button-group-button
+                [position]="'middle'"
+                [variant]="'outline'"
+                (buttonClick)="onButtonGroupClick('Settings')"
+              >
+                Settings
+              </app-button-group-button>
+              <app-button-group-button
+                [position]="'last'"
+                [variant]="'outline'"
+                (buttonClick)="onButtonGroupClick('Messages')"
+              >
+                Messages
+              </app-button-group-button>
+            </app-button-group>
+          </div>
+        </div>
       </div>
-    </div>ssss
+    </div>
   </div>
 </div>
 
 <router-outlet />
+
+<!-- Toast container at the end, outside content flow -->
+<app-toast-container #toastContainer />
