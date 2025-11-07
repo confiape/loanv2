@@ -1,317 +1,171 @@
-# Angular 20 Best Practices & Style Guide
+# Angular 20 – Unified Guide (Main Agent Compact)
 
-> Unified guide combining [Angular.dev Style Guide](https://angular.dev/style-guide) with project-specific conventions.
-> Applies to this codebase: **Angular 20** app with a **semantic design system on Tailwind CSS v4**, using **standalone components**, **zoneless change detection**, **signals**, and **strict TypeScript**.
-
----
-
-## 1. Introduction
-
-This document defines the team’s coding and structural conventions for Angular 20 applications.
-It ensures consistency, readability, and maintainability across all projects.
-
-When rules seem to conflict, **prefer consistency within a file** over strict adherence to guidelines.
+> Base conventions for Angular 20 apps using **Tailwind v4**, **standalone components**, **zoneless change detection**, **signals**, and **strict TypeScript**.
+> Covers implementation, stories, and unit tests for a consistent design-system workflow.
 
 ---
 
-## 2. TypeScript Essentials
+## 1. Core Principles
 
-* Enable `"strict": true` in `tsconfig.json`.
-* Prefer **type inference** when obvious; be explicit otherwise.
-* Avoid `any`; use `unknown` for uncertain types.
-* Use **readonly**, `const`, and interfaces for clear, immutable contracts.
-* Follow [Google's TypeScript Style Guide](https://google.github.io/styleguide/tsguide.html).
-* Keep code **lint-clean** and **formatted** (ESLint + Prettier).
-
-### Module Path Aliases
-
-* **Always use the `@loan` alias** for imports within the project.
-* Never use relative paths like `../../../../` for internal imports.
-
-**Examples:**
-
-```ts
-// ✅ Correct - using @loan alias
-import { wrapInLightDarkComparison } from '@loan/stories/story-helpers';
-import { UserService } from '@loan/services/user.service';
-import { Button } from '@loan/shared/components/button';
-
-// ❌ Incorrect - relative paths
-import { wrapInLightDarkComparison } from '../../../../stories/story-helpers';
-import { UserService } from '../../../services/user.service';
-```
+* Standalone components only (no NgModules).
+* Zoneless change detection → `provideZonelessChangeDetection()`.
+* Reactive state via **signals** + `computed()`.
+* Composition > inheritance; use `inject()` instead of constructors.
+* Small, reusable, focused components with clear inputs/outputs.
+* Code must be lint-clean and strictly typed.
 
 ---
 
-## 3. Angular Core Principles
+## 2. TypeScript & Imports
 
-* Use **standalone components** — no NgModules.
-* Enable **zoneless change detection** via `provideZonelessChangeDetection()`.
-* Manage state with **signals** and `computed()`.
-* Implement **lazy loading** for feature routes.
-* Prefer `inject()` over constructor DI for better readability and tree-shaking.
-* Favor **composition over inheritance**.
-* Define host bindings in the `host` object, not via decorators.
+* `"strict": true`; avoid `any`.
+* Prefer inference, `readonly`, `const`.
+* Use alias `@loan/...`; never relative imports.
 
 ---
 
-## 4. Components
+## 3. Components
 
-* Keep components **focused, small, and reusable**.
-* Use `input()` / `output()` functions instead of decorators.
-* Always enable:
+* `changeDetection: OnPush`.
+* Use `input()` / `output()` functions.
+* Inline template/style for micro-UI.
+* Reactive Forms only.
+* Prefer `[class]` / `[style]`.
+* Semantic HTML + accessibility roles.
 
-  ```ts
-  changeDetection: ChangeDetectionStrategy.OnPush
+---
+
+## 4. Tailwind v4
+
+* Tailwind utilities > CSS; only use CSS for complex visuals.
+* Use tokens (no hardcoded colors):
+  `--color-bg-primary`, `--color-text-primary`, `--color-border`, `--color-accent`, etc.
+* Maintain consistent spacing, typography, and dark/light themes.
+
+---
+
+## 5. Templates & State
+
+* Use new control-flow syntax (`@if`, `@for`, `@switch`).
+* Keep declarative templates.
+* Use async pipe for observables.
+* Manage state via **signals** and `computed()`; pure updates only.
+
+---
+
+## 6. Naming & Structure
+
+* Kebab-case ↔ PascalCase.
+* One concept per file.
+* Organize by feature, not type.
+* Tests next to code.
+* Example:
+
   ```
-* Prefer **inline templates/styles** for small UI units.
-* Use **Reactive Forms**; avoid template-driven ones.
-* Replace `ngClass` / `ngStyle` with `[class.foo]` / `[style.prop]`.
-* Use **NgOptimizedImage** for static images (not base64).
-* Apply **semantic HTML** and accessibility roles.
-
-📘 Before creating new components, read [`components-styles.md`](components-styles.md).
-
----
-
-## 5. Tailwind CSS v4 Guidelines
-
-* **Use Tailwind utilities as much as possible.**
-* Only write plain CSS for **complex or low-level visual logic**.
-* Centralize theme tokens (`--color-bg-primary`, `--color-text-secondary`, etc.).
-* Maintain consistent **spacing, typography, and color scale**.
-* Support **dark/light themes** via CSS variables.
-* Use **grid** and **flex** utilities — avoid unnecessary wrappers.
-
-### Required CSS Variables
-
-Every custom CSS file must use the following standard design tokens (no hardcoded colors):
-
-```css
-/* Backgrounds */
---color-bg-primary: var(--bg-primary);
---color-bg-secondary: var(--bg-secondary);
---color-bg-surface: var(--bg-surface);
-
-/* Text */
---color-text-primary: var(--text-primary);
---color-text-secondary: var(--text-secondary);
-
-/* Borders */
---color-border: var(--border);
-
-/* Brand */
---color-accent: var(--accent);
---color-accent-hover: var(--accent-hover);
-
-/* States */
---color-success: var(--success);
---color-warning: var(--warning);
---color-error: var(--error);
-
-/* Overlay */
---color-overlay: var(--overlay);
-```
-
-**Usage Example**
-
-```html
-<!-- Tailwind-based -->
-<div class="bg-bg-primary text-text-primary p-4 rounded-md">
-  Example using Tailwind color tokens
-</div>
-```
-
-```css
-/* CSS-based */
-.card {
-  background: var(--color-bg-surface);
-  color: var(--color-text-primary);
-  border: 1px solid var(--color-border);
-}
-```
+  feature/
+    ├─ feature.ts
+    ├─ feature.html
+    ├─ feature.css
+    ├─ feature.spec.ts
+  ```
 
 ---
 
-## 6. Templates
+## 7. Dependency & Access
 
-* Keep templates **simple and declarative**.
-* Use **new control flow** (`@if`, `@for`, `@switch`) instead of `*ngIf`/`*ngFor`.
-* Avoid complex inline logic — move to `computed()` or functions.
-* Use the **async pipe** for observables.
-* Avoid direct DOM manipulation.
-
----
-
-## 7. State Management
-
-* Use **signals** for both local and shared state.
-* Derive values with `computed()` and update via `set()` or `update()`.
-* Keep updates **pure and predictable**.
-* Avoid side effects in reactive flows.
+* Prefer `inject()` for DI.
+* `protected` = template access only.
+* `readonly` for inputs/outputs.
+* Extract business logic to services/pure functions.
 
 ---
 
-## 8. Naming & Project Structure
+## 8. Test IDs (Playwright)
 
-### File Naming
-
-According to the official Angular 20 style guide:
-
-| Element   | File Name              | Class / Identifier |
-| --------- | ---------------------- | ------------------ |
-| Component | `user-profile.ts`      | `UserProfile`      |
-| Template  | `user-profile.html`    | —                  |
-| Styles    | `user-profile.css`     | —                  |
-| Unit Test | `user-profile.spec.ts` | —                  |
-
-**Rules**
-
-* Use **hyphens (-)** to separate words in file names.
-* File names mirror the **TypeScript class name** (kebab-case ↔ PascalCase).
-* Related files share the same name base.
-* Group files by **feature**, not by type.
-* Keep one primary concept per file.
-
-**Example**
-
-```
-src/
-├─ user-profile/
-│  ├─ user-profile.ts
-│  ├─ user-profile.html
-│  ├─ user-profile.css
-│  ├─ user-profile.spec.ts
-```
-
-### Folder Structure
-
-* All application code lives under `src/`.
-* Bootstrap entry point: `src/main.ts`.
-* Group related files together.
-* Organize by **feature area**, not by type (`components`, `services`, etc.).
-* Place tests next to the code under test.
-* Avoid overly large directories; split further when needed.
-
----
-
-## 9. Dependency Injection
-
-* Prefer the **`inject()`** function over constructor parameters.
-
-  * Easier comments and readability for multiple dependencies.
-  * Better type inference and cleaner class fields.
-
----
-
-## 10. Components & Directives Guidelines
-
-* Use `protected` for members only accessed by templates.
-* Use `readonly` for `input`, `output`, and query properties.
-* Keep logic **presentation-focused**; extract utilities or business logic to services or pure functions.
-* Keep lifecycle hooks short — call well-named helper methods.
-* Implement lifecycle hook interfaces (`OnInit`, `OnDestroy`, etc.).
-* Name event handlers for **what they do**, not for the event:
+* Support `data-testid` in all components.
+* Read via `HostAttributeToken`; append suffixes (`-wrapper`, `-input`, `-btn`).
+* Return `null` if no host ID.
+* Always computed dynamically.
+* Example:
 
   ```html
-  <button (click)="saveUser()">Save</button>
+  <app-login data-testid="signup-form"/>
   ```
-* Prefer `[class]` / `[style]` bindings over `ngClass` / `ngStyle`.
 
-### Test IDs for E2E Testing
-
-All components **must** support `data-testid` attributes for Playwright e2e tests:
-
-* Use `HostAttributeToken` to read `data-testid` from the host element
-* The host `data-testid` acts as a **prefix** for all child elements
-* Each internal element gets a **suffix** appended to the prefix
-* If no `data-testid` is provided on the host, **no test IDs are rendered** (null)
-
-**Implementation Pattern:**
-
-```typescript
-import { HostAttributeToken, inject, computed } from '@angular/core';
-
-const DATA_TESTID = new HostAttributeToken('data-testid');
-
-@Component({
-  selector: 'app-example',
-  template: `
-    <div [attr.data-testid]="wrapperTestId()">
-      <label [attr.data-testid]="labelTestId()">Label</label>
-      <input [attr.data-testid]="inputTestId()" />
-      <button [attr.data-testid]="buttonTestId()">Submit</button>
-    </div>
-  `,
-  host: {
-    '[attr.data-testid]': 'componentTestId()'
-  }
-})
-export class Example {
-  private readonly hostTestId = inject(DATA_TESTID, { optional: true });
-
-  readonly componentTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-example` : null
-  );
-
-  readonly wrapperTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-wrapper` : null
-  );
-
-  readonly labelTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-label` : null
-  );
-
-  readonly inputTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-input` : null
-  );
-
-  readonly buttonTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-button` : null
-  );
-}
-```
-
-**Usage:**
-
-```html
-<app-example data-testid="signup-form" />
-```
-
-Generates:
-- `signup-form-example`
-- `signup-form-wrapper`
-- `signup-form-label`
-- `signup-form-input`
-- `signup-form-button`
-
-**Important:**
-* Always use `computed()` for test IDs
-* Always check if `hostTestId` exists before generating test IDs
-* Return `null` when no test ID is needed (not an empty string)
-* See [`docs/playwright-testids.md`](docs/playwright-testids.md) for complete component reference
+  → generates `signup-form-login`, `signup-form-input`, `signup-form-button`.
 
 ---
 
-## 11. Performance & Accessibility
+## 9. Unit Tests (Vitest + Angular 20)
 
-* Always use **OnPush** change detection.
-* Use **pure pipes** and `trackBy` in lists.
-* Optimize images (`NgOptimizedImage` + lazy loading).
-* Maintain **ARIA roles**, labels, and keyboard navigation.
-* Avoid unnecessary re-rendering by using **signals** and **computed** values efficiently.
+* **Framework:** Vitest + Testing Library Angular.
+* One `.spec.ts` per component/service.
+* Co-locate tests with source.
+* Use `inject()` helpers and signals.
+* Arrange / Act / Assert pattern.
+* Mocks via `vi.fn()` or providers.
+* Use `data-testid` selectors.
+* Avoid fakeAsync; use real async.
 
+```ts
+it('renders label', async () => {
+  const { getByTestId } = await render(UserForm);
+  expect(getByTestId('userform-label')).toHaveTextContent('User');
+});
+```
+
+---
+
+## 10. Storybook / Stories
+
+* One `.stories.ts` per component.
+* Use Tailwind tokens only.
+* Use **CSF3**: `export default { component, title }` + named stories.
+* **Render el componente directamente** (sin wrappers extras).
+* **Helpers disponibles y parámetros** (no incluir su código, solo usarlos):
+
+  * `wrapInLightDarkComparison(template: string): string` → Envuelve cualquier template para ver **Light/Dark**.
+  * `createLightDarkComparison(componentTag: string, bindings?: string): string` → Light/Dark con un **tag** y **bindings**.
+  * `createVariantComparison(componentTag: string, variants: string[], baseBindings?: string): string` → Grid Light/Dark con **todas las variantes**.
+  * `createLightDarkRender(componentTag: string, bindings: string): (args) => { props; template }` → Genera una **función `render`** estándar Light/Dark.
+
+**Ejemplo (usar exactamente este patrón):**
+
+```ts
+export default {
+  title: 'UI/Avatar',
+  component: Avatar,
+};
+
+export const Default: Story = {
+  args: { variant: 'placeholder', size: 'md', shape: 'full' },
+  render: (args) => ({
+    props: args,
+    template: wrapInLightDarkComparison(`
+      <app-avatar
+        [variant]="variant"
+        [size]="size"
+        [shape]="shape"
+      />
+    `),
+  }),
+};
+```
+
+---
+
+## 11. Performance & A11y
+
+* Always OnPush + pure pipes + `trackBy`.
+* Lazy-load routes/images (`NgOptimizedImage`).
+* Maintain ARIA roles, labels, keyboard navigation.
+* Use signals/computed to minimize re-renders.
+
+---
 
 ## ✅ Summary
 
-> Build Angular 20 apps with **signals**, **zoneless change detection**, and **Tailwind CSS v4**.
-> Use Tailwind for everything possible, CSS only for complex edge cases.
-> Follow the naming and structural conventions from Angular.dev.
-> Always read the relevant internal doc before creating:
->
-> * Components → `components-styles.md`
-> * Stories → `docs/stories.md`
-> * Unit tests → `unit-test.md`
-> * Playwright tests → `playwright.md`
->
-> Keep the codebase **semantic**, **strict-typed**, **performant**, and **maintainable**.
+> Angular 20 + Tailwind v4 + signals + zoneless.
+> Use alias imports `@loan/...`.
+> Unified conventions for components, stories, and tests.
+> Code must remain typed, semantic, performant, and testable.

@@ -60,13 +60,11 @@ export const Default: Story = {
   render: (args) => ({
     props: args,
     template: wrapInLightDarkComparison(`
-      <div class="flex items-center justify-center p-8">
         <app-avatar
           [variant]="variant"
           [size]="size"
           [shape]="shape"
         />
-      </div>
     `),
   }),
 };
