@@ -1,0 +1,50 @@
+<div
+  class="inline-flex"
+  [class.w-full]="trigger().fullWidth"
+  (mouseenter)="handleHostMouseEnter()"
+  (mouseleave)="handleHostMouseLeave()"
+>
+  <app-dropdown-trigger
+    #overlayOrigin="cdkOverlayOrigin"
+    cdkOverlayOrigin
+    [config]="trigger()"
+    [isOpen]="isOpen()"
+    [testId]="triggerTestId()"
+    (triggerClick)="onTriggerClick($event)"
+    (triggerKeydown)="onTriggerKeydown($event)"
+  />
+
+  <ng-template
+    cdkConnectedOverlay
+    [cdkConnectedOverlayOrigin]="overlayOrigin"
+    [cdkConnectedOverlayOpen]="isOpen()"
+    [cdkConnectedOverlayPositions]="overlayPositions()"
+    [cdkConnectedOverlayHasBackdrop]="openStrategy() === 'click'"
+    [cdkConnectedOverlayBackdropClass]="'cdk-overlay-transparent-backdrop'"
+    (overlayOutsideClick)="onOverlayOutsideClick($event)"
+    (backdropClick)="close()"
+    (detach)="close()"
+  >
+    <app-dropdown-panel
+      [header]="header()"
+      [searchConfig]="searchConfig()"
+      [searchTerm]="searchTerm()"
+      [searchDebounceDelay]="searchDebounceDelay()"
+      [sections]="sections()"
+      [visibleSections]="visibleSections()"
+      [footerAction]="footerAction()"
+      [panelWidth]="panelWidth()"
+      [panelMaxHeight]="panelMaxHeight()"
+      [testId]="panelTestId()"
+      [activePath]="activePath()"
+      [checkboxStates]="checkboxState()"
+      (searchChange)="onSearch($event)"
+      (itemSelect)="onItemSelect($event)"
+      (checkboxToggle)="onCheckboxToggle($event)"
+      (submenuEnter)="openSubmenu($event)"
+      (panelMouseEnter)="onPanelMouseEnter()"
+      (panelMouseLeave)="onPanelMouseLeave()"
+      (footerClick)="onFooterClick($event)"
+    />
+  </ng-template>
+</div>

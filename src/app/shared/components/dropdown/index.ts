@@ -1,2 +1,5 @@
-export * from './dropdown';
-export * from './dropdown.types';
+// Advanced dropdown (data-driven, configurable)
+export * from './advanced';
+
+// Basic dropdown (content projection, composable)
+export * from './basic';

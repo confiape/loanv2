@@ -112,6 +112,7 @@ describe('Dropdown', () => {
     fixture.componentRef.setInput('search', {
       placeholder: 'Buscar',
     });
+    fixture.componentRef.setInput('searchDebounceDelay', 0); // Disable debounce for test
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
@@ -121,6 +122,9 @@ describe('Dropdown', () => {
     const searchInput = overlayElement.querySelector('input') as HTMLInputElement;
     searchInput.value = 'ear';
     searchInput.dispatchEvent(new Event('input'));
+
+    // Wait for debounce (even with 0ms, need to wait for next tick)
+    await new Promise(resolve => setTimeout(resolve, 0));
     fixture.detectChanges();
 
     const items = overlayElement.querySelectorAll('ul li button');
