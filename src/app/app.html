@@ -1,34 +1,53 @@
-<div class="p-8">
-  <h1 class="text-2xl font-bold mb-8">Accordion Test - ng-content Mode</h1>
+<div class="min-h-screen bg-bg-primary p-8">
+  <div class="max-w-4xl mx-auto">
+    <h1 class="text-3xl font-bold text-text-primary mb-8">Modal Component Demo</h1>
 
-  <app-accordion [allowMultiple]="false" (itemSelected)="onItemSelected($event)">
-    <app-accordion-item id="1" [expanded]="true">
-      <app-accordion-item-header>What is Flowbite?</app-accordion-item-header>
-      <app-accordion-item-content>
-        <p class="mb-2">Flowbite is an open-source library of interactive components built on top of Tailwind CSS including buttons, dropdowns, modals, navbars, and more.</p>
-        <p>Check out this guide to learn how to get started and start developing websites even faster with components on top of Tailwind CSS.</p>
-      </app-accordion-item-content>
-    </app-accordion-item>
+    <!-- Modal Examples -->
+    <div class="space-y-6 mb-12">
+      <div class="bg-bg-surface border border-border rounded-lg p-6">
+        <h2 class="text-xl font-semibold text-text-primary mb-4">Modal Examples</h2>
+        <p class="text-text-secondary mb-4">
+          Click the buttons below to see different modal variations.
+        </p>
 
-    <app-accordion-item id="2">
-      <app-accordion-item-header>Is there a Figma file available?</app-accordion-item-header>
-      <app-accordion-item-content>
-        <p class="mb-2">Flowbite is first conceptualized and designed using the Figma software so everything you see in the library has a design equivalent in our Figma file.</p>
-        <p>Check out the Figma design system based on the utility classes from Tailwind CSS and components from Flowbite.</p>
-      </app-accordion-item-content>
-    </app-accordion-item>
+        <div class="flex flex-wrap gap-4">
+          <app-button (buttonClick)="openTermsModal()">Open Terms Modal (2xl)</app-button>
 
-    <app-accordion-item id="3">
-      <app-accordion-item-header>What are the differences?</app-accordion-item-header>
-      <app-accordion-item-content>
-        <p class="mb-2">The main difference is that the core components from Flowbite are open source under the MIT license, whereas Tailwind UI is a paid product.</p>
-        <ul class="list-disc pl-5 space-y-1">
-          <li>Feature 1</li>
-          <li>Feature 2</li>
+          <app-button [tone]="'danger'" (buttonClick)="openConfirmModal()">
+            Open Confirm Modal (md, non-dismissible)
+          </app-button>
+        </div>
+      </div>
+
+      <!-- Features -->
+      <div class="bg-bg-surface border border-border rounded-lg p-6">
+        <h2 class="text-xl font-semibold text-text-primary mb-4">Features</h2>
+        <ul class="list-disc list-inside space-y-2 text-text-secondary">
+          <li> Multiple sizes: sm, md, lg, xl, 2xl</li>
+          <li> Dismissible (click outside to close) or non-dismissible</li>
+          <li> Composable: Header, Body, Footer components</li>
+          <li> Dark mode support with design tokens</li>
+          <li> Keyboard navigation (ESC to close when dismissible)</li>
+          <li> Focus trap for accessibility</li>
+          <li> Integrates with your Button component</li>
         </ul>
-      </app-accordion-item-content>
-    </app-accordion-item>
-  </app-accordion>
+      </div>
+
+      <!-- Usage Example -->
+      <div class="bg-bg-surface border border-border rounded-lg p-6">
+        <h2 class="text-xl font-semibold text-text-primary mb-4">Quick Usage</h2>
+        <pre
+          class="bg-bg-disabled text-text-primary p-4 rounded text-sm overflow-x-auto"
+        ><code>// 1. Inject the service
+constructor(private modalService: ModalService) {{ '{}' }}
+
+// 2. Open a modal
+openMyModal() {{ '{' }}
+  this.modalService.open(MyModalComponent);
+{{ '}' }}</code></pre>
+      </div>
+    </div>ssss
+  </div>
 </div>
 
-<router-outlet></router-outlet>
+<router-outlet />
