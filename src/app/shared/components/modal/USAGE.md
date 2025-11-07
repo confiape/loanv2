@@ -21,7 +21,7 @@ import {
 Primero, crea un componente para el contenido del modal:
 
 ```typescript
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Dialog } from '@angular/cdk/dialog';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from '@loan/app/shared/components/modal';
 import { Button } from '@loan/app/shared/components/button';
@@ -35,11 +35,11 @@ import { Button } from '@loan/app/shared/components/button';
       <app-modal-header (closeClick)="close()">Terms of Service</app-modal-header>
 
       <app-modal-body>
-        <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+        <p class="text-base leading-relaxed text-text-secondary">
           With less than a month to go before the European Union enacts new consumer
           privacy laws for its citizens...
         </p>
-        <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+        <p class="text-base leading-relaxed text-text-secondary">
           The European Union's General Data Protection Regulation (G.D.P.R.) goes
           into effect on May 25...
         </p>
@@ -55,7 +55,7 @@ import { Button } from '@loan/app/shared/components/button';
   `,
 })
 export class TermsModalComponent {
-  constructor(private dialog: Dialog) {}
+  private readonly dialog = inject(Dialog);
 
   close(): void {
     this.dialog.closeAll();
@@ -66,7 +66,7 @@ export class TermsModalComponent {
 Luego, abre el modal desde cualquier componente:
 
 ```typescript
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ModalService } from '@loan/app/shared/components/modal';
 import { TermsModalComponent } from './terms-modal.component';
 import { Button } from '@loan/app/shared/components/button';
@@ -80,7 +80,7 @@ import { Button } from '@loan/app/shared/components/button';
   `,
 })
 export class PageComponent {
-  constructor(private modalService: ModalService) {}
+  private readonly modalService = inject(ModalService);
 
   openModal(): void {
     this.modalService.open(TermsModalComponent);
@@ -91,7 +91,7 @@ export class PageComponent {
 ### 2. Modal Simple (sin componente custom)
 
 ```typescript
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ModalService } from '@loan/app/shared/components/modal';
 
 @Component({
@@ -101,7 +101,7 @@ import { ModalService } from '@loan/app/shared/components/modal';
   `,
 })
 export class PageComponent {
-  constructor(private modalService: ModalService) {}
+  private readonly modalService = inject(ModalService);
 
   showInfo(): void {
     this.modalService.openSimple({
