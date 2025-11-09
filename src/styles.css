@@ -39,6 +39,9 @@
 
   /* Overlay */
   --color-overlay: var(--overlay);
+
+  /* Focus ring */
+  --color-focus-ring: var(--focus-ring);
 }
 
 /* Valores reales mapeados a variables nativas de Tailwind */
@@ -74,7 +77,8 @@
     --warning: var(--color-yellow-500);
     --error: var(--color-red-600);
 
-    --overlay: rgb(0 0 0 / 0.4);
+    --overlay: rgb(0 0 0 / 0.5);
+    --focus-ring: var(--color-blue-200);
   }
 
   .dark {
@@ -108,7 +112,8 @@
     --warning: var(--color-yellow-400);
     --error: var(--color-red-400);
 
-    --overlay: rgb(255 255 255 / 0.1);
+    --overlay: rgb(0 0 0 / 0.7);
+    --focus-ring: var(--color-blue-800);
   }
 
   body {

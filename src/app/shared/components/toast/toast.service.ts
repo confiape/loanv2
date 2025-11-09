@@ -1,27 +1,27 @@
 import { Injectable, ComponentRef, inject } from '@angular/core';
-import { Toast } from './toast';
-import { ToastContainer } from './toast-container';
+import { ToastComponent } from './toast';
+import { ToastContainerComponent } from './toast-container';
 import { ToastConfig, ToastVariant } from './toast-helpers';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ToastService {
-  private container?: ToastContainer;
-  private toasts: ComponentRef<Toast>[] = [];
+  private container?: ToastContainerComponent;
+  private toasts: ComponentRef<ToastComponent>[] = [];
 
   /**
    * Register the toast container component
    * Should be called once in the app, typically in the root component
    */
-  setContainer(container: ToastContainer): void {
+  setContainer(container: ToastContainerComponent): void {
     this.container = container;
   }
 
   /**
    * Show a toast notification
    */
-  show(config: ToastConfig): ComponentRef<Toast> {
+  show(config: ToastConfig): ComponentRef<ToastComponent> {
     if (!this.container) {
       console.error('ToastContainer not registered. Add <app-toast-container/> to your app.');
       throw new Error('ToastContainer not registered');
@@ -33,7 +33,7 @@ export class ToastService {
       throw new Error('ViewContainerRef not available');
     }
 
-    const toastRef = viewContainerRef.createComponent(Toast);
+    const toastRef = viewContainerRef.createComponent(ToastComponent);
 
     // Configure the toast
     toastRef.setInput('variant', config.variant ?? 'info');
@@ -57,7 +57,7 @@ export class ToastService {
   /**
    * Convenience method for info toast
    */
-  info(message: string, title?: string, duration?: number): ComponentRef<Toast> {
+  info(message: string, title?: string, duration?: number): ComponentRef<ToastComponent> {
     return this.show({
       variant: 'info',
       message,
@@ -69,7 +69,7 @@ export class ToastService {
   /**
    * Convenience method for success toast
    */
-  success(message: string, title?: string, duration?: number): ComponentRef<Toast> {
+  success(message: string, title?: string, duration?: number): ComponentRef<ToastComponent> {
     return this.show({
       variant: 'success',
       message,
@@ -81,7 +81,7 @@ export class ToastService {
   /**
    * Convenience method for error toast
    */
-  error(message: string, title?: string, duration?: number): ComponentRef<Toast> {
+  error(message: string, title?: string, duration?: number): ComponentRef<ToastComponent> {
     return this.show({
       variant: 'error',
       message,
@@ -93,7 +93,7 @@ export class ToastService {
   /**
    * Convenience method for warning toast
    */
-  warning(message: string, title?: string, duration?: number): ComponentRef<Toast> {
+  warning(message: string, title?: string, duration?: number): ComponentRef<ToastComponent> {
     return this.show({
       variant: 'warning',
       message,
@@ -105,7 +105,7 @@ export class ToastService {
   /**
    * Remove a specific toast
    */
-  private remove(toastRef: ComponentRef<Toast>): void {
+  private remove(toastRef: ComponentRef<ToastComponent>): void {
     const index = this.toasts.indexOf(toastRef);
     if (index > -1) {
       this.toasts.splice(index, 1);

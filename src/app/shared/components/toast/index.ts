@@ -1,4 +1,4 @@
-export * from './toast';
-export * from './toast-container';
-export * from './toast.service';
-export * from './toast-helpers';
+export { ToastComponent } from './toast';
+export { ToastContainerComponent } from './toast-container';
+export { ToastService } from './toast.service';
+export type { ToastVariant, ToastPosition, ToastConfig } from './toast-helpers';

@@ -23,7 +23,7 @@ import { ToastPosition, getContainerPositionClasses } from './toast-helpers';
     'aria-label': 'Notifications',
   },
 })
-export class ToastContainer {
+export class ToastContainerComponent {
   readonly viewContainerRef = viewChild('toastOutlet', { read: ViewContainerRef });
 
   readonly position = input<ToastPosition>('top-right');

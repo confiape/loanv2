@@ -71,7 +71,7 @@ let toastIdCounter = 0;
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Toast implements OnInit, OnDestroy {
+export class ToastComponent implements OnInit, OnDestroy {
   private readonly sanitizer = inject(DomSanitizer);
   private autoDismissTimer?: ReturnType<typeof setTimeout>;
 

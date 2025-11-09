@@ -1,0 +1,60 @@
+
+<div class="h-screen grid grid-rows-[auto_1fr]">
+  <!-- Toast Container -->
+  <app-toast-container position="top-right" />
+  <div class="h-screen grid grid-rows-[auto_1fr_auto] lg:grid-rows-[auto_1fr]">
+    <!-- Navbar -->
+    <nav class="bg-bg-primary border-b border-border">
+      <app-navbar
+        [appTitle]="appTitle"
+        [userName]="userName"
+        [userEmail]="userEmail"
+        [userAvatar]="userAvatar"
+        [notifications]="notifications()"
+        [apps]="appsMenuItems"
+        [userMenuItems]="userMenuItems"
+        (menuToggle)="toggleMobileMenu()"
+        (searchChange)="onSearchChange($event)"
+        (searchSubmit)="onSearchSubmit($event)"
+        (notificationClick)="onNotificationClick($event)"
+        (appClick)="onAppClick($event)"
+        (userMenuClick)="onUserMenuClick($event)"
+      />
+    </nav>
+
+    <!-- Sidenav + Content -->
+    <div class="grid grid-cols-1 lg:grid-cols-[16rem_1fr] overflow-hidden">
+      <!-- Sidenav: hidden on mobile, visible on desktop -->
+      <aside
+        class="hidden lg:block bg-bg-primary border-r border-border h-full overflow-y-auto"
+      >
+        <app-sidenav [items]="sidenavItems" (itemClick)="onSidenavItemClick($event)" />
+      </aside>
+
+      <!-- Mobile Sidenav Overlay -->
+      @if (isMobileMenuOpen()) {
+        <aside
+          class="fixed inset-y-0 left-0 z-50 w-64 bg-bg-primary border-r border-border lg:hidden overflow-y-auto shadow-2xl"
+        >
+          <app-sidenav [items]="sidenavItems" (itemClick)="onSidenavItemClick($event)" />
+        </aside>
+
+        <button
+          type="button"
+          class="fixed inset-0 z-40 border-none p-0 cursor-pointer lg:hidden"
+          [style.background-color]="'var(--color-overlay)'"
+          (click)="closeMobileMenu()"
+          aria-label="Close menu"
+        ></button>
+      }
+
+      <!-- Main Content -->
+      <main class="bg-bg-secondary p-4 lg:p-6 overflow-y-auto">
+<!--        <router-outlet />-->
+      </main>
+    </div>
+
+    <!-- Bottom Navigation (Mobile Only) -->
+    <app-bottom-navigation [items]="bottomNavItems" (itemClick)="onBottomNavClick($event)" />
+  </div>
+</div>

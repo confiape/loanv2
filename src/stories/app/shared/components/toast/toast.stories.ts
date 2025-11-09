@@ -1,13 +1,13 @@
 import { Meta, StoryObj, moduleMetadata, applicationConfig } from '@storybook/angular';
 import { Component, inject, ViewChild, AfterViewInit } from '@angular/core';
-import { Toast, ToastContainer, ToastService } from '@loan/app/shared/components/toast';
+import { ToastComponent, ToastContainerComponent, ToastService } from '@loan/app/shared/components/toast';
 import { Button } from '@loan/app/shared/components/button';
 import { wrapInLightDarkComparison } from '@loan/stories/story-helpers';
 
 @Component({
   selector: 'app-toast-demo',
   standalone: true,
-  imports: [ToastContainer, Button],
+  imports: [ToastContainerComponent, Button],
   template: `
     <app-toast-container #toastContainer [position]="position" />
     <div class="flex flex-col gap-4 p-8 items-center">
@@ -24,7 +24,7 @@ import { wrapInLightDarkComparison } from '@loan/stories/story-helpers';
   `,
 })
 class ToastDemoComponent implements AfterViewInit {
-  @ViewChild('toastContainer', { static: false }) toastContainer!: ToastContainer;
+  @ViewChild('toastContainer', { static: false }) toastContainer!: ToastContainerComponent;
   private readonly toastService = inject(ToastService);
 
   position: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'top-center' | 'bottom-center' = 'top-right';
@@ -58,7 +58,7 @@ const meta: Meta = {
   title: 'UI/Toast',
   decorators: [
     moduleMetadata({
-      imports: [ToastDemoComponent, Toast, ToastContainer, Button],
+      imports: [ToastDemoComponent, ToastComponent, ToastContainerComponent, Button],
       providers: [ToastService],
     }),
   ],
