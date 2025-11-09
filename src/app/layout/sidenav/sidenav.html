@@ -1,0 +1,205 @@
+<aside
+  [style.width]="currentWidth()"
+  class="bg-bg-primary overflow-y-auto h-full flex flex-col relative transition-[width] duration-300 ease-in-out"
+  [class.border-r]="position() === 'left'"
+  [class.border-l]="position() === 'right'"
+  [class.border-border]="true"
+  role="navigation"
+  aria-label="Sidebar navigation"
+>
+  <!-- Header with Logo and Toggle -->
+  @if (header() || logo() || (collapsible() && showToggle())) {
+    <div class="flex items-center justify-between p-4 border-b border-border gap-3 flex-shrink-0">
+      <!-- Logo -->
+      @if (logo() || logoCollapsed()) {
+        <div class="flex items-center justify-center text-2xl font-bold text-accent">
+          @if (!isCollapsed() && logo()) {
+            <ng-icon [name]="logo()" size="32"></ng-icon>
+          }
+          @if (isCollapsed() && logoCollapsed()) {
+            <ng-icon [name]="logoCollapsed()" size="32"></ng-icon>
+          }
+          @if (isCollapsed() && !logoCollapsed() && logo()) {
+            <ng-icon [name]="logo()" size="32"></ng-icon>
+          }
+        </div>
+      }
+
+      <!-- Header Text -->
+      @if (header() && !isCollapsed()) {
+        <h2 class="text-lg font-semibold text-text-primary m-0 whitespace-nowrap overflow-hidden text-ellipsis flex-1">
+          {{ header() }}
+        </h2>
+      }
+
+      <!-- Toggle Button -->
+      @if (collapsible() && showToggle()) {
+        <button
+          type="button"
+          class="p-2 rounded-md flex items-center justify-center transition-all duration-200 text-text-secondary hover:bg-bg-secondary hover:text-text-primary focus:outline-none focus:ring-2 focus:ring-accent flex-shrink-0"
+          (click)="toggleCollapse()"
+          [attr.aria-expanded]="!isCollapsed()"
+          aria-label="Toggle sidebar"
+        >
+          <ng-icon
+            [name]="position() === 'left' ? (isCollapsed() ? 'heroChevronRight' : 'heroChevronLeft') : (isCollapsed() ? 'heroChevronLeft' : 'heroChevronRight')"
+            size="20"
+            class="transition-transform duration-300"
+          ></ng-icon>
+        </button>
+      }
+    </div>
+  }
+
+  <!-- Navigation Menu -->
+  <nav class="flex-1 overflow-y-auto overflow-x-hidden p-3">
+    <ul class="list-none m-0 p-0 flex flex-col gap-2" role="menu">
+      @for (item of items(); track item.value; let i = $index) {
+        <!-- Divider -->
+        @if (item.divider) {
+          <li class="h-px bg-border my-2" role="separator" [attr.aria-hidden]="true"></li>
+        }
+
+        <!-- Regular Item -->
+        @if (!item.divider) {
+          <li class="list-none relative" role="none">
+            <a
+              class="flex items-center gap-3 p-2 text-base font-medium text-text-primary rounded-lg transition-colors duration-75 hover:bg-bg-secondary group w-full cursor-pointer"
+              [class.opacity-50]="item.disabled"
+              [class.cursor-not-allowed]="item.disabled"
+              [class.pointer-events-none]="item.disabled"
+              [class.font-semibold]="item.children && item.children.length > 0"
+              [routerLink]="item.routerLink || null"
+              routerLinkActive="router-link-active"
+              (click)="onItemClick(item, $event)"
+              (keydown)="onKeyDown($event, item)"
+              (mouseenter)="onItemMouseEnter(item.value)"
+              (mouseleave)="onItemMouseLeave()"
+              [attr.aria-disabled]="item.disabled"
+              [attr.aria-current]="isItemSelected(item.value) ? 'page' : null"
+              [attr.aria-expanded]="
+                item.children && item.children.length > 0 ? isItemExpanded(item.value) : null
+              "
+              [attr.tabindex]="item.disabled ? -1 : 0"
+              role="menuitem"
+            >
+              <!-- Icon -->
+              @if (item.icon) {
+                <ng-icon
+                  [name]="item.icon"
+                  size="24"
+                  class="text-text-secondary transition-colors duration-75 group-hover:text-text-primary flex-shrink-0"
+                ></ng-icon>
+              }
+
+              <!-- Label -->
+              @if (!isCollapsed()) {
+                <span class="flex-1 text-left whitespace-nowrap">
+                  {{ item.label }}
+                </span>
+              }
+
+              <!-- Badge -->
+              @if (item.badge && !isCollapsed()) {
+                <span
+                  class="inline-flex justify-center items-center px-2 py-0.5 text-xs font-semibold rounded-full text-accent bg-bg-info"
+                >
+                  {{ item.badge }}
+                </span>
+              }
+
+              <!-- Expand Icon for items with children -->
+              @if (item.children && item.children.length > 0 && !isCollapsed()) {
+                <ng-icon
+                  name="heroChevronDown"
+                  size="24"
+                  class="text-text-secondary transition-transform duration-200"
+                  [class.rotate-180]="isItemExpanded(item.value)"
+                ></ng-icon>
+              }
+            </a>
+
+            <!-- Tooltip for collapsed state -->
+            @if (isCollapsed() && isItemHovered(item.value)) {
+              <div
+                class="absolute top-1/2 -translate-y-1/2 bg-text-primary text-bg-primary px-3 py-2 rounded-md text-sm whitespace-nowrap shadow-lg z-50 pointer-events-none"
+                [style.left]="position() === 'left' ? 'calc(100% + 0.5rem)' : 'auto'"
+                [style.right]="position() === 'right' ? 'calc(100% + 0.5rem)' : 'auto'"
+              >
+                {{ item.label }}
+                @if (item.badge) {
+                  <span class="bg-accent text-white px-2 py-1 rounded-full text-xs ml-2">
+                    {{ item.badge }}
+                  </span>
+                }
+              </div>
+            }
+
+            <!-- Children (Submenu) -->
+            @if (
+              item.children &&
+              item.children.length > 0 &&
+              isItemExpanded(item.value) &&
+              !isCollapsed()
+            ) {
+              <ul
+                class="list-none mt-2 p-0 pl-6 flex flex-col gap-2 border-l-2 border-border ml-6"
+                role="menu"
+                [attr.aria-label]="item.label + ' submenu'"
+              >
+                @for (child of item.children; track child.value) {
+                  <li class="list-none relative" role="none">
+                    <a
+                      class="flex items-center gap-3 p-2 text-sm font-normal text-text-primary rounded-lg transition-colors duration-75 hover:bg-bg-secondary group w-full cursor-pointer"
+                      [class.opacity-50]="child.disabled"
+                      [class.cursor-not-allowed]="child.disabled"
+                      [class.pointer-events-none]="child.disabled"
+                      [routerLink]="child.routerLink || null"
+                      routerLinkActive="router-link-active"
+                      (click)="onItemClick(child, $event)"
+                      (keydown)="onKeyDown($event, child)"
+                      [attr.aria-disabled]="child.disabled"
+                      [attr.aria-current]="isItemSelected(child.value) ? 'page' : null"
+                      [attr.tabindex]="child.disabled ? -1 : 0"
+                      role="menuitem"
+                    >
+                      <!-- Icon -->
+                      @if (child.icon) {
+                        <ng-icon
+                          [name]="child.icon"
+                          size="16"
+                          class="text-text-secondary transition-colors duration-75 group-hover:text-text-primary flex-shrink-0"
+                        ></ng-icon>
+                      }
+
+                      <!-- Label -->
+                      <span class="flex-1 overflow-hidden text-ellipsis whitespace-nowrap">
+                        {{ child.label }}
+                      </span>
+
+                      <!-- Badge -->
+                      @if (child.badge) {
+                        <span
+                          class="inline-flex justify-center items-center px-2 py-0.5 text-xs font-semibold rounded-full text-accent bg-bg-info"
+                        >
+                          {{ child.badge }}
+                        </span>
+                      }
+                    </a>
+                  </li>
+                }
+              </ul>
+            }
+          </li>
+        }
+      }
+    </ul>
+  </nav>
+
+  <!-- Footer -->
+  @if (footer() && !isCollapsed()) {
+    <div class="p-4 border-t border-border text-text-secondary text-sm flex-shrink-0">
+      <span [innerHTML]="footer()"></span>
+    </div>
+  }
+</aside>

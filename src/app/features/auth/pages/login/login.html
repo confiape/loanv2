@@ -1,0 +1,53 @@
+<div class="flex items-center justify-center min-h-screen p-4 bg-gradient-to-br from-accent to-accent-hover">
+  <div class="w-full max-w-md bg-bg-primary rounded-lg shadow-2xl p-8">
+    <div class="text-center mb-8">
+      <h1 class="text-3xl font-bold text-text-primary mb-2">Bienvenido</h1>
+      <p class="text-base text-text-secondary">Inicia sesión en tu cuenta</p>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-6">
+      <!-- Email -->
+      <app-input
+        data-testid="login-email"
+        label="Email"
+        type="email"
+        placeholder="tu@email.com"
+        formControlName="email" />
+
+      <!-- Password -->
+      <app-input
+        data-testid="login-password"
+        label="Contraseña"
+        [type]="showPassword() ? 'text' : 'password'"
+        placeholder="••••asasa••••"
+        formControlName="password"
+        [suffixButton]="true"
+        [suffixButtonText]="showPassword() ? 'Ocultar' : 'Mostrar'"
+        (suffixButtonClick)="togglePasswordVisibility()" />
+
+      <!-- Submit Button -->
+      <app-button
+        data-testid="login-submit"
+        type="submit"
+        variant="solid"
+        tone="primary"
+        size="lg"
+        [fullWidth]="true"
+        [loading]="isLoading()"
+        [disabled]="isSubmitDisabled()"
+        loadingText="Iniciando sesión...">
+        Iniciar Sesión
+      </app-button>
+    </form>
+
+    <!-- Footer -->
+    <div class="mt-6 pt-6 border-t border-border text-center">
+      <p class="text-sm text-text-secondary m-0">
+        ¿Olvidaste tu contraseña?
+        <a href="#" class="text-accent font-medium transition-colors duration-150 ease-in-out hover:text-accent-hover hover:underline">
+          Recuperar
+        </a>
+      </p>
+    </div>
+  </div>
+</div>
