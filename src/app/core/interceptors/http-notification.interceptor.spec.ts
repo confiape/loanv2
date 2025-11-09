@@ -3,8 +3,8 @@ import { TestBed } from '@angular/core/testing';
 import { HttpClient, provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
-import { httpNotificationInterceptor } from './http-notification.interceptor';
-import { ToastService } from '../services/toast.service';
+import {ToastService} from '@loan/app/shared/components/toast/toast.service';
+import {httpNotificationInterceptor} from '@loan/app/core/interceptors/http-notification.interceptor';
 
 describe('httpNotificationInterceptor', () => {
   let httpClient: HttpClient;

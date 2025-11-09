@@ -77,7 +77,7 @@ const STATUS_POSITIONS: Record<string, string> = {
 @Component({
   selector: 'app-avatar',
   standalone: true,
-  imports: [CommonModule, NgOptimizedImage],
+  imports: [CommonModule],
   template: `
     <div
       class="inline-flex items-center justify-center relative"

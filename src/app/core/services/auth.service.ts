@@ -12,7 +12,7 @@ export class AuthService {
   private readonly authApi = inject(AuthenticationApiService);
 
   // State
-  private readonly accessToken = signal<string | null>('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW5AY29uZmlhLmNvbSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWVpZGVudGlmaWVyIjoiNjgzNjMwMTI2MjNkMjJhZWRlNmZlNGRhIiwianRpIjoiNmE5M2QyYTAtNWFiOS00ODBlLThmYTMtZmRmNDE0MDE5NWQ3IiwiUm9sZSI6IkFkbWluIiwiZXhwIjoxNzYyNzExODIyLCJpc3MiOiJDb25maWFQRS5vcmciLCJhdWQiOiJsb2NhbGhvc3QifQ.amuBQqpypRLve3XAF5wxokp-ZARMgHRjwyt7gPwOGDo');
+  private readonly accessToken = signal<string | null>(null);
   private readonly isAuthenticatedSignal = signal<boolean>(false);
   private readonly isRefreshing = new BehaviorSubject<boolean>(false);
 

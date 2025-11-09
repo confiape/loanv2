@@ -1,11 +1,9 @@
 import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
-import {
-  Dropdown,
-  DropdownFooterAction,
-  DropdownSearchConfig,
-  DropdownSection,
-  DropdownTriggerConfig,
-} from '@loan/app/shared/components/dropdown';
+import { Dropdown } from '@loan/app/shared/components/dropdown/advanced/dropdown';
+import { DropdownFooterAction } from '@loan/app/shared/components/dropdown/advanced/dropdown.types';
+import { DropdownSearchConfig } from '@loan/app/shared/components/dropdown/advanced/dropdown.types';
+import { DropdownSection } from '@loan/app/shared/components/dropdown/advanced/dropdown.types';
+import { DropdownTriggerConfig } from '@loan/app/shared/components/dropdown/advanced/dropdown.types';
 import { wrapInLightDarkComparison } from '@loan/stories/story-helpers';
 
 type Story = StoryObj<Dropdown>;

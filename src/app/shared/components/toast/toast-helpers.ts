@@ -3,6 +3,16 @@ import { computed, Signal } from '@angular/core';
 export type ToastVariant = 'info' | 'success' | 'error' | 'warning';
 export type ToastPosition = 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'top-center' | 'bottom-center';
 
+export type ToastType = 'success' | 'error' | 'warning' | 'info';
+export interface Toast {
+  id: string;
+  type: ToastType;
+  title?: string;
+  message: string;
+  duration?: number;
+  dismissible?: boolean;
+}
+
 export interface ToastConfig {
   variant?: ToastVariant;
   title?: string;

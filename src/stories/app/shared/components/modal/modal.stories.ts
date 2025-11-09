@@ -1,14 +1,12 @@
 import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
 import { Component, signal } from '@angular/core';
 import { Dialog, DialogModule } from '@angular/cdk/dialog';
-import {
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  ModalService,
-} from '@loan/app/shared/components/modal';
-import { Button } from '@loan/app/shared/components/button';
+import { Modal } from '@loan/app/shared/components/modal/modal';
+import { ModalHeader } from '@loan/app/shared/components/modal/modal-header';
+import { ModalBody } from '@loan/app/shared/components/modal/modal-body';
+import { ModalFooter } from '@loan/app/shared/components/modal/modal-footer';
+import { ModalService } from '@loan/app/shared/components/modal/modal.service';
+import { Button } from '@loan/app/shared/components/button/button';
 import { wrapInLightDarkComparison } from '@loan/stories/story-helpers';
 
 /**

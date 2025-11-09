@@ -4,10 +4,11 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { provideZonelessChangeDetection } from '@angular/core';
 import { of, throwError } from 'rxjs';
 import { vi, Mock } from 'vitest';
-import { tokenRetryInterceptor } from './token-retry.interceptor';
 import { AuthService } from '../services/auth.service';
-import { ToastService } from '../services/toast.service';
-import { LoginResponse } from '../core/openapi/model/loginResponse';
+import {LoginResponse} from '@loan/app/shared/openapi';
+import {ToastService} from '@loan/app/shared/components/toast/toast.service';
+import {tokenRetryInterceptor} from '@loan/app/core/interceptors/token-retry.interceptor';
+
 
 describe('tokenRetryInterceptor', () => {
   let httpClient: HttpClient;

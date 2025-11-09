@@ -34,8 +34,8 @@ describe('Modal', () => {
 
   it('should render overlay and container', () => {
     const compiled = fixture.nativeElement;
-    const overlay = compiled.querySelector('[class*="bg-gray-900"]');
-    const container = compiled.querySelector('[class*="overflow-y-auto"]');
+    const overlay = compiled.querySelector('.bg-overlay');
+    const container = compiled.querySelector('.overflow-y-auto');
 
     expect(overlay).toBeTruthy();
     expect(container).toBeTruthy();
@@ -58,7 +58,7 @@ describe('Modal', () => {
     fixture.componentRef.setInput('dismissible', true);
     fixture.detectChanges();
 
-    const overlay = fixture.nativeElement.querySelector('[class*="bg-gray-900"]');
+    const overlay = fixture.nativeElement.querySelector('.bg-overlay');
     overlay.click();
 
     expect(mockDialogRef.close).toHaveBeenCalled();
@@ -68,7 +68,7 @@ describe('Modal', () => {
     fixture.componentRef.setInput('dismissible', false);
     fixture.detectChanges();
 
-    const overlay = fixture.nativeElement.querySelector('[class*="bg-gray-900"]');
+    const overlay = fixture.nativeElement.querySelector('.bg-overlay');
     overlay.click();
 
     expect(mockDialogRef.close).not.toHaveBeenCalled();

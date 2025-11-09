@@ -24,7 +24,7 @@ export interface ModalData {
 @Component({
   selector: 'app-modal',
   standalone: true,
-  imports: [DialogModule, ModalHeader, ModalBody, ModalFooter],
+  imports: [DialogModule],
   template: `
     <div
       [attr.data-testid]="overlayTestId()"
@@ -44,7 +44,7 @@ export interface ModalData {
         aria-modal="true"
         [attr.aria-labelledby]="data?.title ? 'modal-title' : null"
       >
-        <ng-content />
+        <ng-content/>
       </div>
     </div>
   `,

@@ -1,6 +1,6 @@
 import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
-import { Alert } from '@loan/app/shared/components/alert';
-import { Button } from '@loan/app/shared/components/button';
+import { Alert } from '@loan/app/shared/components/alert/alert';
+import { Button } from '@loan/app/shared/components/button/button';
 import { wrapInLightDarkComparison } from '@loan/stories/story-helpers';
 
 const meta: Meta<Alert> = {

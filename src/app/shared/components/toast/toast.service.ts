@@ -1,123 +1,94 @@
-import { Injectable, ComponentRef, inject } from '@angular/core';
+import {Injectable, ComponentRef, inject, signal} from '@angular/core';
 import { ToastComponent } from './toast';
 import { ToastContainerComponent } from './toast-container';
-import { ToastConfig, ToastVariant } from './toast-helpers';
+import {Toast, ToastConfig, ToastType, ToastVariant} from './toast-helpers';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ToastService {
-  private container?: ToastContainerComponent;
-  private toasts: ComponentRef<ToastComponent>[] = [];
+  // State
+  private toasts = signal<Toast[]>([]);
 
-  /**
-   * Register the toast container component
-   * Should be called once in the app, typically in the root component
-   */
-  setContainer(container: ToastContainerComponent): void {
-    this.container = container;
-  }
+  // Public readonly signal
+  public readonly toasts$ = this.toasts.asReadonly();
 
   /**
    * Show a toast notification
+   * @param type Type of toast (success, error, warning, info)
+   * @param message Message to display
+   * @param title Optional title
+   * @param duration Duration in milliseconds (default: 3000 for error, 2000 for success)
+   * @param dismissible Whether the toast can be manually dismissed (default: true)
    */
-  show(config: ToastConfig): ComponentRef<ToastComponent> {
-    if (!this.container) {
-      console.error('ToastContainer not registered. Add <app-toast-container/> to your app.');
-      throw new Error('ToastContainer not registered');
-    }
+  show(
+    type: ToastType,
+    message: string,
+    title?: string,
+    duration?: number,
+    dismissible = true,
+  ): void {
+    const id = this.generateId();
+    const defaultDuration = type === 'error' ? 3000 : 2000;
 
-    const viewContainerRef = this.container.viewContainerRef();
-    if (!viewContainerRef) {
-      console.error('ViewContainerRef not available yet');
-      throw new Error('ViewContainerRef not available');
-    }
-
-    const toastRef = viewContainerRef.createComponent(ToastComponent);
-
-    // Configure the toast
-    toastRef.setInput('variant', config.variant ?? 'info');
-    toastRef.setInput('title', config.title ?? '');
-    toastRef.setInput('message', config.message);
-    toastRef.setInput('duration', config.duration ?? 3000);
-    toastRef.setInput('dismissible', config.dismissible ?? true);
-    toastRef.setInput('showIcon', config.showIcon ?? true);
-
-    // Handle close event
-    toastRef.instance.closed.subscribe(() => {
-      this.remove(toastRef);
-    });
-
-    // Track the toast
-    this.toasts.push(toastRef);
-
-    return toastRef;
-  }
-
-  /**
-   * Convenience method for info toast
-   */
-  info(message: string, title?: string, duration?: number): ComponentRef<ToastComponent> {
-    return this.show({
-      variant: 'info',
+    const toast: Toast = {
+      id,
+      type,
       message,
       title,
-      duration,
-    });
+      duration: duration ?? defaultDuration,
+      dismissible,
+    };
+
+    this.toasts.update((toasts) => [...toasts, toast]);
   }
 
   /**
-   * Convenience method for success toast
+   * Show a success toast
    */
-  success(message: string, title?: string, duration?: number): ComponentRef<ToastComponent> {
-    return this.show({
-      variant: 'success',
-      message,
-      title,
-      duration,
-    });
+  success(message: string, title?: string, duration?: number): void {
+    this.show('success', message, title, duration);
   }
 
   /**
-   * Convenience method for error toast
+   * Show an error toast
    */
-  error(message: string, title?: string, duration?: number): ComponentRef<ToastComponent> {
-    return this.show({
-      variant: 'error',
-      message,
-      title,
-      duration: duration ?? 5000, // Errors stay longer by default
-    });
+  error(message: string, title?: string, duration?: number): void {
+    this.show('error', message, title, duration);
   }
 
   /**
-   * Convenience method for warning toast
+   * Show a warning toast
    */
-  warning(message: string, title?: string, duration?: number): ComponentRef<ToastComponent> {
-    return this.show({
-      variant: 'warning',
-      message,
-      title,
-      duration,
-    });
+  warning(message: string, title?: string, duration?: number): void {
+    this.show('warning', message, title, duration);
   }
 
   /**
-   * Remove a specific toast
+   * Show an info toast
    */
-  private remove(toastRef: ComponentRef<ToastComponent>): void {
-    const index = this.toasts.indexOf(toastRef);
-    if (index > -1) {
-      this.toasts.splice(index, 1);
-      toastRef.destroy();
-    }
+  info(message: string, title?: string, duration?: number): void {
+    this.show('info', message, title, duration);
   }
 
   /**
-   * Remove all toasts
+   * Dismiss a toast by ID
+   */
+  dismiss(id: string): void {
+    this.toasts.update((toasts) => toasts.filter((toast) => toast.id !== id));
+  }
+
+  /**
+   * Clear all toasts
    */
   clear(): void {
-    this.toasts.forEach((toast) => toast.destroy());
-    this.toasts = [];
+    this.toasts.set([]);
+  }
+
+  /**
+   * Generate a unique ID for toasts
+   */
+  private generateId(): string {
+    return `toast-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
   }
 }

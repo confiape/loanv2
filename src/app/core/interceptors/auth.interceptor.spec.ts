@@ -7,7 +7,7 @@ import { of, throwError } from 'rxjs';
 import { vi, Mock } from 'vitest';
 import { authInterceptor } from './auth.interceptor';
 import { AuthService } from '../services/auth.service';
-import { LoginResponse } from '../core/openapi/model/loginResponse';
+import {LoginResponse} from '@loan/app/shared/openapi';
 
 describe('authInterceptor', () => {
   let httpClient: HttpClient;

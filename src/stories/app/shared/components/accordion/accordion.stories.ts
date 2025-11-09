@@ -2,12 +2,10 @@ import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
 import { fn } from 'storybook/test';
 
 import { wrapInLightDarkComparison } from '@loan/stories/story-helpers';
-import {
-  Accordion,
-  AccordionItemComponent,
-  AccordionItemContentComponent,
-  AccordionItemHeaderComponent
-} from '@loan/app/shared/components/accordion';
+import { Accordion } from '@loan/app/shared/components/accordion/accordion';
+import { AccordionItemComponent } from '@loan/app/shared/components/accordion/accordion-item';
+import { AccordionItemContentComponent } from '@loan/app/shared/components/accordion/accordion-item-content';
+import { AccordionItemHeaderComponent } from '@loan/app/shared/components/accordion/accordion-item-header';
 
 
 const meta: Meta<Accordion> = {
