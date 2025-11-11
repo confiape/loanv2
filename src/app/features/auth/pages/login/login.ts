@@ -12,7 +12,7 @@ import { EMPTY, catchError, finalize, switchMap, tap } from 'rxjs';
 
 import { AuthenticationApiService } from '@loan/app/shared/openapi';
 import { AuthService } from '@loan/app/core/services/auth.service';
-import { ToastService } from '@loan/app/shared/components/toast/toast.service';
+import { ToastService } from '@loan/app/core/services/toast.service';
 import { Input } from '@loan/app/shared/components/input/input';
 import { PasswordInput } from '@loan/app/shared/components/password-input/password-input';
 import { Button } from '@loan/app/shared/components/button/button';

@@ -63,18 +63,18 @@ class TestHostComponent {
   ];
 
   openChangeEvents: boolean[] = [];
-  itemClickEvents: any[] = [];
-  itemClickDirectEvents: any[] = [];
+  itemClickEvents: unknown[] = [];
+  itemClickDirectEvents: unknown[] = [];
 
   onOpenChange(isOpen: boolean) {
     this.openChangeEvents.push(isOpen);
   }
 
-  onItemClick(value: any) {
+  onItemClick(value: unknown) {
     this.itemClickEvents.push(value);
   }
 
-  onItemClickDirect(value: any) {
+  onItemClickDirect(value: unknown) {
     this.itemClickDirectEvents.push(value);
   }
 }
@@ -138,6 +138,12 @@ describe('DropdownBasic', () => {
     const event = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true });
     document.dispatchEvent(event);
     fixture.detectChanges();
+  }
+
+  function getDropdownInternals() {
+    return dropdownComponent as unknown as {
+      hoverCloseTimeout: ReturnType<typeof setTimeout> | null;
+    };
   }
 
   describe('Component Creation & Initialization', () => {
@@ -495,11 +501,11 @@ describe('DropdownBasic', () => {
 
     it('should clear hover timeout when opening', () => {
       // Simulate hover timeout being set
-      (dropdownComponent as any).hoverCloseTimeout = setTimeout(() => {}, 100);
+      getDropdownInternals().hoverCloseTimeout = setTimeout(() => undefined, 100);
 
       dropdownComponent['open']();
 
-      expect((dropdownComponent as any).hoverCloseTimeout).toBeNull();
+      expect(getDropdownInternals().hoverCloseTimeout).toBeNull();
     });
 
     it('should reset hover states when closing', () => {

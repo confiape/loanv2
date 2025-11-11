@@ -5,7 +5,7 @@ import { fn } from 'storybook/test';
 import { LoginComponent } from '@loan/app/features/auth/pages/login/login';
 import { AuthenticationApiService } from '@loan/app/shared/openapi';
 import { AuthService } from '@loan/app/core/services/auth.service';
-import { ToastService } from '@loan/app/shared/components/toast/toast.service';
+import { ToastService } from '@loan/app/core/services/toast.service';
 import { wrapInLightDarkComparison } from '@loan/stories/story-helpers';
 
 const authApiMock = {

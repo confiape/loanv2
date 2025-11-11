@@ -46,7 +46,7 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
         [cdkConnectedOverlayPositions]="overlayPositions()"
         [cdkConnectedOverlayHasBackdrop]="openStrategy() === 'click'"
         [cdkConnectedOverlayBackdropClass]="'cdk-overlay-transparent-backdrop'"
-        (overlayOutsideClick)="onOverlayOutsideClick($event)"
+        (overlayOutsideClick)="onOverlayOutsideClick()"
         (backdropClick)="close()"
         (detach)="close()"
       >
@@ -84,7 +84,7 @@ export class DropdownBasic {
 
   // Outputs
   readonly openChange = output<boolean>();
-  readonly itemClick = output<any>();
+  readonly itemClick = output<unknown>();
 
   // State
   readonly isOpen = signal(false);
@@ -219,11 +219,11 @@ export class DropdownBasic {
     this.scheduleHoverClose();
   }
 
-  onOverlayOutsideClick(_event: MouseEvent) {
+  onOverlayOutsideClick() {
     this.close();
   }
 
-  notifyItemClick(data: any) {
+  notifyItemClick(data: unknown) {
     this.itemClick.emit(data);
     if (this.closeOnSelect()) {
       this.close();

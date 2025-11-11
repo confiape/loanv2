@@ -1,8 +1,8 @@
 import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
-import { Component, inject, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ToastComponent } from '@loan/app/shared/components/toast/toast';
 import { ToastContainerComponent } from '@loan/app/shared/components/toast/toast-container';
-import { ToastService } from '@loan/app/shared/components/toast/toast.service';
+import { ToastService } from '@loan/app/core/services/toast.service';
 import { Button } from '@loan/app/shared/components/button/button';
 import { wrapInLightDarkComparison } from '@loan/stories/story-helpers';
 
@@ -25,8 +25,7 @@ import { wrapInLightDarkComparison } from '@loan/stories/story-helpers';
     </div>
   `,
 })
-class ToastDemoComponent implements AfterViewInit {
-  @ViewChild('toastContainer', { static: false }) toastContainer!: ToastContainerComponent;
+class ToastDemoComponent {
   private readonly toastService = inject(ToastService);
 
   position:
@@ -36,10 +35,6 @@ class ToastDemoComponent implements AfterViewInit {
     | 'bottom-left'
     | 'top-center'
     | 'bottom-center' = 'top-right';
-
-  ngAfterViewInit(): void {
-    // this.toastService.setContainer(this.toastContainer);
-  }
 
   showInfo(): void {
     this.toastService.info('This is an informational message', 'Info');

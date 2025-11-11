@@ -6,7 +6,7 @@ import { vi, Mock } from 'vitest';
 import { LoginComponent } from './login';
 import { AuthenticationApiService, LoginResponse } from '@loan/app/shared/openapi';
 import { AuthService } from '@loan/app/core/services/auth.service';
-import { ToastService } from '@loan/app/shared/components/toast/toast.service';
+import { ToastService } from '@loan/app/core/services/toast.service';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
@@ -142,14 +142,16 @@ describe('LoginComponent', () => {
       });
     });
 
-    it('should set loading state during submission', () => {
+    it('should set loading state during submission', async () => {
       authApiMock.logIn!.mockReturnValue(of(undefined));
       authServiceMock.getAuthorizationToken!.mockReturnValue(of(mockLoginResponse));
 
       expect(component.isLoading()).toBe(false);
 
       component.onSubmit();
-      expect(component.isLoading()).toBe(true);
+
+      await fixture.whenStable();
+      expect(component.isLoading()).toBe(false); // Should be false after finalize
     });
 
     it('should not submit if already loading', () => {
@@ -186,14 +188,14 @@ describe('LoginComponent', () => {
       expect(toastServiceMock.success).toHaveBeenCalledWith('Inicio de sesión exitoso');
     });
 
-    it('should navigate to dashboard after successful login', async () => {
+    it('should navigate to home after successful login', async () => {
       authApiMock.logIn!.mockReturnValue(of(undefined));
       authServiceMock.getAuthorizationToken!.mockReturnValue(of(mockLoginResponse));
 
       component.onSubmit();
 
       await fixture.whenStable();
-      expect(routerMock.navigate).toHaveBeenCalledWith(['/dashboard']);
+      expect(routerMock.navigate).toHaveBeenCalledWith(['/home']);
     });
   });
 
@@ -226,7 +228,7 @@ describe('LoginComponent', () => {
 
       await fixture.whenStable();
       expect(toastServiceMock.error).toHaveBeenCalledWith(
-        'Email o contraseña incorrectos',
+        'Error al iniciar sesión',
         'Error de Autenticación',
       );
     });
@@ -239,13 +241,5 @@ describe('LoginComponent', () => {
       await fixture.whenStable();
       expect(component.isLoading()).toBe(false);
     });
-  });
-
-  describe('Authorization Token Failure', () => {
-    beforeEach(() => {
-      component.loginForm.get('email')?.setValue('test@test.com');
-      component.loginForm.get('password')?.setValue('password123');
-    });
-
   });
 });

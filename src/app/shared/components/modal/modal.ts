@@ -23,20 +23,23 @@ export interface ModalData {
   standalone: true,
   imports: [DialogModule],
   template: `
-    <div
+    <button
+      type="button"
       [attr.data-testid]="overlayTestId()"
-      class="fixed inset-0 bg-overlay z-50"
+      class="fixed inset-0 z-40 bg-overlay"
+      aria-label="Dismiss modal backdrop"
       (click)="handleBackdropClick()"
-    ></div>
+      (keydown.enter)="handleBackdropKeydown($event)"
+      (keydown.space)="handleBackdropKeydown($event)"
+    ></button>
     <div
       [attr.data-testid]="containerTestId()"
-      class="overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full md:inset-0 h-full max-h-full p-4"
-      (click)="handleBackdropClick()"
+      class="pointer-events-none overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full md:inset-0 h-full max-h-full p-4"
     >
       <div
         [attr.data-testid]="contentTestId()"
         [class]="modalClasses()"
-        (click)="$event.stopPropagation()"
+        class="pointer-events-auto"
         role="dialog"
         aria-modal="true"
         [attr.aria-labelledby]="data?.title ? 'modal-title' : null"
@@ -71,6 +74,11 @@ export class Modal {
     if (this.dismissible() && this.dialogRef) {
       this.dialogRef.close();
     }
+  }
+
+  protected handleBackdropKeydown(event: Event): void {
+    event.preventDefault();
+    this.handleBackdropClick();
   }
 
   close(): void {

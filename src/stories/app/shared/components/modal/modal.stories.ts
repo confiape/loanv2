@@ -1,5 +1,5 @@
 import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Dialog, DialogModule } from '@angular/cdk/dialog';
 import { Modal } from '@loan/app/shared/components/modal/modal';
 import { ModalHeader } from '@loan/app/shared/components/modal/modal-header';
@@ -46,7 +46,7 @@ class ExampleModalComponent {
   modalDismissible = true;
   modalTitle = 'Terms of Service';
 
-  constructor(private dialog: Dialog) {}
+  private readonly dialog = inject(Dialog);
 
   close(): void {
     this.dialog.closeAll();
@@ -67,7 +67,7 @@ class ExampleModalComponent {
   `,
 })
 class ModalStoryWrapper {
-  constructor(private modalService: ModalService) {}
+  private readonly modalService = inject(ModalService);
 
   openModal(): void {
     this.modalService.open(ExampleModalComponent);
@@ -88,10 +88,7 @@ class ModalStoryWrapper {
   `,
 })
 class SmallModalWrapper {
-  constructor(
-    private modalService: ModalService,
-    private dialog: Dialog,
-  ) {}
+  private readonly modalService = inject(ModalService);
 
   openModal(): void {
     const modalRef = this.modalService.open(ExampleModalComponent);
@@ -118,7 +115,7 @@ class SmallModalWrapper {
   `,
 })
 class MediumModalWrapper {
-  constructor(private modalService: ModalService) {}
+  private readonly modalService = inject(ModalService);
 
   openModal(): void {
     const modalRef = this.modalService.open(ExampleModalComponent);
@@ -144,7 +141,7 @@ class MediumModalWrapper {
   `,
 })
 class LargeModalWrapper {
-  constructor(private modalService: ModalService) {}
+  private readonly modalService = inject(ModalService);
 
   openModal(): void {
     const modalRef = this.modalService.open(ExampleModalComponent);
@@ -171,7 +168,7 @@ class LargeModalWrapper {
   `,
 })
 class NonDismissibleModalWrapper {
-  constructor(private modalService: ModalService) {}
+  private readonly modalService = inject(ModalService);
 
   openModal(): void {
     const modalRef = this.modalService.open(ExampleModalComponent, {

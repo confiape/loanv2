@@ -3,7 +3,7 @@ import { inject } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { catchError, switchMap } from 'rxjs/operators';
 import { throwError } from 'rxjs';
-import { ToastService } from '@loan/app/shared/components/toast/toast.service';
+import { ToastService } from '@loan/app/core/services/toast.service';
 
 /**
  * Public endpoints that should not retry

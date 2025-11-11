@@ -63,7 +63,7 @@ export type InputType = 'text' | 'email' | 'password' | 'number' | 'tel' | 'url'
           [id]="inputId()"
           [type]="type()"
           [placeholder]="placeholder()"
-          [disabled]="disabled()"
+          [disabled]="isDisabled()"
           [readonly]="readonly()"
           [attr.aria-label]="ariaLabel()"
           [attr.aria-describedby]="helpTextId()"
@@ -197,10 +197,12 @@ export class Input implements ControlValueAccessor {
 
   // Internal state
   readonly value = signal<string>('');
+  private readonly controlDisabled = signal(false);
+  readonly isDisabled = computed(() => this.disabled() || this.controlDisabled());
 
   // ControlValueAccessor callbacks
-  private onChange: (value: string) => void = () => {};
-  protected onTouched: () => void = () => {};
+  private onChange: (value: string) => void = () => undefined;
+  protected onTouched: () => void = () => undefined;
 
   // Test IDs using helper
   private readonly testIds = generateInputTestIds(() => this.resolvedTestId());
@@ -221,7 +223,7 @@ export class Input implements ControlValueAccessor {
     getInputClasses(
       this.size(),
       this.validationState(),
-      this.disabled(),
+      this.isDisabled(),
       !!this.prefixIcon(),
       !!this.suffixIcon() || this.suffixButton(),
       this.suffixButton(),
@@ -237,7 +239,7 @@ export class Input implements ControlValueAccessor {
   constructor() {
     // Sync disabled state changes
     effect(() => {
-      const isDisabled = this.disabled();
+      const isDisabled = this.isDisabled();
       if (isDisabled) {
         this.onTouched();
       }
@@ -258,7 +260,7 @@ export class Input implements ControlValueAccessor {
   }
 
   setDisabledState(isDisabled: boolean): void {
-    // Handled via input signal
+    this.controlDisabled.set(isDisabled);
   }
 
   // Event handlers

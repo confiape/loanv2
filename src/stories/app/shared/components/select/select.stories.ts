@@ -81,7 +81,7 @@ export const Default: Story = {
     options: countryOptions,
     valueChange: fn(),
   },
-  render: (args) => ({
+  render: () => ({
     props: {
       options: countryOptions,
     },
@@ -104,7 +104,7 @@ export const Sizes: Story = {
   args: {
     valueChange: fn(),
   },
-  render: (args) => ({
+  render: () => ({
     props: {
       options: countryOptions,
     },
@@ -142,7 +142,7 @@ export const Disabled: Story = {
   args: {
     valueChange: fn(),
   },
-  render: (args) => ({
+  render: () => ({
     props: {
       options: countryOptions,
     },
@@ -166,7 +166,7 @@ export const ValidationStates: Story = {
   args: {
     valueChange: fn(),
   },
-  render: (args) => ({
+  render: () => ({
     props: {
       options: countryOptions,
     },
@@ -199,7 +199,7 @@ export const WithHelpText: Story = {
   args: {
     valueChange: fn(),
   },
-  render: (args) => ({
+  render: () => ({
     props: {
       options: countryOptions,
     },
@@ -223,7 +223,7 @@ export const WithDisabledOptions: Story = {
   args: {
     valueChange: fn(),
   },
-  render: (args) => ({
+  render: () => ({
     props: {
       options: [
         { value: 'US', label: 'United States' },
@@ -253,7 +253,7 @@ export const FormExample: Story = {
   args: {
     valueChange: fn(),
   },
-  render: (args) => ({
+  render: () => ({
     props: {
       countries: countryOptions,
       states: [
@@ -303,7 +303,7 @@ export const DifferentCategories: Story = {
   args: {
     valueChange: fn(),
   },
-  render: (args) => ({
+  render: () => ({
     props: {
       languages: [
         { value: 'en', label: 'English' },
@@ -356,7 +356,7 @@ export const CompactForm: Story = {
   args: {
     valueChange: fn(),
   },
-  render: (args) => ({
+  render: () => ({
     props: {
       months: [
         { value: '01', label: 'January' },

@@ -1,14 +1,12 @@
 import { Injectable, signal } from '@angular/core';
-import { Toast, ToastType } from './toast-helpers';
+import { Toast, ToastType } from '@loan/app/shared/components/toast/toast';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ToastService {
-  // State
-  private toasts = signal<Toast[]>([]);
+  private readonly toasts = signal<Toast[]>([]);
 
-  // Public readonly signal
   public readonly toasts$ = this.toasts.asReadonly();
 
   /**

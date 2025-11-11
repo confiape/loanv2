@@ -60,7 +60,7 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
           [id]="inputId()"
           type="number"
           [placeholder]="placeholder()"
-          [disabled]="disabled()"
+          [disabled]="isDisabled()"
           [readonly]="readonly()"
           [min]="min()"
           [max]="max()"
@@ -84,7 +84,7 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
             <button
               type="button"
               [attr.data-testid]="incrementButtonTestId()"
-              [disabled]="disabled() || isMaxReached()"
+              [disabled]="isDisabled() || isMaxReached()"
               [class]="incrementButtonClasses()"
               (click)="increment()"
             >
@@ -98,7 +98,7 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
             <button
               type="button"
               [attr.data-testid]="decrementButtonTestId()"
-              [disabled]="disabled() || isMinReached()"
+              [disabled]="isDisabled() || isMinReached()"
               [class]="decrementButtonClasses()"
               (click)="decrement()"
             >
@@ -193,10 +193,12 @@ export class InputNumber implements ControlValueAccessor {
 
   // Internal state
   readonly value = signal<number | null>(null);
+  private readonly controlDisabled = signal(false);
+  readonly isDisabled = computed(() => this.disabled() || this.controlDisabled());
 
   // ControlValueAccessor callbacks
-  private onChange: (value: number | null) => void = () => {};
-  protected onTouched: () => void = () => {};
+  private onChange: (value: number | null) => void = () => undefined;
+  protected onTouched: () => void = () => undefined;
 
   // Test IDs using helper
   private readonly testIds = generateInputTestIds(() => this.resolvedTestId());
@@ -229,7 +231,7 @@ export class InputNumber implements ControlValueAccessor {
     const baseClasses = getInputClasses(
       this.size(),
       this.validationState(),
-      this.disabled(),
+      this.isDisabled(),
       !!this.prefixIcon(),
       false,
       false,
@@ -280,7 +282,7 @@ export class InputNumber implements ControlValueAccessor {
   constructor() {
     // Sync disabled state changes
     effect(() => {
-      const isDisabled = this.disabled();
+      const isDisabled = this.isDisabled();
       if (isDisabled) {
         this.onTouched();
       }
@@ -301,7 +303,7 @@ export class InputNumber implements ControlValueAccessor {
   }
 
   setDisabledState(isDisabled: boolean): void {
-    // Handled via input signal
+    this.controlDisabled.set(isDisabled);
   }
 
   // Event handlers

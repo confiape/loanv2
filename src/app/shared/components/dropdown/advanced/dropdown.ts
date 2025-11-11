@@ -245,7 +245,7 @@ export class Dropdown {
     this.scheduleHoverClose();
   }
 
-  onOverlayOutsideClick(_event: MouseEvent) {
+  onOverlayOutsideClick() {
     this.close();
   }
 
@@ -283,7 +283,7 @@ export class Dropdown {
     });
   }
 
-  onFooterClick(_event: MouseEvent) {
+  onFooterClick() {
     this.close();
   }
 

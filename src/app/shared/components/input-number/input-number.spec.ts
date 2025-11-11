@@ -8,6 +8,12 @@ import { InputNumber } from '@loan/app/shared/components/input-number/input-numb
 describe('InputNumber', () => {
   let component: InputNumber;
   let fixture: ComponentFixture<InputNumber>;
+  const getEmittedNumber = (value: number | null): number => {
+    if (value === null) {
+      throw new Error('Expected emitted value to be a number');
+    }
+    return value;
+  };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -153,7 +159,7 @@ describe('InputNumber', () => {
     const incrementButton = compiled.querySelectorAll('button')[0];
     incrementButton.click();
 
-    expect(emittedValue).toBe(6 as any);
+    expect(getEmittedNumber(emittedValue)).toBe(6);
   });
 
   it('should emit valueChange on input', () => {
@@ -167,7 +173,7 @@ describe('InputNumber', () => {
     input.value = '42';
     input.dispatchEvent(new Event('input'));
 
-    expect(emittedValue).toBe(42 as any);
+    expect(getEmittedNumber(emittedValue)).toBe(42);
   });
 
   it('should disable increment button when max is reached', () => {
@@ -258,7 +264,7 @@ describe('InputNumber', () => {
       input.value = '99';
       input.dispatchEvent(new Event('input'));
 
-      expect(changedValue).toBe(99 as any);
+      expect(getEmittedNumber(changedValue)).toBe(99);
     });
 
     it('should call onTouched when input loses focus', () => {

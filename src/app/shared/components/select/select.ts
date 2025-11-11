@@ -45,7 +45,7 @@ export interface SelectOption {
         <!-- Select -->
         <select
           [id]="selectId()"
-          [disabled]="disabled()"
+          [disabled]="isDisabled()"
           [attr.aria-label]="ariaLabel()"
           [attr.aria-describedby]="helpTextId()"
           [attr.aria-invalid]="validationState() === 'error'"
@@ -134,10 +134,12 @@ export class Select implements ControlValueAccessor {
 
   // Internal state
   readonly value = signal<string>('');
+  private readonly controlDisabled = signal(false);
+  readonly isDisabled = computed(() => this.disabled() || this.controlDisabled());
 
   // ControlValueAccessor callbacks
-  private onChangeCallback: (value: string) => void = () => {};
-  protected onTouched: () => void = () => {};
+  private onChangeCallback: (value: string) => void = () => undefined;
+  protected onTouched: () => void = () => undefined;
 
   // Test IDs using helper
   private readonly testIds = generateInputTestIds(this.hostTestId);
@@ -167,7 +169,7 @@ export class Select implements ControlValueAccessor {
   readonly selectClasses = computed(() => {
     const size = this.size();
     const state = this.validationState();
-    const disabled = this.disabled();
+    const disabled = this.isDisabled();
 
     // Base classes
     let classes =
@@ -204,7 +206,7 @@ export class Select implements ControlValueAccessor {
   constructor() {
     // Sync disabled state changes
     effect(() => {
-      const isDisabled = this.disabled();
+      const isDisabled = this.isDisabled();
       if (isDisabled) {
         this.onTouched();
       }
@@ -225,7 +227,7 @@ export class Select implements ControlValueAccessor {
   }
 
   setDisabledState(isDisabled: boolean): void {
-    // Handled via input signal
+    this.controlDisabled.set(isDisabled);
   }
 
   // Event handlers

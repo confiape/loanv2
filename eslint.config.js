@@ -9,7 +9,7 @@ const unusedImports = require('eslint-plugin-unused-imports');
 /** @type {import('typescript-eslint').Config} */
 module.exports = tseslint.config(
   {
-    ignores: ['src/app/core/openapi/**'],
+    ignores: ['src/app/shared/openapi/**'],
   },
   {
     files: ['**/*.ts'],

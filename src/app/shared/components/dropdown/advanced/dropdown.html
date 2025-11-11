@@ -21,7 +21,7 @@
     [cdkConnectedOverlayPositions]="overlayPositions()"
     [cdkConnectedOverlayHasBackdrop]="openStrategy() === 'click'"
     [cdkConnectedOverlayBackdropClass]="'cdk-overlay-transparent-backdrop'"
-    (overlayOutsideClick)="onOverlayOutsideClick($event)"
+    (overlayOutsideClick)="onOverlayOutsideClick()"
     (backdropClick)="close()"
     (detach)="close()"
   >
@@ -44,7 +44,7 @@
       (submenuEnter)="openSubmenu($event)"
       (panelMouseEnter)="onPanelMouseEnter()"
       (panelMouseLeave)="onPanelMouseLeave()"
-      (footerClick)="onFooterClick($event)"
+      (footerClick)="onFooterClick()"
     />
   </ng-template>
 </div>

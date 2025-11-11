@@ -4,10 +4,12 @@ import { DialogModule, DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { Modal, ModalData } from './modal';
 import { vi } from 'vitest';
 
+type DialogRefSpy = Pick<DialogRef<unknown>, 'close'>;
+
 describe('Modal', () => {
   let fixture: ComponentFixture<Modal>;
   let component: Modal;
-  let mockDialogRef: any;
+  let mockDialogRef: DialogRefSpy;
 
   beforeEach(async () => {
     mockDialogRef = {
@@ -107,7 +109,7 @@ describe('Modal with data', () => {
   };
 
   beforeEach(async () => {
-    const mockDialogRef = {
+    const mockDialogRef: DialogRefSpy = {
       close: vi.fn(),
     };
 

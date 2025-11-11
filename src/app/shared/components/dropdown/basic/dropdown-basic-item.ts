@@ -28,9 +28,9 @@ export class DropdownBasicItem {
   private readonly dropdown = inject(DropdownBasic, { optional: true });
 
   readonly disabled = input<boolean>(false);
-  readonly value = input<any>();
+  readonly value = input<unknown>();
 
-  readonly itemClick = output<any>();
+  readonly itemClick = output<unknown>();
 
   @HostListener('click', ['$event'])
   onClick(event: MouseEvent) {

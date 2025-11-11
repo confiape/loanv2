@@ -1,0 +1,61 @@
+NOTE: The "unit-test" builder is currently EXPERIMENTAL and not ready for production use.
+❯ Building...
+✔ Building...
+Initial chunk files                                                 | Names                                                            |  Raw size
+chunk-AFPHHKGX.js                                                   | -                                                                |   1.97 MB | 
+chunk-SIM5SRFN.js                                                   | -                                                                | 232.27 kB | 
+chunk-JZNHESHN.js                                                   | -                                                                | 200.46 kB | 
+chunk-LH5CR4SX.js                                                   | -                                                                | 177.34 kB | 
+chunk-JP6KXBAF.js                                                   | -                                                                | 173.75 kB | 
+chunk-HWRHTG3C.js                                                   | -                                                                | 139.74 kB | 
+chunk-FLYBAQIM.js                                                   | -                                                                | 102.76 kB | 
+spec-app-shared-components-dropdown-advanced-dropdown.spec.js       | spec-app-shared-components-dropdown-advanced-dropdown.spec       |  96.42 kB | 
+styles.css                                                          | styles                                                           |  91.35 kB | 
+chunk-2GUWPIAW.js                                                   | -                                                                |  86.92 kB | 
+spec-app-shared-components-dropdown-basic-dropdown-basic.spec.js    | spec-app-shared-components-dropdown-basic-dropdown-basic.spec    |  51.37 kB | 
+chunk-GLDZ6UYY.js                                                   | -                                                                |  38.52 kB | 
+spec-app-shared-components-input-number-input-number.spec.js        | spec-app-shared-components-input-number-input-number.spec        |  31.14 kB | 
+spec-app-shared-components-accordion-accordion.spec.js              | spec-app-shared-components-accordion-accordion.spec              |  28.18 kB | 
+spec-app-shared-components-avatar-avatar.spec.js                    | spec-app-shared-components-avatar-avatar.spec                    |  24.79 kB | 
+spec-app-shared-components-select-select.spec.js                    | spec-app-shared-components-select-select.spec                    |  22.25 kB | 
+init-testbed.js                                                     | init-testbed                                                     |  21.64 kB | 
+chunk-CNL4YJK2.js                                                   | -                                                                |  21.05 kB | 
+chunk-MHJURFFL.js                                                   | -                                                                |  21.04 kB | 
+chunk-TDBXM4AS.js                                                   | -                                                                |  20.72 kB | 
+spec-app-features-auth-pages-login-login.component.spec.js          | spec-app-features-auth-pages-login-login.component.spec          |  15.94 kB | 
+chunk-SFH23752.js                                                   | -                                                                |  15.83 kB | 
+spec-app-shared-components-alert-alert.spec.js                      | spec-app-shared-components-alert-alert.spec                      |  15.36 kB | 
+chunk-LMOZD6HU.js                                                   | -                                                                |  11.14 kB | 
+chunk-HQVK4JN6.js                                                   | -                                                                |  10.88 kB | 
+spec-app-core-interceptors-http-notification.interceptor.spec.js    | spec-app-core-interceptors-http-notification.interceptor.spec    |   8.95 kB | 
+spec-app-core-interceptors-token-retry.interceptor.spec.js          | spec-app-core-interceptors-token-retry.interceptor.spec          |   8.94 kB | 
+spec-app-shared-components-toast-toast.spec.js                      | spec-app-shared-components-toast-toast.spec                      |   8.84 kB | 
+spec-app-core-services-toast.service.spec.js                        | spec-app-core-services-toast.service.spec                        |   8.54 kB | 
+spec-app-shared-components-input-input.spec.js                      | spec-app-shared-components-input-input.spec                      |   8.36 kB | 
+spec-app-core-interceptors-auth.interceptor.spec.js                 | spec-app-core-interceptors-auth.interceptor.spec                 |   7.65 kB | 
+chunk-QII3HYJO.js                                                   | -                                                                |   7.63 kB | 
+spec-app-shared-components-modal-modal-header.spec.js               | spec-app-shared-components-modal-modal-header.spec               |   6.67 kB | 
+spec-app-shared-components-button-group-button-group.spec.js        | spec-app-shared-components-button-group-button-group.spec        |   6.64 kB | 
+spec-app-shared-components-toast-toast-container.spec.js            | spec-app-shared-components-toast-toast-container.spec            |   6.42 kB | 
+spec-app-shared-components-modal-modal.service.spec.js              | spec-app-shared-components-modal-modal.service.spec              |   5.38 kB | 
+chunk-FNGOL2LM.js                                                   | -                                                                |   5.06 kB | 
+spec-app-shared-components-modal-modal.spec.js                      | spec-app-shared-components-modal-modal.spec                      |   4.15 kB | 
+chunk-UABS7RMQ.js                                                   | -                                                                |   4.08 kB | 
+spec-app-shared-components-button-group-button-group-button.spec.js | spec-app-shared-components-button-group-button-group-button.spec |   3.72 kB | 
+spec-app-shared-components-modal-modal-footer.spec.js               | spec-app-shared-components-modal-modal-footer.spec               |   3.33 kB | 
+spec-app-shared-components-modal-modal-body.spec.js                 | spec-app-shared-components-modal-modal-body.spec                 |   3.13 kB | 
+spec-app-shared-components-password-input-password-input.spec.js    | spec-app-shared-components-password-input-password-input.spec    |   2.90 kB | 
+chunk-5VCMJC34.js                                                   | -                                                                |   2.78 kB | 
+spec-app-shared-components-button-button.spec.js                    | spec-app-shared-components-button-button.spec                    |   2.70 kB | 
+chunk-PQ24TZ76.js                                                   | -                                                                |   2.42 kB | 
+spec-app-app.spec.js                                                | spec-app-app.spec                                                |   1.91 kB | 
+chunk-NWVX5JZV.js                                                   | -                                                                | 975 bytes | 
+chunk-56TXKYOD.js                                                   | -                                                                | 753 bytes | 
+
+                                                                    | Initial total                                                    |   3.75 MB
+
+Application bundle generation complete. [4.541 seconds] - 2025-11-11T02:35:43.746Z
+
+
+ RUN  v3.2.4 /home/warren/loan
+

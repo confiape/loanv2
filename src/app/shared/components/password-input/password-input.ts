@@ -114,8 +114,8 @@ export class PasswordInput implements ControlValueAccessor {
     this.passwordVisible() ? this.hideIcon() : this.showIcon(),
   );
 
-  private onChange: (value: string) => void = () => {};
-  private onTouched: () => void = () => {};
+  private onChange: (value: string) => void = () => undefined;
+  private onTouched: () => void = () => undefined;
 
   constructor() {
     effect(() => {

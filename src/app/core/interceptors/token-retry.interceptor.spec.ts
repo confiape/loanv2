@@ -6,7 +6,7 @@ import { of, throwError } from 'rxjs';
 import { vi, Mock } from 'vitest';
 import { AuthService } from '../services/auth.service';
 import { LoginResponse } from '@loan/app/shared/openapi';
-import { ToastService } from '@loan/app/shared/components/toast/toast.service';
+import { ToastService } from '@loan/app/core/services/toast.service';
 import { tokenRetryInterceptor } from '@loan/app/core/interceptors/token-retry.interceptor';
 
 describe('tokenRetryInterceptor', () => {

@@ -2,6 +2,8 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
 import { DropdownSearchConfig } from './dropdown.types';
 import { DropdownIcon } from './dropdown-icon';
 
+let dropdownSearchId = 0;
+
 @Component({
   selector: 'app-dropdown-search',
   standalone: true,
@@ -9,7 +11,9 @@ import { DropdownIcon } from './dropdown-icon';
   template: `
     @if (config()) {
       <div class="border-b border-border px-4 py-3">
-        <label class="sr-only">{{ config()?.ariaLabel || config()?.placeholder }}</label>
+        <label class="sr-only" [attr.for]="searchInputId">
+          {{ config()?.ariaLabel || config()?.placeholder }}
+        </label>
         <div class="relative">
           <span
             class="pointer-events-none absolute inset-y-0 start-3 flex items-center text-text-secondary"
@@ -17,6 +21,7 @@ import { DropdownIcon } from './dropdown-icon';
             <app-dropdown-icon [name]="'search'" [classes]="'text-text-secondary'" />
           </span>
           <input
+            [id]="searchInputId"
             type="text"
             class="w-full rounded-md border border-border bg-bg-secondary py-2 ps-9 pe-3 text-sm text-text-primary placeholder-text-secondary focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent"
             [placeholder]="config()?.placeholder"
@@ -35,6 +40,7 @@ export class DropdownSearchComponent {
   readonly debounceDelay = input<number>(300);
 
   readonly searchChange = output<string>();
+  protected readonly searchInputId = `dropdown-search-${++dropdownSearchId}`;
 
   private debounceTimeout: ReturnType<typeof setTimeout> | null = null;
 

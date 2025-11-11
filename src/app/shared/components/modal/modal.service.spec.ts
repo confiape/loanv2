@@ -12,12 +12,14 @@ import { vi, expect } from 'vitest';
 })
 class TestComponent {}
 
+type DialogSpy = Pick<Dialog, 'open' | 'closeAll'>;
+
 describe('ModalService', () => {
   let service: ModalService;
-  let dialog: any;
+  let dialog: DialogSpy;
 
   beforeEach(() => {
-    const dialogSpy = {
+    const dialogSpy: DialogSpy = {
       open: vi.fn(),
       closeAll: vi.fn(),
     };
