@@ -35,11 +35,7 @@ export interface SelectOption {
     <div class="w-full" [attr.data-testid]="wrapperTestId()">
       <!-- Label -->
       @if (label()) {
-        <label
-          [for]="selectId()"
-          [class]="labelClasses()"
-          [attr.data-testid]="labelTestId()"
-        >
+        <label [for]="selectId()" [class]="labelClasses()" [attr.data-testid]="labelTestId()">
           {{ label() }}
         </label>
       }
@@ -63,10 +59,7 @@ export interface SelectOption {
             <option value="" disabled selected>{{ placeholder() }}</option>
           }
           @for (option of options(); track option.value) {
-            <option
-              [value]="option.value"
-              [disabled]="option.disabled || false"
-            >
+            <option [value]="option.value" [disabled]="option.disabled || false">
               {{ option.label }}
             </option>
           }
@@ -155,9 +148,7 @@ export class Select implements ControlValueAccessor {
   readonly errorMessageTestId = this.testIds.errorMessage;
 
   // Select-specific test ID
-  readonly selectTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-select` : null
-  );
+  readonly selectTestId = computed(() => (this.hostTestId ? `${this.hostTestId}-select` : null));
 
   // Computed classes
   readonly labelClasses = computed(() => {
@@ -179,7 +170,8 @@ export class Select implements ControlValueAccessor {
     const disabled = this.disabled();
 
     // Base classes
-    let classes = 'block w-full border rounded-lg focus:ring-1 focus:outline-none transition-colors';
+    let classes =
+      'block w-full border rounded-lg focus:ring-1 focus:outline-none transition-colors';
 
     // Size variants
     if (size === 'small') {

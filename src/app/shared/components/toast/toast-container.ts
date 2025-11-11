@@ -11,9 +11,7 @@ import { ToastPosition, getContainerPositionClasses } from './toast-helpers';
 @Component({
   selector: 'app-toast-container',
   standalone: true,
-  template: `
-    <ng-container #toastOutlet></ng-container>
-  `,
+  template: ` <ng-container #toastOutlet></ng-container> `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '[class]': 'containerClasses()',

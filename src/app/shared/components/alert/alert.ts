@@ -7,19 +7,23 @@ import {
   input,
   output,
 } from '@angular/core';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import {
-  AlertVariant,
-  generateAlertTestIds,
-  getAlertClasses,
-  getAlertIcon,
-} from './alert-helpers';
+  heroInformationCircle,
+  heroCheckCircle,
+  heroXCircle,
+  heroExclamationTriangle,
+  heroXMark,
+} from '@ng-icons/heroicons/outline';
+
+import { AlertVariant, generateAlertTestIds, getAlertClasses, getAlertIcon } from './alert-helpers';
 
 const DATA_TESTID = new HostAttributeToken('data-testid');
 
 @Component({
   selector: 'app-alert',
   standalone: true,
+  imports: [NgIconComponent],
   template: `
     <div
       [attr.data-testid]="alertTestId()"
@@ -29,12 +33,9 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
     >
       <div class="flex items-center">
         @if (showIcon()) {
-          <div
-            [attr.data-testid]="iconTestId()"
-            class="shrink-0 inline me-3"
-            [innerHTML]="iconHtml()"
-            aria-hidden="true"
-          ></div>
+          <div [attr.data-testid]="iconTestId()" class="shrink-0 inline me-3" aria-hidden="true">
+            <ng-icon [name]="iconName()" size="18" [class]="iconClasses()"></ng-icon>
+          </div>
         }
 
         <div [attr.data-testid]="contentTestId()" class="flex-1">
@@ -57,21 +58,7 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
             (click)="handleDismiss()"
           >
             <span class="sr-only">Dismiss</span>
-            <svg
-              class="w-3 h-3"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 14 14"
-            >
-              <path
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
-              />
-            </svg>
+            <ng-icon [name]="closeIcon" size="12"></ng-icon>
           </button>
         }
       </div>
@@ -84,10 +71,18 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [
+    provideIcons({
+      heroInformationCircle,
+      heroCheckCircle,
+      heroXCircle,
+      heroExclamationTriangle,
+      heroXMark,
+    }),
+  ],
 })
 export class Alert {
   private readonly hostTestId = inject(DATA_TESTID, { optional: true });
-  private readonly sanitizer = inject(DomSanitizer);
 
   readonly variant = input<AlertVariant>('info');
   readonly title = input<string>('');
@@ -109,10 +104,9 @@ export class Alert {
   protected readonly containerClasses = computed(() => this.classes().container);
   protected readonly textClasses = computed(() => this.classes().text);
 
-  protected readonly iconHtml = computed<SafeHtml>(() => {
-    const iconSvg = getAlertIcon(this.variant());
-    return this.sanitizer.sanitize(1, iconSvg) || '';
-  });
+  protected readonly iconName = computed(() => getAlertIcon(this.variant()));
+  protected readonly iconClasses = computed(() => this.classes().icon);
+  protected readonly closeIcon = 'heroXMark';
 
   protected handleDismiss(): void {
     this.dismissed.emit();

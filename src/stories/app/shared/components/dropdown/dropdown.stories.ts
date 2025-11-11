@@ -53,9 +53,7 @@ const headerSections: DropdownSection[] = [
   },
   {
     id: 'secondary',
-    items: [
-      { type: 'action', id: 'logout', label: 'Sign out', intent: 'danger' },
-    ],
+    items: [{ type: 'action', id: 'logout', label: 'Sign out', intent: 'danger' }],
   },
 ];
 
@@ -118,7 +116,10 @@ const scrollingSections: DropdownSection[] = [
         id: 'user-4',
         label: 'Leslie Livingston',
         value: 'leslie-livingston',
-        avatar: { name: 'Leslie Livingston', imageUrl: '/docs/images/people/profile-picture-4.jpg' },
+        avatar: {
+          name: 'Leslie Livingston',
+          imageUrl: '/docs/images/people/profile-picture-4.jpg',
+        },
       },
       {
         type: 'user',

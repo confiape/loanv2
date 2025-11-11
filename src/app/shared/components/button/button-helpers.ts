@@ -47,7 +47,8 @@ const solidToneClasses: Record<ButtonTone, string> = {
   primary: 'bg-accent text-white hover:bg-accent-hover focus-visible:ring-accent/40',
   neutral: 'bg-bg-secondary text-text-primary hover:bg-bg-primary focus-visible:ring-border/40',
   dark: 'bg-gray-900 text-white hover:bg-gray-800 focus-visible:ring-gray-500/40',
-  light: 'bg-bg-primary text-text-primary border border-border hover:bg-bg-secondary focus-visible:ring-border/40',
+  light:
+    'bg-bg-primary text-text-primary border border-border hover:bg-bg-secondary focus-visible:ring-border/40',
   success: 'bg-success text-white hover:opacity-90 focus-visible:ring-success/40',
   danger: 'bg-error text-white hover:opacity-90 focus-visible:ring-error/40',
   warning: 'bg-warning text-gray-900 hover:opacity-90 focus-visible:ring-warning/40',
@@ -68,15 +69,13 @@ const outlineToneClasses: Record<ButtonTone, string> = {
     'border border-border text-text-primary hover:bg-bg-secondary focus-visible:ring-border/30',
   success: 'border border-success text-success hover:bg-success/10 focus-visible:ring-success/30',
   danger: 'border border-error text-error hover:bg-error/10 focus-visible:ring-error/30',
-  warning:
-    'border border-warning text-warning hover:bg-warning/10 focus-visible:ring-warning/30',
+  warning: 'border border-warning text-warning hover:bg-warning/10 focus-visible:ring-warning/30',
   info: 'border border-sky-600 text-sky-600 hover:bg-sky-600/10 focus-visible:ring-sky-500/30',
   purple:
     'border border-purple-600 text-purple-600 hover:bg-purple-600/10 focus-visible:ring-purple-500/30',
   teal: 'border border-teal-600 text-teal-600 hover:bg-teal-600/10 focus-visible:ring-teal-500/30',
   cyan: 'border border-cyan-600 text-cyan-600 hover:bg-cyan-600/10 focus-visible:ring-cyan-500/30',
-  lime:
-    'border border-lime-500 text-lime-600 hover:bg-lime-500/10 focus-visible:ring-lime-400/30',
+  lime: 'border border-lime-500 text-lime-600 hover:bg-lime-500/10 focus-visible:ring-lime-400/30',
   pink: 'border border-pink-600 text-pink-600 hover:bg-pink-600/10 focus-visible:ring-pink-500/30',
 };
 
@@ -101,8 +100,7 @@ const gradientToneClasses: Record<ButtonTone, string> = {
     'text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 shadow-lg shadow-blue-500/40 focus-visible:ring-blue-500/40',
   neutral:
     'text-gray-900 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-400 shadow-lg shadow-gray-400/40 focus-visible:ring-gray-400/40',
-  dark:
-    'text-white bg-gradient-to-r from-slate-800 via-slate-900 to-black shadow-lg shadow-gray-900/50 focus-visible:ring-gray-600/50',
+  dark: 'text-white bg-gradient-to-r from-slate-800 via-slate-900 to-black shadow-lg shadow-gray-900/50 focus-visible:ring-gray-600/50',
   light:
     'text-gray-900 bg-gradient-to-r from-white via-gray-50 to-gray-200 shadow-lg shadow-gray-200/60 focus-visible:ring-gray-200/60',
   success:
@@ -111,18 +109,13 @@ const gradientToneClasses: Record<ButtonTone, string> = {
     'text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 shadow-lg shadow-red-500/40 focus-visible:ring-red-400/40',
   warning:
     'text-white bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 shadow-lg shadow-yellow-500/50 focus-visible:ring-yellow-400/50',
-  info:
-    'text-white bg-gradient-to-r from-sky-400 via-sky-500 to-sky-600 shadow-lg shadow-sky-500/40 focus-visible:ring-sky-400/40',
+  info: 'text-white bg-gradient-to-r from-sky-400 via-sky-500 to-sky-600 shadow-lg shadow-sky-500/40 focus-visible:ring-sky-400/40',
   purple:
     'text-white bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 shadow-lg shadow-purple-500/40 focus-visible:ring-purple-400/40',
-  teal:
-    'text-white bg-gradient-to-r from-teal-400 via-teal-500 to-teal-600 shadow-lg shadow-teal-500/40 focus-visible:ring-teal-400/40',
-  cyan:
-    'text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 shadow-lg shadow-cyan-500/40 focus-visible:ring-cyan-400/40',
-  lime:
-    'text-gray-900 bg-gradient-to-r from-lime-200 via-lime-400 to-lime-500 shadow-lg shadow-lime-400/40 focus-visible:ring-lime-300/40',
-  pink:
-    'text-white bg-gradient-to-r from-pink-400 via-pink-500 to-pink-600 shadow-lg shadow-pink-500/40 focus-visible:ring-pink-400/40',
+  teal: 'text-white bg-gradient-to-r from-teal-400 via-teal-500 to-teal-600 shadow-lg shadow-teal-500/40 focus-visible:ring-teal-400/40',
+  cyan: 'text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 shadow-lg shadow-cyan-500/40 focus-visible:ring-cyan-400/40',
+  lime: 'text-gray-900 bg-gradient-to-r from-lime-200 via-lime-400 to-lime-500 shadow-lg shadow-lime-400/40 focus-visible:ring-lime-300/40',
+  pink: 'text-white bg-gradient-to-r from-pink-400 via-pink-500 to-pink-600 shadow-lg shadow-pink-500/40 focus-visible:ring-pink-400/40',
 };
 
 const defaultVariantByTone: Record<ButtonVariant, Record<ButtonTone, string>> = {
@@ -178,11 +171,7 @@ export function getButtonClasses(config: ButtonClassConfig): string {
     classes.push('cursor-progress');
   }
 
-  return classes
-    .filter(Boolean)
-    .join(' ')
-    .replace(/\s+/g, ' ')
-    .trim();
+  return classes.filter(Boolean).join(' ').replace(/\s+/g, ' ').trim();
 }
 
 export interface ButtonTestIds {

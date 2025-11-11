@@ -1,4 +1,14 @@
-import { Component, input, output, signal, computed, ChangeDetectionStrategy, contentChildren, inject, HostAttributeToken } from '@angular/core';
+import {
+  Component,
+  input,
+  output,
+  signal,
+  computed,
+  ChangeDetectionStrategy,
+  contentChildren,
+  inject,
+  HostAttributeToken,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AccordionItemComponent } from './accordion-item';
 
@@ -20,16 +30,14 @@ export interface AccordionItem {
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: 'block',
-    '[attr.data-testid]': 'testId()'
-  }
+    '[attr.data-testid]': 'testId()',
+  },
 })
 export class Accordion {
   // Test ID from host
   private readonly hostTestId = inject(DATA_TESTID, { optional: true });
 
-  readonly testId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-accordion` : null
-  );
+  readonly testId = computed(() => (this.hostTestId ? `${this.hostTestId}-accordion` : null));
 
   readonly items = input<AccordionItem[]>([]);
   readonly allowMultiple = input(false);
@@ -55,11 +63,11 @@ export class Accordion {
   private getInitialExpanded(): string[] {
     const items = this.contentItems();
     if (items.length > 0) {
-      return items
-        .filter(item => item.expanded())
-        .map(item => item.id());
+      return items.filter((item) => item.expanded()).map((item) => item.id());
     }
-    return this.items().filter(item => item.expanded).map(item => item.id);
+    return this.items()
+      .filter((item) => item.expanded)
+      .map((item) => item.id);
   }
 
   getContentItems(): readonly AccordionItemComponent[] {
@@ -71,7 +79,7 @@ export class Accordion {
   }
 
   toggleItem(itemId: string): void {
-    const contentItem = this.contentItems().find(i => i.id() === itemId);
+    const contentItem = this.contentItems().find((i) => i.id() === itemId);
 
     if (contentItem?.disabled()) {
       return;
@@ -109,7 +117,7 @@ export class Accordion {
     } else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
       event.preventDefault();
       const items = this.contentItems();
-      const currentIndex = items.findIndex(i => i.id() === itemId);
+      const currentIndex = items.findIndex((i) => i.id() === itemId);
 
       if (event.key === 'ArrowDown' && currentIndex < items.length - 1) {
         const nextItem = items[currentIndex + 1];

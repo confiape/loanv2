@@ -1,6 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Input } from './input';
-import {provideZonelessChangeDetection} from '@angular/core';
+import { provideZonelessChangeDetection } from '@angular/core';
+import { provideIcons } from '@ng-icons/core';
+import { heroMagnifyingGlass, heroEyeSlash } from '@ng-icons/heroicons/outline';
+
+import { Input } from '@loan/app/shared/components/input/input';
 
 describe('Input', () => {
   let component: Input;
@@ -9,7 +12,10 @@ describe('Input', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [Input],
-      providers: [provideZonelessChangeDetection()]
+      providers: [
+        provideZonelessChangeDetection(),
+        provideIcons({ heroMagnifyingGlass, heroEyeSlash }),
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(Input);
@@ -112,18 +118,18 @@ describe('Input', () => {
   });
 
   it('should render prefix icon when provided', () => {
-    fixture.componentRef.setInput('prefixIcon', '<path d="M10 10"/>');
+    fixture.componentRef.setInput('prefixIcon', 'heroMagnifyingGlass');
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    const icon = compiled.querySelector('.absolute.start-0 svg');
+    const icon = compiled.querySelector('ng-icon');
     expect(icon).toBeTruthy();
   });
 
   it('should render suffix icon when provided', () => {
-    fixture.componentRef.setInput('suffixIcon', '<path d="M10 10"/>');
+    fixture.componentRef.setInput('suffixIcon', 'heroEyeSlash');
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    const icon = compiled.querySelector('.absolute.end-0 svg');
+    const icon = compiled.querySelector('ng-icon');
     expect(icon).toBeTruthy();
   });
 
@@ -134,6 +140,18 @@ describe('Input', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     const button = compiled.querySelector('button');
     expect(button?.textContent?.trim()).toBe('Search');
+  });
+
+  it('should render suffix button icon when provided', () => {
+    fixture.componentRef.setInput('suffixButton', true);
+    fixture.componentRef.setInput('suffixButtonIcon', 'heroEyeSlash');
+    fixture.componentRef.setInput('suffixButtonAriaLabel', 'Toggle');
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    const icon = compiled.querySelector('button ng-icon');
+    const button = compiled.querySelector('button');
+    expect(icon).toBeTruthy();
+    expect(button?.getAttribute('aria-label')).toBe('Toggle');
   });
 
   it('should emit suffixButtonClick when suffix button is clicked', () => {

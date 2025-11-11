@@ -1,7 +1,13 @@
 import { computed, Signal } from '@angular/core';
 
 export type ToastVariant = 'info' | 'success' | 'error' | 'warning';
-export type ToastPosition = 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'top-center' | 'bottom-center';
+export type ToastPosition =
+  | 'top-right'
+  | 'top-left'
+  | 'bottom-right'
+  | 'bottom-left'
+  | 'top-center'
+  | 'bottom-center';
 
 export type ToastType = 'success' | 'error' | 'warning' | 'info';
 export interface Toast {
@@ -46,7 +52,8 @@ export interface ToastClasses {
 }
 
 export function getToastClasses(variant: ToastVariant): ToastClasses {
-  const baseContainer = 'flex items-center w-full max-w-xs p-4 rounded-lg shadow-lg border pointer-events-auto';
+  const baseContainer =
+    'flex items-center w-full max-w-xs p-4 rounded-lg shadow-lg border pointer-events-auto';
 
   const variantMap: Record<ToastVariant, ToastClasses> = {
     info: {

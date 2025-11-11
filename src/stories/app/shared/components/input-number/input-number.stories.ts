@@ -1,5 +1,8 @@
 import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
 import { fn } from 'storybook/test';
+import { provideIcons } from '@ng-icons/core';
+import { heroChevronUp, heroChevronDown, heroCurrencyDollar } from '@ng-icons/heroicons/outline';
+
 import { InputNumber } from '@loan/app/shared/components/input-number/input-number';
 import { wrapInLightDarkComparison } from '@loan/stories/story-helpers';
 
@@ -10,6 +13,7 @@ const meta: Meta<InputNumber> = {
   decorators: [
     moduleMetadata({
       imports: [InputNumber],
+      providers: [provideIcons({ heroChevronUp, heroChevronDown, heroCurrencyDollar })],
     }),
   ],
   parameters: {
@@ -69,6 +73,10 @@ const meta: Meta<InputNumber> = {
     errorMessage: {
       control: 'text',
       description: 'Error message (shown when validationState is error)',
+    },
+    prefixIcon: {
+      control: 'text',
+      description: 'NgIcon name rendered as prefix (e.g., heroCurrencyDollar)',
     },
     valueChange: {
       description: 'Event emitted when input value changes',
@@ -293,7 +301,7 @@ export const WithPrefixIcon: Story = {
       <div class="p-8 max-w-md mx-auto">
         <app-input-number
           [label]="'Price'"
-          [prefixIcon]="'<path stroke=\\'currentColor\\' stroke-linecap=\\'round\\' stroke-linejoin=\\'round\\' stroke-width=\\'2\\' d=\\'M5 2a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1M2 5h12a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Zm8 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z\\' />'"
+          [prefixIcon]="'heroCurrencyDollar'"
           [placeholder]="'0.00'"
           [step]="0.01"
           [min]="0"
@@ -329,7 +337,7 @@ export const FormExample: Story = {
               [step]="0.01"
               [min]="0"
               [placeholder]="'0.00'"
-              [prefixIcon]="'<path stroke=\\'currentColor\\' stroke-linecap=\\'round\\' stroke-linejoin=\\'round\\' stroke-width=\\'2\\' d=\\'M5 2a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1M2 5h12a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Zm8 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z\\' />'"
+              [prefixIcon]="'heroCurrencyDollar'"
             />
           </div>
 

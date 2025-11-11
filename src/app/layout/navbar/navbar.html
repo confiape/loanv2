@@ -2,7 +2,7 @@
   <div class="flex flex-wrap justify-between items-center w-full">
     <!-- Left section: Menu button (mobile) + Logo + Search -->
     <div class="flex justify-start items-center gap-2">
-<!--      &lt;!&ndash; Mobile menu toggle button &ndash;&gt;-->
+      <!--      &lt;!&ndash; Mobile menu toggle button &ndash;&gt;-->
       <button
         type="button"
         (click)="onMenuToggle()"
@@ -23,9 +23,11 @@
         </svg>
       </button>
 
-<!--      &lt;!&ndash; Logo &ndash;&gt;-->
+      <!--      &lt;!&ndash; Logo &ndash;&gt;-->
       <a href="#" class="flex items-center gap-3 mr-4">
-        <span class="self-center text-2xl font-semibold whitespace-nowrap text-text-primary">{{ appTitle() }}</span>
+        <span class="self-center text-2xl font-semibold whitespace-nowrap text-text-primary">{{
+          appTitle()
+        }}</span>
       </a>
 
       <!-- Search (hidden on mobile) -->
@@ -71,10 +73,10 @@
         (notificationClick)="onNotificationClick($event)"
       />
 
-       Apps Menu
+      Apps Menu
       <app-apps-menu [apps]="apps()" (appClick)="onAppClick($event)" />
 
-       User Menu
+      User Menu
       <app-user-menu
         [userName]="displayUserName"
         [userEmail]="displayUserEmail"

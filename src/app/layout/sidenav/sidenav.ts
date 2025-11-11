@@ -2,8 +2,6 @@ import { Component, input, output, signal, computed, effect } from '@angular/cor
 import { RouterModule } from '@angular/router';
 import { NgIconComponent } from '@ng-icons/core';
 
-
-
 export interface SidenavItem {
   label: string;
   icon?: string;

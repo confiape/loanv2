@@ -80,9 +80,7 @@ describe('Dropdown', () => {
     trigger?.dispatchEvent(new MouseEvent('click'));
     fixture.detectChanges();
 
-    const itemButton = overlayElement.querySelector(
-      'ul li button'
-    ) as HTMLButtonElement;
+    const itemButton = overlayElement.querySelector('ul li button') as HTMLButtonElement;
     itemButton?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     fixture.detectChanges();
 
@@ -124,7 +122,7 @@ describe('Dropdown', () => {
     searchInput.dispatchEvent(new Event('input'));
 
     // Wait for debounce (even with 0ms, need to wait for next tick)
-    await new Promise(resolve => setTimeout(resolve, 0));
+    await new Promise((resolve) => setTimeout(resolve, 0));
     fixture.detectChanges();
 
     const items = overlayElement.querySelectorAll('ul li button');

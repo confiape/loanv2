@@ -1,4 +1,12 @@
-import { Component, input, ChangeDetectionStrategy, inject, viewChild, ElementRef, computed } from '@angular/core';
+import {
+  Component,
+  input,
+  ChangeDetectionStrategy,
+  inject,
+  viewChild,
+  ElementRef,
+  computed,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Accordion } from './accordion';
 
@@ -20,8 +28,11 @@ import { Accordion } from './accordion';
           [attr.data-testid]="buttonTestId()"
           (click)="onToggle()"
           (keydown)="onKeyDown($event)"
-          [disabled]="disabled()">
-          <span [attr.data-testid]="headerTestId()"><ng-content select="app-accordion-item-header"></ng-content></span>
+          [disabled]="disabled()"
+        >
+          <span [attr.data-testid]="headerTestId()"
+            ><ng-content select="app-accordion-item-header"></ng-content
+          ></span>
           <svg
             class="w-3 h-3 rotate-180 shrink-0 transition-transform"
             [class.!rotate-0]="isExpanded()"
@@ -29,13 +40,15 @@ import { Accordion } from './accordion';
             aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
-            viewBox="0 0 10 6">
+            viewBox="0 0 10 6"
+          >
             <path
               stroke="currentColor"
               stroke-linecap="round"
               stroke-linejoin="round"
               stroke-width="2"
-              d="M9 5 5 1 1 5"/>
+              d="M9 5 5 1 1 5"
+            />
           </svg>
         </button>
       </h2>
@@ -43,7 +56,8 @@ import { Accordion } from './accordion';
         class="accordion-body"
         [class.hidden]="!isExpanded()"
         [class.!border-b]="isLast()"
-        [attr.data-testid]="bodyTestId()">
+        [attr.data-testid]="bodyTestId()"
+      >
         <ng-content select="app-accordion-item-content"></ng-content>
       </div>
     </div>
@@ -51,8 +65,8 @@ import { Accordion } from './accordion';
   styleUrl: './accordion.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    class: 'block'
-  }
+    class: 'block',
+  },
 })
 export class AccordionItemComponent {
   readonly id = input.required<string>();

@@ -1,8 +1,7 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, tap, catchError, of, BehaviorSubject } from 'rxjs';
-import {AuthenticationApiService, LoginResponse} from '@loan/app/shared/openapi';
-
+import { AuthenticationApiService, LoginResponse } from '@loan/app/shared/openapi';
 
 @Injectable({
   providedIn: 'root',

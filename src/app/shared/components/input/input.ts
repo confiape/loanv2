@@ -12,6 +12,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { NgIconComponent } from '@ng-icons/core';
 import {
   InputSize,
   ValidationState,
@@ -19,7 +20,7 @@ import {
   getInputClasses,
   getSuffixButtonClasses,
   generateInputTestIds,
-} from './input-helpers';
+} from '@loan/app/shared/components/input/input-helpers';
 
 const DATA_TESTID = new HostAttributeToken('data-testid');
 
@@ -28,16 +29,12 @@ export type InputType = 'text' | 'email' | 'password' | 'number' | 'tel' | 'url'
 @Component({
   selector: 'app-input',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, NgIconComponent],
   template: `
     <div class="w-full" [attr.data-testid]="wrapperTestId()">
       <!-- Label -->
       @if (label()) {
-        <label
-          [for]="inputId()"
-          [class]="labelClasses()"
-          [attr.data-testid]="labelTestId()"
-        >
+        <label [for]="inputId()" [class]="labelClasses()" [attr.data-testid]="labelTestId()">
           {{ label() }}
         </label>
       }
@@ -50,17 +47,14 @@ export type InputType = 'text' | 'email' | 'password' | 'number' | 'tel' | 'url'
             class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none"
             [attr.data-testid]="prefixIconTestId()"
           >
-            <svg
-              class="w-4 h-4"
+            <ng-icon
+              aria-hidden="true"
+              [name]="prefixIcon()!"
+              size="16"
               [class.text-text-secondary]="validationState() === 'none'"
               [class.text-success]="validationState() === 'success'"
               [class.text-error]="validationState() === 'error'"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 20 20"
-              [innerHTML]="prefixIcon()"
-            ></svg>
+            ></ng-icon>
           </div>
         }
 
@@ -87,17 +81,14 @@ export type InputType = 'text' | 'email' | 'password' | 'number' | 'tel' | 'url'
             class="absolute inset-y-0 end-0 flex items-center pe-3 pointer-events-none"
             [attr.data-testid]="suffixIconTestId()"
           >
-            <svg
-              class="w-4 h-4"
+            <ng-icon
+              aria-hidden="true"
+              [name]="suffixIcon()!"
+              size="16"
               [class.text-text-secondary]="validationState() === 'none'"
               [class.text-success]="validationState() === 'success'"
               [class.text-error]="validationState() === 'error'"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 20 20"
-              [innerHTML]="suffixIcon()"
-            ></svg>
+            ></ng-icon>
           </div>
         }
 
@@ -106,9 +97,19 @@ export type InputType = 'text' | 'email' | 'password' | 'number' | 'tel' | 'url'
             type="button"
             [class]="suffixButtonClasses()"
             [attr.data-testid]="suffixButtonTestId()"
+            [attr.aria-label]="suffixButtonAriaLabel() || null"
             (click)="onSuffixButtonClick()"
           >
-            {{ suffixButtonText() }}
+            @if (suffixButtonIcon()) {
+              <ng-icon
+                aria-hidden="true"
+                [name]="suffixButtonIcon()!"
+                size="16"
+                class="text-text-primary"
+              ></ng-icon>
+            } @else {
+              {{ suffixButtonText() }}
+            }
           </button>
         }
       </div>
@@ -160,8 +161,12 @@ export type InputType = 'text' | 'email' | 'password' | 'number' | 'tel' | 'url'
   },
 })
 export class Input implements ControlValueAccessor {
-  // Test ID from host
-  private readonly hostTestId = inject(DATA_TESTID, { optional: true });
+  // Test ID from host or explicit input
+  private readonly injectedTestId = inject(DATA_TESTID, { optional: true });
+  readonly dataTestId = input<string | null>(null);
+  private readonly resolvedTestId = computed(
+    () => this.dataTestId() ?? this.injectedTestId ?? null,
+  );
 
   // Input properties
   readonly label = input<string>('');
@@ -182,6 +187,9 @@ export class Input implements ControlValueAccessor {
   readonly suffixIcon = input<string>('');
   readonly suffixButton = input<boolean>(false);
   readonly suffixButtonText = input<string>('');
+  readonly suffixButtonIcon = input<string>('');
+  readonly suffixButtonAriaLabel = input<string>('');
+  readonly suffixButtonIconOnly = input<boolean>(false);
 
   // Output events
   readonly valueChange = output<string>();
@@ -195,7 +203,7 @@ export class Input implements ControlValueAccessor {
   protected onTouched: () => void = () => {};
 
   // Test IDs using helper
-  private readonly testIds = generateInputTestIds(this.hostTestId);
+  private readonly testIds = generateInputTestIds(() => this.resolvedTestId());
   readonly wrapperTestId = this.testIds.wrapper;
   readonly labelTestId = this.testIds.label;
   readonly inputTestId = this.testIds.input;
@@ -216,11 +224,13 @@ export class Input implements ControlValueAccessor {
       this.disabled(),
       !!this.prefixIcon(),
       !!this.suffixIcon() || this.suffixButton(),
-      this.suffixButton()
-    )
+      this.suffixButton(),
+    ),
   );
 
-  readonly suffixButtonClasses = computed(() => getSuffixButtonClasses(this.size()));
+  readonly suffixButtonClasses = computed(() =>
+    getSuffixButtonClasses(this.size(), this.suffixButtonIconOnly()),
+  );
 
   readonly helpTextId = computed(() => `${this.inputId()}-help`);
 

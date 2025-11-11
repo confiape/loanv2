@@ -1,9 +1,4 @@
-import {
-  Component,
-  input,
-  computed,
-  ChangeDetectionStrategy,
-} from '@angular/core';
+import { Component, input, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonGroupVariant } from './button-group-helpers';
 
@@ -12,11 +7,7 @@ import { ButtonGroupVariant } from './button-group-helpers';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div
-      [class]="containerClasses()"
-      role="group"
-      [attr.aria-label]="ariaLabel()"
-    >
+    <div [class]="containerClasses()" role="group" [attr.aria-label]="ariaLabel()">
       <ng-content />
     </div>
   `,

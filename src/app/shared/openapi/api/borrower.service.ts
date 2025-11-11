@@ -29,7 +29,7 @@ import { CreateBorrowerDto } from '../model/createBorrowerDto';
 import { ReniecPersonalInformationDto } from '../model/reniecPersonalInformationDto';
 
 // @ts-ignore
-import { BASE_PATH, COLLECTION_FORMATS } from '../variables';
+import { BASE_PATH } from '../variables';
 import { Configuration } from '../configuration';
 
 @Injectable({

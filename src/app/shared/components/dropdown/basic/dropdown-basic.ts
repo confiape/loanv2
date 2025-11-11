@@ -22,11 +22,7 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
   standalone: true,
   imports: [OverlayModule],
   template: `
-    <div
-      class="inline-flex"
-      (mouseenter)="handleMouseEnter()"
-      (mouseleave)="handleMouseLeave()"
-    >
+    <div class="inline-flex" (mouseenter)="handleMouseEnter()" (mouseleave)="handleMouseLeave()">
       <!-- Trigger button -->
       <button
         #overlayOrigin="cdkOverlayOrigin"
@@ -98,16 +94,12 @@ export class DropdownBasic {
 
   // Computed
   readonly componentTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-dropdown-basic` : null
+    this.hostTestId ? `${this.hostTestId}-dropdown-basic` : null,
   );
 
-  readonly triggerTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-trigger` : null
-  );
+  readonly triggerTestId = computed(() => (this.hostTestId ? `${this.hostTestId}-trigger` : null));
 
-  readonly panelTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-panel` : null
-  );
+  readonly panelTestId = computed(() => (this.hostTestId ? `${this.hostTestId}-panel` : null));
 
   readonly triggerClasses = computed(() => {
     const config = this.triggerConfig();

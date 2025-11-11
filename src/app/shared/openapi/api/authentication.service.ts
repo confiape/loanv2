@@ -11,12 +11,12 @@
 import { Inject, Injectable, Optional } from '@angular/core';
 import {
   HttpClient,
+  HttpContext,
+  HttpEvent,
   HttpHeaders,
+  HttpParameterCodec,
   HttpParams,
   HttpResponse,
-  HttpEvent,
-  HttpParameterCodec,
-  HttpContext,
 } from '@angular/common/http';
 import { CustomHttpParameterCodec } from '../encoder';
 import { Observable } from 'rxjs';
@@ -29,7 +29,7 @@ import { LoginResponse } from '../model/loginResponse';
 import { TokenDto } from '../model/tokenDto';
 
 // @ts-ignore
-import { BASE_PATH, COLLECTION_FORMATS } from '../variables';
+import { BASE_PATH } from '../variables';
 import { Configuration } from '../configuration';
 
 @Injectable({

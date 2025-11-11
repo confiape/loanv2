@@ -1,6 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { InputNumber } from './input-number';
 import { provideZonelessChangeDetection } from '@angular/core';
+import { provideIcons } from '@ng-icons/core';
+import { heroMagnifyingGlass, heroChevronUp, heroChevronDown } from '@ng-icons/heroicons/outline';
+
+import { InputNumber } from '@loan/app/shared/components/input-number/input-number';
 
 describe('InputNumber', () => {
   let component: InputNumber;
@@ -9,7 +12,10 @@ describe('InputNumber', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [InputNumber],
-      providers: [provideZonelessChangeDetection()],
+      providers: [
+        provideZonelessChangeDetection(),
+        provideIcons({ heroMagnifyingGlass, heroChevronUp, heroChevronDown }),
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(InputNumber);
@@ -58,6 +64,14 @@ describe('InputNumber', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     const buttons = compiled.querySelectorAll('button');
     expect(buttons.length).toBe(2);
+  });
+
+  it('should render prefix icon when provided', () => {
+    fixture.componentRef.setInput('prefixIcon', 'heroMagnifyingGlass');
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    const icon = compiled.querySelector('ng-icon');
+    expect(icon).not.toBeNull();
   });
 
   it('should hide buttons when showButtons is false', () => {

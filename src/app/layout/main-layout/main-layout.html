@@ -1,4 +1,3 @@
-
 <div class="h-screen grid grid-rows-[auto_1fr]">
   <!-- Toast Container -->
   <app-toast-container position="top-right" />
@@ -25,9 +24,7 @@
     <!-- Sidenav + Content -->
     <div class="grid grid-cols-1 lg:grid-cols-[16rem_1fr] overflow-hidden">
       <!-- Sidenav: hidden on mobile, visible on desktop -->
-      <aside
-        class="hidden lg:block bg-bg-primary border-r border-border h-full overflow-y-auto"
-      >
+      <aside class="hidden lg:block bg-bg-primary border-r border-border h-full overflow-y-auto">
         <app-sidenav [items]="sidenavItems" (itemClick)="onSidenavItemClick($event)" />
       </aside>
 

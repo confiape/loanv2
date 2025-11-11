@@ -188,7 +188,10 @@ describe('Avatar', () => {
   });
 
   describe('size handling', () => {
-    const sizeExpectations: Record<AvatarSize, { container: string; text: string; indicator: string }> = {
+    const sizeExpectations: Record<
+      AvatarSize,
+      { container: string; text: string; indicator: string }
+    > = {
       xs: { container: 'w-6 h-6', text: 'text-xs', indicator: 'w-2 h-2' },
       sm: { container: 'w-8 h-8', text: 'text-sm', indicator: 'w-2.5 h-2.5' },
       md: { container: 'w-10 h-10', text: 'text-base', indicator: 'w-3.5 h-3.5' },
@@ -251,7 +254,7 @@ describe('Avatar', () => {
     });
 
     it('supports multiple indicator positions', async () => {
-      const positions: Array<['top-left' | 'top-right' | 'bottom-left' | 'bottom-right', string]> = [
+      const positions: ['top-left' | 'top-right' | 'bottom-left' | 'bottom-right', string][] = [
         ['top-left', 'top-0 left-0'],
         ['top-right', 'top-0 right-0'],
         ['bottom-left', 'bottom-0 left-0'],
@@ -282,9 +285,11 @@ describe('Avatar', () => {
       });
 
       const classes = component.initialsClasses();
-      ['font-medium', 'text-sm', 'text-text-primary', 'bg-bg-secondary', 'rounded-full'].forEach((cls) => {
-        expect(classes).toContain(cls);
-      });
+      ['font-medium', 'text-sm', 'text-text-primary', 'bg-bg-secondary', 'rounded-full'].forEach(
+        (cls) => {
+          expect(classes).toContain(cls);
+        },
+      );
     });
   });
 

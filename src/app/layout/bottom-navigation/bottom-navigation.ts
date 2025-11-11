@@ -31,7 +31,9 @@ export interface BottomNavItem {
               class="w-5 h-5 mb-2 text-text-secondary group-hover:text-accent transition-colors [&.router-link-active]:text-accent"
               [innerHTML]="item.icon"
             ></span>
-            <span class="text-sm text-text-secondary group-hover:text-accent transition-colors [&.router-link-active]:text-accent">
+            <span
+              class="text-sm text-text-secondary group-hover:text-accent transition-colors [&.router-link-active]:text-accent"
+            >
               {{ item.label }}
             </span>
           </a>

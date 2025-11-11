@@ -52,16 +52,16 @@ describe('Alert', () => {
   });
 
   it('should display icon by default', () => {
-    const iconDiv = fixture.nativeElement.querySelector('.shrink-0.inline.me-3');
-    expect(iconDiv).toBeTruthy();
+    const icon = fixture.nativeElement.querySelector('ng-icon');
+    expect(icon).toBeTruthy();
   });
 
   it('should hide icon when showIcon is false', () => {
     fixture.componentRef.setInput('showIcon', false);
     fixture.detectChanges();
 
-    const iconDiv = fixture.nativeElement.querySelector('.shrink-0.inline.me-3');
-    expect(iconDiv).toBeFalsy();
+    const icon = fixture.nativeElement.querySelector('ng-icon');
+    expect(icon).toBeFalsy();
   });
 
   it('should render title when provided', () => {

@@ -145,7 +145,9 @@ export interface Notification {
                   <div class="flex-1 min-w-0">
                     <div class="text-sm text-text-secondary mb-1">
                       @if (notification.title) {
-                        <span class="font-semibold text-text-primary">{{ notification.title }}</span>
+                        <span class="font-semibold text-text-primary">{{
+                          notification.title
+                        }}</span>
                       }
                       {{ notification.message }}
                     </div>
@@ -164,7 +166,13 @@ export interface Notification {
                 class="w-full flex items-center justify-center gap-2 p-2 rounded-md text-text-primary text-sm font-medium hover:bg-bg-primary transition-colors"
                 (click)="onViewAll()"
               >
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <svg
+                  class="w-4 h-4"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true"
+                >
                   <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path>
                   <path
                     fill-rule="evenodd"

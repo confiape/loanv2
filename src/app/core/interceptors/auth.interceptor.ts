@@ -12,7 +12,6 @@ const PUBLIC_ENDPOINTS = [
   '/api/Authentication/LoginWithGoogleToken',
   '/api/Authentication/GetAuthorizationToken',
   '/api/Authentication/LogIn',
-  '/api/Authentication/LogOut',
 ];
 
 /**

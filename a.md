@@ -13,8 +13,8 @@ When generating stories, **create the Storybook file under the mirrored `src/sto
 
 Example:
 
-* Component path: `src/app/shared/components/input/input.ts`
-* Storybook path: `src/stories/app/shared/components/input/input.ts`
+- Component path: `src/app/shared/components/input/input.ts`
+- Storybook path: `src/stories/app/shared/components/input/input.ts`
 
 This ensures all stories are organized in the same nested structure under `src/stories`.
 
@@ -22,14 +22,14 @@ This ensures all stories are organized in the same nested structure under `src/s
 
 ## ⚙️ Context
 
-* Framework: Angular 20 (standalone, zoneless, signals)
-* Styling: Tailwind v4
-* Storybook setup: `@storybook/angular`
-* Theme helpers: `/stories/story-helpers.ts`
-* All stories **must show Light/Dark comparison** using `wrapInLightDarkComparison`
-* Style: clean, minimal, no repetition, only relevant argTypes and examples
-* Each story should be **self-explanatory**, with short, readable templates
-* Naming convention: PascalCase for stories (e.g., `Default`, `Variants`, `Disabled`)
+- Framework: Angular 20 (standalone, zoneless, signals)
+- Styling: Tailwind v4
+- Storybook setup: `@storybook/angular`
+- Theme helpers: `/stories/story-helpers.ts`
+- All stories **must show Light/Dark comparison** using `wrapInLightDarkComparison`
+- Style: clean, minimal, no repetition, only relevant argTypes and examples
+- Each story should be **self-explanatory**, with short, readable templates
+- Naming convention: PascalCase for stories (e.g., `Default`, `Variants`, `Disabled`)
 
 ---
 
@@ -37,39 +37,39 @@ This ensures all stories are organized in the same nested structure under `src/s
 
 ### 1. If no Storybook file exists:
 
-* Create a new `.stories.ts` file in the **destination path defined above**.
-* Include:
+- Create a new `.stories.ts` file in the **destination path defined above**.
+- Include:
+  - `Meta<TComponent>` with `title: 'UI/<ComponentName>'`
+  - `export default meta`
+  - `type Story = StoryObj<TComponent>`
+  - 3–5 stories demonstrating:
+    - Default usage
+    - Key variants
+    - Disabled/readonly state
+    - Validation or visual states
 
-  * `Meta<TComponent>` with `title: 'UI/<ComponentName>'`
-  * `export default meta`
-  * `type Story = StoryObj<TComponent>`
-  * 3–5 stories demonstrating:
-
-    * Default usage
-    * Key variants
-    * Disabled/readonly state
-    * Validation or visual states
-* Use concise examples — no redundant markup or comments.
+- Use concise examples — no redundant markup or comments.
 
 ### 2. If a Storybook file already exists:
 
-* Review it for consistency with `/stories/story-helpers.ts`.
-* Remove redundant code or inline duplication.
-* Ensure **Light/Dark comparison** is correctly applied in all stories.
-* Suggest new stories only if a functional gap exists.
+- Review it for consistency with `/stories/story-helpers.ts`.
+- Remove redundant code or inline duplication.
+- Ensure **Light/Dark comparison** is correctly applied in all stories.
+- Suggest new stories only if a functional gap exists.
 
 ---
 
 ## 🧩 Output Format
 
-* `Meta` configuration block (title, component, decorators, layout)
-* Reusable `type Story = StoryObj<Component>`
-* A minimal set of stories, each with `args` + `render` using `wrapInLightDarkComparison`
+- `Meta` configuration block (title, component, decorators, layout)
+- Reusable `type Story = StoryObj<Component>`
+- A minimal set of stories, each with `args` + `render` using `wrapInLightDarkComparison`
 
 ---
 
 ## 📘 Output Example (Structure, not literal code)
-``` ts
+
+```ts
 import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
 import { MyComponent } from '@loan/app/...';
 import { wrapInLightDarkComparison } from '@loan/stories/story-helpers';
@@ -95,6 +95,7 @@ template: createLightDarkComparison(`<app-my-component /> `),
 }),
 };
 ```
+
 ---
 
 ## 🧾 Inputs

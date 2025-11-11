@@ -25,7 +25,7 @@ import { Observable } from 'rxjs';
 import { InOutBalanceDto } from '../model/inOutBalanceDto';
 
 // @ts-ignore
-import { BASE_PATH, COLLECTION_FORMATS } from '../variables';
+import { BASE_PATH } from '../variables';
 import { Configuration } from '../configuration';
 
 @Injectable({

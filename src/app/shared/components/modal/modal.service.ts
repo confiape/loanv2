@@ -1,5 +1,5 @@
 import { Injectable, inject, Type } from '@angular/core';
-import { Dialog, DialogConfig, DialogRef } from '@angular/cdk/dialog';
+import { Dialog, DialogRef } from '@angular/cdk/dialog';
 import { Modal, ModalData } from './modal';
 import { ModalSize } from './modal-helpers';
 

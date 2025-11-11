@@ -1,0 +1,76 @@
+<div class="relative inline-block">
+  <!-- User Button -->
+  <button
+    type="button"
+    class="flex mx-3 text-sm bg-accent rounded-full md:mr-0 focus:ring-4 focus:ring-border transition-all"
+    (click)="toggle()"
+    [attr.aria-label]="'Menú de ' + userName()"
+    [attr.aria-expanded]="isOpen()"
+    aria-haspopup="true"
+  >
+    @if (userAvatar()) {
+      <img
+        [src]="userAvatar()"
+        [alt]="userName()"
+        class="w-8 h-8 rounded-full object-cover"
+        loading="lazy"
+      />
+    } @else {
+      <div
+        class="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-white font-semibold text-sm"
+        [attr.aria-label]="'Iniciales de ' + userName()"
+      >
+        {{ userInitials() }}
+      </div>
+    }
+  </button>
+
+  <!-- Dropdown -->
+  @if (isOpen()) {
+    <div
+      class="absolute right-0 top-full mt-2 z-50 w-56 bg-bg-primary border border-border rounded-xl shadow-lg overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200"
+      role="menu"
+      [attr.aria-label]="'Menú de usuario de ' + userName()"
+    >
+      <!-- User Info -->
+      @if (hasUserInfo()) {
+        <div class="p-4 bg-bg-secondary border-b border-border">
+          <span class="block text-sm font-semibold text-text-primary">
+            {{ userName() }}
+          </span>
+          @if (userEmail()) {
+            <span class="block text-xs text-text-secondary truncate mt-1">
+              {{ userEmail() }}
+            </span>
+          }
+        </div>
+      }
+
+      <!-- Menu Items -->
+      <div class="py-2">
+        @for (item of menuItems(); track trackByItemId($index, item)) {
+          @if (item.divider) {
+            <div class="h-px bg-border my-2" role="separator"></div>
+          } @else {
+            <a
+              [href]="item.href || '#'"
+              class="flex items-center gap-3 px-4 py-2.5 text-sm text-text-primary hover:bg-bg-secondary focus:bg-bg-secondary focus:outline-none transition-colors group"
+              (click)="onMenuItemClick(item, $event)"
+              role="menuitem"
+              [attr.tabindex]="isOpen() ? 0 : -1"
+            >
+              @if (item.icon) {
+                <ng-icon
+                  [name]="item.icon"
+                  size="16"
+                  class="text-text-secondary transition-colors duration-75 group-hover:text-text-primary group-focus:text-text-primary flex-shrink-0"
+                ></ng-icon>
+              }
+              <span class="flex-1">{{ item.label }}</span>
+            </a>
+          }
+        }
+      </div>
+    </div>
+  }
+</div>

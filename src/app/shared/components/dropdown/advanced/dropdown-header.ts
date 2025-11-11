@@ -15,7 +15,9 @@ import { DropdownHeader } from './dropdown.types';
               [alt]="header()?.avatar?.name"
             />
           } @else if (header()?.avatar?.initials) {
-            <div class="h-8 w-8 rounded-full bg-bg-secondary flex items-center justify-center text-sm font-medium text-text-primary">
+            <div
+              class="h-8 w-8 rounded-full bg-bg-secondary flex items-center justify-center text-sm font-medium text-text-primary"
+            >
               {{ header()?.avatar?.initials }}
             </div>
           }

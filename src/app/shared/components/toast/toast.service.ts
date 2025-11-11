@@ -1,7 +1,5 @@
-import {Injectable, ComponentRef, inject, signal} from '@angular/core';
-import { ToastComponent } from './toast';
-import { ToastContainerComponent } from './toast-container';
-import {Toast, ToastConfig, ToastType, ToastVariant} from './toast-helpers';
+import { Injectable, signal } from '@angular/core';
+import { Toast, ToastType } from './toast-helpers';
 
 @Injectable({
   providedIn: 'root',

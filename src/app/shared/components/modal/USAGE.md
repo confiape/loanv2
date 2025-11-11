@@ -36,12 +36,12 @@ import { Button } from '@loan/app/shared/components/button';
 
       <app-modal-body>
         <p class="text-base leading-relaxed text-text-secondary">
-          With less than a month to go before the European Union enacts new consumer
-          privacy laws for its citizens...
+          With less than a month to go before the European Union enacts new consumer privacy laws
+          for its citizens...
         </p>
         <p class="text-base leading-relaxed text-text-secondary">
-          The European Union's General Data Protection Regulation (G.D.P.R.) goes
-          into effect on May 25...
+          The European Union's General Data Protection Regulation (G.D.P.R.) goes into effect on May
+          25...
         </p>
       </app-modal-body>
 
@@ -75,9 +75,7 @@ import { Button } from '@loan/app/shared/components/button';
   selector: 'app-page',
   standalone: true,
   imports: [Button],
-  template: `
-    <app-button (buttonClick)="openModal()">Open Terms</app-button>
-  `,
+  template: ` <app-button (buttonClick)="openModal()">Open Terms</app-button> `,
 })
 export class PageComponent {
   private readonly modalService = inject(ModalService);
@@ -96,9 +94,7 @@ import { ModalService } from '@loan/app/shared/components/modal';
 
 @Component({
   selector: 'app-page',
-  template: `
-    <app-button (buttonClick)="showInfo()">Show Info</app-button>
-  `,
+  template: ` <app-button (buttonClick)="showInfo()">Show Info</app-button> `,
 })
 export class PageComponent {
   private readonly modalService = inject(ModalService);
@@ -146,6 +142,7 @@ this.modalService.open(MyModalComponent, {
 ```
 
 Esto generará automáticamente:
+
 - `terms-modal-overlay`
 - `terms-modal-container`
 - `terms-modal-content`
@@ -229,6 +226,7 @@ El modal usa tokens de Tailwind v4 y soporta dark mode automáticamente:
 ## Accesibilidad
 
 El componente incluye:
+
 - `role="dialog"`
 - `aria-modal="true"`
 - `aria-labelledby` (cuando se proporciona título)

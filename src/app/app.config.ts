@@ -1,10 +1,14 @@
-import {ApplicationConfig, provideBrowserGlobalErrorListeners, provideZonelessChangeDetection} from '@angular/core';
-import {provideRouter} from '@angular/router';
+import {
+  ApplicationConfig,
+  provideBrowserGlobalErrorListeners,
+  provideZonelessChangeDetection,
+} from '@angular/core';
+import { provideRouter } from '@angular/router';
 
-import {routes} from './app.routes';
-import {provideHttpClient, withInterceptors} from '@angular/common/http';
-import {BASE_PATH} from '@loan/app/shared/openapi';
-import {authInterceptor} from '@loan/app/core/interceptors/auth.interceptor';
+import { routes } from './app.routes';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { BASE_PATH } from '@loan/app/shared/openapi';
+import { authInterceptor } from '@loan/app/core/interceptors/auth.interceptor';
 import { provideIcons } from '@ng-icons/core';
 import {
   heroBars3,
@@ -43,12 +47,8 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
     provideRouter(routes),
-    provideHttpClient(
-      withInterceptors([
-        authInterceptor
-      ]),
-    ),
-    {provide: BASE_PATH, useValue: ''},
+    provideHttpClient(withInterceptors([authInterceptor])),
+    { provide: BASE_PATH, useValue: '' },
     provideIcons({
       heroBars3,
       heroMagnifyingGlass,
@@ -80,5 +80,5 @@ export const appConfig: ApplicationConfig = {
       heroClock,
       heroCheckBadge,
     }),
-  ]
+  ],
 };

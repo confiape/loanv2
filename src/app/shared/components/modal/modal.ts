@@ -8,9 +8,6 @@ import {
 } from '@angular/core';
 import { DialogModule, DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { ModalSize, generateModalTestIds, getModalSizeClasses } from './modal-helpers';
-import { ModalHeader } from './modal-header';
-import { ModalBody } from './modal-body';
-import { ModalFooter } from './modal-footer';
 
 const DATA_TESTID = new HostAttributeToken('data-testid');
 
@@ -44,7 +41,7 @@ export interface ModalData {
         aria-modal="true"
         [attr.aria-labelledby]="data?.title ? 'modal-title' : null"
       >
-        <ng-content/>
+        <ng-content />
       </div>
     </div>
   `,

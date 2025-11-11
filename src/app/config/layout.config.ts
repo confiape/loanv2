@@ -1,9 +1,8 @@
 import { SidenavItem } from '@loan/app/layout/sidenav/sidenav';
 import { BottomNavItem } from '@loan/app/layout/bottom-navigation/bottom-navigation';
-import {AppMenuItem} from '@loan/app/shared/components/apps-menu/apps-menu';
-import {UserMenuItem} from '@loan/app/shared/components/user-menu/user-menu';
-import {Notification} from '@loan/app/shared/components/notification-button/notification-button';
-
+import { AppMenuItem } from '@loan/app/shared/components/apps-menu/apps-menu';
+import { UserMenuItem } from '@loan/app/shared/components/user-menu/user-menu';
+import { Notification } from '@loan/app/shared/components/notification-button/notification-button';
 
 // Sidenav Items Configuration
 export const SIDENAV_ITEMS: SidenavItem[] = [

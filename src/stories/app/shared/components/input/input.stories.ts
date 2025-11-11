@@ -1,5 +1,8 @@
 import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
 import { fn } from 'storybook/test';
+import { provideIcons } from '@ng-icons/core';
+import { heroMagnifyingGlass, heroEnvelope, heroEyeSlash } from '@ng-icons/heroicons/outline';
+
 import { Input } from '@loan/app/shared/components/input/input';
 import { wrapInLightDarkComparison } from '@loan/stories/story-helpers';
 
@@ -10,6 +13,13 @@ const meta: Meta<Input> = {
   decorators: [
     moduleMetadata({
       imports: [Input],
+      providers: [
+        provideIcons({
+          heroMagnifyingGlass,
+          heroEnvelope,
+          heroEyeSlash,
+        }),
+      ],
     }),
   ],
   parameters: {
@@ -64,6 +74,14 @@ const meta: Meta<Input> = {
     },
     suffixButtonClick: {
       description: 'Event emitted when suffix button is clicked',
+    },
+    prefixIcon: {
+      control: 'text',
+      description: 'NgIcon name rendered as prefix (e.g., heroMagnifyingGlass)',
+    },
+    suffixIcon: {
+      control: 'text',
+      description: 'NgIcon name rendered as suffix (e.g., heroEyeSlash)',
     },
   },
 };
@@ -199,7 +217,7 @@ export const SearchInput: Story = {
           [type]="'search'"
           [placeholder]="'Search'"
           [size]="'large'"
-          [prefixIcon]="'<path stroke=\\'currentColor\\' stroke-linecap=\\'round\\' stroke-linejoin=\\'round\\' stroke-width=\\'2\\' d=\\'m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z\\' />'"
+          [prefixIcon]="'heroMagnifyingGlass'"
           [suffixButton]="true"
           [suffixButtonText]="'Search'"
           [ariaLabel]="'search'"
@@ -329,7 +347,7 @@ export const WithPrefixIcon: Story = {
           [label]="'Email'"
           [type]="'email'"
           [placeholder]="'email@example.com'"
-          [prefixIcon]="'<path stroke=\\'currentColor\\' stroke-linecap=\\'round\\' stroke-width=\\'2\\' d=\\'m3.5 5.5 7.893 6.036a1 1 0 0 0 1.214 0L20.5 5.5M4 19h16a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1Z\\' />'"
+          [prefixIcon]="'heroEnvelope'"
         />
       </div>
     `),
@@ -351,7 +369,7 @@ export const WithSuffixIcon: Story = {
           [label]="'Password'"
           [type]="'password'"
           [placeholder]="'Enter password'"
-          [suffixIcon]="'<path stroke=\\'currentColor\\' stroke-linecap=\\'round\\' stroke-linejoin=\\'round\\' stroke-width=\\'2\\' d=\\'M21 12c0 1.2-4.03 6-9 6s-9-4.8-9-6c0-1.2 4.03-6 9-6s9 4.8 9 6Z\\' /><path stroke=\\'currentColor\\' stroke-linecap=\\'round\\' stroke-linejoin=\\'round\\' stroke-width=\\'2\\' d=\\'M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z\\' />'"
+          [suffixIcon]="'heroEyeSlash'"
         />
       </div>
     `),

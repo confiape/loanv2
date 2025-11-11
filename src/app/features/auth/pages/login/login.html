@@ -1,4 +1,4 @@
-<div class="flex items-center justify-center min-h-screen p-4 bg-gradient-to-br from-accent to-accent-hover">
+<div class="flex items-center justify-center min-h-screen p-4">
   <div class="w-full max-w-md bg-bg-primary rounded-lg shadow-2xl p-8">
     <div class="text-center mb-8">
       <h1 class="text-3xl font-bold text-text-primary mb-2">Bienvenido</h1>
@@ -12,18 +12,18 @@
         label="Email"
         type="email"
         placeholder="tu@email.com"
-        formControlName="email" />
+        formControlName="email"
+        [inputId]="'email'"
+      />
 
       <!-- Password -->
-      <app-input
+      <app-password-input
         data-testid="login-password"
         label="Contraseña"
-        [type]="showPassword() ? 'text' : 'password'"
-        placeholder="••••asasa••••"
+        placeholder="••••••••"
         formControlName="password"
-        [suffixButton]="true"
-        [suffixButtonText]="showPassword() ? 'Ocultar' : 'Mostrar'"
-        (suffixButtonClick)="togglePasswordVisibility()" />
+        [inputId]="'password'"
+      />
 
       <!-- Submit Button -->
       <app-button
@@ -35,7 +35,8 @@
         [fullWidth]="true"
         [loading]="isLoading()"
         [disabled]="isSubmitDisabled()"
-        loadingText="Iniciando sesión...">
+        loadingText="Iniciando sesión..."
+      >
         Iniciar Sesión
       </app-button>
     </form>
@@ -44,7 +45,10 @@
     <div class="mt-6 pt-6 border-t border-border text-center">
       <p class="text-sm text-text-secondary m-0">
         ¿Olvidaste tu contraseña?
-        <a href="#" class="text-accent font-medium transition-colors duration-150 ease-in-out hover:text-accent-hover hover:underline">
+        <a
+          href="#"
+          class="text-accent font-medium transition-colors duration-150 ease-in-out hover:text-accent-hover hover:underline"
+        >
           Recuperar
         </a>
       </p>

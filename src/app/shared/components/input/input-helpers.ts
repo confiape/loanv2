@@ -31,7 +31,7 @@ export function getInputClasses(
   disabled: boolean,
   hasPrefix: boolean,
   hasSuffix: boolean,
-  hasSuffixButton: boolean = false
+  hasSuffixButton = false,
 ): string {
   // Base classes
   let classes = 'block w-full border rounded-lg focus:ring-1 focus:outline-none transition-colors';
@@ -76,9 +76,24 @@ export function getInputClasses(
 /**
  * Generates CSS classes for suffix buttons based on size
  */
-export function getSuffixButtonClasses(size: InputSize): string {
-  let classes = 'text-text-primary absolute end-2.5 bg-accent hover:bg-accent-hover';
-  classes += ' focus:ring-4 focus:outline-none focus:ring-accent/30 font-medium rounded-lg';
+export function getSuffixButtonClasses(size: InputSize, iconOnly = false): string {
+  let classes = 'absolute end-2.5 focus:outline-none transition-colors';
+
+  if (iconOnly) {
+    classes +=
+      ' bg-bg-secondary hover:bg-bg-tertiary border border-border rounded-full text-text-primary flex items-center justify-center focus:ring-2 focus:ring-accent/30';
+    if (size === 'small') {
+      classes += ' top-1/2 -translate-y-1/2 h-8 w-8';
+    } else if (size === 'large') {
+      classes += ' top-1/2 -translate-y-1/2 h-10 w-10';
+    } else {
+      classes += ' top-1/2 -translate-y-1/2 h-9 w-9';
+    }
+    return classes;
+  }
+
+  classes +=
+    ' text-bg-primary bg-accent hover:bg-accent-hover focus:ring-4 focus:ring-accent/30 font-medium rounded-lg';
 
   if (size === 'small') {
     classes += ' bottom-1.5 text-xs px-3 py-1.5';
@@ -106,16 +121,53 @@ export interface InputTestIds {
   errorMessage: Signal<string | null>;
 }
 
-export function generateInputTestIds(hostTestId: string | null): InputTestIds {
+type HostTestIdSource = string | null | (() => string | null);
+
+function resolveHostTestId(source: HostTestIdSource): () => string | null {
+  if (typeof source === 'function') {
+    return source;
+  }
+  return () => source;
+}
+
+export function generateInputTestIds(hostTestId: HostTestIdSource): InputTestIds {
+  const getHostTestId = resolveHostTestId(hostTestId);
   return {
-    wrapper: computed(() => (hostTestId ? `${hostTestId}-wrapper` : null)),
-    label: computed(() => (hostTestId ? `${hostTestId}-label` : null)),
-    input: computed(() => (hostTestId ? `${hostTestId}-input` : null)),
-    prefixIcon: computed(() => (hostTestId ? `${hostTestId}-prefix-icon` : null)),
-    suffixIcon: computed(() => (hostTestId ? `${hostTestId}-suffix-icon` : null)),
-    suffixButton: computed(() => (hostTestId ? `${hostTestId}-button` : null)),
-    helpText: computed(() => (hostTestId ? `${hostTestId}-help-text` : null)),
-    successMessage: computed(() => (hostTestId ? `${hostTestId}-success-message` : null)),
-    errorMessage: computed(() => (hostTestId ? `${hostTestId}-error-message` : null)),
+    wrapper: computed(() => {
+      const id = getHostTestId();
+      return id ? `${id}-wrapper` : null;
+    }),
+    label: computed(() => {
+      const id = getHostTestId();
+      return id ? `${id}-label` : null;
+    }),
+    input: computed(() => {
+      const id = getHostTestId();
+      return id ? `${id}-input` : null;
+    }),
+    prefixIcon: computed(() => {
+      const id = getHostTestId();
+      return id ? `${id}-prefix-icon` : null;
+    }),
+    suffixIcon: computed(() => {
+      const id = getHostTestId();
+      return id ? `${id}-suffix-icon` : null;
+    }),
+    suffixButton: computed(() => {
+      const id = getHostTestId();
+      return id ? `${id}-button` : null;
+    }),
+    helpText: computed(() => {
+      const id = getHostTestId();
+      return id ? `${id}-help-text` : null;
+    }),
+    successMessage: computed(() => {
+      const id = getHostTestId();
+      return id ? `${id}-success-message` : null;
+    }),
+    errorMessage: computed(() => {
+      const id = getHostTestId();
+      return id ? `${id}-error-message` : null;
+    }),
   };
 }

@@ -54,7 +54,7 @@ describe('ModalService', () => {
         panelClass: 'modal-panel',
         hasBackdrop: false,
         disableClose: false,
-      })
+      }),
     );
   });
 
@@ -83,7 +83,7 @@ describe('ModalService', () => {
         panelClass: 'modal-panel',
         hasBackdrop: false,
         disableClose: false,
-      })
+      }),
     );
   });
 

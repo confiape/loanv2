@@ -2,7 +2,7 @@ import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { tap, catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
-import {ToastService} from '@loan/app/shared/components/toast/toast.service';
+import { ToastService } from '@loan/app/shared/components/toast/toast.service';
 
 /**
  * HTTP Interceptor that shows toast notifications for:

@@ -1,17 +1,16 @@
 import { Component, input, output, signal, inject, OnInit } from '@angular/core';
-import {Notification} from '@loan/app/shared/components/notification-button/notification-button';
+import { Notification } from '@loan/app/shared/components/notification-button/notification-button';
 
 import { catchError, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
 
-import {UserApiService, UserDto} from '@loan/app/shared/openapi';
-import {AuthService} from '@loan/app/core/services/auth.service';
-import {SearchBarComponent} from '@loan/app/shared/components/search-bar/search-bar';
-import {
-  NotificationButtonComponent
-} from '@loan/app/shared/components/notification-button/notification-button';
-import {AppMenuItem, AppsMenuComponent} from '@loan/app/shared/components/apps-menu/apps-menu';
-import {UserMenuComponent, UserMenuItem} from '@loan/app/shared/components/user-menu/user-menu';
+import { UserApiService, UserDto } from '@loan/app/shared/openapi';
+import { AuthService } from '@loan/app/core/services/auth.service';
+import { SearchBarComponent } from '@loan/app/shared/components/search-bar/search-bar';
+import { NotificationButtonComponent } from '@loan/app/shared/components/notification-button/notification-button';
+import { AppMenuItem, AppsMenuComponent } from '@loan/app/shared/components/apps-menu/apps-menu';
+import { UserMenuComponent, UserMenuItem } from '@loan/app/shared/components/user-menu/user-menu';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
@@ -23,6 +22,7 @@ export class NavbarComponent implements OnInit {
   // Services
   private readonly userApiService = inject(UserApiService);
   private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
 
   // Signals
   currentUser = signal<UserDto | null>(null);
@@ -120,14 +120,17 @@ export class NavbarComponent implements OnInit {
   onUserMenuClick(item: UserMenuItem): void {
     // Handle logout action
     if (item.action === 'logout') {
-      this.handleLogout();
+      this.authService
+        .logout()
+        .pipe(
+          tap(() => {
+            this.router.navigate(['/login']);
+          }),
+        )
+        .subscribe();
       return;
     }
 
     this.userMenuClick.emit(item);
-  }
-
-  private handleLogout(): void {
-    this.authService.logout().subscribe();
   }
 }

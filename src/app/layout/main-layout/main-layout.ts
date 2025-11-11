@@ -3,17 +3,17 @@ import { RouterOutlet } from '@angular/router';
 import { SidenavComponent, SidenavItem } from '../sidenav/sidenav';
 import { NavbarComponent } from '../navbar/navbar';
 import { BottomNavigationComponent, BottomNavItem } from '../bottom-navigation/bottom-navigation';
-import {ToastContainerComponent} from '@loan/app/shared/components/toast/toast-container';
+import { ToastContainerComponent } from '@loan/app/shared/components/toast/toast-container';
 import {
   APPS_MENU_ITEMS,
   BOTTOM_NAV_ITEMS,
   MOCK_NOTIFICATIONS,
   SIDENAV_ITEMS,
-  USER_MENU_ITEMS
+  USER_MENU_ITEMS,
 } from '@loan/app/config/layout.config';
-import {AppMenuItem} from '@loan/app/shared/components/apps-menu/apps-menu';
-import {UserMenuItem} from '@loan/app/shared/components/user-menu/user-menu';
-import {Notification} from '@loan/app/shared/components/notification-button/notification-button';
+import { AppMenuItem } from '@loan/app/shared/components/apps-menu/apps-menu';
+import { UserMenuItem } from '@loan/app/shared/components/user-menu/user-menu';
+import { Notification } from '@loan/app/shared/components/notification-button/notification-button';
 
 @Component({
   selector: 'app-main-layout',

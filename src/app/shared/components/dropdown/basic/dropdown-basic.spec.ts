@@ -828,7 +828,7 @@ describe('DropdownBasic - Different Variants', () => {
     // Click item
     const overlayElement = overlayContainer.getContainerElement();
     const items = Array.from(
-      overlayElement.querySelectorAll('app-dropdown-basic-item button')
+      overlayElement.querySelectorAll('app-dropdown-basic-item button'),
     ) as HTMLButtonElement[];
     items[0]?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     fixture.detectChanges();

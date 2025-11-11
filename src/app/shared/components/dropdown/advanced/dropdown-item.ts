@@ -17,10 +17,7 @@ import { DropdownIcon } from './dropdown-icon';
         @switch (item.type) {
           @case ('divider') {
             <li>
-              <div
-                class="mx-2 my-1 h-px bg-border"
-                [class.my-0]="item.spacing === 'compact'"
-              ></div>
+              <div class="mx-2 my-1 h-px bg-border" [class.my-0]="item.spacing === 'compact'"></div>
             </li>
           }
           @case ('submenu') {
@@ -42,10 +39,7 @@ import { DropdownIcon } from './dropdown-icon';
               </button>
 
               @if (isPathActive(currentPath)) {
-                <div
-                  class="absolute start-full top-0 z-30 ms-2"
-                  [style.width.px]="panelWidth()"
-                >
+                <div class="absolute start-full top-0 z-30 ms-2" [style.width.px]="panelWidth()">
                   <div class="rounded-lg border border-border bg-bg-primary shadow-lg">
                     <app-dropdown-item
                       [items]="item.children"

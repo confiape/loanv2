@@ -7,7 +7,6 @@ import { AccordionItemComponent } from '@loan/app/shared/components/accordion/ac
 import { AccordionItemContentComponent } from '@loan/app/shared/components/accordion/accordion-item-content';
 import { AccordionItemHeaderComponent } from '@loan/app/shared/components/accordion/accordion-item-header';
 
-
 const meta: Meta<Accordion> = {
   title: 'UI/Accordion',
   component: Accordion,

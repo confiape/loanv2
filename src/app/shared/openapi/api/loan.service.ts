@@ -27,7 +27,7 @@ import { LoanAndPaymentDto } from '../model/loanAndPaymentDto';
 import { SaveLoanDto } from '../model/saveLoanDto';
 
 // @ts-ignore
-import { BASE_PATH, COLLECTION_FORMATS } from '../variables';
+import { BASE_PATH } from '../variables';
 import { Configuration } from '../configuration';
 
 @Injectable({

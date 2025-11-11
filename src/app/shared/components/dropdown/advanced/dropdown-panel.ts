@@ -58,10 +58,7 @@ import { DropdownFooterComponent } from './dropdown-footer';
       </div>
 
       <!-- Footer -->
-      <app-dropdown-footer
-        [action]="footerAction()"
-        (footerClick)="footerClick.emit($event)"
-      />
+      <app-dropdown-footer [action]="footerAction()" (footerClick)="footerClick.emit($event)" />
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

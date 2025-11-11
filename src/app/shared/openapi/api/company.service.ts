@@ -27,7 +27,7 @@ import { CompanyDto } from '../model/companyDto';
 import { SaveCompanyDto } from '../model/saveCompanyDto';
 
 // @ts-ignore
-import { BASE_PATH, COLLECTION_FORMATS } from '../variables';
+import { BASE_PATH } from '../variables';
 import { Configuration } from '../configuration';
 
 @Injectable({

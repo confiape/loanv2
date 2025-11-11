@@ -41,12 +41,7 @@ export type ButtonType = 'button' | 'submit' | 'reset';
           [attr.data-testid]="spinnerTestId()"
           aria-live="polite"
         >
-          <svg
-            class="h-4 w-4 animate-spin"
-            viewBox="0 0 24 24"
-            fill="none"
-            aria-hidden="true"
-          >
+          <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <circle
               class="opacity-25"
               cx="12"

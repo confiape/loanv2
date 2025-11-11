@@ -1,10 +1,6 @@
 export type DropdownOpenStrategy = 'click' | 'hover';
 
-export type DropdownPanelPlacement =
-  | 'bottom-start'
-  | 'bottom-end'
-  | 'top-start'
-  | 'top-end';
+export type DropdownPanelPlacement = 'bottom-start' | 'bottom-end' | 'top-start' | 'top-end';
 
 export type DropdownTriggerVariant = 'solid' | 'soft' | 'ghost' | 'icon';
 
@@ -108,10 +104,7 @@ export type DropdownLeafItem =
   | DropdownCheckboxItem
   | DropdownUserItem;
 
-export type DropdownItem =
-  | DropdownLeafItem
-  | DropdownDividerItem
-  | DropdownSubmenuItem;
+export type DropdownItem = DropdownLeafItem | DropdownDividerItem | DropdownSubmenuItem;
 
 export interface DropdownSection {
   id: string;

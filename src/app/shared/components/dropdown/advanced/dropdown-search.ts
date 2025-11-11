@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { DropdownSearchConfig } from './dropdown.types';
 import { DropdownIcon } from './dropdown-icon';
 
@@ -11,7 +11,9 @@ import { DropdownIcon } from './dropdown-icon';
       <div class="border-b border-border px-4 py-3">
         <label class="sr-only">{{ config()?.ariaLabel || config()?.placeholder }}</label>
         <div class="relative">
-          <span class="pointer-events-none absolute inset-y-0 start-3 flex items-center text-text-secondary">
+          <span
+            class="pointer-events-none absolute inset-y-0 start-3 flex items-center text-text-secondary"
+          >
             <app-dropdown-icon [name]="'search'" [classes]="'text-text-secondary'" />
           </span>
           <input

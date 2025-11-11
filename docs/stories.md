@@ -10,10 +10,10 @@
 Storybook documents reusable UI components in **isolation**.
 It provides:
 
-* Visual testing in **Light/Dark** mode.
-* **Responsive previews** (mobile/desktop).
-* Component **interaction and state coverage**.
-* **Automated documentation** for developers and QA.
+- Visual testing in **Light/Dark** mode.
+- **Responsive previews** (mobile/desktop).
+- Component **interaction and state coverage**.
+- **Automated documentation** for developers and QA.
 
 ---
 
@@ -40,10 +40,7 @@ Located in `src/stories/story-helpers.ts`.
 Displays Light + Dark themes side-by-side.
 
 ```ts
-template: createLightDarkComparison(
-  'app-button',
-  `[variant]="variant" [size]="size"`
-)
+template: createLightDarkComparison('app-button', `[variant]="variant" [size]="size"`);
 ```
 
 ### `createVariantComparison()`
@@ -54,8 +51,8 @@ Displays multiple variants in a grid.
 template: createVariantComparison(
   'app-alert',
   ['primary', 'success', 'error'],
-  'message="Example message"'
-)
+  'message="Example message"',
+);
 ```
 
 ### `wrapInLightDarkComparison()`
@@ -75,7 +72,7 @@ template: wrapInLightDarkComparison(`
 Shorthand helper for simple components.
 
 ```ts
-render: createLightDarkRender('app-badge', `[variant]="variant"`)
+render: createLightDarkRender('app-badge', `[variant]="variant"`);
 ```
 
 ---
@@ -132,7 +129,6 @@ export const AllVariants: Story = {
 
 ---
 
-
 ## 6. ArgTypes Best Practices
 
 | Control   | Usage                    |
@@ -150,7 +146,3 @@ args: { onClick: fn() },
 ```
 
 ---
-
-
-
-

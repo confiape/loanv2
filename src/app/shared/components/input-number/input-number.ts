@@ -12,29 +12,26 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { NgIconComponent } from '@ng-icons/core';
 import {
   InputSize,
   ValidationState,
   getLabelClasses,
   getInputClasses,
   generateInputTestIds,
-} from '../input/input-helpers';
+} from '@loan/app/shared/components/input/input-helpers';
 
 const DATA_TESTID = new HostAttributeToken('data-testid');
 
 @Component({
   selector: 'app-input-number',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, NgIconComponent],
   template: `
     <div class="w-full" [attr.data-testid]="wrapperTestId()">
       <!-- Label -->
       @if (label()) {
-        <label
-          [for]="inputId()"
-          [class]="labelClasses()"
-          [attr.data-testid]="labelTestId()"
-        >
+        <label [for]="inputId()" [class]="labelClasses()" [attr.data-testid]="labelTestId()">
           {{ label() }}
         </label>
       }
@@ -47,17 +44,14 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
             class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none"
             [attr.data-testid]="prefixIconTestId()"
           >
-            <svg
-              class="w-4 h-4"
+            <ng-icon
+              aria-hidden="true"
+              [name]="prefixIcon()!"
+              size="16"
               [class.text-text-secondary]="validationState() === 'none'"
               [class.text-success]="validationState() === 'success'"
               [class.text-error]="validationState() === 'error'"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 20 20"
-              [innerHTML]="prefixIcon()"
-            ></svg>
+            ></ng-icon>
           </div>
         }
 
@@ -94,9 +88,12 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
               [class]="incrementButtonClasses()"
               (click)="increment()"
             >
-              <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5 5 1 1 5"/>
-              </svg>
+              <ng-icon
+                aria-hidden="true"
+                name="heroChevronUp"
+                size="12"
+                class="text-text-primary"
+              ></ng-icon>
             </button>
             <button
               type="button"
@@ -105,9 +102,12 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
               [class]="decrementButtonClasses()"
               (click)="decrement()"
             >
-              <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
-              </svg>
+              <ng-icon
+                aria-hidden="true"
+                name="heroChevronDown"
+                size="12"
+                class="text-text-primary"
+              ></ng-icon>
             </button>
           </div>
         }
@@ -160,8 +160,11 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
   },
 })
 export class InputNumber implements ControlValueAccessor {
-  // Test ID from host
-  private readonly hostTestId = inject(DATA_TESTID, { optional: true });
+  private readonly injectedTestId = inject(DATA_TESTID, { optional: true });
+  readonly dataTestId = input<string | null>(null);
+  private readonly resolvedTestId = computed(
+    () => this.dataTestId() ?? this.injectedTestId ?? null,
+  );
 
   // Input properties
   readonly label = input<string>('');
@@ -196,7 +199,7 @@ export class InputNumber implements ControlValueAccessor {
   protected onTouched: () => void = () => {};
 
   // Test IDs using helper
-  private readonly testIds = generateInputTestIds(this.hostTestId);
+  private readonly testIds = generateInputTestIds(() => this.resolvedTestId());
   readonly wrapperTestId = this.testIds.wrapper;
   readonly labelTestId = this.testIds.label;
   readonly inputTestId = this.testIds.input;
@@ -206,15 +209,18 @@ export class InputNumber implements ControlValueAccessor {
   readonly errorMessageTestId = this.testIds.errorMessage;
 
   // Additional test IDs for buttons
-  readonly buttonsContainerTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-buttons` : null
-  );
-  readonly incrementButtonTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-increment` : null
-  );
-  readonly decrementButtonTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-decrement` : null
-  );
+  readonly buttonsContainerTestId = computed(() => {
+    const id = this.resolvedTestId();
+    return id ? `${id}-buttons` : null;
+  });
+  readonly incrementButtonTestId = computed(() => {
+    const id = this.resolvedTestId();
+    return id ? `${id}-increment` : null;
+  });
+  readonly decrementButtonTestId = computed(() => {
+    const id = this.resolvedTestId();
+    return id ? `${id}-decrement` : null;
+  });
 
   // Computed classes using helpers
   readonly labelClasses = computed(() => getLabelClasses(this.validationState()));
@@ -226,7 +232,7 @@ export class InputNumber implements ControlValueAccessor {
       this.disabled(),
       !!this.prefixIcon(),
       false,
-      false
+      false,
     );
 
     // Add padding for increment/decrement buttons if shown
@@ -240,7 +246,8 @@ export class InputNumber implements ControlValueAccessor {
   readonly incrementButtonClasses = computed(() => {
     const baseClasses =
       'h-1/2 px-3 bg-bg-secondary border border-border hover:bg-bg-surface focus:ring-2 focus:outline-none focus:ring-accent transition-colors';
-    const disabledClasses = 'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-bg-secondary';
+    const disabledClasses =
+      'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-bg-secondary';
     const roundedClasses = 'rounded-tr-lg';
 
     return `${baseClasses} ${disabledClasses} ${roundedClasses}`;
@@ -249,7 +256,8 @@ export class InputNumber implements ControlValueAccessor {
   readonly decrementButtonClasses = computed(() => {
     const baseClasses =
       'h-1/2 px-3 bg-bg-secondary border border-t-0 border-border hover:bg-bg-surface focus:ring-2 focus:outline-none focus:ring-accent transition-colors';
-    const disabledClasses = 'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-bg-secondary';
+    const disabledClasses =
+      'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-bg-secondary';
     const roundedClasses = 'rounded-br-lg';
 
     return `${baseClasses} ${disabledClasses} ${roundedClasses}`;

@@ -1,4 +1,18 @@
-import { Component, input, output, signal, HostListener, ElementRef, inject } from '@angular/core';
+import {
+  Component,
+  input,
+  output,
+  signal,
+  computed,
+  inject,
+  DestroyRef,
+  ChangeDetectionStrategy,
+  ElementRef,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { fromEvent } from 'rxjs';
+import { filter } from 'rxjs/operators';
+import { NgIcon } from '@ng-icons/core';
 
 export interface UserMenuItem {
   id: string;
@@ -12,120 +26,132 @@ export interface UserMenuItem {
 @Component({
   selector: 'app-user-menu',
   standalone: true,
-  template: `
-    <div class="relative inline-block">
-      <!-- User Button -->
-      <button
-        type="button"
-        class="flex mx-3 text-sm bg-accent rounded-full md:mr-0 focus:ring-4 focus:ring-border"
-        (click)="toggle()"
-        aria-label="Open user menu"
-        [attr.aria-expanded]="isOpen()"
-        aria-haspopup="true"
-      >
-        @if (userAvatar()) {
-          <img [src]="userAvatar()" [alt]="userName()" class="w-8 h-8 rounded-full" />
-        } @else {
-          <div class="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-white font-semibold text-sm">
-            {{ getUserInitials() }}
-          </div>
-        }
-      </button>
-
-      <!-- Dropdown -->
-      @if (isOpen()) {
-        <div
-          class="absolute right-0 top-full mt-2 z-50 w-56 bg-bg-primary border border-border rounded-xl shadow-lg overflow-hidden"
-          role="menu"
-          aria-label="User menu"
-        >
-          <!-- User Info -->
-          <div class="p-4 bg-bg-secondary border-b border-border">
-            <span class="block text-sm font-semibold text-text-primary">{{ userName() }}</span>
-            @if (userEmail()) {
-              <span class="block text-xs text-text-secondary truncate">{{ userEmail() }}</span>
-            }
-          </div>
-
-          <!-- Menu Items -->
-          <div class="py-2">
-            @for (item of menuItems(); track item.id) {
-              @if (item.divider) {
-                <div class="h-px bg-border my-2" role="separator"></div>
-              } @else {
-                <a
-                  [href]="item.href || '#'"
-                  class="flex items-center gap-3 px-4 py-2 text-sm text-text-primary hover:bg-bg-secondary transition-colors"
-                  (click)="onMenuItemClick(item, $event)"
-                  role="menuitem"
-                >
-                  @if (item.icon) {
-                    <span class="w-5 h-5 text-text-secondary" [innerHTML]="item.icon"></span>
-                  }
-                  <span>{{ item.label }}</span>
-                </a>
-              }
-            }
-          </div>
-        </div>
-      }
-    </div>
-  `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [NgIcon],
+  templateUrl: './user-menu.html',
 })
 export class UserMenuComponent {
   private readonly elementRef = inject(ElementRef);
+  private readonly destroyRef = inject(DestroyRef);
 
   // Inputs
-  userName = input<string>('User');
-  userEmail = input<string>('');
-  userAvatar = input<string>('');
-  menuItems = input<UserMenuItem[]>([]);
+  readonly userName = input<string>('User');
+  readonly userEmail = input<string>('');
+  readonly userAvatar = input<string>('');
+  readonly menuItems = input<UserMenuItem[]>([]);
 
   // Outputs
-  menuItemClick = output<UserMenuItem>();
+  readonly menuItemClick = output<UserMenuItem>();
+  readonly menuOpened = output<void>();
+  readonly menuClosed = output<void>();
 
   // State
-  isOpen = signal(false);
+  readonly isOpen = signal(false);
 
-  // Click outside to close
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent): void {
-    const clickedInside = this.elementRef.nativeElement.contains(event.target);
-    if (!clickedInside && this.isOpen()) {
-      this.close();
+  // Computed signals - mejor que métodos en template
+  readonly userInitials = computed(() => {
+    const name = this.userName();
+    if (!name) return 'U';
+
+    const parts = name.trim().split(/\s+/);
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
     }
+    return name.substring(0, 2).toUpperCase();
+  });
+
+  readonly hasUserInfo = computed(() => {
+    return Boolean(this.userName() || this.userEmail());
+  });
+
+  readonly visibleMenuItems = computed(() => {
+    return this.menuItems().filter((item) => !item.divider);
+  });
+
+  constructor() {
+    this.setupClickOutsideListener();
+    this.setupEscapeKeyListener();
   }
 
-  // Keyboard navigation
-  @HostListener('document:keydown.escape')
-  onEscapeKey(): void {
-    if (this.isOpen()) {
-      this.close();
-    }
+  private setupClickOutsideListener(): void {
+    fromEvent<MouseEvent>(document, 'click')
+      .pipe(
+        // Solo procesar clicks cuando el menú está abierto
+        filter(() => this.isOpen()),
+        filter((event) => {
+          const clickedInside = this.elementRef.nativeElement.contains(event.target);
+          return !clickedInside;
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(() => {
+        this.close();
+      });
+  }
+
+  private setupEscapeKeyListener(): void {
+    fromEvent<KeyboardEvent>(document, 'keydown')
+      .pipe(
+        filter(() => this.isOpen()),
+        filter((event) => event.key === 'Escape'),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(() => {
+        this.close();
+      });
   }
 
   toggle(): void {
-    this.isOpen.update((v) => !v);
+    this.isOpen.update((current) => !current);
+
+    // Emitir eventos aquí directamente
+    if (this.isOpen()) {
+      this.menuOpened.emit();
+      this.focusFirstMenuItem();
+    } else {
+      this.menuClosed.emit();
+    }
+  }
+
+  open(): void {
+    if (this.isOpen()) return; // Ya está abierto
+
+    this.isOpen.set(true);
+    this.menuOpened.emit();
+    this.focusFirstMenuItem();
   }
 
   close(): void {
+    if (!this.isOpen()) return; // Ya está cerrado
+
     this.isOpen.set(false);
+    this.menuClosed.emit();
   }
 
   onMenuItemClick(item: UserMenuItem, event: Event): void {
     if (item.divider) return;
-    event.preventDefault();
+
+    // Prevenir navegación solo si hay una acción o no hay href
+    if (item.action || !item.href) {
+      event.preventDefault();
+    }
+
     this.menuItemClick.emit(item);
     this.close();
   }
 
-  getUserInitials(): string {
-    const name = this.userName();
-    if (!name) return 'U';
-    const parts = name.split(' ');
-    if (parts.length >= 2) {
-      return (parts[0][0] + parts[1][0]).toUpperCase();
-    }
-    return name.substring(0, 2).toUpperCase();
+  private focusFirstMenuItem(): void {
+    // Usar setTimeout para esperar a que el DOM se actualice
+    setTimeout(() => {
+      const firstMenuItem = this.elementRef.nativeElement.querySelector('[role="menuitem"]');
+      if (firstMenuItem) {
+        (firstMenuItem as HTMLElement).focus();
+      }
+    }, 0);
+  }
+
+  // Método helper para template (si es necesario)
+  trackByItemId(index: number, item: UserMenuItem): string {
+    return item.id;
   }
 }

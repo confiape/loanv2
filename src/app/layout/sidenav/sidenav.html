@@ -27,7 +27,9 @@
 
       <!-- Header Text -->
       @if (header() && !isCollapsed()) {
-        <h2 class="text-lg font-semibold text-text-primary m-0 whitespace-nowrap overflow-hidden text-ellipsis flex-1">
+        <h2
+          class="text-lg font-semibold text-text-primary m-0 whitespace-nowrap overflow-hidden text-ellipsis flex-1"
+        >
           {{ header() }}
         </h2>
       }
@@ -42,7 +44,15 @@
           aria-label="Toggle sidebar"
         >
           <ng-icon
-            [name]="position() === 'left' ? (isCollapsed() ? 'heroChevronRight' : 'heroChevronLeft') : (isCollapsed() ? 'heroChevronLeft' : 'heroChevronRight')"
+            [name]="
+              position() === 'left'
+                ? isCollapsed()
+                  ? 'heroChevronRight'
+                  : 'heroChevronLeft'
+                : isCollapsed()
+                  ? 'heroChevronLeft'
+                  : 'heroChevronRight'
+            "
             size="20"
             class="transition-transform duration-300"
           ></ng-icon>

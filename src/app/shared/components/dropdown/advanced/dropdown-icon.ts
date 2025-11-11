@@ -16,7 +16,13 @@ import { DropdownIconName } from './dropdown.types';
           fill="none"
           aria-hidden="true"
         >
-          <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+          <path
+            d="M5 7.5L10 12.5L15 7.5"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
         </svg>
       }
       @case ('chevron-right') {
@@ -27,7 +33,13 @@ import { DropdownIconName } from './dropdown.types';
           fill="none"
           aria-hidden="true"
         >
-          <path d="M7.5 5L12.5 10L7.5 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+          <path
+            d="M7.5 5L12.5 10L7.5 15"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
         </svg>
       }
       @case ('chevron-left') {
@@ -38,7 +50,13 @@ import { DropdownIconName } from './dropdown.types';
           fill="none"
           aria-hidden="true"
         >
-          <path d="M12.5 5L7.5 10L12.5 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+          <path
+            d="M12.5 5L7.5 10L12.5 15"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
         </svg>
       }
       @case ('dots-vertical') {
@@ -49,7 +67,9 @@ import { DropdownIconName } from './dropdown.types';
           fill="currentColor"
           aria-hidden="true"
         >
-          <path d="M3.5 1.5A1.5 1.5 0 1 1 .5 1.5a1.5 1.5 0 0 1 3 0Zm0 6.041a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 5.959a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z" />
+          <path
+            d="M3.5 1.5A1.5 1.5 0 1 1 .5 1.5a1.5 1.5 0 0 1 3 0Zm0 6.041a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 5.959a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z"
+          />
         </svg>
       }
       @case ('dots-horizontal') {
@@ -60,7 +80,9 @@ import { DropdownIconName } from './dropdown.types';
           fill="currentColor"
           aria-hidden="true"
         >
-          <path d="M2 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm6.041 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM14 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z" />
+          <path
+            d="M2 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm6.041 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM14 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z"
+          />
         </svg>
       }
       @case ('plus') {
@@ -71,7 +93,9 @@ import { DropdownIconName } from './dropdown.types';
           fill="currentColor"
           aria-hidden="true"
         >
-          <path d="M10 4a1 1 0 0 1 1 1v4h4a1 1 0 0 1 0 2h-4v4a1 1 0 1 1-2 0v-4H5a1 1 0 1 1 0-2h4V5a1 1 0 0 1 1-1Z" />
+          <path
+            d="M10 4a1 1 0 0 1 1 1v4h4a1 1 0 0 1 0 2h-4v4a1 1 0 1 1-2 0v-4H5a1 1 0 1 1 0-2h4V5a1 1 0 0 1 1-1Z"
+          />
         </svg>
       }
       @case ('minus') {

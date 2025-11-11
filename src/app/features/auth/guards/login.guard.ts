@@ -2,7 +2,7 @@ import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { map, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
-import {AuthService} from '@loan/app/core/services/auth.service';
+import { AuthService } from '@loan/app/core/services/auth.service';
 
 /**
  * Login Guard

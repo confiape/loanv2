@@ -9,8 +9,12 @@ import { ButtonGroupButton } from './button-group-button';
   imports: [ButtonGroup, ButtonGroupButton],
   template: `
     <app-button-group [variant]="variant" [ariaLabel]="ariaLabel">
-      <app-button-group-button [position]="'first'" [variant]="variant">Button 1</app-button-group-button>
-      <app-button-group-button [position]="'last'" [variant]="variant">Button 2</app-button-group-button>
+      <app-button-group-button [position]="'first'" [variant]="variant"
+        >Button 1</app-button-group-button
+      >
+      <app-button-group-button [position]="'last'" [variant]="variant"
+        >Button 2</app-button-group-button
+      >
     </app-button-group>
   `,
 })

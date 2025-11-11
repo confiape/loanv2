@@ -43,7 +43,7 @@ export class ButtonGroupButton {
   readonly buttonClick = output<MouseEvent>();
 
   protected readonly buttonTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-button` : null
+    this.hostTestId ? `${this.hostTestId}-button` : null,
   );
 
   protected readonly buttonClasses = computed(() => {
@@ -61,7 +61,8 @@ export class ButtonGroupButton {
       classes += ' focus:ring-text-secondary focus:bg-text-primary focus:text-bg-primary';
     } else {
       // default variant
-      classes += ' bg-bg-primary border-border text-text-primary hover:bg-bg-secondary hover:text-accent';
+      classes +=
+        ' bg-bg-primary border-border text-text-primary hover:bg-bg-secondary hover:text-accent';
       classes += ' focus:ring-accent focus:text-accent';
     }
 

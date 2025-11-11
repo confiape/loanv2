@@ -1,1084 +1,1051 @@
 {
-    "pipes": [],
-    "interfaces": [
+  "pipes": [],
+  "interfaces": [
+    {
+      "name": "AccordionItem",
+      "id": "interface-AccordionItem-227d7f5b01b3c1fd675533faddd5102a9f5e19860a3f103e3af3494fed0f4637adc8006a778eca39c68bdaefca64d62608eafa89a1e9fe2447dc91175bab0ed1",
+      "file": "src/app/shared/components/accordion/accordion.ts",
+      "deprecated": false,
+      "deprecationMessage": "",
+      "type": "interface",
+      "sourceCode": "import { Component, input, output, signal, computed, ChangeDetectionStrategy, contentChildren } from '@angular/core';\nimport { CommonModule } from '@angular/common';\nimport { AccordionItemComponent } from './accordion-item';\n\nexport interface AccordionItem {\n  id: string;\n  title: string;\n  content?: string;\n  disabled?: boolean;\n  expanded?: boolean;\n}\n\n@Component({\n  selector: 'app-accordion',\n  standalone: true,\n  imports: [CommonModule],\n  template: '<ng-content></ng-content>',\n  changeDetection: ChangeDetectionStrategy.OnPush,\n  host: {\n    class: 'block'\n  }\n})\nexport class Accordion {\n  readonly items = input<AccordionItem[]>([]);\n  readonly allowMultiple = input(false);\n  readonly itemSelected = output<string>();\n\n  readonly contentItems = contentChildren(AccordionItemComponent);\n\n  readonly userExpandedItems = signal<Set<string> | null>(null);\n\n  readonly expandedItems = computed(() => {\n    const userExpanded = this.userExpandedItems();\n\n    // If user has interacted, use their selection\n    if (userExpanded !== null) {\n      return userExpanded;\n    }\n\n    // Otherwise, use initial expanded state from inputs\n    const initialExpanded = this.getInitialExpanded();\n    return new Set(initialExpanded);\n  });\n\n  private getInitialExpanded(): string[] {\n    const items = this.contentItems();\n    if (items.length > 0) {\n      return items\n        .filter(item => item.expanded())\n        .map(item => item.id());\n    }\n    return this.items().filter(item => item.expanded).map(item => item.id);\n  }\n\n  getContentItems(): readonly AccordionItemComponent[] {\n    return this.contentItems();\n  }\n\n  toggleItem(itemId: string): void {\n    const contentItem = this.contentItems().find(i => i.id() === itemId);\n\n    if (contentItem?.disabled()) {\n      return;\n    }\n\n    // Initialize user expanded items on first interaction if not already done\n    if (this.userExpandedItems() === null) {\n      this.userExpandedItems.set(new Set(this.getInitialExpanded()));\n    }\n\n    const updated = new Set(this.expandedItems());\n    const isCurrentlyExpanded = updated.has(itemId);\n\n    if (isCurrentlyExpanded) {\n      updated.delete(itemId);\n    } else {\n      if (!this.allowMultiple()) {\n        updated.clear();\n      }\n      updated.add(itemId);\n    }\n\n    this.userExpandedItems.set(updated);\n    this.itemSelected.emit(itemId);\n  }\n\n  isExpanded(itemId: string): boolean {\n    return this.expandedItems().has(itemId);\n  }\n\n  onKeyDown(event: KeyboardEvent, itemId: string): void {\n    if (event.key === 'Escape') {\n      this.userExpandedItems.set(new Set());\n      event.preventDefault();\n    } else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {\n      event.preventDefault();\n      const items = this.contentItems();\n      const currentIndex = items.findIndex(i => i.id() === itemId);\n\n      if (event.key === 'ArrowDown' && currentIndex < items.length - 1) {\n        const nextItem = items[currentIndex + 1];\n        this.focusItem(nextItem);\n      } else if (event.key === 'ArrowUp' && currentIndex > 0) {\n        const prevItem = items[currentIndex - 1];\n        this.focusItem(prevItem);\n      }\n    }\n  }\n\n  private focusItem(item: AccordionItemComponent): void {\n    item.focusButton();\n  }\n}\n",
+      "properties": [
         {
-            "name": "AccordionItem",
-            "id": "interface-AccordionItem-227d7f5b01b3c1fd675533faddd5102a9f5e19860a3f103e3af3494fed0f4637adc8006a778eca39c68bdaefca64d62608eafa89a1e9fe2447dc91175bab0ed1",
-            "file": "src/app/shared/components/accordion/accordion.ts",
-            "deprecated": false,
-            "deprecationMessage": "",
-            "type": "interface",
-            "sourceCode": "import { Component, input, output, signal, computed, ChangeDetectionStrategy, contentChildren } from '@angular/core';\nimport { CommonModule } from '@angular/common';\nimport { AccordionItemComponent } from './accordion-item';\n\nexport interface AccordionItem {\n  id: string;\n  title: string;\n  content?: string;\n  disabled?: boolean;\n  expanded?: boolean;\n}\n\n@Component({\n  selector: 'app-accordion',\n  standalone: true,\n  imports: [CommonModule],\n  template: '<ng-content></ng-content>',\n  changeDetection: ChangeDetectionStrategy.OnPush,\n  host: {\n    class: 'block'\n  }\n})\nexport class Accordion {\n  readonly items = input<AccordionItem[]>([]);\n  readonly allowMultiple = input(false);\n  readonly itemSelected = output<string>();\n\n  readonly contentItems = contentChildren(AccordionItemComponent);\n\n  readonly userExpandedItems = signal<Set<string> | null>(null);\n\n  readonly expandedItems = computed(() => {\n    const userExpanded = this.userExpandedItems();\n\n    // If user has interacted, use their selection\n    if (userExpanded !== null) {\n      return userExpanded;\n    }\n\n    // Otherwise, use initial expanded state from inputs\n    const initialExpanded = this.getInitialExpanded();\n    return new Set(initialExpanded);\n  });\n\n  private getInitialExpanded(): string[] {\n    const items = this.contentItems();\n    if (items.length > 0) {\n      return items\n        .filter(item => item.expanded())\n        .map(item => item.id());\n    }\n    return this.items().filter(item => item.expanded).map(item => item.id);\n  }\n\n  getContentItems(): readonly AccordionItemComponent[] {\n    return this.contentItems();\n  }\n\n  toggleItem(itemId: string): void {\n    const contentItem = this.contentItems().find(i => i.id() === itemId);\n\n    if (contentItem?.disabled()) {\n      return;\n    }\n\n    // Initialize user expanded items on first interaction if not already done\n    if (this.userExpandedItems() === null) {\n      this.userExpandedItems.set(new Set(this.getInitialExpanded()));\n    }\n\n    const updated = new Set(this.expandedItems());\n    const isCurrentlyExpanded = updated.has(itemId);\n\n    if (isCurrentlyExpanded) {\n      updated.delete(itemId);\n    } else {\n      if (!this.allowMultiple()) {\n        updated.clear();\n      }\n      updated.add(itemId);\n    }\n\n    this.userExpandedItems.set(updated);\n    this.itemSelected.emit(itemId);\n  }\n\n  isExpanded(itemId: string): boolean {\n    return this.expandedItems().has(itemId);\n  }\n\n  onKeyDown(event: KeyboardEvent, itemId: string): void {\n    if (event.key === 'Escape') {\n      this.userExpandedItems.set(new Set());\n      event.preventDefault();\n    } else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {\n      event.preventDefault();\n      const items = this.contentItems();\n      const currentIndex = items.findIndex(i => i.id() === itemId);\n\n      if (event.key === 'ArrowDown' && currentIndex < items.length - 1) {\n        const nextItem = items[currentIndex + 1];\n        this.focusItem(nextItem);\n      } else if (event.key === 'ArrowUp' && currentIndex > 0) {\n        const prevItem = items[currentIndex - 1];\n        this.focusItem(prevItem);\n      }\n    }\n  }\n\n  private focusItem(item: AccordionItemComponent): void {\n    item.focusButton();\n  }\n}\n",
-            "properties": [
-                {
-                    "name": "content",
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "type": "string",
-                    "indexKey": "",
-                    "optional": true,
-                    "description": "",
-                    "line": 8
-                },
-                {
-                    "name": "disabled",
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "type": "boolean",
-                    "indexKey": "",
-                    "optional": true,
-                    "description": "",
-                    "line": 9
-                },
-                {
-                    "name": "expanded",
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "type": "boolean",
-                    "indexKey": "",
-                    "optional": true,
-                    "description": "",
-                    "line": 10
-                },
-                {
-                    "name": "id",
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "type": "string",
-                    "indexKey": "",
-                    "optional": false,
-                    "description": "",
-                    "line": 6
-                },
-                {
-                    "name": "title",
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "type": "string",
-                    "indexKey": "",
-                    "optional": false,
-                    "description": "",
-                    "line": 7
-                }
-            ],
-            "indexSignatures": [],
-            "kind": 172,
-            "methods": [],
-            "extends": []
+          "name": "content",
+          "deprecated": false,
+          "deprecationMessage": "",
+          "type": "string",
+          "indexKey": "",
+          "optional": true,
+          "description": "",
+          "line": 8
+        },
+        {
+          "name": "disabled",
+          "deprecated": false,
+          "deprecationMessage": "",
+          "type": "boolean",
+          "indexKey": "",
+          "optional": true,
+          "description": "",
+          "line": 9
+        },
+        {
+          "name": "expanded",
+          "deprecated": false,
+          "deprecationMessage": "",
+          "type": "boolean",
+          "indexKey": "",
+          "optional": true,
+          "description": "",
+          "line": 10
+        },
+        {
+          "name": "id",
+          "deprecated": false,
+          "deprecationMessage": "",
+          "type": "string",
+          "indexKey": "",
+          "optional": false,
+          "description": "",
+          "line": 6
+        },
+        {
+          "name": "title",
+          "deprecated": false,
+          "deprecationMessage": "",
+          "type": "string",
+          "indexKey": "",
+          "optional": false,
+          "description": "",
+          "line": 7
         }
-    ],
-    "injectables": [],
-    "guards": [],
-    "interceptors": [],
-    "classes": [],
-    "directives": [],
-    "components": [
-        {
-            "name": "Accordion",
-            "id": "component-Accordion-227d7f5b01b3c1fd675533faddd5102a9f5e19860a3f103e3af3494fed0f4637adc8006a778eca39c68bdaefca64d62608eafa89a1e9fe2447dc91175bab0ed1",
-            "file": "src/app/shared/components/accordion/accordion.ts",
-            "changeDetection": "ChangeDetectionStrategy.OnPush",
-            "encapsulation": [],
-            "entryComponents": [],
-            "host": {},
-            "inputs": [],
-            "outputs": [],
-            "providers": [],
-            "selector": "app-accordion",
-            "styleUrls": [],
-            "styles": [],
-            "template": "<ng-content></ng-content>",
-            "templateUrl": [],
-            "viewProviders": [],
-            "hostDirectives": [],
-            "inputsClass": [
-                {
-                    "name": "allowMultiple",
-                    "defaultValue": "false",
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "indexKey": "",
-                    "optional": false,
-                    "description": "",
-                    "line": 25,
-                    "modifierKind": [
-                        148
-                    ],
-                    "required": false
-                },
-                {
-                    "name": "items",
-                    "defaultValue": "[]",
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "type": "AccordionItem[]",
-                    "indexKey": "",
-                    "optional": false,
-                    "description": "",
-                    "line": 24,
-                    "modifierKind": [
-                        148
-                    ],
-                    "required": false
-                }
-            ],
-            "outputsClass": [
-                {
-                    "name": "itemSelected",
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "type": "string",
-                    "indexKey": "",
-                    "optional": false,
-                    "description": "",
-                    "line": 26,
-                    "modifierKind": [
-                        148
-                    ],
-                    "required": false
-                }
-            ],
-            "propertiesClass": [
-                {
-                    "name": "contentItems",
-                    "defaultValue": "contentChildren(AccordionItemComponent)",
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "type": "unknown",
-                    "indexKey": "",
-                    "optional": false,
-                    "description": "",
-                    "line": 28,
-                    "modifierKind": [
-                        148
-                    ]
-                },
-                {
-                    "name": "expandedItems",
-                    "defaultValue": "computed(() => {\n    const userExpanded = this.userExpandedItems();\n\n    // If user has interacted, use their selection\n    if (userExpanded !== null) {\n      return userExpanded;\n    }\n\n    // Otherwise, use initial expanded state from inputs\n    const initialExpanded = this.getInitialExpanded();\n    return new Set(initialExpanded);\n  })",
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "type": "unknown",
-                    "indexKey": "",
-                    "optional": false,
-                    "description": "",
-                    "line": 32,
-                    "modifierKind": [
-                        148
-                    ]
-                },
-                {
-                    "name": "userExpandedItems",
-                    "defaultValue": "signal<Set<string> | null>(null)",
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "type": "unknown",
-                    "indexKey": "",
-                    "optional": false,
-                    "description": "",
-                    "line": 30,
-                    "modifierKind": [
-                        148
-                    ]
-                }
-            ],
-            "methodsClass": [
-                {
-                    "name": "focusItem",
-                    "args": [
-                        {
-                            "name": "item",
-                            "type": "AccordionItemComponent",
-                            "deprecated": false,
-                            "deprecationMessage": ""
-                        }
-                    ],
-                    "optional": false,
-                    "returnType": "void",
-                    "typeParameters": [],
-                    "line": 110,
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "modifierKind": [
-                        123
-                    ],
-                    "jsdoctags": [
-                        {
-                            "name": "item",
-                            "type": "AccordionItemComponent",
-                            "deprecated": false,
-                            "deprecationMessage": "",
-                            "tagName": {
-                                "text": "param"
-                            }
-                        }
-                    ]
-                },
-                {
-                    "name": "getContentItems",
-                    "args": [],
-                    "optional": false,
-                    "returnType": "AccordionItemComponent[]",
-                    "typeParameters": [],
-                    "line": 55,
-                    "deprecated": false,
-                    "deprecationMessage": ""
-                },
-                {
-                    "name": "getInitialExpanded",
-                    "args": [],
-                    "optional": false,
-                    "returnType": "string[]",
-                    "typeParameters": [],
-                    "line": 45,
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "modifierKind": [
-                        123
-                    ]
-                },
-                {
-                    "name": "isExpanded",
-                    "args": [
-                        {
-                            "name": "itemId",
-                            "type": "string",
-                            "deprecated": false,
-                            "deprecationMessage": ""
-                        }
-                    ],
-                    "optional": false,
-                    "returnType": "boolean",
-                    "typeParameters": [],
-                    "line": 87,
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "jsdoctags": [
-                        {
-                            "name": "itemId",
-                            "type": "string",
-                            "deprecated": false,
-                            "deprecationMessage": "",
-                            "tagName": {
-                                "text": "param"
-                            }
-                        }
-                    ]
-                },
-                {
-                    "name": "onKeyDown",
-                    "args": [
-                        {
-                            "name": "event",
-                            "type": "KeyboardEvent",
-                            "deprecated": false,
-                            "deprecationMessage": ""
-                        },
-                        {
-                            "name": "itemId",
-                            "type": "string",
-                            "deprecated": false,
-                            "deprecationMessage": ""
-                        }
-                    ],
-                    "optional": false,
-                    "returnType": "void",
-                    "typeParameters": [],
-                    "line": 91,
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "jsdoctags": [
-                        {
-                            "name": "event",
-                            "type": "KeyboardEvent",
-                            "deprecated": false,
-                            "deprecationMessage": "",
-                            "tagName": {
-                                "text": "param"
-                            }
-                        },
-                        {
-                            "name": "itemId",
-                            "type": "string",
-                            "deprecated": false,
-                            "deprecationMessage": "",
-                            "tagName": {
-                                "text": "param"
-                            }
-                        }
-                    ]
-                },
-                {
-                    "name": "toggleItem",
-                    "args": [
-                        {
-                            "name": "itemId",
-                            "type": "string",
-                            "deprecated": false,
-                            "deprecationMessage": ""
-                        }
-                    ],
-                    "optional": false,
-                    "returnType": "void",
-                    "typeParameters": [],
-                    "line": 59,
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "jsdoctags": [
-                        {
-                            "name": "itemId",
-                            "type": "string",
-                            "deprecated": false,
-                            "deprecationMessage": "",
-                            "tagName": {
-                                "text": "param"
-                            }
-                        }
-                    ]
-                }
-            ],
-            "deprecated": false,
-            "deprecationMessage": "",
-            "hostBindings": [],
-            "hostListeners": [],
-            "standalone": true,
-            "imports": [
-                {
-                    "name": "CommonModule",
-                    "type": "module"
-                }
-            ],
-            "description": "",
-            "rawdescription": "\n",
-            "type": "component",
-            "sourceCode": "import { Component, input, output, signal, computed, ChangeDetectionStrategy, contentChildren } from '@angular/core';\nimport { CommonModule } from '@angular/common';\nimport { AccordionItemComponent } from './accordion-item';\n\nexport interface AccordionItem {\n  id: string;\n  title: string;\n  content?: string;\n  disabled?: boolean;\n  expanded?: boolean;\n}\n\n@Component({\n  selector: 'app-accordion',\n  standalone: true,\n  imports: [CommonModule],\n  template: '<ng-content></ng-content>',\n  changeDetection: ChangeDetectionStrategy.OnPush,\n  host: {\n    class: 'block'\n  }\n})\nexport class Accordion {\n  readonly items = input<AccordionItem[]>([]);\n  readonly allowMultiple = input(false);\n  readonly itemSelected = output<string>();\n\n  readonly contentItems = contentChildren(AccordionItemComponent);\n\n  readonly userExpandedItems = signal<Set<string> | null>(null);\n\n  readonly expandedItems = computed(() => {\n    const userExpanded = this.userExpandedItems();\n\n    // If user has interacted, use their selection\n    if (userExpanded !== null) {\n      return userExpanded;\n    }\n\n    // Otherwise, use initial expanded state from inputs\n    const initialExpanded = this.getInitialExpanded();\n    return new Set(initialExpanded);\n  });\n\n  private getInitialExpanded(): string[] {\n    const items = this.contentItems();\n    if (items.length > 0) {\n      return items\n        .filter(item => item.expanded())\n        .map(item => item.id());\n    }\n    return this.items().filter(item => item.expanded).map(item => item.id);\n  }\n\n  getContentItems(): readonly AccordionItemComponent[] {\n    return this.contentItems();\n  }\n\n  toggleItem(itemId: string): void {\n    const contentItem = this.contentItems().find(i => i.id() === itemId);\n\n    if (contentItem?.disabled()) {\n      return;\n    }\n\n    // Initialize user expanded items on first interaction if not already done\n    if (this.userExpandedItems() === null) {\n      this.userExpandedItems.set(new Set(this.getInitialExpanded()));\n    }\n\n    const updated = new Set(this.expandedItems());\n    const isCurrentlyExpanded = updated.has(itemId);\n\n    if (isCurrentlyExpanded) {\n      updated.delete(itemId);\n    } else {\n      if (!this.allowMultiple()) {\n        updated.clear();\n      }\n      updated.add(itemId);\n    }\n\n    this.userExpandedItems.set(updated);\n    this.itemSelected.emit(itemId);\n  }\n\n  isExpanded(itemId: string): boolean {\n    return this.expandedItems().has(itemId);\n  }\n\n  onKeyDown(event: KeyboardEvent, itemId: string): void {\n    if (event.key === 'Escape') {\n      this.userExpandedItems.set(new Set());\n      event.preventDefault();\n    } else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {\n      event.preventDefault();\n      const items = this.contentItems();\n      const currentIndex = items.findIndex(i => i.id() === itemId);\n\n      if (event.key === 'ArrowDown' && currentIndex < items.length - 1) {\n        const nextItem = items[currentIndex + 1];\n        this.focusItem(nextItem);\n      } else if (event.key === 'ArrowUp' && currentIndex > 0) {\n        const prevItem = items[currentIndex - 1];\n        this.focusItem(prevItem);\n      }\n    }\n  }\n\n  private focusItem(item: AccordionItemComponent): void {\n    item.focusButton();\n  }\n}\n",
-            "assetsDirs": [],
-            "styleUrlsData": "",
-            "stylesData": "",
-            "extends": []
-        },
-        {
-            "name": "AccordionItemComponent",
-            "id": "component-AccordionItemComponent-b215225acd764c60d1a335afb26081b8b59f82c87319a377b46a0a9740edd558ddbdc142a36b823b8ecd7b69f299d00f48e89a1ed9e3e24123d9f814088bc897",
-            "file": "src/app/shared/components/accordion/accordion-item.ts",
-            "changeDetection": "ChangeDetectionStrategy.OnPush",
-            "encapsulation": [],
-            "entryComponents": [],
-            "host": {},
-            "inputs": [],
-            "outputs": [],
-            "providers": [],
-            "selector": "app-accordion-item",
-            "styleUrls": [],
-            "styles": [],
-            "template": "<div class=\"accordion-item-wrapper\">\n  <h2 class=\"accordion-heading\">\n    <button\n      #accordionButton\n      type=\"button\"\n      class=\"flex items-center justify-between w-full p-5 font-medium rtl:text-right text-text-secondary border border-b-0 border-border rounded-t-xl focus:ring-4 focus:ring-bg-surface border-border text-text-secondary hover:bg-bg-surface gap-3 transition-colors disabled:opacity-50 disabled:cursor-not-allowed\"\n      [class.!rounded-none]=\"isNotFirst()\"\n      [class.!border-b]=\"isLast()\"\n      [attr.aria-expanded]=\"isExpanded()\"\n      [attr.id]=\"'accordion-button-' + id()\"\n      (click)=\"onToggle()\"\n      (keydown)=\"onKeyDown($event)\"\n      [disabled]=\"disabled()\">\n      <span><ng-content select=\"app-accordion-item-header\"></ng-content></span>\n      <svg\n        class=\"w-3 h-3 rotate-180 shrink-0 transition-transform\"\n        [class.!rotate-0]=\"isExpanded()\"\n        aria-hidden=\"true\"\n        xmlns=\"http://www.w3.org/2000/svg\"\n        fill=\"none\"\n        viewBox=\"0 0 10 6\">\n        <path\n          stroke=\"currentColor\"\n          stroke-linecap=\"round\"\n          stroke-linejoin=\"round\"\n          stroke-width=\"2\"\n          d=\"M9 5 5 1 1 5\"/>\n      </svg>\n    </button>\n  </h2>\n  <div\n    class=\"accordion-body\"\n    [class.hidden]=\"!isExpanded()\"\n    [class.!border-b]=\"isLast()\">\n    <ng-content select=\"app-accordion-item-content\"></ng-content>\n  </div>\n</div>\n",
-            "templateUrl": [],
-            "viewProviders": [],
-            "hostDirectives": [],
-            "inputsClass": [
-                {
-                    "name": "disabled",
-                    "defaultValue": "false",
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "indexKey": "",
-                    "optional": false,
-                    "description": "",
-                    "line": 56,
-                    "modifierKind": [
-                        148
-                    ],
-                    "required": false
-                },
-                {
-                    "name": "expanded",
-                    "defaultValue": "false",
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "indexKey": "",
-                    "optional": false,
-                    "description": "",
-                    "line": 57,
-                    "modifierKind": [
-                        148
-                    ],
-                    "required": false
-                },
-                {
-                    "name": "id",
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "type": "string",
-                    "indexKey": "",
-                    "optional": false,
-                    "description": "",
-                    "line": 55,
-                    "modifierKind": [
-                        148
-                    ],
-                    "required": true
-                }
-            ],
-            "outputsClass": [],
-            "propertiesClass": [
-                {
-                    "name": "accordion",
-                    "defaultValue": "inject(Accordion)",
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "type": "unknown",
-                    "indexKey": "",
-                    "optional": false,
-                    "description": "",
-                    "line": 59,
-                    "modifierKind": [
-                        123,
-                        148
-                    ]
-                },
-                {
-                    "name": "buttonRef",
-                    "defaultValue": "viewChild<ElementRef<HTMLButtonElement>>('accordionButton')",
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "type": "unknown",
-                    "indexKey": "",
-                    "optional": false,
-                    "description": "",
-                    "line": 60,
-                    "modifierKind": [
-                        123,
-                        148
-                    ]
-                }
-            ],
-            "methodsClass": [
-                {
-                    "name": "focusButton",
-                    "args": [],
-                    "optional": false,
-                    "returnType": "void",
-                    "typeParameters": [],
-                    "line": 84,
-                    "deprecated": false,
-                    "deprecationMessage": ""
-                },
-                {
-                    "name": "isExpanded",
-                    "args": [],
-                    "optional": false,
-                    "returnType": "boolean",
-                    "typeParameters": [],
-                    "line": 62,
-                    "deprecated": false,
-                    "deprecationMessage": ""
-                },
-                {
-                    "name": "isLast",
-                    "args": [],
-                    "optional": false,
-                    "returnType": "boolean",
-                    "typeParameters": [],
-                    "line": 71,
-                    "deprecated": false,
-                    "deprecationMessage": ""
-                },
-                {
-                    "name": "isNotFirst",
-                    "args": [],
-                    "optional": false,
-                    "returnType": "boolean",
-                    "typeParameters": [],
-                    "line": 66,
-                    "deprecated": false,
-                    "deprecationMessage": ""
-                },
-                {
-                    "name": "onKeyDown",
-                    "args": [
-                        {
-                            "name": "event",
-                            "type": "KeyboardEvent",
-                            "deprecated": false,
-                            "deprecationMessage": ""
-                        }
-                    ],
-                    "optional": false,
-                    "returnType": "void",
-                    "typeParameters": [],
-                    "line": 80,
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "jsdoctags": [
-                        {
-                            "name": "event",
-                            "type": "KeyboardEvent",
-                            "deprecated": false,
-                            "deprecationMessage": "",
-                            "tagName": {
-                                "text": "param"
-                            }
-                        }
-                    ]
-                },
-                {
-                    "name": "onToggle",
-                    "args": [],
-                    "optional": false,
-                    "returnType": "void",
-                    "typeParameters": [],
-                    "line": 76,
-                    "deprecated": false,
-                    "deprecationMessage": ""
-                }
-            ],
-            "deprecated": false,
-            "deprecationMessage": "",
-            "hostBindings": [],
-            "hostListeners": [],
-            "standalone": true,
-            "imports": [
-                {
-                    "name": "CommonModule",
-                    "type": "module"
-                }
-            ],
-            "description": "",
-            "rawdescription": "\n",
-            "type": "component",
-            "sourceCode": "import { Component, input, ChangeDetectionStrategy, inject, viewChild, ElementRef } from '@angular/core';\nimport { CommonModule } from '@angular/common';\nimport { Accordion } from './accordion';\n\n@Component({\n  selector: 'app-accordion-item',\n  standalone: true,\n  imports: [CommonModule],\n  template: `\n    <div class=\"accordion-item-wrapper\">\n      <h2 class=\"accordion-heading\">\n        <button\n          #accordionButton\n          type=\"button\"\n          class=\"flex items-center justify-between w-full p-5 font-medium rtl:text-right text-text-secondary border border-b-0 border-border rounded-t-xl focus:ring-4 focus:ring-bg-surface border-border text-text-secondary hover:bg-bg-surface gap-3 transition-colors disabled:opacity-50 disabled:cursor-not-allowed\"\n          [class.!rounded-none]=\"isNotFirst()\"\n          [class.!border-b]=\"isLast()\"\n          [attr.aria-expanded]=\"isExpanded()\"\n          [attr.id]=\"'accordion-button-' + id()\"\n          (click)=\"onToggle()\"\n          (keydown)=\"onKeyDown($event)\"\n          [disabled]=\"disabled()\">\n          <span><ng-content select=\"app-accordion-item-header\"></ng-content></span>\n          <svg\n            class=\"w-3 h-3 rotate-180 shrink-0 transition-transform\"\n            [class.!rotate-0]=\"isExpanded()\"\n            aria-hidden=\"true\"\n            xmlns=\"http://www.w3.org/2000/svg\"\n            fill=\"none\"\n            viewBox=\"0 0 10 6\">\n            <path\n              stroke=\"currentColor\"\n              stroke-linecap=\"round\"\n              stroke-linejoin=\"round\"\n              stroke-width=\"2\"\n              d=\"M9 5 5 1 1 5\"/>\n          </svg>\n        </button>\n      </h2>\n      <div\n        class=\"accordion-body\"\n        [class.hidden]=\"!isExpanded()\"\n        [class.!border-b]=\"isLast()\">\n        <ng-content select=\"app-accordion-item-content\"></ng-content>\n      </div>\n    </div>\n  `,\n  styleUrl: './accordion.css',\n  changeDetection: ChangeDetectionStrategy.OnPush,\n  host: {\n    class: 'block'\n  }\n})\nexport class AccordionItemComponent {\n  readonly id = input.required<string>();\n  readonly disabled = input(false);\n  readonly expanded = input(false);\n\n  private readonly accordion = inject(Accordion);\n  private readonly buttonRef = viewChild<ElementRef<HTMLButtonElement>>('accordionButton');\n\n  isExpanded(): boolean {\n    return this.accordion.isExpanded(this.id());\n  }\n\n  isNotFirst(): boolean {\n    const items = this.accordion.getContentItems();\n    return items.indexOf(this) > 0;\n  }\n\n  isLast(): boolean {\n    const items = this.accordion.getContentItems();\n    return items.indexOf(this) === items.length - 1;\n  }\n\n  onToggle(): void {\n    this.accordion.toggleItem(this.id());\n  }\n\n  onKeyDown(event: KeyboardEvent): void {\n    this.accordion.onKeyDown(event, this.id());\n  }\n\n  focusButton(): void {\n    const button = this.buttonRef();\n    if (button) {\n      button.nativeElement.focus();\n    }\n  }\n}\n",
-            "styleUrl": "./accordion.css",
-            "assetsDirs": [],
-            "styleUrlsData": "",
-            "stylesData": "",
-            "extends": []
-        },
-        {
-            "name": "AccordionItemContentComponent",
-            "id": "component-AccordionItemContentComponent-5b854aca5e1822aa05a7e2a932b7e0bd9d661dcdded27f718bcb67d5fefc20aeabab50afa5ff0dc10b5d001ee2cf452fd0403fc907616261b78960468455617f",
-            "file": "src/app/shared/components/accordion/accordion-item-content.ts",
-            "changeDetection": "ChangeDetectionStrategy.OnPush",
-            "encapsulation": [],
-            "entryComponents": [],
-            "host": {},
-            "inputs": [],
-            "outputs": [],
-            "providers": [],
-            "selector": "app-accordion-item-content",
-            "styleUrls": [],
-            "styles": [],
-            "template": "<div class=\"p-5 border border-b-0 border-border text-text-secondary\">\n  <ng-content></ng-content>\n</div>\n",
-            "templateUrl": [],
-            "viewProviders": [],
-            "hostDirectives": [],
-            "inputsClass": [],
-            "outputsClass": [],
-            "propertiesClass": [],
-            "methodsClass": [],
-            "deprecated": false,
-            "deprecationMessage": "",
-            "hostBindings": [],
-            "hostListeners": [],
-            "standalone": true,
-            "imports": [],
-            "description": "",
-            "rawdescription": "\n",
-            "type": "component",
-            "sourceCode": "import { Component, ChangeDetectionStrategy } from '@angular/core';\n\n@Component({\n  selector: 'app-accordion-item-content',\n  standalone: true,\n  template: `\n    <div class=\"p-5 border border-b-0 border-border text-text-secondary\">\n      <ng-content></ng-content>\n    </div>\n  `,\n  changeDetection: ChangeDetectionStrategy.OnPush,\n  host: {\n    class: 'block'\n  }\n})\nexport class AccordionItemContentComponent {}\n",
-            "assetsDirs": [],
-            "styleUrlsData": "",
-            "stylesData": "",
-            "extends": []
-        },
-        {
-            "name": "AccordionItemHeaderComponent",
-            "id": "component-AccordionItemHeaderComponent-fcdda228aa73baa114aa24b67379851585e6d6393225e59c1159e14b107d962bf416ed23f8bf46fcbd7b5a35d0ab9874bc42f4bf34a2ea4da74edda1a290ea46",
-            "file": "src/app/shared/components/accordion/accordion-item-header.ts",
-            "changeDetection": "ChangeDetectionStrategy.OnPush",
-            "encapsulation": [],
-            "entryComponents": [],
-            "host": {},
-            "inputs": [],
-            "outputs": [],
-            "providers": [],
-            "selector": "app-accordion-item-header",
-            "styleUrls": [],
-            "styles": [],
-            "template": "<ng-content></ng-content>",
-            "templateUrl": [],
-            "viewProviders": [],
-            "hostDirectives": [],
-            "inputsClass": [],
-            "outputsClass": [],
-            "propertiesClass": [],
-            "methodsClass": [],
-            "deprecated": false,
-            "deprecationMessage": "",
-            "hostBindings": [],
-            "hostListeners": [],
-            "standalone": true,
-            "imports": [],
-            "description": "",
-            "rawdescription": "\n",
-            "type": "component",
-            "sourceCode": "import { Component, ChangeDetectionStrategy } from '@angular/core';\n\n@Component({\n  selector: 'app-accordion-item-header',\n  standalone: true,\n  template: '<ng-content></ng-content>',\n  changeDetection: ChangeDetectionStrategy.OnPush,\n  host: {\n    class: 'block'\n  }\n})\nexport class AccordionItemHeaderComponent {}\n",
-            "assetsDirs": [],
-            "styleUrlsData": "",
-            "stylesData": "",
-            "extends": []
-        },
-        {
-            "name": "App",
-            "id": "component-App-72712d398e1893338eb2a458464893803b6310e483ea6e53258230382468600c074d93066fe515044adaaa1b8c657e9e019b21dcaf01d4d7df67a42d90c418a2",
-            "file": "src/app/app.ts",
-            "encapsulation": [],
-            "entryComponents": [],
-            "inputs": [],
-            "outputs": [],
-            "providers": [],
-            "selector": "app-root",
-            "styleUrls": [],
-            "styles": [],
-            "templateUrl": [
-                "./app.html"
-            ],
-            "viewProviders": [],
-            "hostDirectives": [],
-            "inputsClass": [],
-            "outputsClass": [],
-            "propertiesClass": [
-                {
-                    "name": "title",
-                    "defaultValue": "signal('loan')",
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "type": "unknown",
-                    "indexKey": "",
-                    "optional": false,
-                    "description": "",
-                    "line": 23,
-                    "modifierKind": [
-                        124,
-                        148
-                    ]
-                }
-            ],
-            "methodsClass": [
-                {
-                    "name": "onItemSelected",
-                    "args": [
-                        {
-                            "name": "itemId",
-                            "type": "string",
-                            "deprecated": false,
-                            "deprecationMessage": ""
-                        }
-                    ],
-                    "optional": false,
-                    "returnType": "void",
-                    "typeParameters": [],
-                    "line": 25,
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "jsdoctags": [
-                        {
-                            "name": "itemId",
-                            "type": "string",
-                            "deprecated": false,
-                            "deprecationMessage": "",
-                            "tagName": {
-                                "text": "param"
-                            }
-                        }
-                    ]
-                }
-            ],
-            "deprecated": false,
-            "deprecationMessage": "",
-            "hostBindings": [],
-            "hostListeners": [],
-            "standalone": false,
-            "imports": [
-                {
-                    "name": "RouterOutlet"
-                },
-                {
-                    "name": "Accordion"
-                },
-                {
-                    "name": "AccordionItemComponent",
-                    "type": "component"
-                },
-                {
-                    "name": "AccordionItemHeaderComponent",
-                    "type": "component"
-                },
-                {
-                    "name": "AccordionItemContentComponent",
-                    "type": "component"
-                }
-            ],
-            "description": "",
-            "rawdescription": "\n",
-            "type": "component",
-            "sourceCode": "import { Component, signal } from '@angular/core';\nimport { RouterOutlet } from '@angular/router';\nimport {\n  Accordion,\n  AccordionItemComponent,\n  AccordionItemHeaderComponent,\n  AccordionItemContentComponent\n} from './shared/components/accordion';\n\n@Component({\n  selector: 'app-root',\n  imports: [\n    RouterOutlet,\n    Accordion,\n    AccordionItemComponent,\n    AccordionItemHeaderComponent,\n    AccordionItemContentComponent\n  ],\n  templateUrl: './app.html',\n  styleUrl: './app.css'\n})\nexport class App {\n  protected readonly title = signal('loan');\n\n  onItemSelected(itemId: string): void {\n    console.log('Item selected:', itemId);\n  }\n}\n",
-            "styleUrl": "./app.css",
-            "assetsDirs": [],
-            "styleUrlsData": "",
-            "stylesData": "",
-            "extends": [],
-            "templateData": "<div class=\"p-8\">\n  <h1 class=\"text-2xl font-bold mb-8\">Accordion Test - ng-content Mode</h1>\n\n  <app-accordion [allowMultiple]=\"false\" (itemSelected)=\"onItemSelected($event)\">\n    <app-accordion-item id=\"1\" [expanded]=\"true\">\n      <app-accordion-item-header>What is Flowbite?</app-accordion-item-header>\n      <app-accordion-item-content>\n        <p class=\"mb-2\">Flowbite is an open-source library of interactive components built on top of Tailwind CSS including buttons, dropdowns, modals, navbars, and more.</p>\n        <p>Check out this guide to learn how to get started and start developing websites even faster with components on top of Tailwind CSS.</p>\n      </app-accordion-item-content>\n    </app-accordion-item>\n\n    <app-accordion-item id=\"2\">\n      <app-accordion-item-header>Is there a Figma file available?</app-accordion-item-header>\n      <app-accordion-item-content>\n        <p class=\"mb-2\">Flowbite is first conceptualized and designed using the Figma software so everything you see in the library has a design equivalent in our Figma file.</p>\n        <p>Check out the Figma design system based on the utility classes from Tailwind CSS and components from Flowbite.</p>\n      </app-accordion-item-content>\n    </app-accordion-item>\n\n    <app-accordion-item id=\"3\">\n      <app-accordion-item-header>What are the differences?</app-accordion-item-header>\n      <app-accordion-item-content>\n        <p class=\"mb-2\">The main difference is that the core components from Flowbite are open source under the MIT license, whereas Tailwind UI is a paid product.</p>\n        <ul class=\"list-disc pl-5 space-y-1\">\n          <li>Feature 1</li>\n          <li>Feature 2</li>\n        </ul>\n      </app-accordion-item-content>\n    </app-accordion-item>\n  </app-accordion>\n</div>\n\n<router-outlet></router-outlet>\n"
-        }
-    ],
-    "modules": [
-        {
-            "name": "ZonelessTestModule",
-            "id": "module-ZonelessTestModule-bee7cf36d7bf4cf67e6b629a9357faf5d0cbabba6f123467cb0ebb5ce0098e182d70d0308413dc67c7b676872f3e090d2d9a1717e88b7624e3f930b603ca134b",
-            "description": "",
-            "deprecationMessage": "",
-            "deprecated": false,
-            "file": "src/test-setup.ts",
-            "methods": [],
-            "sourceCode": "import '@angular/compiler';\nimport '@analogjs/vitest-angular/setup-snapshots';\n\nimport { provideZonelessChangeDetection, NgModule } from '@angular/core';\nimport { BrowserTestingModule, platformBrowserTesting } from '@angular/platform-browser/testing';\nimport { getTestBed } from '@angular/core/testing';\n\n@NgModule({\n  providers: [provideZonelessChangeDetection()],\n})\nexport class ZonelessTestModule {}\n\ngetTestBed().initTestEnvironment(\n  [BrowserTestingModule, ZonelessTestModule],\n  platformBrowserTesting(),\n);\n",
-            "children": [
-                {
-                    "type": "providers",
-                    "elements": []
-                },
-                {
-                    "type": "declarations",
-                    "elements": []
-                },
-                {
-                    "type": "imports",
-                    "elements": []
-                },
-                {
-                    "type": "exports",
-                    "elements": []
-                },
-                {
-                    "type": "bootstrap",
-                    "elements": []
-                },
-                {
-                    "type": "classes",
-                    "elements": []
-                }
-            ]
-        }
-    ],
-    "miscellaneous": {
-        "variables": [
-            {
-                "name": "appConfig",
-                "ctype": "miscellaneous",
-                "subtype": "variable",
-                "file": "src/app/app.config.ts",
-                "deprecated": false,
-                "deprecationMessage": "",
-                "type": "ApplicationConfig",
-                "defaultValue": "{\n  providers: [\n    provideBrowserGlobalErrorListeners(),\n    provideZonelessChangeDetection(),\n    provideRouter(routes)\n  ]\n}"
-            },
-            {
-                "name": "createLightDarkComparison",
-                "ctype": "miscellaneous",
-                "subtype": "variable",
-                "file": "src/stories/story-helpers.ts",
-                "deprecated": false,
-                "deprecationMessage": "",
-                "type": "unknown",
-                "defaultValue": "(componentTag: string, bindings = ''): string => `\n  <div style=\"display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh;\">\n    <!-- Light Mode -->\n    <div style=\"background-color: #f9fafb; position: relative; border-right: 2px solid #000; padding: 2rem;\">\n      <div style=\"position: absolute; top: 1rem; left: 50%; transform: translateX(-50%); z-index: 100; background: white; padding: 0.5rem 1rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: bold;\">\n        Light Mode\n      </div>\n      <${componentTag}\n        ${bindings}\n      />\n    </div>\n\n    <!-- Dark Mode -->\n    <div class=\"dark\" style=\"background-color: #1f2937; position: relative; padding: 2rem;\">\n      <div style=\"position: absolute; top: 1rem; left: 50%; transform: translateX(-50%); z-index: 100; background: #374151; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.3); font-weight: bold;\">\n        Dark Mode\n      </div>\n      <${componentTag}\n        ${bindings}\n      />\n    </div>\n  </div>\n`",
-                "rawdescription": "Helper utilities for Storybook stories\nCreates consistent Light vs Dark mode comparisons",
-                "description": "<p>Helper utilities for Storybook stories\nCreates consistent Light vs Dark mode comparisons</p>\n"
-            },
-            {
-                "name": "createLightDarkRender",
-                "ctype": "miscellaneous",
-                "subtype": "variable",
-                "file": "src/stories/story-helpers.ts",
-                "deprecated": false,
-                "deprecationMessage": "",
-                "type": "unknown",
-                "defaultValue": "(componentTag: string, bindings: string) => {\n  return (args: Record<string, unknown>) => ({\n    props: args,\n    template: createLightDarkComparison(componentTag, bindings),\n  });\n}",
-                "rawdescription": "Creates a standard render function for stories with Light/Dark comparison",
-                "description": "<p>Creates a standard render function for stories with Light/Dark comparison</p>\n"
-            },
-            {
-                "name": "createVariantComparison",
-                "ctype": "miscellaneous",
-                "subtype": "variable",
-                "file": "src/stories/story-helpers.ts",
-                "deprecated": false,
-                "deprecationMessage": "",
-                "type": "unknown",
-                "defaultValue": "(\n  componentTag: string,\n  variants: string[],\n  baseBindings = '',\n): string => `\n  <div style=\"min-height: 100vh;\">\n    <!-- Light Mode Variants -->\n    <div style=\"background-color: #f9fafb; padding: 2rem 0 1rem 0;\">\n      <h2 style=\"text-align: center; margin-bottom: 1.5rem; font-size: 1.25rem; font-weight: bold; color: #111827;\">\n        Light Mode - All Variants\n      </h2>\n      <div style=\"display: grid; grid-template-columns: repeat(${variants.length}, 1fr); gap: 2rem; justify-content: center; max-width: 1200px; margin: 0 auto; padding: 0 2rem;\">\n        ${variants\n          .map(\n            (variant) => `\n        <div style=\"position: relative;\">\n          <div style=\"position: absolute; top: -1.5rem; left: 50%; transform: translateX(-50%); background: white; padding: 0.25rem 0.75rem; border-radius: 0.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); font-size: 0.75rem; font-weight: 600; white-space: nowrap;\">\n            ${variant}\n          </div>\n          <${componentTag}\n            [variant]=\"'${variant.toLowerCase()}'\"\n            ${baseBindings}\n          />\n        </div>\n        `,\n          )\n          .join('')}\n      </div>\n    </div>\n\n    <!-- Dark Mode Variants -->\n    <div class=\"dark\" style=\"background-color: #1f2937; padding: 2rem 0 1rem 0;\">\n      <h2 style=\"text-align: center; margin-bottom: 1.5rem; font-size: 1.25rem; font-weight: bold; color: white;\">\n        Dark Mode - All Variants\n      </h2>\n      <div style=\"display: grid; grid-template-columns: repeat(${variants.length}, 1fr); gap: 2rem; justify-content: center; max-width: 1200px; margin: 0 auto; padding: 0 2rem;\">\n        ${variants\n          .map(\n            (variant) => `\n        <div style=\"position: relative;\">\n          <div style=\"position: absolute; top: -1.5rem; left: 50%; transform: translateX(-50%); background: #374151; color: white; padding: 0.25rem 0.75rem; border-radius: 0.25rem; box-shadow: 0 2px 4px rgba(0,0,0,0.3); font-size: 0.75rem; font-weight: 600; white-space: nowrap;\">\n            ${variant}\n          </div>\n          <${componentTag}\n            [variant]=\"'${variant.toLowerCase()}'\"\n            ${baseBindings}\n          />\n        </div>\n        `,\n          )\n          .join('')}\n      </div>\n    </div>\n  </div>\n`",
-                "rawdescription": "Creates a template for comparing all variants in a 3x2 grid (Light + Dark)",
-                "description": "<p>Creates a template for comparing all variants in a 3x2 grid (Light + Dark)</p>\n"
-            },
-            {
-                "name": "generateBindings",
-                "ctype": "miscellaneous",
-                "subtype": "variable",
-                "file": "src/stories/story-helpers.ts",
-                "deprecated": false,
-                "deprecationMessage": "",
-                "type": "unknown",
-                "defaultValue": "(props: Record<string, unknown>): string => {\n  return Object.entries(props)\n    .map(([key, value]) => {\n      if (typeof value === 'string') {\n        return `[${key}]=\"${key}\"`;\n      }\n      return `[${key}]=\"${key}\"`;\n    })\n    .join('\\n        ');\n}",
-                "rawdescription": "Helper to generate common Angular bindings string",
-                "description": "<p>Helper to generate common Angular bindings string</p>\n"
-            },
-            {
-                "name": "routes",
-                "ctype": "miscellaneous",
-                "subtype": "variable",
-                "file": "src/app/app.routes.ts",
-                "deprecated": false,
-                "deprecationMessage": "",
-                "type": "Routes",
-                "defaultValue": "[]"
-            },
-            {
-                "name": "wrapInLightDarkComparison",
-                "ctype": "miscellaneous",
-                "subtype": "variable",
-                "file": "src/stories/story-helpers.ts",
-                "deprecated": false,
-                "deprecationMessage": "",
-                "type": "unknown",
-                "defaultValue": "(template: string): string => `\n  <div style=\"display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh;\">\n    <!-- Light Mode -->\n    <div style=\"background-color: #f9fafb; position: relative; border-right: 2px solid #000; padding: 2rem;\">\n      <div style=\"position: absolute; top: 1rem; left: 50%; transform: translateX(-50%); z-index: 100; background: white; padding: 0.5rem 1rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: bold;\">\n        Light Mode\n      </div>\n      ${template}\n    </div>\n\n    <!-- Dark Mode -->\n    <div class=\"dark\" style=\"background-color: #1f2937; position: relative; padding: 2rem;\">\n      <div style=\"position: absolute; top: 1rem; left: 50%; transform: translateX(-50%); z-index: 100; background: #374151; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.3); font-weight: bold;\">\n        Dark Mode\n      </div>\n      ${template}\n    </div>\n  </div>\n`",
-                "rawdescription": "Wraps any template in a Light/Dark comparison layout\nUsed for complex components with custom templates (like modals)",
-                "description": "<p>Wraps any template in a Light/Dark comparison layout\nUsed for complex components with custom templates (like modals)</p>\n"
-            }
-        ],
-        "functions": [],
-        "typealiases": [],
-        "enumerations": [],
-        "groupedVariables": {
-            "src/app/app.config.ts": [
-                {
-                    "name": "appConfig",
-                    "ctype": "miscellaneous",
-                    "subtype": "variable",
-                    "file": "src/app/app.config.ts",
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "type": "ApplicationConfig",
-                    "defaultValue": "{\n  providers: [\n    provideBrowserGlobalErrorListeners(),\n    provideZonelessChangeDetection(),\n    provideRouter(routes)\n  ]\n}"
-                }
-            ],
-            "src/stories/story-helpers.ts": [
-                {
-                    "name": "createLightDarkComparison",
-                    "ctype": "miscellaneous",
-                    "subtype": "variable",
-                    "file": "src/stories/story-helpers.ts",
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "type": "unknown",
-                    "defaultValue": "(componentTag: string, bindings = ''): string => `\n  <div style=\"display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh;\">\n    <!-- Light Mode -->\n    <div style=\"background-color: #f9fafb; position: relative; border-right: 2px solid #000; padding: 2rem;\">\n      <div style=\"position: absolute; top: 1rem; left: 50%; transform: translateX(-50%); z-index: 100; background: white; padding: 0.5rem 1rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: bold;\">\n        Light Mode\n      </div>\n      <${componentTag}\n        ${bindings}\n      />\n    </div>\n\n    <!-- Dark Mode -->\n    <div class=\"dark\" style=\"background-color: #1f2937; position: relative; padding: 2rem;\">\n      <div style=\"position: absolute; top: 1rem; left: 50%; transform: translateX(-50%); z-index: 100; background: #374151; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.3); font-weight: bold;\">\n        Dark Mode\n      </div>\n      <${componentTag}\n        ${bindings}\n      />\n    </div>\n  </div>\n`",
-                    "rawdescription": "Helper utilities for Storybook stories\nCreates consistent Light vs Dark mode comparisons",
-                    "description": "<p>Helper utilities for Storybook stories\nCreates consistent Light vs Dark mode comparisons</p>\n"
-                },
-                {
-                    "name": "createLightDarkRender",
-                    "ctype": "miscellaneous",
-                    "subtype": "variable",
-                    "file": "src/stories/story-helpers.ts",
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "type": "unknown",
-                    "defaultValue": "(componentTag: string, bindings: string) => {\n  return (args: Record<string, unknown>) => ({\n    props: args,\n    template: createLightDarkComparison(componentTag, bindings),\n  });\n}",
-                    "rawdescription": "Creates a standard render function for stories with Light/Dark comparison",
-                    "description": "<p>Creates a standard render function for stories with Light/Dark comparison</p>\n"
-                },
-                {
-                    "name": "createVariantComparison",
-                    "ctype": "miscellaneous",
-                    "subtype": "variable",
-                    "file": "src/stories/story-helpers.ts",
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "type": "unknown",
-                    "defaultValue": "(\n  componentTag: string,\n  variants: string[],\n  baseBindings = '',\n): string => `\n  <div style=\"min-height: 100vh;\">\n    <!-- Light Mode Variants -->\n    <div style=\"background-color: #f9fafb; padding: 2rem 0 1rem 0;\">\n      <h2 style=\"text-align: center; margin-bottom: 1.5rem; font-size: 1.25rem; font-weight: bold; color: #111827;\">\n        Light Mode - All Variants\n      </h2>\n      <div style=\"display: grid; grid-template-columns: repeat(${variants.length}, 1fr); gap: 2rem; justify-content: center; max-width: 1200px; margin: 0 auto; padding: 0 2rem;\">\n        ${variants\n          .map(\n            (variant) => `\n        <div style=\"position: relative;\">\n          <div style=\"position: absolute; top: -1.5rem; left: 50%; transform: translateX(-50%); background: white; padding: 0.25rem 0.75rem; border-radius: 0.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); font-size: 0.75rem; font-weight: 600; white-space: nowrap;\">\n            ${variant}\n          </div>\n          <${componentTag}\n            [variant]=\"'${variant.toLowerCase()}'\"\n            ${baseBindings}\n          />\n        </div>\n        `,\n          )\n          .join('')}\n      </div>\n    </div>\n\n    <!-- Dark Mode Variants -->\n    <div class=\"dark\" style=\"background-color: #1f2937; padding: 2rem 0 1rem 0;\">\n      <h2 style=\"text-align: center; margin-bottom: 1.5rem; font-size: 1.25rem; font-weight: bold; color: white;\">\n        Dark Mode - All Variants\n      </h2>\n      <div style=\"display: grid; grid-template-columns: repeat(${variants.length}, 1fr); gap: 2rem; justify-content: center; max-width: 1200px; margin: 0 auto; padding: 0 2rem;\">\n        ${variants\n          .map(\n            (variant) => `\n        <div style=\"position: relative;\">\n          <div style=\"position: absolute; top: -1.5rem; left: 50%; transform: translateX(-50%); background: #374151; color: white; padding: 0.25rem 0.75rem; border-radius: 0.25rem; box-shadow: 0 2px 4px rgba(0,0,0,0.3); font-size: 0.75rem; font-weight: 600; white-space: nowrap;\">\n            ${variant}\n          </div>\n          <${componentTag}\n            [variant]=\"'${variant.toLowerCase()}'\"\n            ${baseBindings}\n          />\n        </div>\n        `,\n          )\n          .join('')}\n      </div>\n    </div>\n  </div>\n`",
-                    "rawdescription": "Creates a template for comparing all variants in a 3x2 grid (Light + Dark)",
-                    "description": "<p>Creates a template for comparing all variants in a 3x2 grid (Light + Dark)</p>\n"
-                },
-                {
-                    "name": "generateBindings",
-                    "ctype": "miscellaneous",
-                    "subtype": "variable",
-                    "file": "src/stories/story-helpers.ts",
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "type": "unknown",
-                    "defaultValue": "(props: Record<string, unknown>): string => {\n  return Object.entries(props)\n    .map(([key, value]) => {\n      if (typeof value === 'string') {\n        return `[${key}]=\"${key}\"`;\n      }\n      return `[${key}]=\"${key}\"`;\n    })\n    .join('\\n        ');\n}",
-                    "rawdescription": "Helper to generate common Angular bindings string",
-                    "description": "<p>Helper to generate common Angular bindings string</p>\n"
-                },
-                {
-                    "name": "wrapInLightDarkComparison",
-                    "ctype": "miscellaneous",
-                    "subtype": "variable",
-                    "file": "src/stories/story-helpers.ts",
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "type": "unknown",
-                    "defaultValue": "(template: string): string => `\n  <div style=\"display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh;\">\n    <!-- Light Mode -->\n    <div style=\"background-color: #f9fafb; position: relative; border-right: 2px solid #000; padding: 2rem;\">\n      <div style=\"position: absolute; top: 1rem; left: 50%; transform: translateX(-50%); z-index: 100; background: white; padding: 0.5rem 1rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: bold;\">\n        Light Mode\n      </div>\n      ${template}\n    </div>\n\n    <!-- Dark Mode -->\n    <div class=\"dark\" style=\"background-color: #1f2937; position: relative; padding: 2rem;\">\n      <div style=\"position: absolute; top: 1rem; left: 50%; transform: translateX(-50%); z-index: 100; background: #374151; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.3); font-weight: bold;\">\n        Dark Mode\n      </div>\n      ${template}\n    </div>\n  </div>\n`",
-                    "rawdescription": "Wraps any template in a Light/Dark comparison layout\nUsed for complex components with custom templates (like modals)",
-                    "description": "<p>Wraps any template in a Light/Dark comparison layout\nUsed for complex components with custom templates (like modals)</p>\n"
-                }
-            ],
-            "src/app/app.routes.ts": [
-                {
-                    "name": "routes",
-                    "ctype": "miscellaneous",
-                    "subtype": "variable",
-                    "file": "src/app/app.routes.ts",
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "type": "Routes",
-                    "defaultValue": "[]"
-                }
-            ]
-        },
-        "groupedFunctions": {},
-        "groupedEnumerations": {},
-        "groupedTypeAliases": {}
-    },
-    "routes": {
-        "name": "<root>",
-        "kind": "module",
-        "children": []
-    },
-    "coverage": {
-        "count": 38,
-        "status": "medium",
-        "files": [
-            {
-                "filePath": "src/app/app.config.ts",
-                "type": "variable",
-                "linktype": "miscellaneous",
-                "linksubtype": "variable",
-                "name": "appConfig",
-                "coveragePercent": 0,
-                "coverageCount": "0/1",
-                "status": "low"
-            },
-            {
-                "filePath": "src/app/app.routes.ts",
-                "type": "variable",
-                "linktype": "miscellaneous",
-                "linksubtype": "variable",
-                "name": "routes",
-                "coveragePercent": 0,
-                "coverageCount": "0/1",
-                "status": "low"
-            },
-            {
-                "filePath": "src/app/app.ts",
-                "type": "component",
-                "linktype": "component",
-                "name": "App",
-                "coveragePercent": 0,
-                "coverageCount": "0/3",
-                "status": "low"
-            },
-            {
-                "filePath": "src/app/shared/components/accordion/accordion-item-content.ts",
-                "type": "component",
-                "linktype": "component",
-                "name": "AccordionItemContentComponent",
-                "coveragePercent": 0,
-                "coverageCount": "0/1",
-                "status": "low"
-            },
-            {
-                "filePath": "src/app/shared/components/accordion/accordion-item-header.ts",
-                "type": "component",
-                "linktype": "component",
-                "name": "AccordionItemHeaderComponent",
-                "coveragePercent": 0,
-                "coverageCount": "0/1",
-                "status": "low"
-            },
-            {
-                "filePath": "src/app/shared/components/accordion/accordion-item.ts",
-                "type": "component",
-                "linktype": "component",
-                "name": "AccordionItemComponent",
-                "coveragePercent": 0,
-                "coverageCount": "0/12",
-                "status": "low"
-            },
-            {
-                "filePath": "src/app/shared/components/accordion/accordion.ts",
-                "type": "component",
-                "linktype": "component",
-                "name": "Accordion",
-                "coveragePercent": 0,
-                "coverageCount": "0/13",
-                "status": "low"
-            },
-            {
-                "filePath": "src/app/shared/components/accordion/accordion.ts",
-                "type": "interface",
-                "linktype": "interface",
-                "name": "AccordionItem",
-                "coveragePercent": 0,
-                "coverageCount": "0/6",
-                "status": "low"
-            },
-            {
-                "filePath": "src/stories/story-helpers.ts",
-                "type": "variable",
-                "linktype": "miscellaneous",
-                "linksubtype": "variable",
-                "name": "createLightDarkComparison",
-                "coveragePercent": 100,
-                "coverageCount": "1/1",
-                "status": "very-good"
-            },
-            {
-                "filePath": "src/stories/story-helpers.ts",
-                "type": "variable",
-                "linktype": "miscellaneous",
-                "linksubtype": "variable",
-                "name": "createLightDarkRender",
-                "coveragePercent": 100,
-                "coverageCount": "1/1",
-                "status": "very-good"
-            },
-            {
-                "filePath": "src/stories/story-helpers.ts",
-                "type": "variable",
-                "linktype": "miscellaneous",
-                "linksubtype": "variable",
-                "name": "createVariantComparison",
-                "coveragePercent": 100,
-                "coverageCount": "1/1",
-                "status": "very-good"
-            },
-            {
-                "filePath": "src/stories/story-helpers.ts",
-                "type": "variable",
-                "linktype": "miscellaneous",
-                "linksubtype": "variable",
-                "name": "generateBindings",
-                "coveragePercent": 100,
-                "coverageCount": "1/1",
-                "status": "very-good"
-            },
-            {
-                "filePath": "src/stories/story-helpers.ts",
-                "type": "variable",
-                "linktype": "miscellaneous",
-                "linksubtype": "variable",
-                "name": "wrapInLightDarkComparison",
-                "coveragePercent": 100,
-                "coverageCount": "1/1",
-                "status": "very-good"
-            }
-        ]
+      ],
+      "indexSignatures": [],
+      "kind": 172,
+      "methods": [],
+      "extends": []
     }
+  ],
+  "injectables": [],
+  "guards": [],
+  "interceptors": [],
+  "classes": [],
+  "directives": [],
+  "components": [
+    {
+      "name": "Accordion",
+      "id": "component-Accordion-227d7f5b01b3c1fd675533faddd5102a9f5e19860a3f103e3af3494fed0f4637adc8006a778eca39c68bdaefca64d62608eafa89a1e9fe2447dc91175bab0ed1",
+      "file": "src/app/shared/components/accordion/accordion.ts",
+      "changeDetection": "ChangeDetectionStrategy.OnPush",
+      "encapsulation": [],
+      "entryComponents": [],
+      "host": {},
+      "inputs": [],
+      "outputs": [],
+      "providers": [],
+      "selector": "app-accordion",
+      "styleUrls": [],
+      "styles": [],
+      "template": "<ng-content></ng-content>",
+      "templateUrl": [],
+      "viewProviders": [],
+      "hostDirectives": [],
+      "inputsClass": [
+        {
+          "name": "allowMultiple",
+          "defaultValue": "false",
+          "deprecated": false,
+          "deprecationMessage": "",
+          "indexKey": "",
+          "optional": false,
+          "description": "",
+          "line": 25,
+          "modifierKind": [148],
+          "required": false
+        },
+        {
+          "name": "items",
+          "defaultValue": "[]",
+          "deprecated": false,
+          "deprecationMessage": "",
+          "type": "AccordionItem[]",
+          "indexKey": "",
+          "optional": false,
+          "description": "",
+          "line": 24,
+          "modifierKind": [148],
+          "required": false
+        }
+      ],
+      "outputsClass": [
+        {
+          "name": "itemSelected",
+          "deprecated": false,
+          "deprecationMessage": "",
+          "type": "string",
+          "indexKey": "",
+          "optional": false,
+          "description": "",
+          "line": 26,
+          "modifierKind": [148],
+          "required": false
+        }
+      ],
+      "propertiesClass": [
+        {
+          "name": "contentItems",
+          "defaultValue": "contentChildren(AccordionItemComponent)",
+          "deprecated": false,
+          "deprecationMessage": "",
+          "type": "unknown",
+          "indexKey": "",
+          "optional": false,
+          "description": "",
+          "line": 28,
+          "modifierKind": [148]
+        },
+        {
+          "name": "expandedItems",
+          "defaultValue": "computed(() => {\n    const userExpanded = this.userExpandedItems();\n\n    // If user has interacted, use their selection\n    if (userExpanded !== null) {\n      return userExpanded;\n    }\n\n    // Otherwise, use initial expanded state from inputs\n    const initialExpanded = this.getInitialExpanded();\n    return new Set(initialExpanded);\n  })",
+          "deprecated": false,
+          "deprecationMessage": "",
+          "type": "unknown",
+          "indexKey": "",
+          "optional": false,
+          "description": "",
+          "line": 32,
+          "modifierKind": [148]
+        },
+        {
+          "name": "userExpandedItems",
+          "defaultValue": "signal<Set<string> | null>(null)",
+          "deprecated": false,
+          "deprecationMessage": "",
+          "type": "unknown",
+          "indexKey": "",
+          "optional": false,
+          "description": "",
+          "line": 30,
+          "modifierKind": [148]
+        }
+      ],
+      "methodsClass": [
+        {
+          "name": "focusItem",
+          "args": [
+            {
+              "name": "item",
+              "type": "AccordionItemComponent",
+              "deprecated": false,
+              "deprecationMessage": ""
+            }
+          ],
+          "optional": false,
+          "returnType": "void",
+          "typeParameters": [],
+          "line": 110,
+          "deprecated": false,
+          "deprecationMessage": "",
+          "modifierKind": [123],
+          "jsdoctags": [
+            {
+              "name": "item",
+              "type": "AccordionItemComponent",
+              "deprecated": false,
+              "deprecationMessage": "",
+              "tagName": {
+                "text": "param"
+              }
+            }
+          ]
+        },
+        {
+          "name": "getContentItems",
+          "args": [],
+          "optional": false,
+          "returnType": "AccordionItemComponent[]",
+          "typeParameters": [],
+          "line": 55,
+          "deprecated": false,
+          "deprecationMessage": ""
+        },
+        {
+          "name": "getInitialExpanded",
+          "args": [],
+          "optional": false,
+          "returnType": "string[]",
+          "typeParameters": [],
+          "line": 45,
+          "deprecated": false,
+          "deprecationMessage": "",
+          "modifierKind": [123]
+        },
+        {
+          "name": "isExpanded",
+          "args": [
+            {
+              "name": "itemId",
+              "type": "string",
+              "deprecated": false,
+              "deprecationMessage": ""
+            }
+          ],
+          "optional": false,
+          "returnType": "boolean",
+          "typeParameters": [],
+          "line": 87,
+          "deprecated": false,
+          "deprecationMessage": "",
+          "jsdoctags": [
+            {
+              "name": "itemId",
+              "type": "string",
+              "deprecated": false,
+              "deprecationMessage": "",
+              "tagName": {
+                "text": "param"
+              }
+            }
+          ]
+        },
+        {
+          "name": "onKeyDown",
+          "args": [
+            {
+              "name": "event",
+              "type": "KeyboardEvent",
+              "deprecated": false,
+              "deprecationMessage": ""
+            },
+            {
+              "name": "itemId",
+              "type": "string",
+              "deprecated": false,
+              "deprecationMessage": ""
+            }
+          ],
+          "optional": false,
+          "returnType": "void",
+          "typeParameters": [],
+          "line": 91,
+          "deprecated": false,
+          "deprecationMessage": "",
+          "jsdoctags": [
+            {
+              "name": "event",
+              "type": "KeyboardEvent",
+              "deprecated": false,
+              "deprecationMessage": "",
+              "tagName": {
+                "text": "param"
+              }
+            },
+            {
+              "name": "itemId",
+              "type": "string",
+              "deprecated": false,
+              "deprecationMessage": "",
+              "tagName": {
+                "text": "param"
+              }
+            }
+          ]
+        },
+        {
+          "name": "toggleItem",
+          "args": [
+            {
+              "name": "itemId",
+              "type": "string",
+              "deprecated": false,
+              "deprecationMessage": ""
+            }
+          ],
+          "optional": false,
+          "returnType": "void",
+          "typeParameters": [],
+          "line": 59,
+          "deprecated": false,
+          "deprecationMessage": "",
+          "jsdoctags": [
+            {
+              "name": "itemId",
+              "type": "string",
+              "deprecated": false,
+              "deprecationMessage": "",
+              "tagName": {
+                "text": "param"
+              }
+            }
+          ]
+        }
+      ],
+      "deprecated": false,
+      "deprecationMessage": "",
+      "hostBindings": [],
+      "hostListeners": [],
+      "standalone": true,
+      "imports": [
+        {
+          "name": "CommonModule",
+          "type": "module"
+        }
+      ],
+      "description": "",
+      "rawdescription": "\n",
+      "type": "component",
+      "sourceCode": "import { Component, input, output, signal, computed, ChangeDetectionStrategy, contentChildren } from '@angular/core';\nimport { CommonModule } from '@angular/common';\nimport { AccordionItemComponent } from './accordion-item';\n\nexport interface AccordionItem {\n  id: string;\n  title: string;\n  content?: string;\n  disabled?: boolean;\n  expanded?: boolean;\n}\n\n@Component({\n  selector: 'app-accordion',\n  standalone: true,\n  imports: [CommonModule],\n  template: '<ng-content></ng-content>',\n  changeDetection: ChangeDetectionStrategy.OnPush,\n  host: {\n    class: 'block'\n  }\n})\nexport class Accordion {\n  readonly items = input<AccordionItem[]>([]);\n  readonly allowMultiple = input(false);\n  readonly itemSelected = output<string>();\n\n  readonly contentItems = contentChildren(AccordionItemComponent);\n\n  readonly userExpandedItems = signal<Set<string> | null>(null);\n\n  readonly expandedItems = computed(() => {\n    const userExpanded = this.userExpandedItems();\n\n    // If user has interacted, use their selection\n    if (userExpanded !== null) {\n      return userExpanded;\n    }\n\n    // Otherwise, use initial expanded state from inputs\n    const initialExpanded = this.getInitialExpanded();\n    return new Set(initialExpanded);\n  });\n\n  private getInitialExpanded(): string[] {\n    const items = this.contentItems();\n    if (items.length > 0) {\n      return items\n        .filter(item => item.expanded())\n        .map(item => item.id());\n    }\n    return this.items().filter(item => item.expanded).map(item => item.id);\n  }\n\n  getContentItems(): readonly AccordionItemComponent[] {\n    return this.contentItems();\n  }\n\n  toggleItem(itemId: string): void {\n    const contentItem = this.contentItems().find(i => i.id() === itemId);\n\n    if (contentItem?.disabled()) {\n      return;\n    }\n\n    // Initialize user expanded items on first interaction if not already done\n    if (this.userExpandedItems() === null) {\n      this.userExpandedItems.set(new Set(this.getInitialExpanded()));\n    }\n\n    const updated = new Set(this.expandedItems());\n    const isCurrentlyExpanded = updated.has(itemId);\n\n    if (isCurrentlyExpanded) {\n      updated.delete(itemId);\n    } else {\n      if (!this.allowMultiple()) {\n        updated.clear();\n      }\n      updated.add(itemId);\n    }\n\n    this.userExpandedItems.set(updated);\n    this.itemSelected.emit(itemId);\n  }\n\n  isExpanded(itemId: string): boolean {\n    return this.expandedItems().has(itemId);\n  }\n\n  onKeyDown(event: KeyboardEvent, itemId: string): void {\n    if (event.key === 'Escape') {\n      this.userExpandedItems.set(new Set());\n      event.preventDefault();\n    } else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {\n      event.preventDefault();\n      const items = this.contentItems();\n      const currentIndex = items.findIndex(i => i.id() === itemId);\n\n      if (event.key === 'ArrowDown' && currentIndex < items.length - 1) {\n        const nextItem = items[currentIndex + 1];\n        this.focusItem(nextItem);\n      } else if (event.key === 'ArrowUp' && currentIndex > 0) {\n        const prevItem = items[currentIndex - 1];\n        this.focusItem(prevItem);\n      }\n    }\n  }\n\n  private focusItem(item: AccordionItemComponent): void {\n    item.focusButton();\n  }\n}\n",
+      "assetsDirs": [],
+      "styleUrlsData": "",
+      "stylesData": "",
+      "extends": []
+    },
+    {
+      "name": "AccordionItemComponent",
+      "id": "component-AccordionItemComponent-b215225acd764c60d1a335afb26081b8b59f82c87319a377b46a0a9740edd558ddbdc142a36b823b8ecd7b69f299d00f48e89a1ed9e3e24123d9f814088bc897",
+      "file": "src/app/shared/components/accordion/accordion-item.ts",
+      "changeDetection": "ChangeDetectionStrategy.OnPush",
+      "encapsulation": [],
+      "entryComponents": [],
+      "host": {},
+      "inputs": [],
+      "outputs": [],
+      "providers": [],
+      "selector": "app-accordion-item",
+      "styleUrls": [],
+      "styles": [],
+      "template": "<div class=\"accordion-item-wrapper\">\n  <h2 class=\"accordion-heading\">\n    <button\n      #accordionButton\n      type=\"button\"\n      class=\"flex items-center justify-between w-full p-5 font-medium rtl:text-right text-text-secondary border border-b-0 border-border rounded-t-xl focus:ring-4 focus:ring-bg-surface border-border text-text-secondary hover:bg-bg-surface gap-3 transition-colors disabled:opacity-50 disabled:cursor-not-allowed\"\n      [class.!rounded-none]=\"isNotFirst()\"\n      [class.!border-b]=\"isLast()\"\n      [attr.aria-expanded]=\"isExpanded()\"\n      [attr.id]=\"'accordion-button-' + id()\"\n      (click)=\"onToggle()\"\n      (keydown)=\"onKeyDown($event)\"\n      [disabled]=\"disabled()\">\n      <span><ng-content select=\"app-accordion-item-header\"></ng-content></span>\n      <svg\n        class=\"w-3 h-3 rotate-180 shrink-0 transition-transform\"\n        [class.!rotate-0]=\"isExpanded()\"\n        aria-hidden=\"true\"\n        xmlns=\"http://www.w3.org/2000/svg\"\n        fill=\"none\"\n        viewBox=\"0 0 10 6\">\n        <path\n          stroke=\"currentColor\"\n          stroke-linecap=\"round\"\n          stroke-linejoin=\"round\"\n          stroke-width=\"2\"\n          d=\"M9 5 5 1 1 5\"/>\n      </svg>\n    </button>\n  </h2>\n  <div\n    class=\"accordion-body\"\n    [class.hidden]=\"!isExpanded()\"\n    [class.!border-b]=\"isLast()\">\n    <ng-content select=\"app-accordion-item-content\"></ng-content>\n  </div>\n</div>\n",
+      "templateUrl": [],
+      "viewProviders": [],
+      "hostDirectives": [],
+      "inputsClass": [
+        {
+          "name": "disabled",
+          "defaultValue": "false",
+          "deprecated": false,
+          "deprecationMessage": "",
+          "indexKey": "",
+          "optional": false,
+          "description": "",
+          "line": 56,
+          "modifierKind": [148],
+          "required": false
+        },
+        {
+          "name": "expanded",
+          "defaultValue": "false",
+          "deprecated": false,
+          "deprecationMessage": "",
+          "indexKey": "",
+          "optional": false,
+          "description": "",
+          "line": 57,
+          "modifierKind": [148],
+          "required": false
+        },
+        {
+          "name": "id",
+          "deprecated": false,
+          "deprecationMessage": "",
+          "type": "string",
+          "indexKey": "",
+          "optional": false,
+          "description": "",
+          "line": 55,
+          "modifierKind": [148],
+          "required": true
+        }
+      ],
+      "outputsClass": [],
+      "propertiesClass": [
+        {
+          "name": "accordion",
+          "defaultValue": "inject(Accordion)",
+          "deprecated": false,
+          "deprecationMessage": "",
+          "type": "unknown",
+          "indexKey": "",
+          "optional": false,
+          "description": "",
+          "line": 59,
+          "modifierKind": [123, 148]
+        },
+        {
+          "name": "buttonRef",
+          "defaultValue": "viewChild<ElementRef<HTMLButtonElement>>('accordionButton')",
+          "deprecated": false,
+          "deprecationMessage": "",
+          "type": "unknown",
+          "indexKey": "",
+          "optional": false,
+          "description": "",
+          "line": 60,
+          "modifierKind": [123, 148]
+        }
+      ],
+      "methodsClass": [
+        {
+          "name": "focusButton",
+          "args": [],
+          "optional": false,
+          "returnType": "void",
+          "typeParameters": [],
+          "line": 84,
+          "deprecated": false,
+          "deprecationMessage": ""
+        },
+        {
+          "name": "isExpanded",
+          "args": [],
+          "optional": false,
+          "returnType": "boolean",
+          "typeParameters": [],
+          "line": 62,
+          "deprecated": false,
+          "deprecationMessage": ""
+        },
+        {
+          "name": "isLast",
+          "args": [],
+          "optional": false,
+          "returnType": "boolean",
+          "typeParameters": [],
+          "line": 71,
+          "deprecated": false,
+          "deprecationMessage": ""
+        },
+        {
+          "name": "isNotFirst",
+          "args": [],
+          "optional": false,
+          "returnType": "boolean",
+          "typeParameters": [],
+          "line": 66,
+          "deprecated": false,
+          "deprecationMessage": ""
+        },
+        {
+          "name": "onKeyDown",
+          "args": [
+            {
+              "name": "event",
+              "type": "KeyboardEvent",
+              "deprecated": false,
+              "deprecationMessage": ""
+            }
+          ],
+          "optional": false,
+          "returnType": "void",
+          "typeParameters": [],
+          "line": 80,
+          "deprecated": false,
+          "deprecationMessage": "",
+          "jsdoctags": [
+            {
+              "name": "event",
+              "type": "KeyboardEvent",
+              "deprecated": false,
+              "deprecationMessage": "",
+              "tagName": {
+                "text": "param"
+              }
+            }
+          ]
+        },
+        {
+          "name": "onToggle",
+          "args": [],
+          "optional": false,
+          "returnType": "void",
+          "typeParameters": [],
+          "line": 76,
+          "deprecated": false,
+          "deprecationMessage": ""
+        }
+      ],
+      "deprecated": false,
+      "deprecationMessage": "",
+      "hostBindings": [],
+      "hostListeners": [],
+      "standalone": true,
+      "imports": [
+        {
+          "name": "CommonModule",
+          "type": "module"
+        }
+      ],
+      "description": "",
+      "rawdescription": "\n",
+      "type": "component",
+      "sourceCode": "import { Component, input, ChangeDetectionStrategy, inject, viewChild, ElementRef } from '@angular/core';\nimport { CommonModule } from '@angular/common';\nimport { Accordion } from './accordion';\n\n@Component({\n  selector: 'app-accordion-item',\n  standalone: true,\n  imports: [CommonModule],\n  template: `\n    <div class=\"accordion-item-wrapper\">\n      <h2 class=\"accordion-heading\">\n        <button\n          #accordionButton\n          type=\"button\"\n          class=\"flex items-center justify-between w-full p-5 font-medium rtl:text-right text-text-secondary border border-b-0 border-border rounded-t-xl focus:ring-4 focus:ring-bg-surface border-border text-text-secondary hover:bg-bg-surface gap-3 transition-colors disabled:opacity-50 disabled:cursor-not-allowed\"\n          [class.!rounded-none]=\"isNotFirst()\"\n          [class.!border-b]=\"isLast()\"\n          [attr.aria-expanded]=\"isExpanded()\"\n          [attr.id]=\"'accordion-button-' + id()\"\n          (click)=\"onToggle()\"\n          (keydown)=\"onKeyDown($event)\"\n          [disabled]=\"disabled()\">\n          <span><ng-content select=\"app-accordion-item-header\"></ng-content></span>\n          <svg\n            class=\"w-3 h-3 rotate-180 shrink-0 transition-transform\"\n            [class.!rotate-0]=\"isExpanded()\"\n            aria-hidden=\"true\"\n            xmlns=\"http://www.w3.org/2000/svg\"\n            fill=\"none\"\n            viewBox=\"0 0 10 6\">\n            <path\n              stroke=\"currentColor\"\n              stroke-linecap=\"round\"\n              stroke-linejoin=\"round\"\n              stroke-width=\"2\"\n              d=\"M9 5 5 1 1 5\"/>\n          </svg>\n        </button>\n      </h2>\n      <div\n        class=\"accordion-body\"\n        [class.hidden]=\"!isExpanded()\"\n        [class.!border-b]=\"isLast()\">\n        <ng-content select=\"app-accordion-item-content\"></ng-content>\n      </div>\n    </div>\n  `,\n  styleUrl: './accordion.css',\n  changeDetection: ChangeDetectionStrategy.OnPush,\n  host: {\n    class: 'block'\n  }\n})\nexport class AccordionItemComponent {\n  readonly id = input.required<string>();\n  readonly disabled = input(false);\n  readonly expanded = input(false);\n\n  private readonly accordion = inject(Accordion);\n  private readonly buttonRef = viewChild<ElementRef<HTMLButtonElement>>('accordionButton');\n\n  isExpanded(): boolean {\n    return this.accordion.isExpanded(this.id());\n  }\n\n  isNotFirst(): boolean {\n    const items = this.accordion.getContentItems();\n    return items.indexOf(this) > 0;\n  }\n\n  isLast(): boolean {\n    const items = this.accordion.getContentItems();\n    return items.indexOf(this) === items.length - 1;\n  }\n\n  onToggle(): void {\n    this.accordion.toggleItem(this.id());\n  }\n\n  onKeyDown(event: KeyboardEvent): void {\n    this.accordion.onKeyDown(event, this.id());\n  }\n\n  focusButton(): void {\n    const button = this.buttonRef();\n    if (button) {\n      button.nativeElement.focus();\n    }\n  }\n}\n",
+      "styleUrl": "./accordion.css",
+      "assetsDirs": [],
+      "styleUrlsData": "",
+      "stylesData": "",
+      "extends": []
+    },
+    {
+      "name": "AccordionItemContentComponent",
+      "id": "component-AccordionItemContentComponent-5b854aca5e1822aa05a7e2a932b7e0bd9d661dcdded27f718bcb67d5fefc20aeabab50afa5ff0dc10b5d001ee2cf452fd0403fc907616261b78960468455617f",
+      "file": "src/app/shared/components/accordion/accordion-item-content.ts",
+      "changeDetection": "ChangeDetectionStrategy.OnPush",
+      "encapsulation": [],
+      "entryComponents": [],
+      "host": {},
+      "inputs": [],
+      "outputs": [],
+      "providers": [],
+      "selector": "app-accordion-item-content",
+      "styleUrls": [],
+      "styles": [],
+      "template": "<div class=\"p-5 border border-b-0 border-border text-text-secondary\">\n  <ng-content></ng-content>\n</div>\n",
+      "templateUrl": [],
+      "viewProviders": [],
+      "hostDirectives": [],
+      "inputsClass": [],
+      "outputsClass": [],
+      "propertiesClass": [],
+      "methodsClass": [],
+      "deprecated": false,
+      "deprecationMessage": "",
+      "hostBindings": [],
+      "hostListeners": [],
+      "standalone": true,
+      "imports": [],
+      "description": "",
+      "rawdescription": "\n",
+      "type": "component",
+      "sourceCode": "import { Component, ChangeDetectionStrategy } from '@angular/core';\n\n@Component({\n  selector: 'app-accordion-item-content',\n  standalone: true,\n  template: `\n    <div class=\"p-5 border border-b-0 border-border text-text-secondary\">\n      <ng-content></ng-content>\n    </div>\n  `,\n  changeDetection: ChangeDetectionStrategy.OnPush,\n  host: {\n    class: 'block'\n  }\n})\nexport class AccordionItemContentComponent {}\n",
+      "assetsDirs": [],
+      "styleUrlsData": "",
+      "stylesData": "",
+      "extends": []
+    },
+    {
+      "name": "AccordionItemHeaderComponent",
+      "id": "component-AccordionItemHeaderComponent-fcdda228aa73baa114aa24b67379851585e6d6393225e59c1159e14b107d962bf416ed23f8bf46fcbd7b5a35d0ab9874bc42f4bf34a2ea4da74edda1a290ea46",
+      "file": "src/app/shared/components/accordion/accordion-item-header.ts",
+      "changeDetection": "ChangeDetectionStrategy.OnPush",
+      "encapsulation": [],
+      "entryComponents": [],
+      "host": {},
+      "inputs": [],
+      "outputs": [],
+      "providers": [],
+      "selector": "app-accordion-item-header",
+      "styleUrls": [],
+      "styles": [],
+      "template": "<ng-content></ng-content>",
+      "templateUrl": [],
+      "viewProviders": [],
+      "hostDirectives": [],
+      "inputsClass": [],
+      "outputsClass": [],
+      "propertiesClass": [],
+      "methodsClass": [],
+      "deprecated": false,
+      "deprecationMessage": "",
+      "hostBindings": [],
+      "hostListeners": [],
+      "standalone": true,
+      "imports": [],
+      "description": "",
+      "rawdescription": "\n",
+      "type": "component",
+      "sourceCode": "import { Component, ChangeDetectionStrategy } from '@angular/core';\n\n@Component({\n  selector: 'app-accordion-item-header',\n  standalone: true,\n  template: '<ng-content></ng-content>',\n  changeDetection: ChangeDetectionStrategy.OnPush,\n  host: {\n    class: 'block'\n  }\n})\nexport class AccordionItemHeaderComponent {}\n",
+      "assetsDirs": [],
+      "styleUrlsData": "",
+      "stylesData": "",
+      "extends": []
+    },
+    {
+      "name": "App",
+      "id": "component-App-72712d398e1893338eb2a458464893803b6310e483ea6e53258230382468600c074d93066fe515044adaaa1b8c657e9e019b21dcaf01d4d7df67a42d90c418a2",
+      "file": "src/app/app.ts",
+      "encapsulation": [],
+      "entryComponents": [],
+      "inputs": [],
+      "outputs": [],
+      "providers": [],
+      "selector": "app-root",
+      "styleUrls": [],
+      "styles": [],
+      "templateUrl": ["./app.html"],
+      "viewProviders": [],
+      "hostDirectives": [],
+      "inputsClass": [],
+      "outputsClass": [],
+      "propertiesClass": [
+        {
+          "name": "title",
+          "defaultValue": "signal('loan')",
+          "deprecated": false,
+          "deprecationMessage": "",
+          "type": "unknown",
+          "indexKey": "",
+          "optional": false,
+          "description": "",
+          "line": 23,
+          "modifierKind": [124, 148]
+        }
+      ],
+      "methodsClass": [
+        {
+          "name": "onItemSelected",
+          "args": [
+            {
+              "name": "itemId",
+              "type": "string",
+              "deprecated": false,
+              "deprecationMessage": ""
+            }
+          ],
+          "optional": false,
+          "returnType": "void",
+          "typeParameters": [],
+          "line": 25,
+          "deprecated": false,
+          "deprecationMessage": "",
+          "jsdoctags": [
+            {
+              "name": "itemId",
+              "type": "string",
+              "deprecated": false,
+              "deprecationMessage": "",
+              "tagName": {
+                "text": "param"
+              }
+            }
+          ]
+        }
+      ],
+      "deprecated": false,
+      "deprecationMessage": "",
+      "hostBindings": [],
+      "hostListeners": [],
+      "standalone": false,
+      "imports": [
+        {
+          "name": "RouterOutlet"
+        },
+        {
+          "name": "Accordion"
+        },
+        {
+          "name": "AccordionItemComponent",
+          "type": "component"
+        },
+        {
+          "name": "AccordionItemHeaderComponent",
+          "type": "component"
+        },
+        {
+          "name": "AccordionItemContentComponent",
+          "type": "component"
+        }
+      ],
+      "description": "",
+      "rawdescription": "\n",
+      "type": "component",
+      "sourceCode": "import { Component, signal } from '@angular/core';\nimport { RouterOutlet } from '@angular/router';\nimport {\n  Accordion,\n  AccordionItemComponent,\n  AccordionItemHeaderComponent,\n  AccordionItemContentComponent\n} from './shared/components/accordion';\n\n@Component({\n  selector: 'app-root',\n  imports: [\n    RouterOutlet,\n    Accordion,\n    AccordionItemComponent,\n    AccordionItemHeaderComponent,\n    AccordionItemContentComponent\n  ],\n  templateUrl: './app.html',\n  styleUrl: './app.css'\n})\nexport class App {\n  protected readonly title = signal('loan');\n\n  onItemSelected(itemId: string): void {\n    console.log('Item selected:', itemId);\n  }\n}\n",
+      "styleUrl": "./app.css",
+      "assetsDirs": [],
+      "styleUrlsData": "",
+      "stylesData": "",
+      "extends": [],
+      "templateData": "<div class=\"p-8\">\n  <h1 class=\"text-2xl font-bold mb-8\">Accordion Test - ng-content Mode</h1>\n\n  <app-accordion [allowMultiple]=\"false\" (itemSelected)=\"onItemSelected($event)\">\n    <app-accordion-item id=\"1\" [expanded]=\"true\">\n      <app-accordion-item-header>What is Flowbite?</app-accordion-item-header>\n      <app-accordion-item-content>\n        <p class=\"mb-2\">Flowbite is an open-source library of interactive components built on top of Tailwind CSS including buttons, dropdowns, modals, navbars, and more.</p>\n        <p>Check out this guide to learn how to get started and start developing websites even faster with components on top of Tailwind CSS.</p>\n      </app-accordion-item-content>\n    </app-accordion-item>\n\n    <app-accordion-item id=\"2\">\n      <app-accordion-item-header>Is there a Figma file available?</app-accordion-item-header>\n      <app-accordion-item-content>\n        <p class=\"mb-2\">Flowbite is first conceptualized and designed using the Figma software so everything you see in the library has a design equivalent in our Figma file.</p>\n        <p>Check out the Figma design system based on the utility classes from Tailwind CSS and components from Flowbite.</p>\n      </app-accordion-item-content>\n    </app-accordion-item>\n\n    <app-accordion-item id=\"3\">\n      <app-accordion-item-header>What are the differences?</app-accordion-item-header>\n      <app-accordion-item-content>\n        <p class=\"mb-2\">The main difference is that the core components from Flowbite are open source under the MIT license, whereas Tailwind UI is a paid product.</p>\n        <ul class=\"list-disc pl-5 space-y-1\">\n          <li>Feature 1</li>\n          <li>Feature 2</li>\n        </ul>\n      </app-accordion-item-content>\n    </app-accordion-item>\n  </app-accordion>\n</div>\n\n<router-outlet></router-outlet>\n"
+    }
+  ],
+  "modules": [
+    {
+      "name": "ZonelessTestModule",
+      "id": "module-ZonelessTestModule-bee7cf36d7bf4cf67e6b629a9357faf5d0cbabba6f123467cb0ebb5ce0098e182d70d0308413dc67c7b676872f3e090d2d9a1717e88b7624e3f930b603ca134b",
+      "description": "",
+      "deprecationMessage": "",
+      "deprecated": false,
+      "file": "src/test-setup.ts",
+      "methods": [],
+      "sourceCode": "import '@angular/compiler';\nimport '@analogjs/vitest-angular/setup-snapshots';\n\nimport { provideZonelessChangeDetection, NgModule } from '@angular/core';\nimport { BrowserTestingModule, platformBrowserTesting } from '@angular/platform-browser/testing';\nimport { getTestBed } from '@angular/core/testing';\n\n@NgModule({\n  providers: [provideZonelessChangeDetection()],\n})\nexport class ZonelessTestModule {}\n\ngetTestBed().initTestEnvironment(\n  [BrowserTestingModule, ZonelessTestModule],\n  platformBrowserTesting(),\n);\n",
+      "children": [
+        {
+          "type": "providers",
+          "elements": []
+        },
+        {
+          "type": "declarations",
+          "elements": []
+        },
+        {
+          "type": "imports",
+          "elements": []
+        },
+        {
+          "type": "exports",
+          "elements": []
+        },
+        {
+          "type": "bootstrap",
+          "elements": []
+        },
+        {
+          "type": "classes",
+          "elements": []
+        }
+      ]
+    }
+  ],
+  "miscellaneous": {
+    "variables": [
+      {
+        "name": "appConfig",
+        "ctype": "miscellaneous",
+        "subtype": "variable",
+        "file": "src/app/app.config.ts",
+        "deprecated": false,
+        "deprecationMessage": "",
+        "type": "ApplicationConfig",
+        "defaultValue": "{\n  providers: [\n    provideBrowserGlobalErrorListeners(),\n    provideZonelessChangeDetection(),\n    provideRouter(routes)\n  ]\n}"
+      },
+      {
+        "name": "createLightDarkComparison",
+        "ctype": "miscellaneous",
+        "subtype": "variable",
+        "file": "src/stories/story-helpers.ts",
+        "deprecated": false,
+        "deprecationMessage": "",
+        "type": "unknown",
+        "defaultValue": "(componentTag: string, bindings = ''): string => `\n  <div style=\"display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh;\">\n    <!-- Light Mode -->\n    <div style=\"background-color: #f9fafb; position: relative; border-right: 2px solid #000; padding: 2rem;\">\n      <div style=\"position: absolute; top: 1rem; left: 50%; transform: translateX(-50%); z-index: 100; background: white; padding: 0.5rem 1rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: bold;\">\n        Light Mode\n      </div>\n      <${componentTag}\n        ${bindings}\n      />\n    </div>\n\n    <!-- Dark Mode -->\n    <div class=\"dark\" style=\"background-color: #1f2937; position: relative; padding: 2rem;\">\n      <div style=\"position: absolute; top: 1rem; left: 50%; transform: translateX(-50%); z-index: 100; background: #374151; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.3); font-weight: bold;\">\n        Dark Mode\n      </div>\n      <${componentTag}\n        ${bindings}\n      />\n    </div>\n  </div>\n`",
+        "rawdescription": "Helper utilities for Storybook stories\nCreates consistent Light vs Dark mode comparisons",
+        "description": "<p>Helper utilities for Storybook stories\nCreates consistent Light vs Dark mode comparisons</p>\n"
+      },
+      {
+        "name": "createLightDarkRender",
+        "ctype": "miscellaneous",
+        "subtype": "variable",
+        "file": "src/stories/story-helpers.ts",
+        "deprecated": false,
+        "deprecationMessage": "",
+        "type": "unknown",
+        "defaultValue": "(componentTag: string, bindings: string) => {\n  return (args: Record<string, unknown>) => ({\n    props: args,\n    template: createLightDarkComparison(componentTag, bindings),\n  });\n}",
+        "rawdescription": "Creates a standard render function for stories with Light/Dark comparison",
+        "description": "<p>Creates a standard render function for stories with Light/Dark comparison</p>\n"
+      },
+      {
+        "name": "createVariantComparison",
+        "ctype": "miscellaneous",
+        "subtype": "variable",
+        "file": "src/stories/story-helpers.ts",
+        "deprecated": false,
+        "deprecationMessage": "",
+        "type": "unknown",
+        "defaultValue": "(\n  componentTag: string,\n  variants: string[],\n  baseBindings = '',\n): string => `\n  <div style=\"min-height: 100vh;\">\n    <!-- Light Mode Variants -->\n    <div style=\"background-color: #f9fafb; padding: 2rem 0 1rem 0;\">\n      <h2 style=\"text-align: center; margin-bottom: 1.5rem; font-size: 1.25rem; font-weight: bold; color: #111827;\">\n        Light Mode - All Variants\n      </h2>\n      <div style=\"display: grid; grid-template-columns: repeat(${variants.length}, 1fr); gap: 2rem; justify-content: center; max-width: 1200px; margin: 0 auto; padding: 0 2rem;\">\n        ${variants\n          .map(\n            (variant) => `\n        <div style=\"position: relative;\">\n          <div style=\"position: absolute; top: -1.5rem; left: 50%; transform: translateX(-50%); background: white; padding: 0.25rem 0.75rem; border-radius: 0.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); font-size: 0.75rem; font-weight: 600; white-space: nowrap;\">\n            ${variant}\n          </div>\n          <${componentTag}\n            [variant]=\"'${variant.toLowerCase()}'\"\n            ${baseBindings}\n          />\n        </div>\n        `,\n          )\n          .join('')}\n      </div>\n    </div>\n\n    <!-- Dark Mode Variants -->\n    <div class=\"dark\" style=\"background-color: #1f2937; padding: 2rem 0 1rem 0;\">\n      <h2 style=\"text-align: center; margin-bottom: 1.5rem; font-size: 1.25rem; font-weight: bold; color: white;\">\n        Dark Mode - All Variants\n      </h2>\n      <div style=\"display: grid; grid-template-columns: repeat(${variants.length}, 1fr); gap: 2rem; justify-content: center; max-width: 1200px; margin: 0 auto; padding: 0 2rem;\">\n        ${variants\n          .map(\n            (variant) => `\n        <div style=\"position: relative;\">\n          <div style=\"position: absolute; top: -1.5rem; left: 50%; transform: translateX(-50%); background: #374151; color: white; padding: 0.25rem 0.75rem; border-radius: 0.25rem; box-shadow: 0 2px 4px rgba(0,0,0,0.3); font-size: 0.75rem; font-weight: 600; white-space: nowrap;\">\n            ${variant}\n          </div>\n          <${componentTag}\n            [variant]=\"'${variant.toLowerCase()}'\"\n            ${baseBindings}\n          />\n        </div>\n        `,\n          )\n          .join('')}\n      </div>\n    </div>\n  </div>\n`",
+        "rawdescription": "Creates a template for comparing all variants in a 3x2 grid (Light + Dark)",
+        "description": "<p>Creates a template for comparing all variants in a 3x2 grid (Light + Dark)</p>\n"
+      },
+      {
+        "name": "generateBindings",
+        "ctype": "miscellaneous",
+        "subtype": "variable",
+        "file": "src/stories/story-helpers.ts",
+        "deprecated": false,
+        "deprecationMessage": "",
+        "type": "unknown",
+        "defaultValue": "(props: Record<string, unknown>): string => {\n  return Object.entries(props)\n    .map(([key, value]) => {\n      if (typeof value === 'string') {\n        return `[${key}]=\"${key}\"`;\n      }\n      return `[${key}]=\"${key}\"`;\n    })\n    .join('\\n        ');\n}",
+        "rawdescription": "Helper to generate common Angular bindings string",
+        "description": "<p>Helper to generate common Angular bindings string</p>\n"
+      },
+      {
+        "name": "routes",
+        "ctype": "miscellaneous",
+        "subtype": "variable",
+        "file": "src/app/app.routes.ts",
+        "deprecated": false,
+        "deprecationMessage": "",
+        "type": "Routes",
+        "defaultValue": "[]"
+      },
+      {
+        "name": "wrapInLightDarkComparison",
+        "ctype": "miscellaneous",
+        "subtype": "variable",
+        "file": "src/stories/story-helpers.ts",
+        "deprecated": false,
+        "deprecationMessage": "",
+        "type": "unknown",
+        "defaultValue": "(template: string): string => `\n  <div style=\"display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh;\">\n    <!-- Light Mode -->\n    <div style=\"background-color: #f9fafb; position: relative; border-right: 2px solid #000; padding: 2rem;\">\n      <div style=\"position: absolute; top: 1rem; left: 50%; transform: translateX(-50%); z-index: 100; background: white; padding: 0.5rem 1rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: bold;\">\n        Light Mode\n      </div>\n      ${template}\n    </div>\n\n    <!-- Dark Mode -->\n    <div class=\"dark\" style=\"background-color: #1f2937; position: relative; padding: 2rem;\">\n      <div style=\"position: absolute; top: 1rem; left: 50%; transform: translateX(-50%); z-index: 100; background: #374151; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.3); font-weight: bold;\">\n        Dark Mode\n      </div>\n      ${template}\n    </div>\n  </div>\n`",
+        "rawdescription": "Wraps any template in a Light/Dark comparison layout\nUsed for complex components with custom templates (like modals)",
+        "description": "<p>Wraps any template in a Light/Dark comparison layout\nUsed for complex components with custom templates (like modals)</p>\n"
+      }
+    ],
+    "functions": [],
+    "typealiases": [],
+    "enumerations": [],
+    "groupedVariables": {
+      "src/app/app.config.ts": [
+        {
+          "name": "appConfig",
+          "ctype": "miscellaneous",
+          "subtype": "variable",
+          "file": "src/app/app.config.ts",
+          "deprecated": false,
+          "deprecationMessage": "",
+          "type": "ApplicationConfig",
+          "defaultValue": "{\n  providers: [\n    provideBrowserGlobalErrorListeners(),\n    provideZonelessChangeDetection(),\n    provideRouter(routes)\n  ]\n}"
+        }
+      ],
+      "src/stories/story-helpers.ts": [
+        {
+          "name": "createLightDarkComparison",
+          "ctype": "miscellaneous",
+          "subtype": "variable",
+          "file": "src/stories/story-helpers.ts",
+          "deprecated": false,
+          "deprecationMessage": "",
+          "type": "unknown",
+          "defaultValue": "(componentTag: string, bindings = ''): string => `\n  <div style=\"display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh;\">\n    <!-- Light Mode -->\n    <div style=\"background-color: #f9fafb; position: relative; border-right: 2px solid #000; padding: 2rem;\">\n      <div style=\"position: absolute; top: 1rem; left: 50%; transform: translateX(-50%); z-index: 100; background: white; padding: 0.5rem 1rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: bold;\">\n        Light Mode\n      </div>\n      <${componentTag}\n        ${bindings}\n      />\n    </div>\n\n    <!-- Dark Mode -->\n    <div class=\"dark\" style=\"background-color: #1f2937; position: relative; padding: 2rem;\">\n      <div style=\"position: absolute; top: 1rem; left: 50%; transform: translateX(-50%); z-index: 100; background: #374151; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.3); font-weight: bold;\">\n        Dark Mode\n      </div>\n      <${componentTag}\n        ${bindings}\n      />\n    </div>\n  </div>\n`",
+          "rawdescription": "Helper utilities for Storybook stories\nCreates consistent Light vs Dark mode comparisons",
+          "description": "<p>Helper utilities for Storybook stories\nCreates consistent Light vs Dark mode comparisons</p>\n"
+        },
+        {
+          "name": "createLightDarkRender",
+          "ctype": "miscellaneous",
+          "subtype": "variable",
+          "file": "src/stories/story-helpers.ts",
+          "deprecated": false,
+          "deprecationMessage": "",
+          "type": "unknown",
+          "defaultValue": "(componentTag: string, bindings: string) => {\n  return (args: Record<string, unknown>) => ({\n    props: args,\n    template: createLightDarkComparison(componentTag, bindings),\n  });\n}",
+          "rawdescription": "Creates a standard render function for stories with Light/Dark comparison",
+          "description": "<p>Creates a standard render function for stories with Light/Dark comparison</p>\n"
+        },
+        {
+          "name": "createVariantComparison",
+          "ctype": "miscellaneous",
+          "subtype": "variable",
+          "file": "src/stories/story-helpers.ts",
+          "deprecated": false,
+          "deprecationMessage": "",
+          "type": "unknown",
+          "defaultValue": "(\n  componentTag: string,\n  variants: string[],\n  baseBindings = '',\n): string => `\n  <div style=\"min-height: 100vh;\">\n    <!-- Light Mode Variants -->\n    <div style=\"background-color: #f9fafb; padding: 2rem 0 1rem 0;\">\n      <h2 style=\"text-align: center; margin-bottom: 1.5rem; font-size: 1.25rem; font-weight: bold; color: #111827;\">\n        Light Mode - All Variants\n      </h2>\n      <div style=\"display: grid; grid-template-columns: repeat(${variants.length}, 1fr); gap: 2rem; justify-content: center; max-width: 1200px; margin: 0 auto; padding: 0 2rem;\">\n        ${variants\n          .map(\n            (variant) => `\n        <div style=\"position: relative;\">\n          <div style=\"position: absolute; top: -1.5rem; left: 50%; transform: translateX(-50%); background: white; padding: 0.25rem 0.75rem; border-radius: 0.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); font-size: 0.75rem; font-weight: 600; white-space: nowrap;\">\n            ${variant}\n          </div>\n          <${componentTag}\n            [variant]=\"'${variant.toLowerCase()}'\"\n            ${baseBindings}\n          />\n        </div>\n        `,\n          )\n          .join('')}\n      </div>\n    </div>\n\n    <!-- Dark Mode Variants -->\n    <div class=\"dark\" style=\"background-color: #1f2937; padding: 2rem 0 1rem 0;\">\n      <h2 style=\"text-align: center; margin-bottom: 1.5rem; font-size: 1.25rem; font-weight: bold; color: white;\">\n        Dark Mode - All Variants\n      </h2>\n      <div style=\"display: grid; grid-template-columns: repeat(${variants.length}, 1fr); gap: 2rem; justify-content: center; max-width: 1200px; margin: 0 auto; padding: 0 2rem;\">\n        ${variants\n          .map(\n            (variant) => `\n        <div style=\"position: relative;\">\n          <div style=\"position: absolute; top: -1.5rem; left: 50%; transform: translateX(-50%); background: #374151; color: white; padding: 0.25rem 0.75rem; border-radius: 0.25rem; box-shadow: 0 2px 4px rgba(0,0,0,0.3); font-size: 0.75rem; font-weight: 600; white-space: nowrap;\">\n            ${variant}\n          </div>\n          <${componentTag}\n            [variant]=\"'${variant.toLowerCase()}'\"\n            ${baseBindings}\n          />\n        </div>\n        `,\n          )\n          .join('')}\n      </div>\n    </div>\n  </div>\n`",
+          "rawdescription": "Creates a template for comparing all variants in a 3x2 grid (Light + Dark)",
+          "description": "<p>Creates a template for comparing all variants in a 3x2 grid (Light + Dark)</p>\n"
+        },
+        {
+          "name": "generateBindings",
+          "ctype": "miscellaneous",
+          "subtype": "variable",
+          "file": "src/stories/story-helpers.ts",
+          "deprecated": false,
+          "deprecationMessage": "",
+          "type": "unknown",
+          "defaultValue": "(props: Record<string, unknown>): string => {\n  return Object.entries(props)\n    .map(([key, value]) => {\n      if (typeof value === 'string') {\n        return `[${key}]=\"${key}\"`;\n      }\n      return `[${key}]=\"${key}\"`;\n    })\n    .join('\\n        ');\n}",
+          "rawdescription": "Helper to generate common Angular bindings string",
+          "description": "<p>Helper to generate common Angular bindings string</p>\n"
+        },
+        {
+          "name": "wrapInLightDarkComparison",
+          "ctype": "miscellaneous",
+          "subtype": "variable",
+          "file": "src/stories/story-helpers.ts",
+          "deprecated": false,
+          "deprecationMessage": "",
+          "type": "unknown",
+          "defaultValue": "(template: string): string => `\n  <div style=\"display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh;\">\n    <!-- Light Mode -->\n    <div style=\"background-color: #f9fafb; position: relative; border-right: 2px solid #000; padding: 2rem;\">\n      <div style=\"position: absolute; top: 1rem; left: 50%; transform: translateX(-50%); z-index: 100; background: white; padding: 0.5rem 1rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: bold;\">\n        Light Mode\n      </div>\n      ${template}\n    </div>\n\n    <!-- Dark Mode -->\n    <div class=\"dark\" style=\"background-color: #1f2937; position: relative; padding: 2rem;\">\n      <div style=\"position: absolute; top: 1rem; left: 50%; transform: translateX(-50%); z-index: 100; background: #374151; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.3); font-weight: bold;\">\n        Dark Mode\n      </div>\n      ${template}\n    </div>\n  </div>\n`",
+          "rawdescription": "Wraps any template in a Light/Dark comparison layout\nUsed for complex components with custom templates (like modals)",
+          "description": "<p>Wraps any template in a Light/Dark comparison layout\nUsed for complex components with custom templates (like modals)</p>\n"
+        }
+      ],
+      "src/app/app.routes.ts": [
+        {
+          "name": "routes",
+          "ctype": "miscellaneous",
+          "subtype": "variable",
+          "file": "src/app/app.routes.ts",
+          "deprecated": false,
+          "deprecationMessage": "",
+          "type": "Routes",
+          "defaultValue": "[]"
+        }
+      ]
+    },
+    "groupedFunctions": {},
+    "groupedEnumerations": {},
+    "groupedTypeAliases": {}
+  },
+  "routes": {
+    "name": "<root>",
+    "kind": "module",
+    "children": []
+  },
+  "coverage": {
+    "count": 38,
+    "status": "medium",
+    "files": [
+      {
+        "filePath": "src/app/app.config.ts",
+        "type": "variable",
+        "linktype": "miscellaneous",
+        "linksubtype": "variable",
+        "name": "appConfig",
+        "coveragePercent": 0,
+        "coverageCount": "0/1",
+        "status": "low"
+      },
+      {
+        "filePath": "src/app/app.routes.ts",
+        "type": "variable",
+        "linktype": "miscellaneous",
+        "linksubtype": "variable",
+        "name": "routes",
+        "coveragePercent": 0,
+        "coverageCount": "0/1",
+        "status": "low"
+      },
+      {
+        "filePath": "src/app/app.ts",
+        "type": "component",
+        "linktype": "component",
+        "name": "App",
+        "coveragePercent": 0,
+        "coverageCount": "0/3",
+        "status": "low"
+      },
+      {
+        "filePath": "src/app/shared/components/accordion/accordion-item-content.ts",
+        "type": "component",
+        "linktype": "component",
+        "name": "AccordionItemContentComponent",
+        "coveragePercent": 0,
+        "coverageCount": "0/1",
+        "status": "low"
+      },
+      {
+        "filePath": "src/app/shared/components/accordion/accordion-item-header.ts",
+        "type": "component",
+        "linktype": "component",
+        "name": "AccordionItemHeaderComponent",
+        "coveragePercent": 0,
+        "coverageCount": "0/1",
+        "status": "low"
+      },
+      {
+        "filePath": "src/app/shared/components/accordion/accordion-item.ts",
+        "type": "component",
+        "linktype": "component",
+        "name": "AccordionItemComponent",
+        "coveragePercent": 0,
+        "coverageCount": "0/12",
+        "status": "low"
+      },
+      {
+        "filePath": "src/app/shared/components/accordion/accordion.ts",
+        "type": "component",
+        "linktype": "component",
+        "name": "Accordion",
+        "coveragePercent": 0,
+        "coverageCount": "0/13",
+        "status": "low"
+      },
+      {
+        "filePath": "src/app/shared/components/accordion/accordion.ts",
+        "type": "interface",
+        "linktype": "interface",
+        "name": "AccordionItem",
+        "coveragePercent": 0,
+        "coverageCount": "0/6",
+        "status": "low"
+      },
+      {
+        "filePath": "src/stories/story-helpers.ts",
+        "type": "variable",
+        "linktype": "miscellaneous",
+        "linksubtype": "variable",
+        "name": "createLightDarkComparison",
+        "coveragePercent": 100,
+        "coverageCount": "1/1",
+        "status": "very-good"
+      },
+      {
+        "filePath": "src/stories/story-helpers.ts",
+        "type": "variable",
+        "linktype": "miscellaneous",
+        "linksubtype": "variable",
+        "name": "createLightDarkRender",
+        "coveragePercent": 100,
+        "coverageCount": "1/1",
+        "status": "very-good"
+      },
+      {
+        "filePath": "src/stories/story-helpers.ts",
+        "type": "variable",
+        "linktype": "miscellaneous",
+        "linksubtype": "variable",
+        "name": "createVariantComparison",
+        "coveragePercent": 100,
+        "coverageCount": "1/1",
+        "status": "very-good"
+      },
+      {
+        "filePath": "src/stories/story-helpers.ts",
+        "type": "variable",
+        "linktype": "miscellaneous",
+        "linksubtype": "variable",
+        "name": "generateBindings",
+        "coveragePercent": 100,
+        "coverageCount": "1/1",
+        "status": "very-good"
+      },
+      {
+        "filePath": "src/stories/story-helpers.ts",
+        "type": "variable",
+        "linktype": "miscellaneous",
+        "linksubtype": "variable",
+        "name": "wrapInLightDarkComparison",
+        "coveragePercent": 100,
+        "coverageCount": "1/1",
+        "status": "very-good"
+      }
+    ]
+  }
 }

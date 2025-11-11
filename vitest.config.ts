@@ -1,8 +1,15 @@
 import { defineConfig } from 'vitest/config';
+import { resolve } from 'node:path';
 
 import angular from '@analogjs/vite-plugin-angular';
+
 export default defineConfig({
   plugins: [angular()],
+  resolve: {
+    alias: {
+      '@loan': resolve(__dirname, 'src'),
+    },
+  },
   test: {
     globals: true,
     environment: 'jsdom',

@@ -6,7 +6,7 @@ import {
   inject,
   HostAttributeToken,
 } from '@angular/core';
-import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { CommonModule } from '@angular/common';
 
 const DATA_TESTID = new HostAttributeToken('data-testid');
 
@@ -96,10 +96,7 @@ const STATUS_POSITIONS: Record<string, string> = {
 
       <!-- Initials Avatar -->
       @if (variant() === 'initials') {
-        <span
-          [class]="initialsClasses()"
-          [attr.data-testid]="initialsTestId()"
-        >
+        <span [class]="initialsClasses()" [attr.data-testid]="initialsTestId()">
           {{ initials() }}
         </span>
       }
@@ -131,10 +128,7 @@ const STATUS_POSITIONS: Record<string, string> = {
 
       <!-- Status Indicator -->
       @if (statusIndicator() !== null) {
-        <span
-          [class]="indicatorClasses()"
-          [attr.data-testid]="indicatorTestId()"
-        ></span>
+        <span [class]="indicatorClasses()" [attr.data-testid]="indicatorTestId()"></span>
       }
     </div>
   `,
@@ -200,23 +194,19 @@ export class Avatar {
   });
 
   // Test ID computed values
-  readonly componentTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-avatar` : null
-  );
+  readonly componentTestId = computed(() => (this.hostTestId ? `${this.hostTestId}-avatar` : null));
 
-  readonly imageTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-image` : null
-  );
+  readonly imageTestId = computed(() => (this.hostTestId ? `${this.hostTestId}-image` : null));
 
   readonly initialsTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-initials` : null
+    this.hostTestId ? `${this.hostTestId}-initials` : null,
   );
 
   readonly placeholderTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-placeholder` : null
+    this.hostTestId ? `${this.hostTestId}-placeholder` : null,
   );
 
   readonly indicatorTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-indicator` : null
+    this.hostTestId ? `${this.hostTestId}-indicator` : null,
   );
 }

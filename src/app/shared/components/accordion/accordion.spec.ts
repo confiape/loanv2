@@ -9,7 +9,12 @@ import { AccordionItemContentComponent } from './accordion-item-content';
 @Component({
   selector: 'app-test-wrapper',
   standalone: true,
-  imports: [Accordion, AccordionItemComponent, AccordionItemHeaderComponent, AccordionItemContentComponent],
+  imports: [
+    Accordion,
+    AccordionItemComponent,
+    AccordionItemHeaderComponent,
+    AccordionItemContentComponent,
+  ],
   template: `
     <app-accordion [allowMultiple]="allowMultiple()">
       <app-accordion-item [id]="'item1'" [disabled]="item1Disabled()" [expanded]="item1Expanded()">
@@ -25,7 +30,7 @@ import { AccordionItemContentComponent } from './accordion-item-content';
         <app-accordion-item-content>Content 3</app-accordion-item-content>
       </app-accordion-item>
     </app-accordion>
-  `
+  `,
 })
 class TestWrapperComponent {
   readonly allowMultiple = signal(false);
@@ -40,7 +45,7 @@ describe('Accordion', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [Accordion],
-      providers: [provideZonelessChangeDetection()]
+      providers: [provideZonelessChangeDetection()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(Accordion);
@@ -113,14 +118,16 @@ describe('Accordion', () => {
       TestBed.resetTestingModule();
       await TestBed.configureTestingModule({
         imports: [TestWrapperComponent],
-        providers: [provideZonelessChangeDetection()]
+        providers: [provideZonelessChangeDetection()],
       }).compileComponents();
 
       wrapperFixture = TestBed.createComponent(TestWrapperComponent);
       wrapperComponent = wrapperFixture.componentInstance;
       wrapperFixture.detectChanges();
 
-      const accordionDebugElement: DebugElement = wrapperFixture.debugElement.query(By.directive(Accordion));
+      const accordionDebugElement: DebugElement = wrapperFixture.debugElement.query(
+        By.directive(Accordion),
+      );
       accordionComponent = accordionDebugElement.componentInstance;
     });
 

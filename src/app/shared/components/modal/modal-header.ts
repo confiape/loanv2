@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, HostAttributeToken, inject, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  HostAttributeToken,
+  inject,
+  output,
+} from '@angular/core';
 import { generateModalTestIds } from './modal-helpers';
 
 const DATA_TESTID = new HostAttributeToken('data-testid');

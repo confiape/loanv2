@@ -5,14 +5,17 @@ import { AccordionItemComponent } from './accordion-item';
   selector: 'app-accordion-item-content',
   standalone: true,
   template: `
-    <div class="p-5 border border-b-0 border-border text-text-secondary" [attr.data-testid]="contentTestId()">
+    <div
+      class="p-5 border border-b-0 border-border text-text-secondary"
+      [attr.data-testid]="contentTestId()"
+    >
       <ng-content></ng-content>
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    class: 'block'
-  }
+    class: 'block',
+  },
 })
 export class AccordionItemContentComponent {
   private readonly accordionItem = inject(AccordionItemComponent, { optional: true });

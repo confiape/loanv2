@@ -1,5 +1,5 @@
 import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { Dialog, DialogModule } from '@angular/cdk/dialog';
 import { Modal } from '@loan/app/shared/components/modal/modal';
 import { ModalHeader } from '@loan/app/shared/components/modal/modal-header';
@@ -26,10 +26,10 @@ import { wrapInLightDarkComparison } from '@loan/stories/story-helpers';
           agreements to comply.
         </p>
         <p class="text-base leading-relaxed text-text-secondary">
-          The European Union's General Data Protection Regulation (G.D.P.R.) goes into effect on
-          May 25 and is meant to ensure a common set of data rights in the European Union. It
-          requires organizations to notify users as soon as possible of high-risk data breaches
-          that could personally affect them.
+          The European Union's General Data Protection Regulation (G.D.P.R.) goes into effect on May
+          25 and is meant to ensure a common set of data rights in the European Union. It requires
+          organizations to notify users as soon as possible of high-risk data breaches that could
+          personally affect them.
         </p>
       </app-modal-body>
       <app-modal-footer>

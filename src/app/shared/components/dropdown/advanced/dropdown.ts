@@ -118,16 +118,12 @@ export class Dropdown {
   readonly searchConfig = computed(() => this.search());
 
   readonly componentTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-dropdown` : null
+    this.hostTestId ? `${this.hostTestId}-dropdown` : null,
   );
 
-  readonly triggerTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-trigger` : null
-  );
+  readonly triggerTestId = computed(() => (this.hostTestId ? `${this.hostTestId}-trigger` : null));
 
-  readonly panelTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-panel` : null
-  );
+  readonly panelTestId = computed(() => (this.hostTestId ? `${this.hostTestId}-panel` : null));
 
   readonly visibleSections = computed(() => {
     const sections = this.sections();
@@ -273,11 +269,7 @@ export class Dropdown {
     }
   }
 
-  onCheckboxToggle(event: {
-    item: DropdownCheckboxItem;
-    path: string[];
-    event: Event;
-  }) {
+  onCheckboxToggle(event: { item: DropdownCheckboxItem; path: string[]; event: Event }) {
     event.event.stopPropagation();
     const input = event.event.target as HTMLInputElement;
     this.userCheckboxState.update((state) => ({
