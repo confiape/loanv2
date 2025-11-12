@@ -277,7 +277,7 @@ export const Default: Story = {
       </div>
     `),
     props: {
-      service: signal(new MockUserCrudService()),
+      service: new MockUserCrudService(),
     },
   }),
 };
@@ -295,7 +295,7 @@ export const WithSearch: Story = {
         </div>
       `),
       props: {
-        service: signal(service),
+        service: service,
       },
     };
   },
@@ -314,7 +314,7 @@ export const WithSelection: Story = {
         </div>
       `),
       props: {
-        service: signal(service),
+        service: service,
       },
     };
   },
@@ -338,7 +338,7 @@ export const EmptyState: Story = {
         </div>
       `),
       props: {
-        service: signal(new EmptyService()),
+        service: new EmptyService(),
       },
     };
   },
@@ -357,7 +357,7 @@ export const Loading: Story = {
         </div>
       `),
       props: {
-        service: signal(service),
+        service: service,
       },
     };
   },
