@@ -1,0 +1,284 @@
+<div
+  class="relative overflow-x-auto shadow-md sm:rounded-lg"
+  [attr.data-testid]="testIds().wrapper"
+>
+  <!-- Toolbar: Búsqueda -->
+  @if (searchable()) {
+    <div class="pb-4 bg-bg-primary">
+      <label [for]="testIds().search ?? 'table-search'" class="sr-only"
+        >Search</label
+      >
+      <div class="relative mt-1">
+        <div
+          class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none"
+        >
+          <svg
+            class="w-4 h-4 text-text-secondary"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 20 20"
+          >
+            <path
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+            />
+          </svg>
+        </div>
+        <input
+          type="text"
+          [id]="testIds().search ?? 'table-search'"
+          [attr.data-testid]="testIds().search"
+          class="block pt-2 ps-10 text-sm text-text-primary border border-border rounded-lg w-80 bg-bg-secondary focus:ring-accent focus:border-accent"
+          [placeholder]="searchPlaceholder()"
+          [value]="searchTerm()"
+          (input)="onSearchChange($event)"
+        />
+      </div>
+    </div>
+  }
+
+  <!-- Tabla -->
+  <table
+    class="w-full text-sm text-left rtl:text-right text-text-secondary"
+    [attr.data-testid]="testIds().table"
+  >
+    <!-- Encabezado -->
+    <thead
+      class="text-xs text-text-primary uppercase bg-bg-secondary border-b border-border"
+    >
+      <tr>
+        <!-- Columna de selección -->
+        @if (selectable()) {
+          <th scope="col" class="p-4">
+            <div class="flex items-center">
+              <input
+                [id]="testIds().selectAll ?? 'checkbox-all'"
+                [attr.data-testid]="testIds().selectAll"
+                type="checkbox"
+                class="w-4 h-4 text-accent bg-bg-primary border-border rounded-sm focus:ring-accent focus:ring-2"
+                [checked]="allSelected()"
+                [indeterminate]="partialSelection()"
+                (change)="toggleSelectAll()"
+              />
+              <label
+                [for]="testIds().selectAll ?? 'checkbox-all'"
+                class="sr-only"
+                >Select all</label
+              >
+            </div>
+          </th>
+        }
+
+        <!-- Columnas dinámicas -->
+        @for (column of columns(); track column.key) {
+          <th
+            scope="col"
+            [class]="densityClasses() + ' ' + getAlignClass(column.align)"
+            [style.width]="column.width"
+          >
+            @if (sortable() && column.sortable) {
+              <button
+                type="button"
+                class="flex items-center gap-1 hover:text-accent transition-colors"
+                (click)="handleSort(column)"
+              >
+                <span>{{ column.label }}</span>
+                @if (sortState().key === column.key) {
+                  @if (sortState().direction === 'asc') {
+                    <svg
+                      class="w-3 h-3"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z"
+                      />
+                    </svg>
+                  } @else if (sortState().direction === 'desc') {
+                    <svg
+                      class="w-3 h-3"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        d="M14.707 10.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 12.586V5a1 1 0 012 0v7.586l2.293-2.293a1 1 0 011.414 0z"
+                      />
+                    </svg>
+                  }
+                }
+              </button>
+            } @else {
+              {{ column.label }}
+            }
+          </th>
+        }
+
+        <!-- Columna de acciones -->
+        @if (actions().length > 0) {
+          <th scope="col" [class]="densityClasses()">Actions</th>
+        }
+      </tr>
+    </thead>
+
+    <!-- Cuerpo -->
+    <tbody>
+      @for (row of visibleData(); track $index) {
+        <tr
+          class="bg-bg-primary border-b border-border"
+          [class.hover:bg-bg-secondary]="hoverable()"
+          [class.cursor-pointer]="hoverable()"
+        >
+          <!-- Celda de selección -->
+          @if (selectable()) {
+            <td class="w-4 p-4">
+              <div class="flex items-center">
+                <input
+                  [id]="'checkbox-table-' + $index"
+                  type="checkbox"
+                  class="w-4 h-4 text-accent bg-bg-primary border-border rounded-sm focus:ring-accent focus:ring-2"
+                  [checked]="isRowSelected($index)"
+                  (change)="toggleRow($index)"
+                />
+                <label [for]="'checkbox-table-' + $index" class="sr-only"
+                  >Select row {{ $index + 1 }}</label
+                >
+              </div>
+            </td>
+          }
+
+          <!-- Celdas dinámicas -->
+          @for (column of columns(); track column.key; let first = $first) {
+            @if (first) {
+              <th
+                scope="row"
+                [class]="
+                  densityClasses() +
+                  ' font-medium text-text-primary whitespace-nowrap ' +
+                  getAlignClass(column.align)
+                "
+              >
+                {{ getCellValue(row, column) }}
+              </th>
+            } @else {
+              <td [class]="densityClasses() + ' ' + getAlignClass(column.align)">
+                {{ getCellValue(row, column) }}
+              </td>
+            }
+          }
+
+          <!-- Celda de acciones -->
+          @if (actions().length > 0) {
+            <td [class]="densityClasses()">
+              <div class="flex gap-2">
+                @for (action of actions(); track action.label) {
+                  @if (shouldShowAction(action, row)) {
+                    <button
+                      type="button"
+                      [class]="
+                        'font-medium underline transition-colors ' +
+                        getActionClass(action.variant)
+                      "
+                      (click)="executeAction(action, row)"
+                    >
+                      {{ action.label }}
+                    </button>
+                  }
+                }
+              </div>
+            </td>
+          }
+        </tr>
+      } @empty {
+        <tr>
+          <td
+            [attr.colspan]="
+              columns().length +
+              (selectable() ? 1 : 0) +
+              (actions().length > 0 ? 1 : 0)
+            "
+            class="px-6 py-8 text-center text-text-secondary"
+          >
+            No data available
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+
+  <!-- Paginación -->
+  @if (paginated() && pagination().totalPages > 1) {
+    <nav
+      class="flex items-center flex-column flex-wrap md:flex-row justify-between pt-4 px-4 pb-4 bg-bg-primary"
+      [attr.data-testid]="testIds().pagination"
+      aria-label="Table navigation"
+    >
+      <span
+        class="text-sm font-normal text-text-secondary mb-4 md:mb-0 block w-full md:inline md:w-auto"
+      >
+        Showing
+        <span class="font-semibold text-text-primary"
+          >{{ (pagination().currentPage - 1) * pagination().pageSize + 1 }}-{{
+            Math.min(
+              pagination().currentPage * pagination().pageSize,
+              pagination().totalRecords
+            )
+          }}</span
+        >
+        of
+        <span class="font-semibold text-text-primary">{{
+          pagination().totalRecords
+        }}</span>
+      </span>
+
+      <ul class="inline-flex -space-x-px rtl:space-x-reverse text-sm h-8">
+        <!-- Previous -->
+        <li>
+          <button
+            type="button"
+            class="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-text-secondary bg-bg-primary border border-border rounded-s-lg hover:bg-bg-secondary hover:text-text-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            [disabled]="pagination().currentPage === 1"
+            (click)="goToPage(pagination().currentPage - 1)"
+          >
+            Previous
+          </button>
+        </li>
+
+        <!-- Números de página -->
+        @for (page of getPageRange(); track page) {
+          <li>
+            <button
+              type="button"
+              [class]="
+                pagination().currentPage === page
+                  ? 'flex items-center justify-center px-3 h-8 text-accent border border-border bg-blue-50 hover:bg-blue-100 hover:text-accent transition-colors'
+                  : 'flex items-center justify-center px-3 h-8 leading-tight text-text-secondary bg-bg-primary border border-border hover:bg-bg-secondary hover:text-text-primary transition-colors'
+              "
+              [attr.aria-current]="
+                pagination().currentPage === page ? 'page' : null
+              "
+              (click)="goToPage(page)"
+            >
+              {{ page }}
+            </button>
+          </li>
+        }
+
+        <!-- Next -->
+        <li>
+          <button
+            type="button"
+            class="flex items-center justify-center px-3 h-8 leading-tight text-text-secondary bg-bg-primary border border-border rounded-e-lg hover:bg-bg-secondary hover:text-text-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            [disabled]="pagination().currentPage === pagination().totalPages"
+            (click)="goToPage(pagination().currentPage + 1)"
+          >
+            Next
+          </button>
+        </li>
+      </ul>
+    </nav>
+  }
+</div>
