@@ -6,6 +6,8 @@ import { signal, Signal } from '@angular/core';
 import { of, Observable } from 'rxjs';
 import { ICrudService } from '@loan/app/core/services';
 import { TableColumnMetadata, FormFieldMetadata } from '@loan/app/core/models';
+import { Router, ActivatedRoute } from '@angular/router';
+import { provideRouter } from '@angular/router';
 
 const meta: Meta<GenericCrudListComponent<any>> = {
   title: 'Components/GenericCrudList',
@@ -14,6 +16,17 @@ const meta: Meta<GenericCrudListComponent<any>> = {
   decorators: [
     moduleMetadata({
       imports: [GenericCrudListComponent, ReactiveFormsModule],
+      providers: [
+        provideRouter([]),
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: { params: {}, queryParams: {} },
+            params: of({}),
+            queryParams: of({}),
+          },
+        },
+      ],
     }),
   ],
 };
