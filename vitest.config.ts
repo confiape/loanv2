@@ -18,10 +18,13 @@ export default defineConfig({
     coverage: {
       enabled: true,
       provider: 'v8',
-      reporter: ['text', 'lcov'],
+      all: true,
+      reporter: ['text', 'lcov' , 'html'],
+      include: ['src/**/*.ts'],
       exclude: [
-        'node_modules/',
+        '**/node_modules/**',
         'dist/',
+        'src/app/shared/openapi/**',
         '**/*.spec.ts',
         '**/*.stories.ts',
         '**/*.stories.tsx',
