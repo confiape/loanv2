@@ -1,0 +1,255 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-6">
+  <!-- Error message -->
+  @if (error()) {
+    <div
+      class="flex items-center p-4 mb-4 text-sm text-error bg-bg-error border border-error rounded-lg"
+      role="alert"
+    >
+      <svg
+        class="flex-shrink-0 inline w-4 h-4 me-3"
+        aria-hidden="true"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="currentColor"
+        viewBox="0 0 20 20"
+      >
+        <path
+          d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"
+        />
+      </svg>
+      <span class="sr-only">Error</span>
+      <div>
+        <span class="font-medium">{{ error() }}</span>
+      </div>
+    </div>
+  }
+
+  <!-- Form fields -->
+  @for (field of fields(); track field.key) {
+    @if (shouldShowField(field)) {
+      <div [class]="'form-group ' + (field.cssClass || '')">
+        <!-- Text, Email inputs -->
+        @if (field.type === 'text' || field.type === 'email') {
+          <app-input
+            [formControlName]="field.key"
+            [type]="field.type"
+            [label]="field.label"
+            [placeholder]="field.placeholder || ''"
+            [helpText]="field.helpText || ''"
+            [validationState]="getValidationState(field.key)"
+            [errorMessage]="getFieldError(field.key) || ''"
+            [disabled]="field.disabled || false"
+            [readonly]="field.readonly || false"
+            [attr.data-testid]="testIdPrefix() + '-input-' + field.key"
+          />
+        }
+
+        <!-- Password input -->
+        @if (field.type === 'password') {
+          <app-password-input
+            [formControlName]="field.key"
+            [label]="field.label"
+            [placeholder]="field.placeholder || ''"
+            [helpText]="field.helpText || ''"
+            [validationState]="getValidationState(field.key)"
+            [errorMessage]="getFieldError(field.key) || ''"
+            [disabled]="field.disabled || false"
+            [readonly]="field.readonly || false"
+            [attr.data-testid]="testIdPrefix() + '-password-' + field.key"
+          />
+        }
+
+        <!-- Number input -->
+        @if (field.type === 'number') {
+          <app-input-number
+            [formControlName]="field.key"
+            [label]="field.label"
+            [placeholder]="field.placeholder || ''"
+            [helpText]="field.helpText || ''"
+            [validationState]="getValidationState(field.key)"
+            [errorMessage]="getFieldError(field.key) || ''"
+            [disabled]="field.disabled || false"
+            [readonly]="field.readonly || false"
+            [min]="field.min as number"
+            [max]="field.max as number"
+            [step]="field.step || 1"
+            [attr.data-testid]="testIdPrefix() + '-number-' + field.key"
+          />
+        }
+
+        <!-- Date input -->
+        @if (field.type === 'date') {
+          <app-date-input
+            [formControlName]="field.key"
+            [label]="field.label"
+            [placeholder]="field.placeholder || ''"
+            [helpText]="field.helpText || ''"
+            [validationState]="getValidationState(field.key)"
+            [errorMessage]="getFieldError(field.key) || ''"
+            [disabled]="field.disabled || false"
+            [readonly]="field.readonly || false"
+            [min]="field.min as string"
+            [max]="field.max as string"
+            [attr.data-testid]="testIdPrefix() + '-date-' + field.key"
+          />
+        }
+
+        <!-- Checkbox -->
+        @if (field.type === 'checkbox') {
+          <app-checkbox
+            [formControlName]="field.key"
+            [label]="field.label"
+            [helpText]="field.helpText || ''"
+            [validationState]="getValidationState(field.key)"
+            [errorMessage]="getFieldError(field.key) || ''"
+            [disabled]="field.disabled || false"
+            [attr.data-testid]="testIdPrefix() + '-checkbox-' + field.key"
+          />
+        }
+
+        <!-- Radio buttons -->
+        @if (field.type === 'radio') {
+          <app-radio-group
+            [formControlName]="field.key"
+            [label]="field.label"
+            [helpText]="field.helpText || ''"
+            [validationState]="getValidationState(field.key)"
+            [errorMessage]="getFieldError(field.key) || ''"
+            [disabled]="field.disabled || false || loadingOptions()"
+            [options]="getOptions(field.key)"
+            [attr.data-testid]="testIdPrefix() + '-radio-' + field.key"
+          />
+          @if (loadingOptions()) {
+            <p class="mt-1 text-sm text-accent flex items-center">
+              <svg
+                class="animate-spin -ml-1 mr-2 h-4 w-4 inline"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  class="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  stroke-width="4"
+                ></circle>
+                <path
+                  class="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+              Loading options...
+            </p>
+          }
+        }
+
+        <!-- Select (simple) -->
+        @if (field.type === 'select') {
+          <app-select
+            [formControlName]="field.key"
+            [label]="field.label"
+            [placeholder]="field.placeholder || 'Select an option'"
+            [helpText]="field.helpText || ''"
+            [validationState]="getValidationState(field.key)"
+            [errorMessage]="getFieldError(field.key) || ''"
+            [disabled]="field.disabled || false || loadingOptions()"
+            [options]="getOptions(field.key)"
+            [attr.data-testid]="testIdPrefix() + '-select-' + field.key"
+          />
+          @if (loadingOptions()) {
+            <p class="mt-1 text-sm text-accent flex items-center">
+              <svg
+                class="animate-spin -ml-1 mr-2 h-4 w-4 inline"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  class="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  stroke-width="4"
+                ></circle>
+                <path
+                  class="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+              Loading options...
+            </p>
+          }
+        }
+
+        <!-- MultiSelect -->
+        @if (field.type === 'multiselect') {
+          <app-multiselect
+            [formControlName]="field.key"
+            [label]="field.label"
+            [placeholder]="field.placeholder || 'Select options'"
+            [helpText]="field.helpText || ''"
+            [validationState]="getValidationState(field.key)"
+            [errorMessage]="getFieldError(field.key) || ''"
+            [disabled]="field.disabled || false || loadingOptions()"
+            [options]="getOptions(field.key)"
+            [searchable]="true"
+            [attr.data-testid]="testIdPrefix() + '-multiselect-' + field.key"
+          />
+          @if (loadingOptions()) {
+            <p class="mt-1 text-sm text-accent flex items-center">
+              <svg
+                class="animate-spin -ml-1 mr-2 h-4 w-4 inline"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  class="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  stroke-width="4"
+                ></circle>
+                <path
+                  class="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+              Loading options...
+            </p>
+          }
+        }
+      </div>
+    }
+  }
+
+  <!-- Form actions -->
+  <div class="flex justify-end gap-3 pt-4 border-t border-border">
+    <app-button
+      type="button"
+      [variant]="'outline'"
+      [tone]="'neutral'"
+      [attr.data-testid]="testIdPrefix() + '-btn-cancel'"
+      (buttonClick)="onCancel()"
+    >
+      Cancel
+    </app-button>
+    <app-button
+      type="submit"
+      [variant]="'solid'"
+      [tone]="'primary'"
+      [disabled]="loading() || form.invalid"
+      [loading]="loading()"
+      [loadingText]="'Saving...'"
+      [attr.data-testid]="testIdPrefix() + '-btn-submit'"
+    >
+      {{ isEditMode ? 'Update' : 'Create' }}
+    </app-button>
+  </div>
+</form>
