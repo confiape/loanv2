@@ -25,7 +25,7 @@ export interface ICrudService<TDto extends { id: string }, TSaveDto = TDto> {
   showDeleteConfirm: Signal<boolean>;
 
   /** Selected items (for bulk operations) */
-  selectedItems: Signal<Set<string>>();
+  selectedItems: Signal<Set<string>>;
 
   /** Current search term */
   searchTerm: Signal<string>;

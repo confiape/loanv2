@@ -69,8 +69,8 @@
             [errorMessage]="getFieldError(field.key) || ''"
             [disabled]="field.disabled || false"
             [readonly]="field.readonly || false"
-            [min]="field.min as number"
-            [max]="field.max as number"
+            [min]="$any(field.min)"
+            [max]="$any(field.max)"
             [step]="field.step || 1"
             [attr.data-testid]="testIdPrefix() + '-number-' + field.key"
           />
@@ -87,8 +87,8 @@
             [errorMessage]="getFieldError(field.key) || ''"
             [disabled]="field.disabled || false"
             [readonly]="field.readonly || false"
-            [min]="field.min as string"
-            [max]="field.max as string"
+            [min]="$any(field.min)"
+            [max]="$any(field.max)"
             [attr.data-testid]="testIdPrefix() + '-date-' + field.key"
           />
         }

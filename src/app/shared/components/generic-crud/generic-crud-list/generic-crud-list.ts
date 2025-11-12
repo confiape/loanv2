@@ -47,6 +47,9 @@ export class GenericCrudListComponent<TDto extends { id: string }> implements On
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
+  // Expose Math for template
+  protected readonly Math = Math;
+
   // Input: CRUD service (required)
   service = input.required<ICrudService<TDto, unknown>>();
 
