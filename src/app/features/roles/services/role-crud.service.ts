@@ -25,7 +25,15 @@ export class RoleCrudService extends BaseCrudService<RoleDto, SaveRoleDto> {
   }
 
   protected performSave(dto: SaveRoleDto): Observable<RoleDto> {
-    return this.apiService.saveRole(dto);
+    // Strip nested role data and ensure clean SaveRoleDto structure
+    const cleanDto: SaveRoleDto = {
+      id: dto.id || null,
+      name: dto.name,
+      rolesId: Array.isArray(dto.rolesId) ? dto.rolesId : [],
+      permissionsId: Array.isArray(dto.permissionsId) ? dto.permissionsId : [],
+    };
+
+    return this.apiService.saveRole(cleanDto);
   }
 
   protected performDelete(id: string): Observable<unknown> {

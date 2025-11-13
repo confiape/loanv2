@@ -195,6 +195,57 @@ describe('RoleCrudService', () => {
       await promise;
     });
 
+    it('should strip nested role data and send clean SaveRoleDto', async () => {
+      mockUserApiService.saveRole.mockReturnValue(of(mockRole1));
+
+      // Create a DTO with potential nested data (simulating what might come from the form)
+      const dtoWithNestedData: SaveRoleDto = {
+        id: 'role-1',
+        name: 'Test Role',
+        rolesId: ['role-2', 'role-3'],
+        permissionsId: ['read', 'write', 'delete'],
+      };
+
+      const promise = new Promise<void>((resolve) => {
+        service.saveItem(dtoWithNestedData).subscribe(() => {
+          // Verify that saveRole was called with a clean DTO structure
+          expect(mockUserApiService.saveRole).toHaveBeenCalledWith({
+            id: 'role-1',
+            name: 'Test Role',
+            rolesId: ['role-2', 'role-3'],
+            permissionsId: ['read', 'write', 'delete'],
+          });
+          resolve();
+        });
+      });
+
+      await promise;
+    });
+
+    it('should handle null id in SaveRoleDto', async () => {
+      mockUserApiService.saveRole.mockReturnValue(of(mockRole1));
+
+      const newRoleDto: SaveRoleDto = {
+        name: 'New Role',
+        rolesId: [],
+        permissionsId: ['read'],
+      };
+
+      const promise = new Promise<void>((resolve) => {
+        service.saveItem(newRoleDto).subscribe(() => {
+          expect(mockUserApiService.saveRole).toHaveBeenCalledWith({
+            id: null,
+            name: 'New Role',
+            rolesId: [],
+            permissionsId: ['read'],
+          });
+          resolve();
+        });
+      });
+
+      await promise;
+    });
+
     it('should handle save errors', async () => {
       const error = new Error('Save failed');
       mockUserApiService.saveRole.mockReturnValue(throwError(() => error));
