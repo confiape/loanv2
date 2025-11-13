@@ -8,7 +8,7 @@
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-6">
       <!-- Email -->
       <app-input
-        data-testid="login-email"
+        data-testid="login-email-input"
         label="Email"
         type="email"
         placeholder="tu@email.com"
@@ -18,7 +18,7 @@
 
       <!-- Password -->
       <app-password-input
-        data-testid="login-password"
+        data-testid="login-password-input"
         label="Contraseña"
         placeholder="••••••••"
         formControlName="password"
@@ -27,7 +27,7 @@
 
       <!-- Submit Button -->
       <app-button
-        data-testid="login-submit"
+        data-testid="login-submit-btn"
         type="submit"
         variant="solid"
         tone="primary"

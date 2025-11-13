@@ -182,6 +182,7 @@
                         'font-medium underline transition-colors ' +
                         getActionClass(action.variant)
                       "
+                      [attr.data-testid]="testIds().table ? testIds().table + '-row-' + $index + '-btn-' + action.label.toLowerCase() : null"
                       (click)="executeAction(action, row)"
                     >
                       {{ action.label }}
