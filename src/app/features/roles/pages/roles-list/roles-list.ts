@@ -18,5 +18,5 @@ import { RoleCrudService } from '../../services/role-crud.service';
   `,
 })
 export class RolesListComponent {
-  protected readonly service = inject(RoleCrudService);
+  readonly service = inject(RoleCrudService);
 }

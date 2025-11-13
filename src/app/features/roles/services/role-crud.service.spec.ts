@@ -26,8 +26,8 @@ describe('RoleCrudService', () => {
     name: 'Admin',
     roles: [],
     permissions: [
-      { name: 'read', description: 'Read permission' },
-      { name: 'write', description: 'Write permission' },
+      { name: 'read' },
+      { name: 'write' },
     ],
   };
 
@@ -35,7 +35,7 @@ describe('RoleCrudService', () => {
     id: 'role-2',
     name: 'User',
     roles: [mockRole1],
-    permissions: [{ name: 'read', description: 'Read permission' }],
+    permissions: [{ name: 'read' }],
   };
 
   const mockRole3: RoleDto = {
@@ -47,12 +47,10 @@ describe('RoleCrudService', () => {
 
   const mockPermission1: PermissionDto = {
     name: 'create',
-    description: 'Create permission',
   };
 
   const mockPermission2: PermissionDto = {
     name: 'delete',
-    description: 'Delete permission',
   };
 
   const mockPermissions: PermissionDto[] = [mockPermission1, mockPermission2];
@@ -568,7 +566,6 @@ describe('RoleCrudService', () => {
       it('should map permission name as both value and label', async () => {
         const customPermission: PermissionDto = {
           name: 'custom_permission',
-          description: 'Custom',
         };
         mockUserApiService.getAllPermissions.mockReturnValue(of([customPermission]));
 
