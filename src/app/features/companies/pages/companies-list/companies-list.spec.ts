@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi, Mock } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideZonelessChangeDetection, signal } from '@angular/core';
+import { provideZonelessChangeDetection, signal, computed } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 import { CompaniesListComponent } from './companies-list';
@@ -47,9 +47,9 @@ describe('CompaniesListComponent', () => {
       removeFromSelection: vi.fn(),
       clearSelection: vi.fn(),
       hasSelection: vi.fn().mockReturnValue(false),
-      selectedItemsData: vi.fn().mockReturnValue([]),
+      selectedItemsData: computed(() => []),
       getTableData: vi.fn().mockReturnValue(mockCompanies),
-      deleteMessage: vi.fn().mockReturnValue('Are you sure?'),
+      deleteMessage: computed(() => 'Are you sure?'),
       loadAllItems: vi.fn().mockReturnValue(of(mockCompanies)),
       saveItem: vi.fn().mockReturnValue(of(mockCompanies[0])),
       deleteItem: vi.fn().mockReturnValue(of({})),
