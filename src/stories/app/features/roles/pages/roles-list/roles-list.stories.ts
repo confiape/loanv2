@@ -65,7 +65,14 @@ const mockRoles: RoleDto[] = [
   {
     id: '4',
     name: 'Analyst',
-    roles: [{ id: '3', name: 'User' }],
+    roles: [
+      {
+        id: '3',
+        name: 'User',
+        roles: [],
+        permissions: [],
+      },
+    ],
     permissions: [
       { name: 'reports.read' },
       { name: 'analytics.read' },
@@ -84,15 +91,15 @@ const mockRoles: RoleDto[] = [
 
 // Mock service for stories
 class MockRoleCrudService extends RoleCrudService {
-  private _items = signal<RoleDto[]>(mockRoles);
-  private _loading = signal<boolean>(false);
-  private _showModal = signal<boolean>(false);
-  private _editingItem = signal<RoleDto | null>(null);
-  private _showDeleteConfirm = signal<boolean>(false);
-  private _selectedItems = signal<Set<string>>(new Set());
-  private _searchTerm = signal<string>('');
-  private _currentPage = signal<number>(1);
-  private _pageSize = signal<number>(10);
+  protected override _items = signal<RoleDto[]>(mockRoles);
+  protected override _loading = signal<boolean>(false);
+  protected override _showModal = signal<boolean>(false);
+  protected override _editingItem = signal<RoleDto | null>(null);
+  protected override _showDeleteConfirm = signal<boolean>(false);
+  protected override _selectedItems = signal<Set<string>>(new Set());
+  protected override _searchTerm = signal<string>('');
+  protected override _currentPage = signal<number>(1);
+  protected override _pageSize = signal<number>(10);
   private _filteredItems = signal<RoleDto[]>(mockRoles);
 
   override items: Signal<RoleDto[]> = this._items.asReadonly();
@@ -118,7 +125,14 @@ class MockRoleCrudService extends RoleCrudService {
   }
 
   protected override performSave(dto: SaveRoleDto): Observable<RoleDto> {
-    return of(dto as RoleDto);
+    // Transform SaveRoleDto to RoleDto for mock
+    const roleDto: RoleDto = {
+      id: dto.id || crypto.randomUUID(),
+      name: dto.name,
+      roles: [],
+      permissions: dto.permissionsId?.map((name) => ({ name })) || [],
+    };
+    return of(roleDto);
   }
 
   protected override performDelete(id: string): Observable<unknown> {
@@ -262,8 +276,8 @@ export const WithInheritedRoles: Story = {
         id: '2',
         name: 'Department Manager',
         roles: [
-          { id: '3', name: 'User' },
-          { id: '4', name: 'Viewer' },
+          { id: '3', name: 'User', roles: [], permissions: [] },
+          { id: '4', name: 'Viewer', roles: [], permissions: [] },
         ],
         permissions: [
           { name: 'team.manage' },
