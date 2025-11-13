@@ -7,6 +7,8 @@ import { Validators } from '@angular/forms';
 import { RoleDto, SaveRoleDto } from '@loan/app/shared/openapi';
 import { ICrudService } from '@loan/app/core/services';
 import { TableColumnMetadata, FormFieldMetadata } from '@loan/app/core/models';
+import { Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
 const meta: Meta<RolesListComponent> = {
   title: 'Features/Roles/RolesList',
@@ -17,6 +19,18 @@ const meta: Meta<RolesListComponent> = {
 
 export default meta;
 type Story = StoryObj<RolesListComponent>;
+
+// Mock router and route for GenericCrudListComponent
+const mockRouter = {
+  navigate: () => Promise.resolve(true),
+};
+
+const mockActivatedRoute = {
+  params: of({}),
+  snapshot: {
+    params: {},
+  },
+};
 
 // Mock data
 const mockRoles: RoleDto[] = [
@@ -294,6 +308,8 @@ export const Default: Story = {
       imports: [RolesListComponent],
       providers: [
         { provide: RoleCrudService, useValue: new MockRoleCrudService() },
+        { provide: Router, useValue: mockRouter },
+        { provide: ActivatedRoute, useValue: mockActivatedRoute },
       ],
     }),
   ],
@@ -315,6 +331,8 @@ export const Loading: Story = {
       imports: [RolesListComponent],
       providers: [
         { provide: RoleCrudService, useValue: new MockRoleCrudService(mockRoles, true) },
+        { provide: Router, useValue: mockRouter },
+        { provide: ActivatedRoute, useValue: mockActivatedRoute },
       ],
     }),
   ],
@@ -336,6 +354,8 @@ export const Empty: Story = {
       imports: [RolesListComponent],
       providers: [
         { provide: RoleCrudService, useValue: new MockRoleCrudService([], false) },
+        { provide: Router, useValue: mockRouter },
+        { provide: ActivatedRoute, useValue: mockActivatedRoute },
       ],
     }),
   ],
@@ -364,6 +384,8 @@ export const WithSearch: Story = {
             return service;
           },
         },
+        { provide: Router, useValue: mockRouter },
+        { provide: ActivatedRoute, useValue: mockActivatedRoute },
       ],
     }),
   ],
@@ -392,6 +414,8 @@ export const WithSelection: Story = {
             return service;
           },
         },
+        { provide: Router, useValue: mockRouter },
+        { provide: ActivatedRoute, useValue: mockActivatedRoute },
       ],
     }),
   ],
@@ -441,6 +465,8 @@ export const WithInheritedRoles: Story = {
             return new MockRoleCrudService(rolesWithInheritance, false);
           },
         },
+        { provide: Router, useValue: mockRouter },
+        { provide: ActivatedRoute, useValue: mockActivatedRoute },
       ],
     }),
   ],
