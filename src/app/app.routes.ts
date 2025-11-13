@@ -3,6 +3,7 @@ import { MainLayoutComponent } from './layout/main-layout/main-layout';
 import { LoginComponent } from '@loan/app/features/auth/pages/login/login';
 import { loginGuard } from '@loan/app/features/auth/guards/login.guard';
 import { userResolver } from '@loan/app/core/resolvers/user.resolver';
+import { CompaniesListComponent } from '@loan/app/features/companies/pages/companies-list/companies-list';
 
 export const routes: Routes = [
   {
@@ -25,6 +26,14 @@ export const routes: Routes = [
       {
         path: 'home',
         component: LoginComponent,
+      },
+      {
+        path: 'companies',
+        component: CompaniesListComponent,
+      },
+      {
+        path: 'companies/:id',
+        component: CompaniesListComponent,
       },
     ],
   },
