@@ -91,27 +91,18 @@ const mockRoles: RoleDto[] = [
 
 // Mock service for stories
 class MockRoleCrudService extends RoleCrudService {
-  protected override _items = signal<RoleDto[]>(mockRoles);
-  protected override _loading = signal<boolean>(false);
-  protected override _showModal = signal<boolean>(false);
-  protected override _editingItem = signal<RoleDto | null>(null);
-  protected override _showDeleteConfirm = signal<boolean>(false);
-  protected override _selectedItems = signal<Set<string>>(new Set());
-  protected override _searchTerm = signal<string>('');
-  protected override _currentPage = signal<number>(1);
-  protected override _pageSize = signal<number>(10);
-
   private initialData: RoleDto[];
 
   constructor(initialRoles: RoleDto[] = mockRoles, isLoading = false) {
     super();
     this.initialData = initialRoles;
+    // Set the parent's signals directly - don't create new ones
     this._items.set(initialRoles);
     this._loading.set(isLoading);
   }
 
   protected override fetchAllItems(): Observable<RoleDto[]> {
-    return of(this.initialData).pipe(delay(100));
+    return of(this.initialData);
   }
 
   protected override performSave(dto: SaveRoleDto): Observable<RoleDto> {
