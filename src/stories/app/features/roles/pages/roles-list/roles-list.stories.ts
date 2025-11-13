@@ -100,23 +100,10 @@ class MockRoleCrudService extends RoleCrudService {
   protected override _searchTerm = signal<string>('');
   protected override _currentPage = signal<number>(1);
   protected override _pageSize = signal<number>(10);
-  private _filteredItems = signal<RoleDto[]>(mockRoles);
-
-  override items: Signal<RoleDto[]> = this._items.asReadonly();
-  override loading: Signal<boolean> = this._loading.asReadonly();
-  override showModal: Signal<boolean> = this._showModal.asReadonly();
-  override editingItem: Signal<RoleDto | null> = this._editingItem.asReadonly();
-  override showDeleteConfirm: Signal<boolean> = this._showDeleteConfirm.asReadonly();
-  override selectedItems: Signal<Set<string>> = this._selectedItems.asReadonly();
-  override searchTerm: Signal<string> = this._searchTerm.asReadonly();
-  override currentPage: Signal<number> = this._currentPage.asReadonly();
-  override pageSize: Signal<number> = this._pageSize.asReadonly();
-  override filteredItems: Signal<RoleDto[]> = this._filteredItems.asReadonly();
 
   constructor(initialRoles: RoleDto[] = mockRoles, isLoading = false) {
     super();
     this._items.set(initialRoles);
-    this._filteredItems.set(initialRoles);
     this._loading.set(isLoading);
   }
 
@@ -150,17 +137,8 @@ class MockRoleCrudService extends RoleCrudService {
     this._loading.set(true);
     setTimeout(() => {
       this._items.set(mockRoles);
-      this._filteredItems.set(mockRoles);
       this._loading.set(false);
     }, 500);
-  }
-
-  override onSearch(term: string): void {
-    this._searchTerm.set(term);
-    const filtered = this._items().filter((role) =>
-      this.matchesSearch(role, term)
-    );
-    this._filteredItems.set(filtered);
   }
 
   override onSelectionChange(selected: Set<string>): void {
