@@ -36,11 +36,12 @@ export const TestIds = {
 
   /**
    * Login page test IDs
+   * Note: Input components auto-generate suffixes (-input, -label, etc.)
    */
   login: {
-    emailInput: 'login-email-input',
-    passwordInput: 'login-password-input',
-    submitBtn: 'login-submit-btn',
+    emailInput: 'login-email-input',  // Base: login-email, suffix: -input
+    passwordInput: 'login-password-input',  // Base: login-password, suffix: -input
+    submitBtn: 'login-submit',
     errorMessage: 'login-error-message',
   },
 
