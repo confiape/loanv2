@@ -1,148 +1,60 @@
 # STORYBOOK.md – Storybook Documentation Guide
 
 > Applies to: **Angular 20 (Zoneless)** application with **Tailwind CSS v4** and **standalone components**.
-> Goal: ensure every UI component has consistent, accessible, and themed stories.
+> Goal: keep every UI component documented with consistent, accessible, and themed stories.
 
 ---
 
 ## 1. Purpose
 
-Storybook documents reusable UI components in **isolation**.
-It provides:
-
-- Visual testing in **Light/Dark** mode.
-- **Responsive previews** (mobile/desktop).
-- Component **interaction and state coverage**.
-- **Automated documentation** for developers and QA.
+Storybook documents reusable UI components in isolation so that teams can review Light/Dark states, responsive breakpoints, and QA notes without running the full app. Treat every story as living documentation that mirrors production behavior.
 
 ---
 
 ## 2. Folder Structure
 
-```
-src/stories/
-├── story-helpers.ts           # Shared Light/Dark helpers
-├── ui/                        # Component stories
-│   ├── button.stories.ts
-│   ├── dropdown.stories.ts
-│   ├── modal.stories.ts
-└── themes/                    # Global decorators and theme preview
-```
+All stories live under `src/stories`. Group files by feature (`ui/button/button.stories.ts`, `forms/input.stories.ts`, etc.) so discoverability matches the design system. Global decorators and parameters remain in `src/stories/themes`. The legacy `story-helpers.ts` file stays in the directory for backward compatibility only and must not be referenced by new stories.
 
 ---
 
-## 3. Required Helpers
+## 3. Theming and Layout
 
-Located in `src/stories/story-helpers.ts`.
-
-### `createLightDarkComparison()`
-
-Displays Light + Dark themes side-by-side.
-
-```ts
-template: createLightDarkComparison('app-button', `[variant]="variant" [size]="size"`);
-```
-
-### `createVariantComparison()`
-
-Displays multiple variants in a grid.
-
-```ts
-template: createVariantComparison(
-  'app-alert',
-  ['primary', 'success', 'error'],
-  'message="Example message"',
-);
-```
-
-### `wrapInLightDarkComparison()`
-
-Wraps a custom or complex layout in both themes.
-
-```ts
-template: wrapInLightDarkComparison(`
-  <div class="p-8">
-    <app-modal [isOpen]="true" title="Example"></app-modal>
-  </div>
-`);
-```
-
-### `createLightDarkRender()`
-
-Shorthand helper for simple components.
-
-```ts
-render: createLightDarkRender('app-badge', `[variant]="variant"`);
-```
+- [`@storybook/addon-themes`](https://storybook.js.org/addons/@storybook/addon-themes) is applied globally, so individual stories do **not** need to manage theme toggles or helper wrappers.
+- Even though switching is automatic, components must look correct for Light/Dark because QA will flip the toolbar themes while reviewing.
+- Keep layouts minimal: prefer the `padded` or `fullscreen` Storybook layout parameter when extra space is required, and avoid custom iframes or helper wrappers.
 
 ---
 
 ## 4. Meta Configuration
 
-Every story must define a `Meta` object:
+Every `.stories.ts` file defines a strongly typed `Meta` export with:
 
-```ts
-import { Meta, StoryObj } from '@storybook/angular';
-import { ButtonComponent } from './button';
-
-const meta: Meta<ButtonComponent> = {
-  title: 'UI/Button',
-  component: ButtonComponent,
-  tags: ['autodocs'],
-  parameters: {
-    layout: 'fullscreen', // REQUIRED for theme helpers
-  },
-  argTypes: {
-    variant: { control: 'select', options: ['primary', 'secondary', 'error'] },
-    size: { control: 'select', options: ['sm', 'md', 'lg'] },
-    disabled: { control: 'boolean' },
-  },
-};
-
-export default meta;
-type Story = StoryObj<ButtonComponent>;
-```
+- `title`: follows `Domain/Subdomain/Component` so navigation matches Figma files.
+- `component`: direct reference to the standalone Angular component.
+- `tags`: include `['autodocs']` for automatic docs pages.
+- `parameters`: set `layout` (`'padded'` for inline components, `'fullscreen'` for layouts) plus any controls for the themes addon.
+- `argTypes`: describe every public input, output, and variant to keep controls self-documented.
 
 ---
 
-## 5. Story Coverage (Minimum Set)
+## 5. Story Coverage
 
-Each component should include **5–10 stories** covering all states.
-
-| Type             | Example                               |
-| ---------------- | ------------------------------------- |
-| Default          | `Default: Story`                      |
-| Variants         | `AllVariants: Story`                  |
-| Sizes            | `Sizes: Story`                        |
-| Disabled/Loading | `Disabled`, `Loading`                 |
-| Edge Cases       | `EmptyState`, `Overflow`, `LongLabel` |
-
-Example:
-
-```ts
-export const Default: Story = { args: { variant: 'primary', label: 'Click me' } };
-export const AllVariants: Story = {
-  render: () =>
-    createVariantComparison('app-button', ['primary', 'secondary', 'error'], `label='Click'`),
-};
-```
+Provide 5–10 stories per component covering at minimum the default view, each visual variant, size differences, loading/disabled/error states, edge cases (overflow, empty data), and any interactive flows. When state combinations explode, prioritize what designers list as critical and document rationale in a `description` parameter.
 
 ---
 
-## 6. ArgTypes Best Practices
+## 6. ArgTypes and Controls
 
-| Control   | Usage                    |
-| --------- | ------------------------ |
-| `select`  | Variants, sizes          |
-| `boolean` | Toggles, states          |
-| `text`    | Labels, placeholders     |
-| `number`  | Values, progress, steps  |
-| `color`   | Theme visualization only |
+- Map enums (`variant`, `size`, `tone`) to `select` controls.
+- Use `boolean` for toggles such as `disabled`, `open`, `loading`.
+- Limit `text` controls to content slots or free-form labels.
+- `number` controls cover quantities (progress, step indexes, counts).
+- For event outputs, use `fn()` from `@storybook/test` so docs pages surface interactions.
 
-Use `fn()` from `storybook/test` to mock events:
+---
 
-```ts
-args: { onClick: fn() },
-```
+## 7. Deprecations
+
+`src/stories/story-helpers.ts` and all of its exports (`createLightDarkComparison`, `createVariantComparison`, `wrapInLightDarkComparison`, `generateBindings`, `createLightDarkRender`) are deprecated. Do not import them in future stories; extend the themes addon configuration instead when you need custom Light/Dark previews.
 
 ---

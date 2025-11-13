@@ -5,6 +5,7 @@
 
 /**
  * Creates a side-by-side comparison template for Light and Dark modes
+ * @deprecated Use @storybook/addon-themes instead of inline helpers.
  * @param componentTag - The component HTML tag (e.g., 'app-dropdown', 'app-button')
  * @param bindings - String of Angular bindings to pass to the component
  * @returns Template string with Light/Dark comparison
@@ -35,6 +36,7 @@ export const createLightDarkComparison = (componentTag: string, bindings = ''): 
 
 /**
  * Creates a template for comparing all variants in a 3x2 grid (Light + Dark)
+ * @deprecated Use @storybook/addon-themes instead of inline helpers.
  * @param componentTag - The component HTML tag
  * @param variants - Array of variant names
  * @param baseBindings - Common bindings for all variants
@@ -98,6 +100,7 @@ export const createVariantComparison = (
 
 /**
  * Helper to generate common Angular bindings string
+ * @deprecated Use strongly typed story args instead.
  * @param props - Object with property names and values
  * @returns String of Angular bindings
  */
@@ -115,6 +118,7 @@ export const generateBindings = (props: Record<string, unknown>): string => {
 /**
  * Wraps any template in a Light/Dark comparison layout
  * Used for complex components with custom templates (like modals)
+ * @deprecated Use @storybook/addon-themes instead of inline helpers.
  * @param template - The complete template to wrap
  * @returns Template string with Light/Dark comparison
  */
@@ -140,6 +144,7 @@ export const wrapInLightDarkComparison = (template: string): string => `
 
 /**
  * Creates a standard render function for stories with Light/Dark comparison
+ * @deprecated Use @storybook/addon-themes renderers instead of inline helpers.
  * @param componentTag - The component HTML tag
  * @param bindings - String of Angular bindings
  * @returns Render function for Storybook stories
