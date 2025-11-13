@@ -7,7 +7,6 @@ import { ModalBody } from '@loan/app/shared/components/modal/modal-body';
 import { ModalFooter } from '@loan/app/shared/components/modal/modal-footer';
 import { ModalService } from '@loan/app/shared/components/modal/modal.service';
 import { Button } from '@loan/app/shared/components/button/button';
-import { wrapInLightDarkComparison } from '@loan/stories/story-helpers';
 
 /**
  * Base modal component that accepts configuration
@@ -211,40 +210,40 @@ type Story = StoryObj;
 
 export const Default: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <app-modal-story-wrapper />
-    `),
+    `,
   }),
 };
 
 export const SmallSize: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <app-modal-small-wrapper />
-    `),
+    `,
   }),
 };
 
 export const MediumSize: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <app-modal-medium-wrapper />
-    `),
+    `,
   }),
 };
 
 export const LargeSize: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <app-modal-large-wrapper />
-    `),
+    `,
   }),
 };
 
 export const NonDismissible: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <app-modal-non-dismissible-wrapper />
-    `),
+    `,
   }),
 };

@@ -4,7 +4,6 @@ import { provideIcons } from '@ng-icons/core';
 import { heroChevronUp, heroChevronDown, heroCurrencyDollar } from '@ng-icons/heroicons/outline';
 
 import { InputNumber } from '@loan/app/shared/components/input-number/input-number';
-import { wrapInLightDarkComparison } from '@loan/stories/story-helpers';
 
 const meta: Meta<InputNumber> = {
   title: 'UI/InputNumber',
@@ -98,14 +97,14 @@ export const Default: Story = {
   },
   render: (args) => ({
     props: args,
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-md mx-auto">
         <app-input-number
           [label]="'Select a number'"
           [placeholder]="'0'"
         />
       </div>
-    `),
+    `,
   }),
 };
 
@@ -118,7 +117,7 @@ export const WithMinMax: Story = {
   },
   render: (args) => ({
     props: args,
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-md mx-auto space-y-6">
         <app-input-number
           [label]="'Quantity (1-100)'"
@@ -135,7 +134,7 @@ export const WithMinMax: Story = {
           [placeholder]="'Enter age'"
         />
       </div>
-    `),
+    `,
   }),
 };
 
@@ -148,7 +147,7 @@ export const Sizes: Story = {
   },
   render: (args) => ({
     props: args,
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-md mx-auto space-y-6">
         <app-input-number
           [label]="'Large input'"
@@ -168,7 +167,7 @@ export const Sizes: Story = {
           [placeholder]="'0'"
         />
       </div>
-    `),
+    `,
   }),
 };
 
@@ -181,7 +180,7 @@ export const WithStep: Story = {
   },
   render: (args) => ({
     props: args,
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-md mx-auto space-y-6">
         <app-input-number
           [label]="'Count by 1'"
@@ -207,7 +206,7 @@ export const WithStep: Story = {
           [placeholder]="'0.00'"
         />
       </div>
-    `),
+    `,
   }),
 };
 
@@ -220,7 +219,7 @@ export const WithoutButtons: Story = {
   },
   render: (args) => ({
     props: args,
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-md mx-auto">
         <app-input-number
           [label]="'Enter a number'"
@@ -228,7 +227,7 @@ export const WithoutButtons: Story = {
           [placeholder]="'Type a number'"
         />
       </div>
-    `),
+    `,
   }),
 };
 
@@ -241,7 +240,7 @@ export const DisabledAndReadonly: Story = {
   },
   render: (args) => ({
     props: args,
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-md mx-auto space-y-6">
         <app-input-number
           [label]="'Disabled input'"
@@ -255,7 +254,7 @@ export const DisabledAndReadonly: Story = {
           [placeholder]="'Readonly'"
         />
       </div>
-    `),
+    `,
   }),
 };
 
@@ -268,7 +267,7 @@ export const ValidationStates: Story = {
   },
   render: (args) => ({
     props: args,
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-md mx-auto space-y-6">
         <app-input-number
           [label]="'Valid quantity'"
@@ -284,7 +283,7 @@ export const ValidationStates: Story = {
           [placeholder]="'0'"
         />
       </div>
-    `),
+    `,
   }),
 };
 
@@ -297,7 +296,7 @@ export const WithPrefixIcon: Story = {
   },
   render: (args) => ({
     props: args,
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-md mx-auto">
         <app-input-number
           [label]="'Price'"
@@ -307,7 +306,7 @@ export const WithPrefixIcon: Story = {
           [min]="0"
         />
       </div>
-    `),
+    `,
   }),
 };
 
@@ -320,7 +319,7 @@ export const FormExample: Story = {
   },
   render: (args) => ({
     props: args,
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-2xl mx-auto">
         <form class="space-y-6">
           <div class="grid gap-6 md:grid-cols-2">
@@ -358,7 +357,7 @@ export const FormExample: Story = {
           />
         </form>
       </div>
-    `),
+    `,
   }),
 };
 
@@ -371,7 +370,7 @@ export const CompactForm: Story = {
   },
   render: (args) => ({
     props: args,
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-xl mx-auto">
         <form class="space-y-4">
           <div class="grid gap-4 grid-cols-3">
@@ -401,6 +400,6 @@ export const CompactForm: Story = {
           </div>
         </form>
       </div>
-    `),
+    `,
   }),
 };

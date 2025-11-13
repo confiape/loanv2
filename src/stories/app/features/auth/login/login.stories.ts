@@ -6,7 +6,6 @@ import { LoginComponent } from '@loan/app/features/auth/pages/login/login';
 import { AuthenticationApiService } from '@loan/app/shared/openapi';
 import { AuthService } from '@loan/app/core/services/auth.service';
 import { ToastService } from '@loan/app/core/services/toast.service';
-import { wrapInLightDarkComparison } from '@loan/stories/story-helpers';
 
 const authApiMock = {
   logIn: fn().mockReturnValue(of(undefined)),
@@ -40,11 +39,11 @@ const meta: Meta<LoginComponent> = {
 export default meta;
 type Story = StoryObj<LoginComponent>;
 
-const template = wrapInLightDarkComparison(`
+const template = `
   <div class="min-h-screen flex items-center justify-center">
     <app-login></app-login>
   </div>
-`);
+`;
 
 export const Default: Story = {
   render: () => ({

@@ -1,7 +1,6 @@
 import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
 import { Alert } from '@loan/app/shared/components/alert/alert';
 import { Button } from '@loan/app/shared/components/button/button';
-import { wrapInLightDarkComparison } from '@loan/stories/story-helpers';
 
 const meta: Meta<Alert> = {
   title: 'UI/Alert',
@@ -19,7 +18,7 @@ type Story = StoryObj<Alert>;
 
 export const Variants: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="space-y-4 p-8">
         <app-alert [variant]="'info'" [title]="'Info alert!'">
           Change a few things up and try submitting again.
@@ -41,13 +40,13 @@ export const Variants: Story = {
           This is a neutral informational message.
         </app-alert>
       </div>
-    `),
+    `,
   }),
 };
 
 export const WithBorder: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="space-y-4 p-8">
         <app-alert [variant]="'info'" [withBorder]="true" [title]="'Info alert!'">
           This alert has a border for better visual separation.
@@ -61,13 +60,13 @@ export const WithBorder: Story = {
           Error message with border emphasis.
         </app-alert>
       </div>
-    `),
+    `,
   }),
 };
 
 export const Dismissible: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="space-y-4 p-8">
         <app-alert [variant]="'info'" [dismissible]="true" [title]="'Dismissible alert'">
           You can close this alert by clicking the X button.
@@ -77,13 +76,13 @@ export const Dismissible: Story = {
           This success message can be dismissed.
         </app-alert>
       </div>
-    `),
+    `,
   }),
 };
 
 export const WithoutIcon: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="space-y-4 p-8">
         <app-alert [variant]="'info'" [showIcon]="false" [title]="'Info without icon'">
           This alert doesn't show an icon.
@@ -93,13 +92,13 @@ export const WithoutIcon: Story = {
           Alert without icon or title.
         </app-alert>
       </div>
-    `),
+    `,
   }),
 };
 
 export const WithActions: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="space-y-4 p-8">
         <app-alert [variant]="'info'" [hasActions]="true" [withBorder]="true">
           <div class="mb-2">
@@ -140,13 +139,13 @@ export const WithActions: Story = {
           </div>
         </app-alert>
       </div>
-    `),
+    `,
   }),
 };
 
 export const Simple: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="space-y-4 p-8">
         <app-alert [variant]="'info'">
           Simple info message without title.
@@ -160,6 +159,6 @@ export const Simple: Story = {
           Simple error message.
         </app-alert>
       </div>
-    `),
+    `,
   }),
 };

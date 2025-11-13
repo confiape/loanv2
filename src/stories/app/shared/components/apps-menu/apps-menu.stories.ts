@@ -1,7 +1,6 @@
 import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
 
 import { AppsMenuComponent, AppMenuItem } from '@loan/app/shared/components/apps-menu/apps-menu';
-import { wrapInLightDarkComparison } from '@loan/stories/story-helpers';
 
 const sampleApps: AppMenuItem[] = [
   {
@@ -53,14 +52,14 @@ const meta: Meta<AppsMenuComponent> = {
 export default meta;
 type Story = StoryObj<AppsMenuComponent>;
 
-const renderTemplate = wrapInLightDarkComparison(`
+const renderTemplate = `
   <div class="flex items-center justify-center min-h-screen">
     <app-apps-menu
       [apps]="apps"
       [title]="title"
     ></app-apps-menu>
   </div>
-`);
+`;
 
 export const Default: Story = {
   render: (args) => ({

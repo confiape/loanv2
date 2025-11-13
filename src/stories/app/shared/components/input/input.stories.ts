@@ -4,7 +4,6 @@ import { provideIcons } from '@ng-icons/core';
 import { heroMagnifyingGlass, heroEnvelope, heroEyeSlash } from '@ng-icons/heroicons/outline';
 
 import { Input } from '@loan/app/shared/components/input/input';
-import { wrapInLightDarkComparison } from '@loan/stories/story-helpers';
 
 const meta: Meta<Input> = {
   title: 'UI/Input',
@@ -100,14 +99,14 @@ export const Default: Story = {
   },
   render: (args) => ({
     props: args,
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-md mx-auto">
         <app-input
           [label]="'First name'"
           [placeholder]="'John'"
         />
       </div>
-    `),
+    `,
   }),
 };
 
@@ -120,7 +119,7 @@ export const Sizes: Story = {
   },
   render: (args) => ({
     props: args,
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-md mx-auto space-y-6">
         <app-input
           [label]="'Large input'"
@@ -140,7 +139,7 @@ export const Sizes: Story = {
           [placeholder]="'Small size'"
         />
       </div>
-    `),
+    `,
   }),
 };
 
@@ -153,7 +152,7 @@ export const DisabledAndReadonly: Story = {
   },
   render: (args) => ({
     props: args,
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-md mx-auto space-y-6">
         <app-input
           [disabled]="true"
@@ -168,7 +167,7 @@ export const DisabledAndReadonly: Story = {
           [ariaLabel]="'disabled input 2'"
         />
       </div>
-    `),
+    `,
   }),
 };
 
@@ -181,7 +180,7 @@ export const ValidationStates: Story = {
   },
   render: (args) => ({
     props: args,
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-md mx-auto space-y-6">
         <app-input
           [label]="'Your name'"
@@ -197,7 +196,7 @@ export const ValidationStates: Story = {
           [placeholder]="'Error input'"
         />
       </div>
-    `),
+    `,
   }),
 };
 
@@ -211,7 +210,7 @@ export const SearchInput: Story = {
   },
   render: (args) => ({
     props: args,
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-2xl mx-auto">
         <app-input
           [type]="'search'"
@@ -223,7 +222,7 @@ export const SearchInput: Story = {
           [ariaLabel]="'search'"
         />
       </div>
-    `),
+    `,
   }),
 };
 
@@ -236,7 +235,7 @@ export const FormExample: Story = {
   },
   render: (args) => ({
     props: args,
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-2xl mx-auto">
         <form class="space-y-6">
           <div class="grid gap-6 md:grid-cols-2">
@@ -271,7 +270,7 @@ export const FormExample: Story = {
           />
         </form>
       </div>
-    `),
+    `,
   }),
 };
 
@@ -284,7 +283,7 @@ export const InputTypes: Story = {
   },
   render: (args) => ({
     props: args,
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-md mx-auto space-y-4">
         <app-input
           [label]="'Text'"
@@ -328,7 +327,7 @@ export const InputTypes: Story = {
           [placeholder]="'Search...'"
         />
       </div>
-    `),
+    `,
   }),
 };
 
@@ -341,7 +340,7 @@ export const WithPrefixIcon: Story = {
   },
   render: (args) => ({
     props: args,
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-md mx-auto">
         <app-input
           [label]="'Email'"
@@ -350,7 +349,7 @@ export const WithPrefixIcon: Story = {
           [prefixIcon]="'heroEnvelope'"
         />
       </div>
-    `),
+    `,
   }),
 };
 
@@ -363,7 +362,7 @@ export const WithSuffixIcon: Story = {
   },
   render: (args) => ({
     props: args,
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-md mx-auto">
         <app-input
           [label]="'Password'"
@@ -372,7 +371,7 @@ export const WithSuffixIcon: Story = {
           [suffixIcon]="'heroEyeSlash'"
         />
       </div>
-    `),
+    `,
   }),
 };
 
@@ -385,7 +384,7 @@ export const WithHelpText: Story = {
   },
   render: (args) => ({
     props: args,
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-md mx-auto">
         <app-input
           [label]="'Username'"
@@ -393,7 +392,7 @@ export const WithHelpText: Story = {
           [helpText]="'Choose a unique username between 3-20 characters.'"
         />
       </div>
-    `),
+    `,
   }),
 };
 
@@ -406,7 +405,7 @@ export const CompactForm: Story = {
   },
   render: (args) => ({
     props: args,
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-xl mx-auto">
         <form class="space-y-4">
           <app-input
@@ -424,6 +423,6 @@ export const CompactForm: Story = {
           />
         </form>
       </div>
-    `),
+    `,
   }),
 };

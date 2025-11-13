@@ -1,6 +1,5 @@
 import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
 import { Avatar } from '@loan/app/shared/components/avatar/avatar';
-import { wrapInLightDarkComparison } from '@loan/stories/story-helpers';
 
 const meta: Meta<Avatar> = {
   title: 'UI/Avatar',
@@ -59,13 +58,13 @@ export const Default: Story = {
   },
   render: (args) => ({
     props: args,
-    template: wrapInLightDarkComparison(`
+    template: `
         <app-avatar
           [variant]="variant"
           [size]="size"
           [shape]="shape"
         />
-    `),
+    `,
   }),
 };
 
@@ -79,7 +78,7 @@ export const ImageVariant: Story = {
   },
   render: (args) => ({
     props: args,
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="flex items-center justify-center p-8">
         <app-avatar
           [variant]="variant"
@@ -89,7 +88,7 @@ export const ImageVariant: Story = {
           [imageAlt]="imageAlt"
         />
       </div>
-    `),
+    `,
   }),
 };
 
@@ -102,7 +101,7 @@ export const InitialsVariant: Story = {
   },
   render: (args) => ({
     props: args,
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="flex items-center justify-center p-8">
         <app-avatar
           [variant]="variant"
@@ -111,7 +110,7 @@ export const InitialsVariant: Story = {
           [initials]="initials"
         />
       </div>
-    `),
+    `,
   }),
 };
 
@@ -123,7 +122,7 @@ export const AllSizes: Story = {
   },
   render: (args) => ({
     props: args,
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="flex flex-col gap-8 p-8">
         <div class="flex items-center gap-4">
           <span class="w-24 text-sm font-medium">Extra Small:</span>
@@ -171,7 +170,7 @@ export const AllSizes: Story = {
           />
         </div>
       </div>
-    `),
+    `,
   }),
 };
 
@@ -184,7 +183,7 @@ export const ShapeVariants: Story = {
   },
   render: (args) => ({
     props: args,
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="flex items-center justify-center gap-12 p-8">
         <div class="flex flex-col items-center gap-4">
           <span class="text-sm font-medium">Full (Rounded)</span>
@@ -207,7 +206,7 @@ export const ShapeVariants: Story = {
           />
         </div>
       </div>
-    `),
+    `,
   }),
 };
 
@@ -222,7 +221,7 @@ export const WithStatusIndicators: Story = {
   },
   render: (args) => ({
     props: args,
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="flex flex-col gap-8 p-8">
         <div class="flex items-center gap-4">
           <span class="w-24 text-sm font-medium">Online:</span>
@@ -273,7 +272,7 @@ export const WithStatusIndicators: Story = {
           />
         </div>
       </div>
-    `),
+    `,
   }),
 };
 
@@ -287,7 +286,7 @@ export const StatusPositions: Story = {
   },
   render: (args) => ({
     props: args,
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="grid grid-cols-2 gap-12 p-8">
         <div class="flex flex-col items-center gap-4">
           <span class="text-sm font-medium">Top Left</span>
@@ -334,14 +333,14 @@ export const StatusPositions: Story = {
           />
         </div>
       </div>
-    `),
+    `,
   }),
 };
 
 export const AvatarGroup: Story = {
   render: () => ({
     props: {},
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="flex flex-col gap-8 p-8">
         <div class="flex items-center gap-3">
           <app-avatar
@@ -403,6 +402,6 @@ export const AvatarGroup: Story = {
           />
         </div>
       </div>
-    `),
+    `,
   }),
 };

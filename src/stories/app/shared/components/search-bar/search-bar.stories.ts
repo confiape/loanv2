@@ -1,7 +1,6 @@
 import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
 
 import { SearchBarComponent } from '@loan/app/shared/components/search-bar/search-bar';
-import { wrapInLightDarkComparison } from '@loan/stories/story-helpers';
 
 const meta: Meta<SearchBarComponent> = {
   title: 'Shared/SearchBar',
@@ -20,7 +19,7 @@ const meta: Meta<SearchBarComponent> = {
 export default meta;
 type Story = StoryObj<SearchBarComponent>;
 
-const template = wrapInLightDarkComparison(`
+const template = `
   <div class="flex items-center justify-center min-h-screen">
     <app-search-bar
       [placeholder]="placeholder"
@@ -28,7 +27,7 @@ const template = wrapInLightDarkComparison(`
       [disabled]="disabled"
     ></app-search-bar>
   </div>
-`);
+`;
 
 export const Default: Story = {
   render: (args) => ({

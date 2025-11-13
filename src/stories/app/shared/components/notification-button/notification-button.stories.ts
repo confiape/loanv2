@@ -4,7 +4,6 @@ import {
   NotificationButtonComponent,
   Notification,
 } from '@loan/app/shared/components/notification-button/notification-button';
-import { wrapInLightDarkComparison } from '@loan/stories/story-helpers';
 
 const notifications: Notification[] = [
   {
@@ -54,14 +53,14 @@ const meta: Meta<NotificationButtonComponent> = {
 export default meta;
 type Story = StoryObj<NotificationButtonComponent>;
 
-const template = wrapInLightDarkComparison(`
+const template = `
   <div class="flex items-center justify-center min-h-screen">
     <app-notification-button
       [notifications]="notifications"
       [badgeCount]="badgeCount"
     ></app-notification-button>
   </div>
-`);
+`;
 
 export const Default: Story = {
   render: (args) => ({

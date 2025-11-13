@@ -4,7 +4,6 @@ import { DropdownBasic } from '@loan/app/shared/components/dropdown/basic/dropdo
 import { DropdownBasicHeader } from '@loan/app/shared/components/dropdown/basic/dropdown-basic-header';
 import { DropdownBasicItem } from '@loan/app/shared/components/dropdown/basic/dropdown-basic-item';
 import { DropdownBasicFooter } from '@loan/app/shared/components/dropdown/basic/dropdown-basic-footer';
-import { wrapInLightDarkComparison } from '@loan/stories/story-helpers';
 
 const meta: Meta<DropdownBasic> = {
   title: 'UI/Dropdown/DropdownBasic',
@@ -61,7 +60,7 @@ export const Default: Story = {
     itemClick: fn(),
   },
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="flex justify-center items-start p-12">
         <app-dropdown-basic>
           <span trigger>Menu</span>
@@ -71,7 +70,7 @@ export const Default: Story = {
           <app-dropdown-basic-item [value]="'logout'">Logout</app-dropdown-basic-item>
         </app-dropdown-basic>
       </div>
-    `),
+    `,
   }),
 };
 
@@ -81,7 +80,7 @@ export const WithHeader: Story = {
     itemClick: fn(),
   },
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="flex justify-center items-start p-12">
         <app-dropdown-basic>
           <span trigger>User Menu</span>
@@ -103,7 +102,7 @@ export const WithHeader: Story = {
           <app-dropdown-basic-item [value]="'logout'">Sign Out</app-dropdown-basic-item>
         </app-dropdown-basic>
       </div>
-    `),
+    `,
   }),
 };
 
@@ -113,7 +112,7 @@ export const WithFooter: Story = {
     itemClick: fn(),
   },
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="flex justify-center items-start p-12">
         <app-dropdown-basic>
           <span trigger>Actions</span>
@@ -127,7 +126,7 @@ export const WithFooter: Story = {
           </app-dropdown-basic-footer>
         </app-dropdown-basic>
       </div>
-    `),
+    `,
   }),
 };
 
@@ -137,7 +136,7 @@ export const Complete: Story = {
     itemClick: fn(),
   },
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="flex justify-center items-start p-12">
         <app-dropdown-basic>
           <span trigger>Account</span>
@@ -181,7 +180,7 @@ export const Complete: Story = {
           </app-dropdown-basic-footer>
         </app-dropdown-basic>
       </div>
-    `),
+    `,
   }),
 };
 
@@ -191,7 +190,7 @@ export const TriggerVariants: Story = {
     itemClick: fn(),
   },
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="flex flex-wrap gap-8 p-12">
         <app-dropdown-basic [triggerConfig]="{variant: 'solid', size: 'md'}">
           <span trigger>Solid</span>
@@ -214,7 +213,7 @@ export const TriggerVariants: Story = {
           <app-dropdown-basic-item [value]="'action3'">Action 3</app-dropdown-basic-item>
         </app-dropdown-basic>
       </div>
-    `),
+    `,
   }),
 };
 
@@ -224,7 +223,7 @@ export const TriggerSizes: Story = {
     itemClick: fn(),
   },
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="flex items-center gap-6 p-12">
         <app-dropdown-basic [triggerConfig]="{variant: 'solid', size: 'sm'}">
           <span trigger>Small</span>
@@ -240,7 +239,7 @@ export const TriggerSizes: Story = {
           <app-dropdown-basic-item [value]="'action3'">Action 3</app-dropdown-basic-item>
         </app-dropdown-basic>
       </div>
-    `),
+    `,
   }),
 };
 
@@ -250,7 +249,7 @@ export const Placements: Story = {
     itemClick: fn(),
   },
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="grid grid-cols-2 gap-16 p-16">
         <div class="flex flex-col items-center gap-4">
           <span class="text-sm font-semibold text-text-secondary">Bottom End (Default)</span>
@@ -292,7 +291,7 @@ export const Placements: Story = {
           </app-dropdown-basic>
         </div>
       </div>
-    `),
+    `,
   }),
 };
 
@@ -302,7 +301,7 @@ export const HoverStrategy: Story = {
     itemClick: fn(),
   },
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="flex justify-center items-start p-12">
         <div class="text-center">
           <p class="text-sm text-text-secondary mb-4">Hover over the button to open</p>
@@ -315,7 +314,7 @@ export const HoverStrategy: Story = {
           </app-dropdown-basic>
         </div>
       </div>
-    `),
+    `,
   }),
 };
 
@@ -325,7 +324,7 @@ export const DisabledItems: Story = {
     itemClick: fn(),
   },
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="flex justify-center items-start p-12">
         <app-dropdown-basic>
           <span trigger>Options</span>
@@ -337,7 +336,7 @@ export const DisabledItems: Story = {
           <app-dropdown-basic-item [value]="'archive'" [disabled]="true">Archive (disabled)</app-dropdown-basic-item>
         </app-dropdown-basic>
       </div>
-    `),
+    `,
   }),
 };
 
@@ -347,7 +346,7 @@ export const CustomContent: Story = {
     itemClick: fn(),
   },
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="flex justify-center items-start p-12">
         <app-dropdown-basic [minPanelWidth]="280">
           <span trigger>
@@ -408,7 +407,7 @@ export const CustomContent: Story = {
           </app-dropdown-basic-footer>
         </app-dropdown-basic>
       </div>
-    `),
+    `,
   }),
 };
 
@@ -418,7 +417,7 @@ export const WithIcons: Story = {
     itemClick: fn(),
   },
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="flex justify-center items-start p-12">
         <app-dropdown-basic>
           <span trigger>
@@ -456,6 +455,6 @@ export const WithIcons: Story = {
           </app-dropdown-basic-item>
         </app-dropdown-basic>
       </div>
-    `),
+    `,
   }),
 };

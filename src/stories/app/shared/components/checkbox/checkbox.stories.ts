@@ -1,6 +1,5 @@
 import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
 import { Checkbox } from '@loan/app/shared/components/checkbox/checkbox';
-import { wrapInLightDarkComparison } from '@loan/stories/story-helpers';
 import { ReactiveFormsModule } from '@angular/forms';
 
 const meta: Meta<Checkbox> = {
@@ -38,30 +37,30 @@ type Story = StoryObj<Checkbox>;
 
 export const Default: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 space-y-4">
         <app-checkbox [label]="'Accept terms and conditions'" />
         <app-checkbox [label]="'Subscribe to newsletter'" />
         <app-checkbox [label]="'Remember me'" />
       </div>
-    `),
+    `,
   }),
 };
 
 export const Checked: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 space-y-4">
         <app-checkbox [label]="'Option 1'" [value]="true" />
         <app-checkbox [label]="'Option 2'" [value]="true" />
       </div>
-    `),
+    `,
   }),
 };
 
 export const ValidationStates: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 space-y-6">
         <div>
           <app-checkbox
@@ -78,37 +77,37 @@ export const ValidationStates: Story = {
           />
         </div>
       </div>
-    `),
+    `,
   }),
 };
 
 export const Disabled: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 space-y-4">
         <app-checkbox [label]="'Disabled unchecked'" [disabled]="true" />
         <app-checkbox [label]="'Disabled checked'" [disabled]="true" [value]="true" />
       </div>
-    `),
+    `,
   }),
 };
 
 export const WithHelperText: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-md">
         <app-checkbox [label]="'Send me promotional emails'" />
         <p class="ml-7 text-sm text-gray-500 dark:text-gray-400 mt-1">
           We'll occasionally send you account-related emails.
         </p>
       </div>
-    `),
+    `,
   }),
 };
 
 export const InForm: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-md">
         <form class="space-y-4">
           <div>
@@ -130,6 +129,6 @@ export const InForm: Story = {
           </div>
         </form>
       </div>
-    `),
+    `,
   }),
 };

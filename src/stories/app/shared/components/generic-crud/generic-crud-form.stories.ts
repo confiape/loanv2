@@ -1,6 +1,5 @@
 import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
 import { GenericCrudFormComponent } from '@loan/app/shared/components/generic-crud/generic-crud-form/generic-crud-form';
-import { wrapInLightDarkComparison } from '@loan/stories/story-helpers';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { of } from 'rxjs';
 import { FormFieldMetadata } from '@loan/app/core/models';
@@ -182,14 +181,14 @@ const userRegistrationFields: FormFieldMetadata[] = [
 
 export const BasicForm: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-2xl mx-auto">
         <h2 class="text-2xl font-bold mb-6">Basic Form Example</h2>
         <app-generic-crud-form
           [fields]="fields"
         />
       </div>
-    `),
+    `,
     props: {
       fields: basicFields,
     },
@@ -198,14 +197,14 @@ export const BasicForm: Story = {
 
 export const AllFieldTypes: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-2xl mx-auto">
         <h2 class="text-2xl font-bold mb-6">All Field Types Showcase</h2>
         <app-generic-crud-form
           [fields]="fields"
         />
       </div>
-    `),
+    `,
     props: {
       fields: allFieldTypes,
     },
@@ -214,14 +213,14 @@ export const AllFieldTypes: Story = {
 
 export const UserRegistration: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-2xl mx-auto">
         <h2 class="text-2xl font-bold mb-6">User Registration Form</h2>
         <app-generic-crud-form
           [fields]="fields"
         />
       </div>
-    `),
+    `,
     props: {
       fields: userRegistrationFields,
     },
@@ -230,7 +229,7 @@ export const UserRegistration: Story = {
 
 export const WithInitialData: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-2xl mx-auto">
         <h2 class="text-2xl font-bold mb-6">Edit Mode (Pre-filled Data)</h2>
         <app-generic-crud-form
@@ -238,7 +237,7 @@ export const WithInitialData: Story = {
           [initialData]="initialData"
         />
       </div>
-    `),
+    `,
     props: {
       fields: basicFields,
       initialData: {
@@ -252,14 +251,14 @@ export const WithInitialData: Story = {
 
 export const Compact: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-md mx-auto">
         <h2 class="text-xl font-bold mb-4">Compact Form</h2>
         <app-generic-crud-form
           [fields]="fields"
         />
       </div>
-    `),
+    `,
     props: {
       fields: [
         {

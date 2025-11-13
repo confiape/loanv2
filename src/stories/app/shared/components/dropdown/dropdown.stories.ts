@@ -4,7 +4,6 @@ import { DropdownFooterAction } from '@loan/app/shared/components/dropdown/advan
 import { DropdownSearchConfig } from '@loan/app/shared/components/dropdown/advanced/dropdown.types';
 import { DropdownSection } from '@loan/app/shared/components/dropdown/advanced/dropdown.types';
 import { DropdownTriggerConfig } from '@loan/app/shared/components/dropdown/advanced/dropdown.types';
-import { wrapInLightDarkComparison } from '@loan/stories/story-helpers';
 
 type Story = StoryObj<Dropdown>;
 
@@ -180,14 +179,14 @@ export default meta;
 export const Default: Story = {
   render: (args) => ({
     props: args,
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="flex min-h-screen items-start justify-center pt-16">
         <app-dropdown
           [trigger]="trigger"
           [sections]="sections"
         />
       </div>
-    `),
+    `,
   }),
 };
 
@@ -197,14 +196,14 @@ export const WithDivider: Story = {
   },
   render: (args) => ({
     props: args,
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="flex min-h-screen items-start justify-center pt-16">
         <app-dropdown
           [trigger]="trigger"
           [sections]="sections"
         />
       </div>
-    `),
+    `,
   }),
 };
 
@@ -220,7 +219,7 @@ export const WithHeaderAndFooter: Story = {
   },
   render: (args) => ({
     props: args,
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="flex min-h-screen items-start justify-center pt-16">
         <app-dropdown
           [trigger]="trigger"
@@ -229,7 +228,7 @@ export const WithHeaderAndFooter: Story = {
           [footerAction]="footerAction"
         />
       </div>
-    `),
+    `,
   }),
 };
 
@@ -239,14 +238,14 @@ export const MultiLevel: Story = {
   },
   render: (args) => ({
     props: args,
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="flex min-h-screen items-start justify-center pt-16">
         <app-dropdown
           [trigger]="trigger"
           [sections]="sections"
         />
       </div>
-    `),
+    `,
   }),
 };
 
@@ -269,7 +268,7 @@ export const WithSearchAndScrolling: Story = {
   },
   render: (args) => ({
     props: args,
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="flex min-h-screen items-start justify-center pt-16">
         <app-dropdown
           [trigger]="trigger"
@@ -280,6 +279,6 @@ export const WithSearchAndScrolling: Story = {
           [footerAction]="footerAction"
         />
       </div>
-    `),
+    `,
   }),
 };

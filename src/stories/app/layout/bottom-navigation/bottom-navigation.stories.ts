@@ -5,7 +5,6 @@ import {
   BottomNavigationComponent,
   BottomNavItem,
 } from '@loan/app/layout/bottom-navigation/bottom-navigation';
-import { wrapInLightDarkComparison } from '@loan/stories/story-helpers';
 
 const items: BottomNavItem[] = [
   { id: 'home', label: 'Inicio', icon: '<span>🏠</span>', routerLink: '/' },
@@ -30,11 +29,11 @@ const meta: Meta<BottomNavigationComponent> = {
 export default meta;
 type Story = StoryObj<BottomNavigationComponent>;
 
-const template = wrapInLightDarkComparison(`
+const template = `
   <div class="min-h-screen flex flex-col justify-end">
     <app-bottom-navigation [items]="items"></app-bottom-navigation>
   </div>
-`);
+`;
 
 export const Default: Story = {
   render: (args) => ({

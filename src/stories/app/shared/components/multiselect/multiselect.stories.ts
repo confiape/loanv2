@@ -1,6 +1,5 @@
 import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
 import { MultiSelect } from '@loan/app/shared/components/multiselect/multiselect';
-import { wrapInLightDarkComparison } from '@loan/stories/story-helpers';
 import { ReactiveFormsModule } from '@angular/forms';
 
 const meta: Meta<MultiSelect> = {
@@ -55,14 +54,14 @@ const manyOptions = Array.from({ length: 20 }, (_, i) => ({
 
 export const Default: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-md">
         <app-multiselect
           [placeholder]="'Select options'"
           [options]="options"
         />
       </div>
-    `),
+    `,
     props: {
       options: mockOptions,
     },
@@ -71,7 +70,7 @@ export const Default: Story = {
 
 export const WithSearch: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-md">
         <app-multiselect
           [placeholder]="'Search and select'"
@@ -79,7 +78,7 @@ export const WithSearch: Story = {
           [searchable]="true"
         />
       </div>
-    `),
+    `,
     props: {
       options: manyOptions,
     },
@@ -88,7 +87,7 @@ export const WithSearch: Story = {
 
 export const PreSelected: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-md">
         <app-multiselect
           [placeholder]="'Select options'"
@@ -96,7 +95,7 @@ export const PreSelected: Story = {
           [value]="['2', '4']"
         />
       </div>
-    `),
+    `,
     props: {
       options: mockOptions,
     },
@@ -105,7 +104,7 @@ export const PreSelected: Story = {
 
 export const ValidationStates: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 space-y-6 max-w-md">
         <div>
           <label class="block text-sm font-medium mb-2">Success State</label>
@@ -126,7 +125,7 @@ export const ValidationStates: Story = {
           />
         </div>
       </div>
-    `),
+    `,
     props: {
       options: mockOptions,
     },
@@ -135,7 +134,7 @@ export const ValidationStates: Story = {
 
 export const Disabled: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-md">
         <app-multiselect
           [placeholder]="'Disabled multiselect'"
@@ -143,7 +142,7 @@ export const Disabled: Story = {
           [disabled]="true"
         />
       </div>
-    `),
+    `,
     props: {
       options: mockOptions,
     },
@@ -152,7 +151,7 @@ export const Disabled: Story = {
 
 export const WithLabel: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-md">
         <label class="block text-sm font-medium mb-2">Select Your Preferences</label>
         <app-multiselect
@@ -160,7 +159,7 @@ export const WithLabel: Story = {
           [options]="options"
         />
       </div>
-    `),
+    `,
     props: {
       options: mockOptions,
     },

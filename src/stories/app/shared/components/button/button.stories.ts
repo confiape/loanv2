@@ -1,7 +1,6 @@
 import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
 import { fn } from 'storybook/test';
 import { Button } from '@loan/app/shared/components/button/button';
-import { wrapInLightDarkComparison } from '@loan/stories/story-helpers';
 
 const meta: Meta<Button> = {
   title: 'UI/Button',
@@ -78,7 +77,7 @@ export const SolidPalette: Story = {
     buttonClick: fn(),
   },
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="flex flex-wrap gap-4 p-8">
         <app-button>Primary</app-button>
         <app-button [tone]="'neutral'">Neutral</app-button>
@@ -89,13 +88,13 @@ export const SolidPalette: Story = {
         <app-button [tone]="'warning'">Warning</app-button>
         <app-button [tone]="'purple'">Purple</app-button>
       </div>
-    `),
+    `,
   }),
 };
 
 export const PillButtons: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="flex flex-wrap gap-4 p-8">
         <app-button [shape]="'pill'">Primary</app-button>
         <app-button [shape]="'pill'" [tone]="'neutral'">Alternative</app-button>
@@ -106,13 +105,13 @@ export const PillButtons: Story = {
         <app-button [shape]="'pill'" [tone]="'warning'">Yellow</app-button>
         <app-button [shape]="'pill'" [tone]="'purple'">Purple</app-button>
       </div>
-    `),
+    `,
   }),
 };
 
 export const GradientShowcase: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="flex flex-wrap gap-4 p-8">
         <app-button [variant]="'gradient'">Blue</app-button>
         <app-button [variant]="'gradient'" [tone]="'success'">Green</app-button>
@@ -123,13 +122,13 @@ export const GradientShowcase: Story = {
         <app-button [variant]="'gradient'" [tone]="'pink'">Pink</app-button>
         <app-button [variant]="'gradient'" [tone]="'purple'">Purple</app-button>
       </div>
-    `),
+    `,
   }),
 };
 
 export const OutlineVariants: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="flex flex-wrap gap-4 p-8">
         <app-button [variant]="'outline'">Primary</app-button>
         <app-button [variant]="'outline'" [tone]="'dark'">Dark</app-button>
@@ -138,13 +137,13 @@ export const OutlineVariants: Story = {
         <app-button [variant]="'outline'" [tone]="'warning'">Yellow</app-button>
         <app-button [variant]="'outline'" [tone]="'purple'">Purple</app-button>
       </div>
-    `),
+    `,
   }),
 };
 
 export const Sizes: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="flex flex-col gap-4 p-8 max-w-md">
         <app-button [size]="'xs'">Extra small</app-button>
         <app-button [size]="'sm'">Small</app-button>
@@ -152,13 +151,13 @@ export const Sizes: Story = {
         <app-button [size]="'lg'">Large</app-button>
         <app-button [size]="'xl'">Extra large</app-button>
       </div>
-    `),
+    `,
   }),
 };
 
 export const IconButtons: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="flex flex-wrap gap-6 p-8 items-center">
         <app-button [shape]="'icon'" [ariaLabel]="'Navigate forward'">
           <svg class="w-5 h-5" aria-hidden="true" viewBox="0 0 14 10" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -188,13 +187,13 @@ export const IconButtons: Story = {
           <span class="sr-only">Icon description</span>
         </app-button>
       </div>
-    `),
+    `,
   }),
 };
 
 export const ButtonsWithIcons: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="flex flex-wrap gap-4 p-8 items-center">
         <app-button>
           <svg class="w-4 h-4 mr-2" aria-hidden="true" viewBox="0 0 18 21" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -210,30 +209,30 @@ export const ButtonsWithIcons: Story = {
           </svg>
         </app-button>
       </div>
-    `),
+    `,
   }),
 };
 
 export const LoaderStates: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="flex flex-wrap gap-4 p-8">
         <app-button [loading]="true">Submit</app-button>
         <app-button [variant]="'outline'" [loading]="true" [tone]="'neutral'" [loadingText]="'Loading...'">
           Secondary
         </app-button>
       </div>
-    `),
+    `,
   }),
 };
 
 export const DisabledState: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="flex flex-wrap gap-4 p-8">
         <app-button [disabled]="true">Disabled button</app-button>
         <app-button [variant]="'outline'" [disabled]="true">Outline disabled</app-button>
       </div>
-    `),
+    `,
   }),
 };

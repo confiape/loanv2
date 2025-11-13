@@ -1,6 +1,5 @@
 import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
 import { DateInput } from '@loan/app/shared/components/date-input/date-input';
-import { wrapInLightDarkComparison } from '@loan/stories/story-helpers';
 import { ReactiveFormsModule } from '@angular/forms';
 
 const meta: Meta<DateInput> = {
@@ -46,30 +45,30 @@ type Story = StoryObj<DateInput>;
 
 export const Default: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-md">
         <app-date-input [placeholder]="'Select date'" />
       </div>
-    `),
+    `,
   }),
 };
 
 export const WithValue: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-md">
         <app-date-input
           [placeholder]="'Select date'"
           [value]="'2025-11-12'"
         />
       </div>
-    `),
+    `,
   }),
 };
 
 export const WithMinMax: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 space-y-6 max-w-md">
         <div>
           <label class="block text-sm font-medium mb-2">Future dates only</label>
@@ -96,13 +95,13 @@ export const WithMinMax: Story = {
           />
         </div>
       </div>
-    `),
+    `,
   }),
 };
 
 export const ValidationStates: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 space-y-6 max-w-md">
         <div>
           <label class="block text-sm font-medium mb-2">Success State</label>
@@ -121,26 +120,26 @@ export const ValidationStates: Story = {
           />
         </div>
       </div>
-    `),
+    `,
   }),
 };
 
 export const Disabled: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-md">
         <app-date-input
           [placeholder]="'Disabled date input'"
           [disabled]="true"
         />
       </div>
-    `),
+    `,
   }),
 };
 
 export const InForm: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-md">
         <form class="space-y-6">
           <div>
@@ -166,13 +165,13 @@ export const InForm: Story = {
           </div>
         </form>
       </div>
-    `),
+    `,
   }),
 };
 
 export const BirthdayPicker: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-md">
         <label class="block text-sm font-medium mb-2">Date of Birth</label>
         <app-date-input
@@ -183,6 +182,6 @@ export const BirthdayPicker: Story = {
           You must be at least 18 years old.
         </p>
       </div>
-    `),
+    `,
   }),
 };

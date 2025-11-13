@@ -1,6 +1,5 @@
 import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
 import { RadioGroup } from '@loan/app/shared/components/radio/radio';
-import { wrapInLightDarkComparison } from '@loan/stories/story-helpers';
 import { ReactiveFormsModule } from '@angular/forms';
 
 const meta: Meta<RadioGroup> = {
@@ -55,14 +54,14 @@ const paymentOptions = [
 
 export const Default: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-md">
         <app-radio-group
           [name]="'default-radio'"
           [options]="options"
         />
       </div>
-    `),
+    `,
     props: {
       options: mockOptions,
     },
@@ -71,7 +70,7 @@ export const Default: Story = {
 
 export const Inline: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-2xl">
         <app-radio-group
           [name]="'inline-radio'"
@@ -79,7 +78,7 @@ export const Inline: Story = {
           [inline]="true"
         />
       </div>
-    `),
+    `,
     props: {
       options: mockOptions,
     },
@@ -88,7 +87,7 @@ export const Inline: Story = {
 
 export const PreSelected: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-md">
         <app-radio-group
           [name]="'selected-radio'"
@@ -96,7 +95,7 @@ export const PreSelected: Story = {
           [value]="'option2'"
         />
       </div>
-    `),
+    `,
     props: {
       options: mockOptions,
     },
@@ -105,7 +104,7 @@ export const PreSelected: Story = {
 
 export const ValidationStates: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 space-y-6 max-w-md">
         <div>
           <label class="block text-sm font-medium mb-2">Success State</label>
@@ -126,7 +125,7 @@ export const ValidationStates: Story = {
           />
         </div>
       </div>
-    `),
+    `,
     props: {
       options: mockOptions,
     },
@@ -135,7 +134,7 @@ export const ValidationStates: Story = {
 
 export const Disabled: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-md">
         <app-radio-group
           [name]="'disabled-radio'"
@@ -143,7 +142,7 @@ export const Disabled: Story = {
           [disabled]="true"
         />
       </div>
-    `),
+    `,
     props: {
       options: mockOptions,
     },
@@ -152,7 +151,7 @@ export const Disabled: Story = {
 
 export const PaymentMethod: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-md">
         <label class="block text-sm font-medium mb-3">Select Payment Method</label>
         <app-radio-group
@@ -160,7 +159,7 @@ export const PaymentMethod: Story = {
           [options]="options"
         />
       </div>
-    `),
+    `,
     props: {
       options: paymentOptions,
     },
@@ -169,7 +168,7 @@ export const PaymentMethod: Story = {
 
 export const InlinePayment: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-2xl">
         <label class="block text-sm font-medium mb-3">Payment Method</label>
         <app-radio-group
@@ -178,7 +177,7 @@ export const InlinePayment: Story = {
           [inline]="true"
         />
       </div>
-    `),
+    `,
     props: {
       options: paymentOptions,
     },

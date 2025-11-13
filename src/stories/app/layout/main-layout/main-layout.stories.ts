@@ -37,7 +37,6 @@ import {
 import { MainLayoutComponent } from '@loan/app/layout/main-layout/main-layout';
 import { UserApiService } from '@loan/app/shared/openapi';
 import { AuthService } from '@loan/app/core/services/auth.service';
-import { wrapInLightDarkComparison } from '@loan/stories/story-helpers';
 
 @Component({
   selector: 'app-story-placeholder',
@@ -108,11 +107,11 @@ const meta: Meta<MainLayoutComponent> = {
 export default meta;
 type Story = StoryObj<MainLayoutComponent>;
 
-const template = wrapInLightDarkComparison(`
+const template = `
   <div class="min-h-screen">
     <app-main-layout></app-main-layout>
   </div>
-`);
+`;
 
 export const Default: Story = {
   render: () => ({ template }),

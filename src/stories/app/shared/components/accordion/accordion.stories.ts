@@ -1,7 +1,6 @@
 import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
 import { fn } from 'storybook/test';
 
-import { wrapInLightDarkComparison } from '@loan/stories/story-helpers';
 import { Accordion } from '@loan/app/shared/components/accordion/accordion';
 import { AccordionItemComponent } from '@loan/app/shared/components/accordion/accordion-item';
 import { AccordionItemContentComponent } from '@loan/app/shared/components/accordion/accordion-item-content';
@@ -48,7 +47,7 @@ export const Default: Story = {
   },
   render: (args) => ({
     props: args,
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-2xl mx-auto">
         <app-accordion [allowMultiple]="false">
           <app-accordion-item id="item1">
@@ -73,7 +72,7 @@ export const Default: Story = {
           </app-accordion-item>
         </app-accordion>
       </div>
-    `),
+    `,
   }),
 };
 
@@ -87,7 +86,7 @@ export const MultipleExpanded: Story = {
   },
   render: (args) => ({
     props: args,
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-2xl mx-auto">
         <app-accordion [allowMultiple]="true">
           <app-accordion-item id="item1" [expanded]="true">
@@ -116,7 +115,7 @@ export const MultipleExpanded: Story = {
           </app-accordion-item>
         </app-accordion>
       </div>
-    `),
+    `,
   }),
 };
 
@@ -130,7 +129,7 @@ export const InitiallyExpanded: Story = {
   },
   render: (args) => ({
     props: args,
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-2xl mx-auto">
         <app-accordion [allowMultiple]="false">
           <app-accordion-item id="item1" [expanded]="true">
@@ -155,7 +154,7 @@ export const InitiallyExpanded: Story = {
           </app-accordion-item>
         </app-accordion>
       </div>
-    `),
+    `,
   }),
 };
 
@@ -169,7 +168,7 @@ export const WithDisabledItems: Story = {
   },
   render: (args) => ({
     props: args,
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-2xl mx-auto">
         <app-accordion [allowMultiple]="false">
           <app-accordion-item id="item1">
@@ -194,7 +193,7 @@ export const WithDisabledItems: Story = {
           </app-accordion-item>
         </app-accordion>
       </div>
-    `),
+    `,
   }),
 };
 
@@ -208,7 +207,7 @@ export const RichContent: Story = {
   },
   render: (args) => ({
     props: args,
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-2xl mx-auto">
         <app-accordion [allowMultiple]="true">
           <app-accordion-item id="item1">
@@ -262,7 +261,7 @@ export const RichContent: Story = {
           </app-accordion-item>
         </app-accordion>
       </div>
-    `),
+    `,
   }),
 };
 
@@ -276,7 +275,7 @@ export const ManyItems: Story = {
   },
   render: (args) => ({
     props: args,
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-2xl mx-auto">
         <app-accordion [allowMultiple]="false">
           <app-accordion-item id="item1">
@@ -329,7 +328,7 @@ export const ManyItems: Story = {
           </app-accordion-item>
         </app-accordion>
       </div>
-    `),
+    `,
   }),
 };
 
@@ -343,7 +342,7 @@ export const Compact: Story = {
   },
   render: (args) => ({
     props: args,
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-4 max-w-xl mx-auto">
         <app-accordion [allowMultiple]="false">
           <app-accordion-item id="item1">
@@ -368,6 +367,6 @@ export const Compact: Story = {
           </app-accordion-item>
         </app-accordion>
       </div>
-    `),
+    `,
   }),
 };

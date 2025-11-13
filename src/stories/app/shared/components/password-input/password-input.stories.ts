@@ -4,7 +4,6 @@ import { provideIcons } from '@ng-icons/core';
 import { heroEye, heroEyeSlash, heroLockClosed } from '@ng-icons/heroicons/outline';
 
 import { PasswordInput } from '@loan/app/shared/components/password-input/password-input';
-import { wrapInLightDarkComparison } from '@loan/stories/story-helpers';
 
 const meta: Meta<PasswordInput> = {
   title: 'UI/PasswordInput',
@@ -94,14 +93,14 @@ export const Default: Story = {
   },
   render: (args) => ({
     props: args,
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-md mx-auto">
         <app-password-input
           [label]="'Password'"
           [placeholder]="'••••••••'"
         />
       </div>
-    `),
+    `,
   }),
 };
 
@@ -113,7 +112,7 @@ export const WithPrefixIcon: Story = {
   },
   render: (args) => ({
     props: args,
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-md mx-auto">
         <app-password-input
           [label]="'Account password'"
@@ -121,7 +120,7 @@ export const WithPrefixIcon: Story = {
           [prefixIcon]="'heroLockClosed'"
         />
       </div>
-    `),
+    `,
   }),
 };
 
@@ -131,7 +130,7 @@ export const ValidationStates: Story = {
   },
   render: (args) => ({
     props: args,
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-md mx-auto space-y-6">
         <app-password-input
           [label]="'Strong password'"
@@ -147,7 +146,7 @@ export const ValidationStates: Story = {
           [placeholder]="'••••'"
         />
       </div>
-    `),
+    `,
   }),
 };
 
@@ -159,7 +158,7 @@ export const CustomToggleText: Story = {
   },
   render: (args) => ({
     props: args,
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-md mx-auto">
         <app-password-input
           [label]="'Contraseña'"
@@ -168,7 +167,7 @@ export const CustomToggleText: Story = {
           [hideLabel]="'Ocultar'"
         />
       </div>
-    `),
+    `,
   }),
 };
 
@@ -179,7 +178,7 @@ export const CompactForm: Story = {
   },
   render: (args) => ({
     props: args,
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-xl mx-auto">
         <form class="space-y-4">
           <app-password-input
@@ -196,6 +195,6 @@ export const CompactForm: Story = {
           />
         </form>
       </div>
-    `),
+    `,
   }),
 };

@@ -20,7 +20,6 @@ import {
 } from '@ng-icons/heroicons/outline';
 
 import { SidenavComponent, SidenavItem } from '@loan/app/layout/sidenav/sidenav';
-import { wrapInLightDarkComparison } from '@loan/stories/story-helpers';
 
 const items: SidenavItem[] = [
   { label: 'Dashboard', icon: 'heroChartPie', value: 'dashboard' },
@@ -83,7 +82,7 @@ const meta: Meta<SidenavComponent> = {
 export default meta;
 type Story = StoryObj<SidenavComponent>;
 
-const template = wrapInLightDarkComparison(`
+const template = `
   <div class="min-h-screen">
     <app-sidenav
       [items]="items"
@@ -94,7 +93,7 @@ const template = wrapInLightDarkComparison(`
       [showToggle]="showToggle"
     ></app-sidenav>
   </div>
-`);
+`;
 
 export const Default: Story = {
   render: (args) => ({ props: args, template }),

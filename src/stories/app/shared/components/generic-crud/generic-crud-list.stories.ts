@@ -1,6 +1,5 @@
 import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
 import { GenericCrudListComponent } from '@loan/app/shared/components/generic-crud/generic-crud-list/generic-crud-list';
-import { wrapInLightDarkComparison } from '@loan/stories/story-helpers';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { signal, Signal } from '@angular/core';
 import { of, Observable } from 'rxjs';
@@ -249,13 +248,13 @@ class MockUserCrudService implements ICrudService<MockUser> {
 
 export const Default: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8">
         <app-generic-crud-list
           [service]="service"
         />
       </div>
-    `),
+    `,
     props: {
       service: signal(new MockUserCrudService()),
     },
@@ -267,13 +266,13 @@ export const WithSearch: Story = {
     const service = new MockUserCrudService();
     service.onSearch('john');
     return {
-      template: wrapInLightDarkComparison(`
+      template: `
         <div class="p-8">
           <app-generic-crud-list
             [service]="service"
           />
         </div>
-      `),
+      `,
       props: {
         service: signal(service),
       },
@@ -286,13 +285,13 @@ export const WithSelection: Story = {
     const service = new MockUserCrudService();
     service.onSelectionChange(new Set(['1', '3']));
     return {
-      template: wrapInLightDarkComparison(`
+      template: `
         <div class="p-8">
           <app-generic-crud-list
             [service]="service"
           />
         </div>
-      `),
+      `,
       props: {
         service: signal(service),
       },
@@ -310,13 +309,13 @@ export const EmptyState: Story = {
       }
     }
     return {
-      template: wrapInLightDarkComparison(`
+      template: `
         <div class="p-8">
           <app-generic-crud-list
             [service]="service"
           />
         </div>
-      `),
+      `,
       props: {
         service: signal(new EmptyService()),
       },
@@ -329,13 +328,13 @@ export const Loading: Story = {
     const service = new MockUserCrudService();
     service['_loading'].set(true);
     return {
-      template: wrapInLightDarkComparison(`
+      template: `
         <div class="p-8">
           <app-generic-crud-list
             [service]="service"
           />
         </div>
-      `),
+      `,
       props: {
         service: signal(service),
       },

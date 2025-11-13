@@ -1,6 +1,5 @@
 import { Meta, StoryObj } from '@storybook/angular';
 import { CompaniesListComponent } from '@loan/app/features/companies/pages/companies-list/companies-list';
-import { wrapInLightDarkComparison } from '@loan/stories/story-helpers';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 
@@ -10,11 +9,11 @@ const meta: Meta<CompaniesListComponent> = {
   tags: ['autodocs'],
   decorators: [
     (Story) => ({
-      template: wrapInLightDarkComparison(`
+      template: `
         <div class="min-h-screen p-8">
           <story />
         </div>
-      `),
+      `,
       providers: [
         provideRouter([]),
         provideHttpClient(),

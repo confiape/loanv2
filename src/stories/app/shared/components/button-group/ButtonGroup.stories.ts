@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/angular';
 import { ButtonGroup } from '@loan/app/shared/components/button-group/button-group';
 import { ButtonGroupButton } from '@loan/app/shared/components/button-group/button-group-button';
-import { wrapInLightDarkComparison } from '../../../../story-helpers';
 
 const meta: Meta<ButtonGroup> = {
   title: 'Components/ButtonGroup',
@@ -18,7 +17,7 @@ export const Default: Story = {
     moduleMetadata: {
       imports: [ButtonGroup, ButtonGroupButton],
     },
-    template: wrapInLightDarkComparison(`
+    template: `
       <app-button-group [variant]="'default'">
         <app-button-group-button [position]="'first'" [variant]="'default'">
           Profile
@@ -30,7 +29,7 @@ export const Default: Story = {
           Messages
         </app-button-group-button>
       </app-button-group>
-    `),
+    `,
   }),
 };
 
@@ -40,7 +39,7 @@ export const Outline: Story = {
     moduleMetadata: {
       imports: [ButtonGroup, ButtonGroupButton],
     },
-    template: wrapInLightDarkComparison(`
+    template: `
       <app-button-group [variant]="'outline'">
         <app-button-group-button [position]="'first'" [variant]="'outline'">
           Profile
@@ -52,7 +51,7 @@ export const Outline: Story = {
           Messages
         </app-button-group-button>
       </app-button-group>
-    `),
+    `,
   }),
 };
 
@@ -62,7 +61,7 @@ export const TwoButtons: Story = {
     moduleMetadata: {
       imports: [ButtonGroup, ButtonGroupButton],
     },
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="space-y-4">
         <app-button-group [variant]="'default'">
           <app-button-group-button [position]="'first'" [variant]="'default'">
@@ -82,7 +81,7 @@ export const TwoButtons: Story = {
           </app-button-group-button>
         </app-button-group>
       </div>
-    `),
+    `,
   }),
 };
 
@@ -92,7 +91,7 @@ export const Disabled: Story = {
     moduleMetadata: {
       imports: [ButtonGroup, ButtonGroupButton],
     },
-    template: wrapInLightDarkComparison(`
+    template: `
       <app-button-group [variant]="'default'">
         <app-button-group-button [position]="'first'" [variant]="'default'">
           Profile
@@ -104,6 +103,6 @@ export const Disabled: Story = {
           Messages
         </app-button-group-button>
       </app-button-group>
-    `),
+    `,
   }),
 };

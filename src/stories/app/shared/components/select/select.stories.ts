@@ -1,7 +1,6 @@
 import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
 import { fn } from 'storybook/test';
 import { Select } from '@loan/app/shared/components/select/select';
-import { wrapInLightDarkComparison } from '@loan/stories/story-helpers';
 
 const meta: Meta<Select> = {
   title: 'UI/Select',
@@ -85,7 +84,7 @@ export const Default: Story = {
     props: {
       options: countryOptions,
     },
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-md mx-auto">
         <app-select
           [label]="'Choose a country'"
@@ -93,7 +92,7 @@ export const Default: Story = {
           [options]="options"
         />
       </div>
-    `),
+    `,
   }),
 };
 
@@ -108,7 +107,7 @@ export const Sizes: Story = {
     props: {
       options: countryOptions,
     },
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-md mx-auto space-y-6">
         <app-select
           [label]="'Small select'"
@@ -131,7 +130,7 @@ export const Sizes: Story = {
           [options]="options"
         />
       </div>
-    `),
+    `,
   }),
 };
 
@@ -146,7 +145,7 @@ export const Disabled: Story = {
     props: {
       options: countryOptions,
     },
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-md mx-auto">
         <app-select
           [label]="'Choose a country'"
@@ -155,7 +154,7 @@ export const Disabled: Story = {
           [options]="options"
         />
       </div>
-    `),
+    `,
   }),
 };
 
@@ -170,7 +169,7 @@ export const ValidationStates: Story = {
     props: {
       options: countryOptions,
     },
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-md mx-auto space-y-6">
         <app-select
           [label]="'Country'"
@@ -188,7 +187,7 @@ export const ValidationStates: Story = {
           [options]="options"
         />
       </div>
-    `),
+    `,
   }),
 };
 
@@ -203,7 +202,7 @@ export const WithHelpText: Story = {
     props: {
       options: countryOptions,
     },
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-md mx-auto">
         <app-select
           [label]="'Shipping country'"
@@ -212,7 +211,7 @@ export const WithHelpText: Story = {
           [helpText]="'Choose where you want your order shipped'"
         />
       </div>
-    `),
+    `,
   }),
 };
 
@@ -233,7 +232,7 @@ export const WithDisabledOptions: Story = {
         { value: 'GB', label: 'United Kingdom' },
       ],
     },
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-md mx-auto">
         <app-select
           [label]="'Available countries'"
@@ -242,7 +241,7 @@ export const WithDisabledOptions: Story = {
           [helpText]="'Some destinations are temporarily unavailable'"
         />
       </div>
-    `),
+    `,
   }),
 };
 
@@ -268,7 +267,7 @@ export const FormExample: Story = {
         { value: 'SD', label: 'San Diego' },
       ],
     },
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-2xl mx-auto">
         <form class="space-y-6">
           <app-select
@@ -292,7 +291,7 @@ export const FormExample: Story = {
           </div>
         </form>
       </div>
-    `),
+    `,
   }),
 };
 
@@ -325,7 +324,7 @@ export const DifferentCategories: Story = {
         { value: 'CET', label: 'Central European Time (CET)' },
       ],
     },
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-md mx-auto space-y-6">
         <app-select
           [label]="'Language'"
@@ -345,7 +344,7 @@ export const DifferentCategories: Story = {
           [options]="timezones"
         />
       </div>
-    `),
+    `,
   }),
 };
 
@@ -375,7 +374,7 @@ export const CompactForm: Story = {
         label: String(2024 - i),
       })),
     },
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8 max-w-xl mx-auto">
         <form class="space-y-4">
           <div class="grid gap-4 grid-cols-3">
@@ -402,6 +401,6 @@ export const CompactForm: Story = {
           </div>
         </form>
       </div>
-    `),
+    `,
   }),
 };

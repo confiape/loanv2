@@ -4,7 +4,6 @@ import { ToastComponent } from '@loan/app/shared/components/toast/toast';
 import { ToastContainerComponent } from '@loan/app/shared/components/toast/toast-container';
 import { ToastService } from '@loan/app/core/services/toast.service';
 import { Button } from '@loan/app/shared/components/button/button';
-import { wrapInLightDarkComparison } from '@loan/stories/story-helpers';
 
 @Component({
   selector: 'app-toast-demo',
@@ -73,50 +72,50 @@ type Story = StoryObj;
 
 export const TopRight: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <app-toast-demo />
-    `),
+    `,
   }),
 };
 
 export const TopLeft: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <app-toast-demo />
-    `),
+    `,
   }),
 };
 
 export const BottomRight: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <app-toast-demo />
-    `),
+    `,
   }),
 };
 
 export const WithTitle: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8">
         <p class="text-text-secondary mb-4 text-center">
           Toasts with titles for better context
         </p>
         <app-toast-demo />
       </div>
-    `),
+    `,
   }),
 };
 
 export const LongDuration: Story = {
   render: () => ({
-    template: wrapInLightDarkComparison(`
+    template: `
       <div class="p-8">
         <p class="text-text-secondary mb-4 text-center">
           Error toasts stay visible for 5 seconds by default
         </p>
         <app-toast-demo />
       </div>
-    `),
+    `,
   }),
 };

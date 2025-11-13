@@ -8,7 +8,6 @@ import { AppMenuItem } from '@loan/app/shared/components/apps-menu/apps-menu';
 import { UserMenuItem } from '@loan/app/shared/components/user-menu/user-menu';
 import { UserApiService } from '@loan/app/shared/openapi';
 import { AuthService } from '@loan/app/core/services/auth.service';
-import { wrapInLightDarkComparison } from '@loan/stories/story-helpers';
 
 const notifications: Notification[] = [
   { id: 'n1', title: 'Pago completado', message: 'Se aplicó el pago #1234', time: 'hace 5m' },
@@ -69,7 +68,7 @@ const meta: Meta<NavbarComponent> = {
 export default meta;
 type Story = StoryObj<NavbarComponent>;
 
-const template = wrapInLightDarkComparison(`
+const template = `
   <div class="min-h-screen">
     <app-navbar
       [appTitle]="appTitle"
@@ -79,7 +78,7 @@ const template = wrapInLightDarkComparison(`
       [showSearch]="showSearch"
     ></app-navbar>
   </div>
-`);
+`;
 
 export const Default: Story = {
   render: (args) => ({
