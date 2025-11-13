@@ -101,14 +101,17 @@ class MockRoleCrudService extends RoleCrudService {
   protected override _currentPage = signal<number>(1);
   protected override _pageSize = signal<number>(10);
 
+  private initialData: RoleDto[];
+
   constructor(initialRoles: RoleDto[] = mockRoles, isLoading = false) {
     super();
+    this.initialData = initialRoles;
     this._items.set(initialRoles);
     this._loading.set(isLoading);
   }
 
   protected override fetchAllItems(): Observable<RoleDto[]> {
-    return of(this._items());
+    return of(this.initialData).pipe(delay(100));
   }
 
   protected override performSave(dto: SaveRoleDto): Observable<RoleDto> {
@@ -131,14 +134,6 @@ class MockRoleCrudService extends RoleCrudService {
     return searchableFields.some((field) =>
       field.toLowerCase().includes(term.toLowerCase())
     );
-  }
-
-  override loadItems(): void {
-    this._loading.set(true);
-    setTimeout(() => {
-      this._items.set(mockRoles);
-      this._loading.set(false);
-    }, 500);
   }
 
   override onSelectionChange(selected: Set<string>): void {
