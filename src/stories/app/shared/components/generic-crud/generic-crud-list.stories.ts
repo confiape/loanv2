@@ -124,16 +124,11 @@ class MockUserCrudService implements ICrudService<MockUser> {
     ];
   }
 
-  getRouteBasePath(): string {
-    return '/users';
-  }
+  readonly itemTypeName = 'user';
+  readonly itemTypePluralName = 'users';
 
-  getItemTypeName(): string {
-    return 'user';
-  }
-
-  getItemTypePluralName(): string {
-    return 'users';
+  get routeBasePath(): string {
+    return '/' + this.itemTypePluralName;
   }
 
   getItemDisplayName(item: MockUser): string {
@@ -256,6 +251,7 @@ export const Default: Story = {
       <div class="p-8">
         <app-generic-crud-list
           [service]="service"
+          data-testid="users"
         />
       </div>
     `,

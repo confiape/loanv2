@@ -1,6 +1,11 @@
 {
   "permissions": {
-    "allow": ["Bash(cat:*)", "Bash(npm run build:*)"],
+    "allow": [
+      "Bash(cat:*)",
+      "Bash(npm run build:*)",
+      "Bash(timeout 60 npm run test:*)",
+      "Bash(npm run test:*)"
+    ],
     "deny": [],
     "ask": []
   }

@@ -58,14 +58,14 @@ export interface ICrudService<TDto extends { id: string }, TSaveDto = TDto> {
   /** Get form field configuration */
   getFormFields(): FormFieldMetadata[];
 
-  /** Get base route path (e.g., '/companies') */
-  getRouteBasePath(): string;
+  /** Base route path (e.g., '/companies') - computed from itemTypePluralName by default */
+  readonly routeBasePath: string;
 
-  /** Get singular item type name (e.g., 'company') */
-  getItemTypeName(): string;
+  /** Singular item type name (e.g., 'company') */
+  readonly itemTypeName: string;
 
-  /** Get plural item type name (e.g., 'companies') */
-  getItemTypePluralName(): string;
+  /** Plural item type name (e.g., 'companies') */
+  readonly itemTypePluralName: string;
 
   /** Get display name for an item */
   getItemDisplayName(item: TDto): string;

@@ -13,7 +13,7 @@ import { CompanyCrudService } from '../../services/company-crud.service';
   template: `
     <app-generic-crud-list
       [service]="service"
-      [testIdPrefix]="'companies'"
+      data-testid="companies"
     />
   `,
 })

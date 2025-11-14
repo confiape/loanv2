@@ -65,9 +65,9 @@ describe('CompaniesListComponent', () => {
           validators: [],
         },
       ]),
-      getRouteBasePath: vi.fn().mockReturnValue('/companies'),
-      getItemTypeName: vi.fn().mockReturnValue('company'),
-      getItemTypePluralName: vi.fn().mockReturnValue('companies'),
+      routeBasePath: '/companies',
+      itemTypeName: 'company',
+      itemTypePluralName: 'companies',
       getItemDisplayName: vi.fn().mockImplementation((item: CompanyDto) => item.name),
       openEditModal: vi.fn(),
     };
@@ -123,7 +123,7 @@ describe('CompaniesListComponent', () => {
       // This test verifies the component is properly configured
       expect(serviceMock.getTableColumns).toBeDefined();
       expect(serviceMock.getFormFields).toBeDefined();
-      expect(serviceMock.getItemTypeName).toBeDefined();
+      expect(serviceMock.itemTypeName).toBeDefined();
     });
 
     it('should pass testIdPrefix to GenericCrudListComponent', () => {
@@ -155,9 +155,9 @@ describe('CompaniesListComponent', () => {
     });
 
     it('should have access to metadata', () => {
-      expect(serviceMock.getRouteBasePath!()).toBe('/companies');
-      expect(serviceMock.getItemTypeName!()).toBe('company');
-      expect(serviceMock.getItemTypePluralName!()).toBe('companies');
+      expect(serviceMock.routeBasePath).toBe('/companies');
+      expect(serviceMock.itemTypeName).toBe('company');
+      expect(serviceMock.itemTypePluralName).toBe('companies');
     });
   });
 

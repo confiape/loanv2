@@ -1,16 +1,16 @@
-<div class="p-6">
+  <div class="p-6">
   <!-- Header -->
   <div class="mb-6 flex items-center justify-between">
     <h1 class="text-2xl font-bold text-text-primary">
       {{
-        service().getItemTypePluralName().charAt(0).toUpperCase() +
-          service().getItemTypePluralName().slice(1)
+        service().itemTypePluralName.charAt(0).toUpperCase() +
+          service().itemTypePluralName.slice(1)
       }}
     </h1>
     <app-button
       [variant]="'solid'"
       [tone]="'primary'"
-      [attr.data-testid]="testIdPrefix() + '-btn-new'"
+      [attr.data-testid]="testIds().btnNew"
       (buttonClick)="service().onNewItem()"
     >
       <svg
@@ -27,8 +27,8 @@
           d="M12 4v16m8-8H4"
         ></path>
       </svg>
-      New {{ service().getItemTypeName().charAt(0).toUpperCase() +
-      service().getItemTypeName().slice(1) }}
+      New {{ service().itemTypeName.charAt(0).toUpperCase() +
+      service().itemTypeName.slice(1) }}
     </app-button>
   </div>
 
@@ -57,7 +57,7 @@
       <input
         type="text"
         [value]="service().searchTerm()"
-        [attr.data-testid]="testIdPrefix() + '-search-input'"
+        [attr.data-testid]="testIds().searchInput"
         class="block w-full p-2.5 ps-10 text-sm text-text-primary border border-border rounded-lg bg-bg-secondary focus:ring-accent focus:border-accent focus:outline-none transition-colors"
         placeholder="Search..."
         (input)="onSearch($any($event.target).value)"
@@ -69,7 +69,7 @@
   @if (service().hasSelection()) {
     <div
       class="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg"
-      [attr.data-testid]="testIdPrefix() + '-selected-items'"
+      [attr.data-testid]="testIds().selectedItems"
     >
       <div class="flex items-center justify-between flex-wrap gap-2">
         <div class="flex items-center gap-2 flex-wrap">
@@ -119,7 +119,7 @@
             [variant]="'solid'"
             [tone]="'danger'"
             [size]="'sm'"
-            [attr.data-testid]="testIdPrefix() + '-btn-bulk-delete'"
+            [attr.data-testid]="testIds().btnBulkDelete"
             (buttonClick)="service().onBulkDelete()"
           >
             Delete Selected
@@ -137,7 +137,7 @@
     [actions]="tableActions()"
     [hoverable]="true"
     [sortable]="true"
-    [attr.data-testid]="testIdPrefix() + '-table'"
+    [attr.data-testid]="testIds().table"
     (selectionChange)="onSelectionChange($event)"
   />
 
@@ -185,7 +185,7 @@
     <app-modal
       [size]="'2xl'"
       [dismissible]="true"
-      [attr.data-testid]="testIdPrefix() + '-modal'"
+      [testId]="testIds().modal"
     >
       <app-modal-header (closeClick)="closeFormModal()">
         {{ modalTitle() }}
@@ -196,7 +196,7 @@
           [fields]="service().getFormFields()"
           [loading]="formLoading()"
           [error]="formError()"
-          [testIdPrefix]="testIdPrefix()"
+          [testIdPrefix]="testIds().form"
           (formSubmit)="onFormSave($event)"
           (formCancel)="onFormCancel()"
         />
@@ -209,7 +209,7 @@
     <app-modal
       [size]="'sm'"
       [dismissible]="true"
-      [attr.data-testid]="testIdPrefix() + '-delete-modal'"
+      [testId]="testIds().deleteModal"
     >
       <app-modal-header (closeClick)="closeDeleteModal()">
         Confirm Delete
@@ -238,7 +238,7 @@
             <app-button
               [variant]="'outline'"
               [tone]="'neutral'"
-              [attr.data-testid]="testIdPrefix() + '-btn-cancel-delete'"
+              [attr.data-testid]="testIds().btnCancelDelete"
               (buttonClick)="closeDeleteModal()"
             >
               Cancel
@@ -246,7 +246,7 @@
             <app-button
               [variant]="'solid'"
               [tone]="'danger'"
-              [attr.data-testid]="testIdPrefix() + '-btn-confirm-delete'"
+              [attr.data-testid]="testIds().btnConfirmDelete"
               (buttonClick)="confirmDelete()"
             >
               Delete
