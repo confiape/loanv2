@@ -27,8 +27,8 @@ export const loginGuard: CanActivateFn = () => {
   const token = authService.getToken();
 
   if (token) {
-    // User has a token, redirect to dashboard
-    router.navigate(['/dashboard']);
+    // User has a token, redirect to companies page
+    router.navigate(['/companies']);
     return false;
   }
 
@@ -36,8 +36,8 @@ export const loginGuard: CanActivateFn = () => {
   return authService.checkAuthentication().pipe(
     map((isAuthenticated) => {
       if (isAuthenticated) {
-        // User is authenticated, redirect to dashboard
-        router.navigate(['/dashboard']);
+        // User is authenticated, redirect to companies page
+        router.navigate(['/companies']);
         return false;
       } else {
         // Not authenticated, allow access to login page

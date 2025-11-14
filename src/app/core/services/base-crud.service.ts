@@ -1,4 +1,5 @@
-import { signal, computed, Signal } from '@angular/core';
+import { signal, computed, Signal, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ICrudService } from './crud.interface';
@@ -12,6 +13,10 @@ import { TableColumnMetadata, FormFieldMetadata } from '@loan/app/core/models/fo
 export abstract class BaseCrudService<TDto extends { id: string }, TSaveDto = TDto>
   implements ICrudService<TDto, TSaveDto>
 {
+  // ========== DEPENDENCIES ==========
+
+  protected router = inject(Router);
+
   // ========== STATE (Signals) ==========
 
   protected _items = signal<TDto[]>([]);
@@ -84,17 +89,26 @@ export abstract class BaseCrudService<TDto extends { id: string }, TSaveDto = TD
   /** Get form fields configuration */
   abstract getFormFields(): FormFieldMetadata[];
 
-  /** Get route base path */
-  abstract getRouteBasePath(): string;
-
-  /** Get item type name (singular) */
-  abstract getItemTypeName(): string;
-
-  /** Get item type name (plural) */
-  abstract getItemTypePluralName(): string;
-
   /** Get display name for an item */
   abstract getItemDisplayName(item: TDto): string;
+
+  // ========== ABSTRACT PROPERTIES (must be implemented) ==========
+
+  /** Singular item type name (e.g., 'company') */
+  abstract readonly itemTypeName: string;
+
+  /** Plural item type name (e.g., 'companies') */
+  abstract readonly itemTypePluralName: string;
+
+  // ========== COMPUTED PROPERTIES (can be overridden) ==========
+
+  /**
+   * Base route path - defaults to '/' + itemTypePluralName
+   * Override if you need a custom path (e.g., '/admin/companies')
+   */
+  get routeBasePath(): string {
+    return '/' + this.itemTypePluralName;
+  }
 
   // ========== LIFECYCLE HOOKS (optional overrides) ==========
 
@@ -154,7 +168,15 @@ export abstract class BaseCrudService<TDto extends { id: string }, TSaveDto = TD
   }
 
   onEditItem(item: TDto): void {
-    this.openEditModal(item);
+    // Navigate to edit route (modal will open via route effect in GenericCrudListComponent)
+    const editPath = [this.routeBasePath, item.id];
+
+    this.router.navigate(editPath).then((success) => {
+      if (!success) {
+        // Navigation failed - route probably not configured
+        this.throwRouteConfigurationError(this.routeBasePath, item.id);
+      }
+    });
   }
 
   openEditModal(item: TDto): void {
@@ -203,12 +225,14 @@ export abstract class BaseCrudService<TDto extends { id: string }, TSaveDto = TD
   onFormSave(): void {
     this._showModal.set(false);
     this._editingItem.set(null);
+    this.router.navigate([this.routeBasePath]);
     this.onAfterFormSave();
   }
 
   onFormCancel(): void {
     this._showModal.set(false);
     this._editingItem.set(null);
+    this.router.navigate([this.routeBasePath]);
     this.onAfterFormCancel();
   }
 
@@ -264,6 +288,67 @@ export abstract class BaseCrudService<TDto extends { id: string }, TSaveDto = TD
   }
 
   // ========== HELPER METHODS ==========
+
+  /**
+   * Throw detailed error when route configuration is missing
+   */
+  private throwRouteConfigurationError(basePath: string, itemId: string): never {
+    const routesFileName = `${basePath.split('/').pop()}.routes.ts`;
+
+    throw new Error(`
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║ CRUD Route Configuration Error                                               ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
+
+Navigation to "${basePath}/${itemId}" failed. The route is not configured.
+
+The GenericCrudList component requires route configuration to edit items via URL.
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ REQUIRED SETUP:                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+1. Add the :id route to your routes configuration:
+
+   File: src/app/features${basePath}/${routesFileName}
+
+   export const routes: Routes = [
+     {
+       path: '',
+       component: YourListComponent,  // List view
+     },
+     {
+       path: ':id',                   // ← ADD THIS ROUTE
+       component: YourListComponent,  // Same component (modal opens via route)
+     },
+   ];
+
+2. The GenericCrudListComponent will automatically:
+   ✓ Detect route parameter changes
+   ✓ Open the edit modal when navigating to ${basePath}/:id
+   ✓ Close the modal when navigating back to ${basePath}
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ WHY THIS IS REQUIRED:                                                       │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+✓ Shareable URLs (e.g., ${basePath}/${itemId})
+✓ Browser back/forward navigation works correctly
+✓ Page refresh maintains modal state
+✓ Deep linking from notifications/emails
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ CURRENT STATE:                                                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Item Type:       ${this.itemTypeName}
+Base Path:       ${basePath}
+Attempted Route: ${basePath}/${itemId}
+Route Exists:    ❌ NO
+
+Please configure the route and try again.
+`);
+  }
 
   private updateItemsAfterSave(savedItem: TDto): void {
     const items = [...this._items()];

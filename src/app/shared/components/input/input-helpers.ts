@@ -110,7 +110,6 @@ export function getSuffixButtonClasses(size: InputSize, iconOnly = false): strin
  * Generates test IDs for input components
  */
 export interface InputTestIds {
-  wrapper: Signal<string | null>;
   label: Signal<string | null>;
   input: Signal<string | null>;
   prefixIcon: Signal<string | null>;
@@ -133,10 +132,6 @@ function resolveHostTestId(source: HostTestIdSource): () => string | null {
 export function generateInputTestIds(hostTestId: HostTestIdSource): InputTestIds {
   const getHostTestId = resolveHostTestId(hostTestId);
   return {
-    wrapper: computed(() => {
-      const id = getHostTestId();
-      return id ? `${id}-wrapper` : null;
-    }),
     label: computed(() => {
       const id = getHostTestId();
       return id ? `${id}-label` : null;

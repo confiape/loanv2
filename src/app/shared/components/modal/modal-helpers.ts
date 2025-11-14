@@ -3,6 +3,9 @@ import { computed, Signal } from '@angular/core';
 export type ModalSize = 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 
 export interface ModalTestIds {
+  // Main dialog element (no suffix - this is the primary test ID)
+  dialog: Signal<string | null>;
+  // Internal elements (with suffixes)
   overlay: Signal<string | null>;
   container: Signal<string | null>;
   content: Signal<string | null>;
@@ -14,6 +17,9 @@ export interface ModalTestIds {
 
 export function generateModalTestIds(hostTestId: string | null): ModalTestIds {
   return {
+    // Primary test ID without suffix (for role="dialog" element)
+    dialog: computed(() => hostTestId),
+    // Internal elements with suffixes
     overlay: computed(() => (hostTestId ? `${hostTestId}-overlay` : null)),
     container: computed(() => (hostTestId ? `${hostTestId}-container` : null)),
     content: computed(() => (hostTestId ? `${hostTestId}-content` : null)),

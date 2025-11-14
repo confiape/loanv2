@@ -1,5 +1,4 @@
 import { Injectable, inject } from '@angular/core';
-import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Validators } from '@angular/forms';
 import { BaseCrudService } from '@loan/app/core/services/base-crud.service';
@@ -16,7 +15,6 @@ import { noSpecialCharactersValidator } from '../validators/company.validators';
 })
 export class CompanyCrudService extends BaseCrudService<CompanyDto, SaveCompanyDto> {
   private apiService = inject(CompanyApiService);
-  private router = inject(Router);
 
   // ========== ABSTRACT METHOD IMPLEMENTATIONS ==========
 
@@ -83,52 +81,13 @@ export class CompanyCrudService extends BaseCrudService<CompanyDto, SaveCompanyD
     ];
   }
 
-  getRouteBasePath(): string {
-    return '/companies';
-  }
+  // ========== METADATA PROPERTIES ==========
 
-  getItemTypeName(): string {
-    return 'company';
-  }
-
-  getItemTypePluralName(): string {
-    return 'companies';
-  }
+  readonly itemTypeName = 'company';
+  readonly itemTypePluralName = 'companies';
+  // routeBasePath is computed automatically as '/companies' from itemTypePluralName
 
   getItemDisplayName(item: CompanyDto): string {
     return item.name;
-  }
-
-  // ========== UI ACTION OVERRIDES (for routing) ==========
-
-  /**
-   * Override to navigate to edit route instead of opening modal directly
-   */
-  override onEditItem(item: CompanyDto): void {
-    this.router.navigate([this.getRouteBasePath(), item.id]);
-  }
-
-  /**
-   * Override to navigate to base route when opening new item form
-   */
-  override onNewItem(): void {
-    this._editingItem.set(null);
-    this._showModal.set(true);
-  }
-
-  /**
-   * Override to navigate back to list after saving
-   */
-  protected override onAfterFormSave(): void {
-    this.router.navigate([this.getRouteBasePath()]);
-  }
-
-  /**
-   * Override to navigate back to list when canceling
-   */
-  override onFormCancel(): void {
-    this._showModal.set(false);
-    this._editingItem.set(null);
-    this.router.navigate([this.getRouteBasePath()]);
   }
 }

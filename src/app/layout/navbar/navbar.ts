@@ -92,8 +92,7 @@ export class NavbarComponent {
           this.userState.clearUser();
           this.router.navigate(['/login']);
           return EMPTY;
-        }),
-        takeUntilDestroyed(),
+        })
       )
       .subscribe();
   }

@@ -1,4 +1,13 @@
-import { Component, OnInit, inject, input, effect, signal, computed } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  inject,
+  input,
+  effect,
+  signal,
+  computed,
+  HostAttributeToken,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Table } from '@loan/app/shared/ui/table/table';
@@ -10,6 +19,8 @@ import { Button } from '@loan/app/shared/components/button/button';
 import { GenericCrudFormComponent } from '../generic-crud-form/generic-crud-form';
 import { ICrudService } from '@loan/app/core/services/crud.interface';
 import { TableColumnMetadata } from '@loan/app/core/models/form-metadata';
+
+const DATA_TESTID = new HostAttributeToken('data-testid');
 
 /**
  * Generic CRUD list component
@@ -46,15 +57,13 @@ import { TableColumnMetadata } from '@loan/app/core/models/form-metadata';
 export class GenericCrudListComponent<TDto extends { id: string }> implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private readonly hostTestId = inject(DATA_TESTID, { optional: true });
 
   // Expose Math for template
   protected readonly Math = Math;
 
   // Input: CRUD service (required)
   service = input.required<ICrudService<TDto, unknown>>();
-
-  // Input: Test ID prefix for E2E testing (optional)
-  testIdPrefix = input<string>('crud');
 
   // Table configuration
   tableColumns = signal<TableColumn<TDto>[]>([]);
@@ -67,9 +76,27 @@ export class GenericCrudListComponent<TDto extends { id: string }> implements On
   // Track current route param ID
   private currentRouteId = signal<string | null>(null);
 
+  // Computed test IDs (generated from host data-testid)
+  private readonly testIdPrefix = computed(() => this.hostTestId ?? 'crud');
+  readonly testIds = computed(() => {
+    const prefix = this.testIdPrefix();
+    return {
+      btnNew: `${prefix}-btn-new`,
+      searchInput: `${prefix}-search-input`,
+      selectedItems: `${prefix}-selected-items`,
+      btnBulkDelete: `${prefix}-btn-bulk-delete`,
+      table: `${prefix}-table`,
+      modal: `${prefix}-modal`,
+      deleteModal: `${prefix}-delete-modal`,
+      btnCancelDelete: `${prefix}-btn-cancel-delete`,
+      btnConfirmDelete: `${prefix}-btn-confirm-delete`,
+      form: prefix, // passed to GenericCrudFormComponent
+    };
+  });
+
   // Computed modal title
   readonly modalTitle = computed(() => {
-    const itemTypeName = this.service().getItemTypeName();
+    const itemTypeName = this.service().itemTypeName;
     const isEdit = this.service().editingItem() !== null;
     const capitalizedName = itemTypeName.charAt(0).toUpperCase() + itemTypeName.slice(1);
     return isEdit ? `Edit ${capitalizedName}` : `New ${capitalizedName}`;
@@ -95,7 +122,7 @@ export class GenericCrudListComponent<TDto extends { id: string }> implements On
           }
         } else {
           // Item not found, navigate back to list
-          this.router.navigate([srv.getRouteBasePath()]);
+          this.router.navigate([srv.routeBasePath]);
         }
       } else if (!routeId) {
         // No ID in route, close modal if open

@@ -42,7 +42,7 @@ describe('CompanyCrudService', () => {
     };
 
     routerMock = {
-      navigate: vi.fn() as Mock,
+      navigate: vi.fn().mockResolvedValue(true) as Mock,
     };
 
     TestBed.configureTestingModule({
@@ -79,17 +79,17 @@ describe('CompanyCrudService', () => {
     });
   });
 
-  describe('Metadata Methods', () => {
-    it('should return correct route base path', () => {
-      expect(service.getRouteBasePath()).toBe('/companies');
+  describe('Metadata Properties', () => {
+    it('should have correct item type name', () => {
+      expect(service.itemTypeName).toBe('company');
     });
 
-    it('should return correct item type name', () => {
-      expect(service.getItemTypeName()).toBe('company');
+    it('should have correct item type plural name', () => {
+      expect(service.itemTypePluralName).toBe('companies');
     });
 
-    it('should return correct item type plural name', () => {
-      expect(service.getItemTypePluralName()).toBe('companies');
+    it('should compute route base path from plural name', () => {
+      expect(service.routeBasePath).toBe('/companies');
     });
 
     it('should return item display name', () => {
@@ -297,9 +297,9 @@ describe('CompanyCrudService', () => {
       });
     });
 
-    describe('onAfterFormSave', () => {
+    describe('onFormSave', () => {
       it('should navigate back to list after save', () => {
-        service['onAfterFormSave']();
+        service.onFormSave();
 
         expect(routerMock.navigate).toHaveBeenCalledWith(['/companies']);
       });
