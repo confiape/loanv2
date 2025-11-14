@@ -182,7 +182,7 @@ export interface ButtonTestIds {
 
 export function generateButtonTestIds(hostTestId: string | null): ButtonTestIds {
   return {
-    button: computed(() => hostTestId),
+    button: computed(() => (hostTestId ? `${hostTestId}-button` : null)),
     content: computed(() => (hostTestId ? `${hostTestId}-content` : null)),
     spinner: computed(() => (hostTestId ? `${hostTestId}-spinner` : null)),
   };
