@@ -1,25 +1,20 @@
 import { test, expect } from '@playwright/test';
 import { LoginPage } from '../../page-objects/login.page';
 import { CompaniesPage } from '../../page-objects/companies.page';
-import { ApiMockHelper } from '../../helpers/api-mock.helper';
 import { generateUniqueCompanyName } from '../../fixtures/companies.fixture';
 
 /**
  * E2E Tests: Companies Bulk Operations
  * Tests multi-select and bulk delete operations
+ * Uses mock API server running on localhost:3001
  */
 
 test.describe('Companies Bulk Operations', () => {
   let loginPage: LoginPage;
   let companiesPage: CompaniesPage;
-  let apiMock: ApiMockHelper;
 
-  // Setup: Mock API and login before each test
+  // Setup: Login before each test
   test.beforeEach(async ({ page }) => {
-    // Setup API mocks FIRST (before any navigation)
-    apiMock = new ApiMockHelper(page);
-    await apiMock.setupAllMocks();
-
     loginPage = new LoginPage(page);
     companiesPage = new CompaniesPage(page);
 
