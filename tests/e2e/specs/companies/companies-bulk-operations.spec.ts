@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { LoginPage } from '../../page-objects/login.page';
 import { CompaniesPage } from '../../page-objects/companies.page';
+import { ApiMockHelper } from '../../helpers/api-mock.helper';
 import { generateUniqueCompanyName } from '../../fixtures/companies.fixture';
 
 /**
@@ -11,9 +12,14 @@ import { generateUniqueCompanyName } from '../../fixtures/companies.fixture';
 test.describe('Companies Bulk Operations', () => {
   let loginPage: LoginPage;
   let companiesPage: CompaniesPage;
+  let apiMock: ApiMockHelper;
 
-  // Setup: Login before each test
+  // Setup: Mock API and login before each test
   test.beforeEach(async ({ page }) => {
+    // Setup API mocks FIRST (before any navigation)
+    apiMock = new ApiMockHelper(page);
+    await apiMock.setupAllMocks();
+
     loginPage = new LoginPage(page);
     companiesPage = new CompaniesPage(page);
 
