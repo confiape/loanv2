@@ -6,14 +6,15 @@
 export const TestIds = {
   /**
    * Companies page test IDs
+   * Note: Modal components auto-generate suffixes (-overlay, -container, -content, etc.)
    */
   companies: {
     // Main elements
     btnNew: 'companies-btn-new',
     searchInput: 'companies-search-input',
     table: 'companies-table',
-    modal: 'companies-modal',
-    deleteModal: 'companies-delete-modal',
+    modal: 'companies-modal-content',  // Base: companies-modal, suffix: -content
+    deleteModal: 'companies-delete-modal-content',  // Base: companies-delete-modal, suffix: -content
 
     // Selected items section
     selectedItems: 'companies-selected-items',
