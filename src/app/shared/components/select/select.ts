@@ -32,7 +32,7 @@ export interface SelectOption {
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="w-full" [attr.data-testid]="wrapperTestId()">
+    <div class="w-full">
       <!-- Label -->
       @if (label()) {
         <label [for]="selectId()" [class]="labelClasses()" [attr.data-testid]="labelTestId()">
@@ -143,7 +143,6 @@ export class Select implements ControlValueAccessor {
 
   // Test IDs using helper
   private readonly testIds = generateInputTestIds(this.hostTestId);
-  readonly wrapperTestId = this.testIds.wrapper;
   readonly labelTestId = this.testIds.label;
   readonly helpTextTestId = this.testIds.helpText;
   readonly successMessageTestId = this.testIds.successMessage;

@@ -21,7 +21,7 @@ export const TestIds = {
     btnBulkDelete: 'companies-btn-bulk-delete',
 
     // Form elements
-    inputName: 'companies-input-name',
+    inputName: 'companies-input-name-input',
     btnSubmit: 'companies-btn-submit',
     btnCancel: 'companies-btn-cancel',
 

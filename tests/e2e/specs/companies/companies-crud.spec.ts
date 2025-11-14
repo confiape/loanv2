@@ -74,7 +74,7 @@ test.describe('Companies CRUD Operations', () => {
     });
 
     test('should create a new company successfully', async () => {
-      const companyName = generateUniqueCompanyName('E2E Create Test');
+      const companyName = generateUniqueCompanyName('E2E');
 
       // Create company
       await companiesPage.createCompany(companyName);

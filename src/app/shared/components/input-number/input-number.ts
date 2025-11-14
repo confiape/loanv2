@@ -8,7 +8,7 @@ import {
   forwardRef,
   effect,
   inject,
-  HostAttributeToken,
+  ElementRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
@@ -21,14 +21,12 @@ import {
   generateInputTestIds,
 } from '@loan/app/shared/components/input/input-helpers';
 
-const DATA_TESTID = new HostAttributeToken('data-testid');
-
 @Component({
   selector: 'app-input-number',
   standalone: true,
   imports: [CommonModule, NgIconComponent],
   template: `
-    <div class="w-full" [attr.data-testid]="wrapperTestId()">
+    <div class="w-full">
       <!-- Label -->
       @if (label()) {
         <label [for]="inputId()" [class]="labelClasses()" [attr.data-testid]="labelTestId()">
@@ -160,10 +158,16 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
   },
 })
 export class InputNumber implements ControlValueAccessor {
-  private readonly injectedTestId = inject(DATA_TESTID, { optional: true });
+  private readonly el = inject(ElementRef);
+
+  // Test ID from input or host attribute (fallback)
   readonly dataTestId = input<string | null>(null);
+  private readonly hostTestId = computed(() => {
+    const attr = this.el.nativeElement.getAttribute('data-testid');
+    return attr ?? null;
+  });
   private readonly resolvedTestId = computed(
-    () => this.dataTestId() ?? this.injectedTestId ?? null,
+    () => this.dataTestId() ?? this.hostTestId() ?? null,
   );
 
   // Input properties
@@ -202,7 +206,6 @@ export class InputNumber implements ControlValueAccessor {
 
   // Test IDs using helper
   private readonly testIds = generateInputTestIds(() => this.resolvedTestId());
-  readonly wrapperTestId = this.testIds.wrapper;
   readonly labelTestId = this.testIds.label;
   readonly inputTestId = this.testIds.input;
   readonly prefixIconTestId = this.testIds.prefixIcon;

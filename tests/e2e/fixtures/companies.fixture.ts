@@ -69,9 +69,8 @@ export const invalidCompanies: CompanyTestData[] = [
  * Generate unique company name with timestamp
  */
 export function generateUniqueCompanyName(prefix = 'E2E Test Company'): string {
-  const timestamp = Date.now();
-  const random = Math.floor(Math.random() * 1000);
-  return `${prefix} ${timestamp}-${random}`;
+  const id = Math.random().toString(36).substring(2, 6).toUpperCase();
+  return `${prefix}${id}`;
 }
 
 /**

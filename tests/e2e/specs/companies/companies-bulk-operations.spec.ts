@@ -29,7 +29,7 @@ test.describe('Companies Bulk Operations', () => {
   test.describe('Selection Operations', () => {
     test('should select and deselect individual rows', async () => {
       // Ensure we have at least one company
-      const companyName = generateUniqueCompanyName('E2E Selection Individual');
+      const companyName = generateUniqueCompanyName('E2E');
       await companiesPage.createCompany(companyName);
       await companiesPage.waitForTableLoad();
 

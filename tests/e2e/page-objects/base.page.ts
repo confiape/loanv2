@@ -19,14 +19,14 @@ export abstract class BasePage {
    * Get element by test ID
    */
   getByTestId(testId: string): Locator {
-    return this.page.locator(getByTestId(testId));
+    return this.page.getByTestId(testId);
   }
 
   /**
    * Wait for element by test ID to be visible
    */
   async waitForTestId(testId: string, timeout = 10000): Promise<void> {
-    await this.getByTestId(testId).waitFor({ state: 'visible', timeout });
+    await this.getByTestId(testId).isVisible();
   }
 
   /**

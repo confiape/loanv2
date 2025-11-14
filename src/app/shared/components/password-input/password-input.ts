@@ -7,7 +7,7 @@ import {
   computed,
   effect,
   inject,
-  HostAttributeToken,
+  ElementRef,
   ViewChild,
   forwardRef,
 } from '@angular/core';
@@ -18,15 +18,13 @@ import { heroEye, heroEyeSlash } from '@ng-icons/heroicons/outline';
 import { Input } from '@loan/app/shared/components/input/input';
 import { InputSize, ValidationState } from '@loan/app/shared/components/input/input-helpers';
 
-const DATA_TESTID = new HostAttributeToken('data-testid');
-
 @Component({
   selector: 'app-password-input',
   standalone: true,
   imports: [Input],
   template: `
     <app-input
-      [dataTestId]="hostTestId()"
+      [dataTestId]="resolvedTestId()"
       [label]="label()"
       [placeholder]="placeholder()"
       [disabled]="isDisabled()"
@@ -63,9 +61,16 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
   },
 })
 export class PasswordInput implements ControlValueAccessor {
-  private readonly injectedTestId = inject(DATA_TESTID, { optional: true });
+  private readonly el = inject(ElementRef);
+
   readonly dataTestId = input<string | null>(null);
-  protected readonly hostTestId = computed(() => this.dataTestId() ?? this.injectedTestId ?? null);
+  private readonly hostTestId = computed(() => {
+    const attr = this.el.nativeElement.getAttribute('data-testid');
+    return attr ?? null;
+  });
+  protected readonly resolvedTestId = computed(
+    () => this.dataTestId() ?? this.hostTestId() ?? null,
+  );
 
   @ViewChild(Input)
   set inputComponent(component: Input | undefined) {

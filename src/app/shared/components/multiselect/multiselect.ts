@@ -34,7 +34,7 @@ export interface MultiSelectOption {
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="w-full relative" [attr.data-testid]="wrapperTestId()">
+    <div class="w-full relative">
       <!-- Label -->
       @if (label()) {
         <label
@@ -258,7 +258,6 @@ export class MultiSelect implements ControlValueAccessor {
 
   // Test IDs using helper
   private readonly testIds = generateInputTestIds(this.hostTestId);
-  readonly wrapperTestId = this.testIds.wrapper;
   readonly labelTestId = this.testIds.label;
   readonly helpTextTestId = this.testIds.helpText;
   readonly successMessageTestId = this.testIds.successMessage;
