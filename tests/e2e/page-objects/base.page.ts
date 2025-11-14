@@ -60,7 +60,10 @@ export abstract class BasePage {
   /**
    * Wait for URL to match pattern
    */
-  async waitForURL(urlPattern: string | RegExp, timeout = 10000): Promise<void> {
+  async waitForURL(
+    urlPattern: string | RegExp | ((url: URL) => boolean),
+    timeout = 10000,
+  ): Promise<void> {
     await this.page.waitForURL(urlPattern, { timeout });
   }
 

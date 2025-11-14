@@ -49,7 +49,7 @@ export class LoginPage extends BasePage {
     await this.clickLogin();
 
     // Wait for redirect away from login page
-    await this.waitForURL((url) => !url.includes('/login'));
+    await this.waitForURL((url) => !url.pathname.includes('/login'));
   }
 
   /**
