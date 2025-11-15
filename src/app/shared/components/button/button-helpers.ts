@@ -176,14 +176,12 @@ export function getButtonClasses(config: ButtonClassConfig): string {
 
 export interface ButtonTestIds {
   button: Signal<string | null>;
-  content: Signal<string | null>;
   spinner: Signal<string | null>;
 }
 
 export function generateButtonTestIds(hostTestId: string | null): ButtonTestIds {
   return {
     button: computed(() => hostTestId),
-    content: computed(() => (hostTestId ? `${hostTestId}-content` : null)),
     spinner: computed(() => (hostTestId ? `${hostTestId}-spinner` : null)),
   };
 }

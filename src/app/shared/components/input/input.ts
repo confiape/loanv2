@@ -31,7 +31,7 @@ export type InputType = 'text' | 'email' | 'password' | 'number' | 'tel' | 'url'
   standalone: true,
   imports: [CommonModule, NgIconComponent],
   template: `
-    <div class="w-full" [attr.data-testid]="wrapperTestId()">
+    <div class="w-full">
       <!-- Label -->
       @if (label()) {
         <label [for]="inputId()" [class]="labelClasses()" [attr.data-testid]="labelTestId()">
@@ -43,10 +43,7 @@ export type InputType = 'text' | 'email' | 'password' | 'number' | 'tel' | 'url'
       <div class="relative">
         <!-- Prefix Icon -->
         @if (prefixIcon()) {
-          <div
-            class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none"
-            [attr.data-testid]="prefixIconTestId()"
-          >
+          <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
             <ng-icon
               aria-hidden="true"
               [name]="prefixIcon()!"
@@ -77,10 +74,7 @@ export type InputType = 'text' | 'email' | 'password' | 'number' | 'tel' | 'url'
 
         <!-- Suffix Icon or Button -->
         @if (suffixIcon()) {
-          <div
-            class="absolute inset-y-0 end-0 flex items-center pe-3 pointer-events-none"
-            [attr.data-testid]="suffixIconTestId()"
-          >
+          <div class="absolute inset-y-0 end-0 flex items-center pe-3 pointer-events-none">
             <ng-icon
               aria-hidden="true"
               [name]="suffixIcon()!"
@@ -96,7 +90,7 @@ export type InputType = 'text' | 'email' | 'password' | 'number' | 'tel' | 'url'
           <button
             type="button"
             [class]="suffixButtonClasses()"
-            [attr.data-testid]="suffixButtonTestId()"
+            [attr.data-testid]="buttonTestId()"
             [attr.aria-label]="suffixButtonAriaLabel() || null"
             (click)="onSuffixButtonClick()"
           >
@@ -127,11 +121,7 @@ export type InputType = 'text' | 'email' | 'password' | 'number' | 'tel' | 'url'
 
       <!-- Success Message -->
       @if (successMessage() && validationState() === 'success') {
-        <p
-          [id]="helpTextId()"
-          class="mt-2 text-sm text-success"
-          [attr.data-testid]="successMessageTestId()"
-        >
+        <p [id]="helpTextId()" class="mt-2 text-sm text-success">
           <span class="font-medium">{{ successMessage() }}</span>
         </p>
       }
@@ -161,12 +151,8 @@ export type InputType = 'text' | 'email' | 'password' | 'number' | 'tel' | 'url'
   },
 })
 export class Input implements ControlValueAccessor {
-  // Test ID from host or explicit input
-  private readonly injectedTestId = inject(DATA_TESTID, { optional: true });
-  readonly dataTestId = input<string | null>(null);
-  private readonly resolvedTestId = computed(
-    () => this.dataTestId() ?? this.injectedTestId ?? null,
-  );
+  // Test ID from host attribute
+  private readonly hostTestId = inject(DATA_TESTID, { optional: true });
 
   // Input properties
   readonly label = input<string>('');
@@ -205,15 +191,11 @@ export class Input implements ControlValueAccessor {
   protected onTouched: () => void = () => undefined;
 
   // Test IDs using helper
-  private readonly testIds = generateInputTestIds(() => this.resolvedTestId());
-  readonly wrapperTestId = this.testIds.wrapper;
+  private readonly testIds = generateInputTestIds(this.hostTestId);
   readonly labelTestId = this.testIds.label;
   readonly inputTestId = this.testIds.input;
-  readonly prefixIconTestId = this.testIds.prefixIcon;
-  readonly suffixIconTestId = this.testIds.suffixIcon;
-  readonly suffixButtonTestId = this.testIds.suffixButton;
+  readonly buttonTestId = this.testIds.button;
   readonly helpTextTestId = this.testIds.helpText;
-  readonly successMessageTestId = this.testIds.successMessage;
   readonly errorMessageTestId = this.testIds.errorMessage;
 
   // Computed classes using helpers
