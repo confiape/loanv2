@@ -8,7 +8,6 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
   standalone: true,
   template: `
     <div
-      [attr.data-testid]="footerTestId()"
       class="flex items-center p-4 md:p-5 border-t border-border rounded-b"
     >
       <ng-content />
@@ -16,9 +15,4 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ModalFooter {
-  private readonly hostTestId = inject(DATA_TESTID, { optional: true });
-  private readonly testIds = generateModalTestIds(this.hostTestId);
-
-  readonly footerTestId = this.testIds.footer;
-}
+export class ModalFooter {}

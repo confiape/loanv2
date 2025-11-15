@@ -1,4 +1,10 @@
-<div [class]="containerClasses()" role="alert" aria-live="assertive" aria-atomic="true">
+<div
+  [class]="containerClasses()"
+  role="alert"
+  aria-live="assertive"
+  aria-atomic="true"
+  [attr.data-testid]="toastTestId()"
+>
   <div [class]="iconClasses()">
     {{ icon() }}
   </div>
@@ -14,6 +20,7 @@
     <button
       type="button"
       class="shrink-0 bg-transparent border-0 p-1 cursor-pointer rounded text-text-secondary hover:bg-bg-secondary hover:text-text-primary transition-all duration-150"
+      [attr.data-testid]="closeTestId()"
       (click)="dismiss()"
       aria-label="Close"
     >

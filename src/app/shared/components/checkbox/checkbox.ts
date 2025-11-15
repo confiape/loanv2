@@ -21,7 +21,7 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="w-full" [attr.data-testid]="wrapperTestId()">
+    <div class="w-full">
       <div class="flex items-start">
         <div class="flex items-center h-5">
           <input
@@ -32,7 +32,7 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
             [attr.aria-label]="ariaLabel()"
             [attr.aria-describedby]="helpTextId()"
             [attr.aria-invalid]="validationState() === 'error'"
-            [attr.data-testid]="checkboxTestId()"
+            [attr.data-testid]="inputTestId()"
             [class]="checkboxClasses()"
             (change)="onChange($event)"
             (blur)="onTouched()"
@@ -65,7 +65,6 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
         <p
           [id]="helpTextId()"
           class="mt-2 text-sm text-success"
-          [attr.data-testid]="successMessageTestId()"
         >
           <span class="font-medium">{{ successMessage() }}</span>
         </p>
@@ -122,18 +121,12 @@ export class Checkbox implements ControlValueAccessor {
   protected onTouched: () => void = () => undefined;
 
   // Test IDs
-  readonly wrapperTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-wrapper` : null,
-  );
-  readonly checkboxTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-checkbox` : null,
+  readonly inputTestId = computed(() =>
+    this.hostTestId ? `${this.hostTestId}-input` : null,
   );
   readonly labelTestId = computed(() => (this.hostTestId ? `${this.hostTestId}-label` : null));
   readonly helpTextTestId = computed(() =>
     this.hostTestId ? `${this.hostTestId}-help-text` : null,
-  );
-  readonly successMessageTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-success-message` : null,
   );
   readonly errorMessageTestId = computed(() =>
     this.hostTestId ? `${this.hostTestId}-error-message` : null,

@@ -53,7 +53,7 @@ export class ModalHeader {
   private readonly testIds = generateModalTestIds(this.hostTestId);
 
   readonly headerTestId = this.testIds.header;
-  readonly closeButtonTestId = this.testIds.closeButton;
+  readonly closeButtonTestId = this.testIds.close;
 
   readonly closeClick = output<void>();
 }

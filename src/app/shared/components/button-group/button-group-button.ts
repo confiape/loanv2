@@ -42,9 +42,7 @@ export class ButtonGroupButton {
 
   readonly buttonClick = output<MouseEvent>();
 
-  protected readonly buttonTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-button` : null,
-  );
+  protected readonly buttonTestId = computed(() => this.hostTestId);
 
   protected readonly buttonClasses = computed(() => {
     const position = this.position();

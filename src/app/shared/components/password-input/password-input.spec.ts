@@ -1,7 +1,15 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideZonelessChangeDetection } from '@angular/core';
+import { Component, provideZonelessChangeDetection } from '@angular/core';
 
 import { PasswordInput } from '@loan/app/shared/components/password-input/password-input';
+
+// Wrapper component for testing data-testid attribute
+@Component({
+  template: `<app-password-input data-testid="pwd-field"></app-password-input>`,
+  standalone: true,
+  imports: [PasswordInput],
+})
+class TestWrapperComponent {}
 
 describe('PasswordInput', () => {
   let fixture: ComponentFixture<PasswordInput>;
@@ -82,11 +90,26 @@ describe('PasswordInput', () => {
     expect(input.disabled).toBe(true);
   });
 
-  it('should forward host data-testid to inner input', () => {
-    fixture.componentRef.setInput('dataTestId', 'pwd-field');
-    fixture.detectChanges();
+  it('should forward host data-testid to inner input', async () => {
+    // Reset TestBed to configure it fresh for this test
+    TestBed.resetTestingModule();
 
-    const inner = fixture.nativeElement.querySelector('app-input');
+    // Configure test module with wrapper component
+    await TestBed.configureTestingModule({
+      imports: [TestWrapperComponent],
+      providers: [provideZonelessChangeDetection()],
+    }).compileComponents();
+
+    // Create wrapper component that has data-testid attribute
+    const wrapperFixture = TestBed.createComponent(TestWrapperComponent);
+    wrapperFixture.detectChanges();
+    await wrapperFixture.whenStable();
+
+    // Find the inner app-input element
+    const passwordInput = wrapperFixture.nativeElement.querySelector('app-password-input');
+    const inner = passwordInput.querySelector('app-input');
+
+    // Verify that data-testid was forwarded to the inner input component
     expect(inner.getAttribute('data-testid')).toBe('pwd-field');
   });
 });

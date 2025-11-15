@@ -27,7 +27,7 @@ export interface RadioOption {
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="w-full" [attr.data-testid]="wrapperTestId()">
+    <div class="w-full">
       <!-- Label -->
       @if (label()) {
         <label [class]="labelClasses()" [attr.data-testid]="labelTestId()">
@@ -37,8 +37,8 @@ export interface RadioOption {
 
       <!-- Radio Options -->
       <div [class]="containerClasses()">
-        @for (option of options(); track option.value) {
-          <div class="flex items-center" [attr.data-testid]="getOptionWrapperTestId(option.value)">
+        @for (option of options(); track option.value; let idx = $index) {
+          <div class="flex items-center">
             <input
               [id]="getOptionId(option.value)"
               type="radio"
@@ -47,7 +47,7 @@ export interface RadioOption {
               [checked]="value() === option.value"
               [disabled]="isDisabled() || option.disabled"
               [attr.aria-label]="option.label"
-              [attr.data-testid]="getOptionTestId(option.value)"
+              [attr.data-testid]="getOptionTestId(idx)"
               [class]="radioClasses()"
               (change)="onChange(option.value)"
               (blur)="onTouched()"
@@ -55,7 +55,7 @@ export interface RadioOption {
             <label
               [for]="getOptionId(option.value)"
               [class]="getOptionLabelClasses(option.disabled)"
-              [attr.data-testid]="getOptionLabelTestId(option.value)"
+              [attr.data-testid]="getOptionLabelTestId(idx)"
             >
               {{ option.label }}
             </label>
@@ -79,7 +79,6 @@ export interface RadioOption {
         <p
           [id]="helpTextId()"
           class="mt-2 text-sm text-success"
-          [attr.data-testid]="successMessageTestId()"
         >
           <span class="font-medium">{{ successMessage() }}</span>
         </p>
@@ -137,15 +136,9 @@ export class RadioGroup implements ControlValueAccessor {
   protected onTouched: () => void = () => undefined;
 
   // Test IDs
-  readonly wrapperTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-wrapper` : null,
-  );
   readonly labelTestId = computed(() => (this.hostTestId ? `${this.hostTestId}-label` : null));
   readonly helpTextTestId = computed(() =>
     this.hostTestId ? `${this.hostTestId}-help-text` : null,
-  );
-  readonly successMessageTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-success-message` : null,
   );
   readonly errorMessageTestId = computed(() =>
     this.hostTestId ? `${this.hostTestId}-error-message` : null,
@@ -271,15 +264,11 @@ export class RadioGroup implements ControlValueAccessor {
     return `${this.name()}-${value}`;
   }
 
-  protected getOptionTestId(value: string): string | null {
-    return this.hostTestId ? `${this.hostTestId}-option-${value}` : null;
+  protected getOptionTestId(index: number): string | null {
+    return this.hostTestId ? `${this.hostTestId}-radio-${index}` : null;
   }
 
-  protected getOptionWrapperTestId(value: string): string | null {
-    return this.hostTestId ? `${this.hostTestId}-option-${value}-wrapper` : null;
-  }
-
-  protected getOptionLabelTestId(value: string): string | null {
-    return this.hostTestId ? `${this.hostTestId}-option-${value}-label` : null;
+  protected getOptionLabelTestId(index: number): string | null {
+    return this.hostTestId ? `${this.hostTestId}-label-${index}` : null;
   }
 }
