@@ -1,4 +1,15 @@
-import { ChangeDetectionStrategy, Component, computed, effect, input, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  input,
+  output,
+  inject,
+  HostAttributeToken,
+} from '@angular/core';
+
+const DATA_TESTID = new HostAttributeToken('data-testid');
 
 export type ToastType = 'success' | 'error' | 'warning' | 'info';
 export type ToastPosition =
@@ -25,10 +36,16 @@ export interface Toast {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ToastComponent {
+  private readonly hostTestId = inject(DATA_TESTID, { optional: true });
+
   readonly toast = input.required<Toast>();
   readonly position = input<ToastPosition>('top-right');
 
   readonly dismissed = output<string>();
+
+  // Test IDs
+  readonly toastTestId = computed(() => (this.hostTestId ? this.hostTestId : null));
+  readonly closeTestId = computed(() => (this.hostTestId ? `${this.hostTestId}-close` : null));
 
   readonly containerClasses = computed(() => {
     const type = this.toast().type;

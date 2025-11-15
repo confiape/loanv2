@@ -1,4 +1,16 @@
-import { Component, input, output, signal, HostListener, ElementRef, inject } from '@angular/core';
+import {
+  Component,
+  input,
+  output,
+  signal,
+  computed,
+  HostListener,
+  ElementRef,
+  inject,
+  HostAttributeToken,
+} from '@angular/core';
+
+const DATA_TESTID = new HostAttributeToken('data-testid');
 
 export interface AppMenuItem {
   id: string;
@@ -17,6 +29,7 @@ export interface AppMenuItem {
       <button
         type="button"
         class="p-2 text-text-secondary rounded-lg hover:text-text-primary hover:bg-bg-secondary focus:ring-4 focus:ring-border transition-colors"
+        [attr.data-testid]="triggerTestId()"
         (click)="toggle()"
         aria-label="View apps"
         [attr.aria-expanded]="isOpen()"
@@ -45,10 +58,11 @@ export interface AppMenuItem {
             <span class="text-base font-medium text-text-primary">{{ title() }}</span>
           </div>
           <div class="p-3 grid grid-cols-3 gap-2">
-            @for (app of apps(); track app.id) {
+            @for (app of apps(); track app.id; let idx = $index) {
               <a
                 [href]="app.href || '#'"
                 class="flex flex-col items-center justify-center p-3 rounded-lg hover:bg-bg-secondary transition-colors group"
+                [attr.data-testid]="getItemTestId(idx)"
                 (click)="onAppClick(app, $event)"
                 role="menuitem"
                 [attr.aria-label]="app.label"
@@ -68,6 +82,7 @@ export interface AppMenuItem {
 })
 export class AppsMenuComponent {
   private readonly elementRef = inject(ElementRef);
+  private readonly hostTestId = inject(DATA_TESTID, { optional: true });
 
   // Inputs
   apps = input<AppMenuItem[]>([]);
@@ -78,6 +93,13 @@ export class AppsMenuComponent {
 
   // State
   isOpen = signal(false);
+
+  // Test IDs
+  readonly triggerTestId = computed(() => (this.hostTestId ? `${this.hostTestId}-trigger` : null));
+
+  protected getItemTestId(index: number): string | null {
+    return this.hostTestId ? `${this.hostTestId}-item-${index}` : null;
+  }
 
   // Click outside to close
   @HostListener('document:click', ['$event'])

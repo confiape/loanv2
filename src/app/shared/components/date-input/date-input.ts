@@ -27,7 +27,7 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="w-full" [attr.data-testid]="wrapperTestId()">
+    <div class="w-full">
       <!-- Label -->
       @if (label()) {
         <label [for]="inputId()" [class]="labelClasses()" [attr.data-testid]="labelTestId()">
@@ -40,7 +40,6 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
         <!-- Calendar Icon -->
         <div
           class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none"
-          [attr.data-testid]="iconTestId()"
         >
           <svg
             class="w-4 h-4"
@@ -94,7 +93,6 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
         <p
           [id]="helpTextId()"
           class="mt-2 text-sm text-success"
-          [attr.data-testid]="successMessageTestId()"
         >
           <span class="font-medium">{{ successMessage() }}</span>
         </p>
@@ -125,12 +123,7 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
   },
 })
 export class DateInput implements ControlValueAccessor {
-  // Test ID from host or explicit input
-  private readonly injectedTestId = inject(DATA_TESTID, { optional: true });
-  readonly dataTestId = input<string | null>(null);
-  private readonly resolvedTestId = computed(
-    () => this.dataTestId() ?? this.injectedTestId ?? null,
-  );
+  private readonly hostTestId = inject(DATA_TESTID, { optional: true });
 
   // Input properties
   readonly label = input<string>('');
@@ -162,18 +155,11 @@ export class DateInput implements ControlValueAccessor {
   protected onTouched: () => void = () => undefined;
 
   // Test IDs using helper
-  private readonly testIds = generateInputTestIds(() => this.resolvedTestId());
-  readonly wrapperTestId = this.testIds.wrapper;
+  private readonly testIds = generateInputTestIds(this.hostTestId);
   readonly labelTestId = this.testIds.label;
   readonly inputTestId = this.testIds.input;
   readonly helpTextTestId = this.testIds.helpText;
-  readonly successMessageTestId = this.testIds.successMessage;
   readonly errorMessageTestId = this.testIds.errorMessage;
-
-  readonly iconTestId = computed(() => {
-    const id = this.resolvedTestId();
-    return id ? `${id}-icon` : null;
-  });
 
   // Computed classes using helpers
   readonly labelClasses = computed(() => getLabelClasses(this.validationState()));

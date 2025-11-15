@@ -23,7 +23,7 @@ export class AccordionItemContentComponent {
   readonly contentTestId = computed(() => {
     const item = this.accordionItem;
     if (!item) return null;
-    const bodyTestId = item.bodyTestId();
-    return bodyTestId ? `${bodyTestId}-content` : null;
+    const panelTestId = item.panelTestId();
+    return panelTestId ? `${panelTestId}-content` : null;
   });
 }

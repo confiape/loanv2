@@ -28,7 +28,7 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
   standalone: true,
   imports: [CommonModule, NgIconComponent],
   template: `
-    <div class="w-full" [attr.data-testid]="wrapperTestId()">
+    <div class="w-full">
       <!-- Label -->
       @if (label()) {
         <label [for]="inputId()" [class]="labelClasses()" [attr.data-testid]="labelTestId()">
@@ -42,7 +42,6 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
         @if (prefixIcon()) {
           <div
             class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none"
-            [attr.data-testid]="prefixIconTestId()"
           >
             <ng-icon
               aria-hidden="true"
@@ -79,7 +78,6 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
         @if (showButtons()) {
           <div
             class="absolute inset-y-0 end-0 flex flex-col"
-            [attr.data-testid]="buttonsContainerTestId()"
           >
             <button
               type="button"
@@ -129,7 +127,6 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
         <p
           [id]="helpTextId()"
           class="mt-2 text-sm text-success"
-          [attr.data-testid]="successMessageTestId()"
         >
           <span class="font-medium">{{ successMessage() }}</span>
         </p>
@@ -160,11 +157,7 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
   },
 })
 export class InputNumber implements ControlValueAccessor {
-  private readonly injectedTestId = inject(DATA_TESTID, { optional: true });
-  readonly dataTestId = input<string | null>(null);
-  private readonly resolvedTestId = computed(
-    () => this.dataTestId() ?? this.injectedTestId ?? null,
-  );
+  private readonly hostTestId = inject(DATA_TESTID, { optional: true });
 
   // Input properties
   readonly label = input<string>('');
@@ -201,28 +194,19 @@ export class InputNumber implements ControlValueAccessor {
   protected onTouched: () => void = () => undefined;
 
   // Test IDs using helper
-  private readonly testIds = generateInputTestIds(() => this.resolvedTestId());
-  readonly wrapperTestId = this.testIds.wrapper;
+  private readonly testIds = generateInputTestIds(this.hostTestId);
   readonly labelTestId = this.testIds.label;
   readonly inputTestId = this.testIds.input;
-  readonly prefixIconTestId = this.testIds.prefixIcon;
   readonly helpTextTestId = this.testIds.helpText;
-  readonly successMessageTestId = this.testIds.successMessage;
   readonly errorMessageTestId = this.testIds.errorMessage;
 
   // Additional test IDs for buttons
-  readonly buttonsContainerTestId = computed(() => {
-    const id = this.resolvedTestId();
-    return id ? `${id}-buttons` : null;
-  });
-  readonly incrementButtonTestId = computed(() => {
-    const id = this.resolvedTestId();
-    return id ? `${id}-increment` : null;
-  });
-  readonly decrementButtonTestId = computed(() => {
-    const id = this.resolvedTestId();
-    return id ? `${id}-decrement` : null;
-  });
+  readonly incrementButtonTestId = computed(() =>
+    this.hostTestId ? `${this.hostTestId}-increment` : null,
+  );
+  readonly decrementButtonTestId = computed(() =>
+    this.hostTestId ? `${this.hostTestId}-decrement` : null,
+  );
 
   // Computed classes using helpers
   readonly labelClasses = computed(() => getLabelClasses(this.validationState()));

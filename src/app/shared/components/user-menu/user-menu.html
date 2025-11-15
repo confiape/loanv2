@@ -3,6 +3,7 @@
   <button
     type="button"
     class="flex mx-3 text-sm bg-accent rounded-full md:mr-0 focus:ring-4 focus:ring-border transition-all"
+    [attr.data-testid]="triggerTestId()"
     (click)="toggle()"
     [attr.aria-label]="'Menú de ' + userName()"
     [attr.aria-expanded]="isOpen()"
@@ -48,13 +49,14 @@
 
       <!-- Menu Items -->
       <div class="py-2">
-        @for (item of menuItems(); track trackByItemId($index, item)) {
+        @for (item of menuItems(); track trackByItemId($index, item); let idx = $index) {
           @if (item.divider) {
             <div class="h-px bg-border my-2" role="separator"></div>
           } @else {
             <a
               [href]="item.href || '#'"
               class="flex items-center gap-3 px-4 py-2.5 text-sm text-text-primary hover:bg-bg-secondary focus:bg-bg-secondary focus:outline-none transition-colors group"
+              [attr.data-testid]="getItemTestId(idx)"
               (click)="onMenuItemClick(item, $event)"
               role="menuitem"
               [attr.tabindex]="isOpen() ? 0 : -1"

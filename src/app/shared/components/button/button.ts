@@ -31,7 +31,7 @@ export type ButtonType = 'button' | 'submit' | 'reset';
       [disabled]="disabled() || loading()"
       [attr.aria-label]="ariaLabel() || null"
       [attr.aria-busy]="loading()"
-      [attr.data-testid]="buttonTestId()"
+      [attr.data-testid]="hostTestId"
       [class]="buttonClasses()"
       (click)="handleClick($event)"
     >
@@ -61,7 +61,7 @@ export type ButtonType = 'button' | 'submit' | 'reset';
           }
         </span>
       } @else {
-        <span class="inline-flex items-center gap-2" [attr.data-testid]="contentTestId()">
+        <span class="inline-flex items-center gap-2">
           <ng-content />
         </span>
       }
@@ -73,7 +73,7 @@ export type ButtonType = 'button' | 'submit' | 'reset';
   },
 })
 export class Button {
-  private readonly hostTestId = inject(DATA_TESTID, { optional: true });
+  protected readonly hostTestId = inject(DATA_TESTID, { optional: true });
 
   readonly variant = input<ButtonVariant>('solid');
   readonly tone = input<ButtonTone>('primary');
@@ -88,10 +88,9 @@ export class Button {
 
   readonly buttonClick = output<MouseEvent>();
 
-  private readonly testIds = generateButtonTestIds(this.hostTestId);
-  readonly buttonTestId = this.testIds.button;
-  readonly contentTestId = this.testIds.content;
-  readonly spinnerTestId = this.testIds.spinner;
+  readonly spinnerTestId = computed(() =>
+    this.hostTestId ? `${this.hostTestId}-spinner` : null,
+  );
 
   readonly buttonClasses = computed(() =>
     getButtonClasses({
