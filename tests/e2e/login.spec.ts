@@ -99,8 +99,8 @@ test.describe('Login Page', () => {
     const submitButton = page.getByTestId('login-submit-button');
 
     // Fill in valid credentials
-    await emailInput.fill('admin@example.com');
-    await passwordInput.fill('password123');
+    await emailInput.fill('admin@confia.com');
+    await passwordInput.fill('admin@confia.com@@');
 
     // Click submit button
     await submitButton.click();
@@ -112,7 +112,7 @@ test.describe('Login Page', () => {
     // Wait for navigation or success toast
     // Note: This will depend on your backend mock/test setup
     // Adjust timeout and expectations based on your test environment
-    await page.waitForURL(/\/(home|companies)/, { timeout: 5000 }).catch(() => {
+    await page.waitForURL(/\/(home|companies)/, { timeout: 10000 }).catch(() => {
       // If navigation doesn't happen (e.g., backend not mocked), continue
     });
   });

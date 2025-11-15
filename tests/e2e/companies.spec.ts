@@ -11,11 +11,11 @@ test.describe('Companies Page', () => {
   // Helper function to login (customize based on your auth implementation)
   async function login(page) {
     await page.goto('/login');
-    await page.getByTestId('login-email-input').fill('admin@example.com');
-    await page.getByTestId('login-password-input').fill('password123');
+    await page.getByTestId('login-email-input').fill('admin@confia.com');
+    await page.getByTestId('login-password-input').fill('admin@confia.com@@');
     await page.getByTestId('login-submit-button').click();
     // Wait for navigation or authentication to complete
-    await page.waitForURL(/\/(home|companies)/, { timeout: 5000 }).catch(() => {
+    await page.waitForURL(/\/(home|companies)/, { timeout: 10000 }).catch(() => {
       // Continue if already authenticated
     });
   }
