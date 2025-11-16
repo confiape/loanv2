@@ -84,6 +84,7 @@
               <button
                 type="button"
                 (click)="service().removeFromSelection(item.id)"
+                [attr.data-testid]="testIdPrefix() + '-btn-remove-selection-' + item.id"
                 class="ml-1 text-text-secondary hover:text-error focus:outline-none"
                 [attr.aria-label]="
                   'Remove ' + service().getItemDisplayName(item) + ' from selection'
@@ -111,6 +112,7 @@
           <button
             type="button"
             (click)="service().clearSelection()"
+            [attr.data-testid]="testIdPrefix() + '-btn-clear-selection'"
             class="text-sm text-blue-700 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300 font-medium"
           >
             Clear all
@@ -161,6 +163,7 @@
           [tone]="'neutral'"
           [size]="'sm'"
           [disabled]="service().currentPage() === 1"
+          [attr.data-testid]="testIdPrefix() + '-btn-prev-page'"
           (buttonClick)="service().onPageChange(service().currentPage() - 1)"
         >
           Previous
@@ -172,6 +175,7 @@
           [disabled]="
             service().currentPage() * service().pageSize() >= service().filteredItems().length
           "
+          [attr.data-testid]="testIdPrefix() + '-btn-next-page'"
           (buttonClick)="service().onPageChange(service().currentPage() + 1)"
         >
           Next

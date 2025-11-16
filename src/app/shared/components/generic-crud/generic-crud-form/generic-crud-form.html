@@ -4,6 +4,7 @@
     <div
       class="flex items-center p-4 mb-4 text-sm text-error bg-bg-error border border-error rounded-lg"
       role="alert"
+      [attr.data-testid]="testIdPrefix() + '-form-error'"
     >
       <svg
         class="flex-shrink-0 inline w-4 h-4 me-3"
