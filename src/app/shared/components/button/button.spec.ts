@@ -94,7 +94,7 @@ describe('Button', () => {
   });
 
   describe('data-testid support', () => {
-    it('should render test ID on button when data-testid attribute is provided', async () => {
+    it('should render test IDs with wrapper pattern when data-testid attribute is provided', async () => {
       @Component({
         template: `<app-button data-testid="test-button">Click me</app-button>`,
         standalone: true,
@@ -112,14 +112,17 @@ describe('Button', () => {
       wrapperFixture.detectChanges();
       await wrapperFixture.whenStable();
 
-      const buttonComponent = wrapperFixture.nativeElement.querySelector('app-button');
-      const button = buttonComponent.querySelector('button');
+      const hostElement = wrapperFixture.nativeElement.querySelector('app-button');
 
-      // Verify button has the test ID
-      expect(button.getAttribute('data-testid')).toBe('test-button');
+      // Verify host has -wrapper suffix
+      expect(hostElement.getAttribute('data-testid')).toBe('test-button-wrapper');
+
+      // Verify main element has original ID
+      const button = hostElement.querySelector('button');
+      expect(button?.getAttribute('data-testid')).toBe('test-button');
     });
 
-    it('should render spinner test ID when loading', async () => {
+    it('should render spinner test ID with wrapper pattern when loading', async () => {
       @Component({
         template: `<app-button data-testid="test-button" [loading]="true">Submit</app-button>`,
         standalone: true,
@@ -137,10 +140,13 @@ describe('Button', () => {
       wrapperFixture.detectChanges();
       await wrapperFixture.whenStable();
 
-      const buttonComponent = wrapperFixture.nativeElement.querySelector('app-button');
+      const hostElement = wrapperFixture.nativeElement.querySelector('app-button');
+
+      // Verify host has -wrapper suffix
+      expect(hostElement.getAttribute('data-testid')).toBe('test-button-wrapper');
 
       // Verify spinner test ID on correct element type (span containing the SVG)
-      const spinnerSpan = buttonComponent.querySelector('span[aria-live="polite"]');
+      const spinnerSpan = hostElement.querySelector('span[aria-live="polite"]');
       expect(spinnerSpan?.getAttribute('data-testid')).toBe('test-button-spinner');
     });
 

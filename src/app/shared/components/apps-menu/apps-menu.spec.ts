@@ -567,7 +567,7 @@ describe('AppsMenuComponent', () => {
   });
 
   describe('data-testid support', () => {
-    it('should render test IDs when data-testid attribute is provided', async () => {
+    it('should render test IDs with wrapper pattern when data-testid attribute is provided', async () => {
       TestBed.resetTestingModule();
 
       await TestBed.configureTestingModule({
@@ -579,11 +579,14 @@ describe('AppsMenuComponent', () => {
       wrapperFixture.detectChanges();
       await wrapperFixture.whenStable();
 
-      const appsMenu = wrapperFixture.nativeElement.querySelector('app-apps-menu');
-      const button = appsMenu?.querySelector('button');
+      const hostElement = wrapperFixture.nativeElement.querySelector('app-apps-menu');
 
-      // Verify trigger test ID on correct element type (button)
-      expect(button?.getAttribute('data-testid')).toBe('test-apps-trigger');
+      // Verify host has -wrapper suffix
+      expect(hostElement.getAttribute('data-testid')).toBe('test-apps-wrapper');
+
+      // Verify trigger has original ID (no suffix)
+      const button = hostElement.querySelector('button');
+      expect(button?.getAttribute('data-testid')).toBe('test-apps');
 
       // Open menu by clicking button to verify item test IDs
       button?.dispatchEvent(new MouseEvent('click'));
@@ -591,7 +594,7 @@ describe('AppsMenuComponent', () => {
       await wrapperFixture.whenStable();
 
       // Verify item test IDs with indices on correct element types (anchor links)
-      const allLinks = appsMenu?.querySelectorAll('a[role="menuitem"]');
+      const allLinks = hostElement.querySelectorAll('a[role="menuitem"]');
 
       const item0 = Array.from(allLinks || []).find(a =>
         a.getAttribute('data-testid') === 'test-apps-item-0'

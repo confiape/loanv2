@@ -111,11 +111,16 @@ export interface SelectOption {
   ],
   host: {
     class: 'block',
+    '[attr.data-testid]': 'wrapperTestId()',
   },
 })
 export class Select implements ControlValueAccessor {
   // Test ID from host
   private readonly hostTestId = inject(DATA_TESTID, { optional: true });
+
+  protected readonly wrapperTestId = computed(() =>
+    this.hostTestId ? `${this.hostTestId}-wrapper` : null,
+  );
 
   // Input properties
   readonly label = input<string>('');
@@ -149,7 +154,7 @@ export class Select implements ControlValueAccessor {
   readonly errorMessageTestId = this.testIds.errorMessage;
 
   // Select-specific test ID
-  readonly selectTestId = computed(() => (this.hostTestId ? `${this.hostTestId}-select` : null));
+  readonly selectTestId = computed(() => this.hostTestId);
 
   /**
    * Get test ID for option element with sanitized value

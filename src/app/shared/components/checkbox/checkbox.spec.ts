@@ -142,7 +142,7 @@ describe('Checkbox', () => {
   });
 
   describe('data-testid support', () => {
-    it('should render test IDs when data-testid attribute is provided', async () => {
+    it('should render test IDs with wrapper pattern when data-testid attribute is provided', async () => {
       @Component({
         template: `<app-checkbox
           data-testid="test-checkbox"
@@ -164,23 +164,27 @@ describe('Checkbox', () => {
       wrapperFixture.detectChanges();
       await wrapperFixture.whenStable();
 
-      const checkboxComponent = wrapperFixture.nativeElement.querySelector('app-checkbox');
+      const hostElement = wrapperFixture.nativeElement.querySelector('app-checkbox');
 
-      // Verify all expected test IDs on correct element types
-      const input = checkboxComponent.querySelector('input[type="checkbox"]');
-      expect(input?.getAttribute('data-testid')).toBe('test-checkbox-input');
+      // Verify host has -wrapper suffix
+      expect(hostElement.getAttribute('data-testid')).toBe('test-checkbox-wrapper');
 
-      const label = checkboxComponent.querySelector('label');
+      // Verify main element has original ID (no suffix)
+      const input = hostElement.querySelector('input[type="checkbox"]');
+      expect(input?.getAttribute('data-testid')).toBe('test-checkbox');
+
+      // Verify auxiliary elements have suffixes
+      const label = hostElement.querySelector('label');
       expect(label?.getAttribute('data-testid')).toBe('test-checkbox-label');
 
-      const helpTextParagraphs = checkboxComponent.querySelectorAll('p');
+      const helpTextParagraphs = hostElement.querySelectorAll('p');
       const helpText = Array.from(helpTextParagraphs).find(p =>
         p.getAttribute('data-testid') === 'test-checkbox-help-text'
       );
       expect(helpText).toBeTruthy();
     });
 
-    it('should render error message test ID when validation state is error', async () => {
+    it('should render error message test ID with wrapper pattern when validation state is error', async () => {
       @Component({
         template: `<app-checkbox
           data-testid="test-checkbox"
@@ -202,10 +206,13 @@ describe('Checkbox', () => {
       wrapperFixture.detectChanges();
       await wrapperFixture.whenStable();
 
-      const checkboxComponent = wrapperFixture.nativeElement.querySelector('app-checkbox');
+      const hostElement = wrapperFixture.nativeElement.querySelector('app-checkbox');
+
+      // Verify host has -wrapper suffix
+      expect(hostElement.getAttribute('data-testid')).toBe('test-checkbox-wrapper');
 
       // Verify error message test ID on correct element type
-      const errorParagraphs = checkboxComponent.querySelectorAll('p');
+      const errorParagraphs = hostElement.querySelectorAll('p');
       const errorMessage = Array.from(errorParagraphs).find(p =>
         p.getAttribute('data-testid') === 'test-checkbox-error-message'
       );

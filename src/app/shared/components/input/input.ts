@@ -148,11 +148,16 @@ export type InputType = 'text' | 'email' | 'password' | 'number' | 'tel' | 'url'
   ],
   host: {
     class: 'block',
+    '[attr.data-testid]': 'wrapperTestId()',
   },
 })
 export class Input implements ControlValueAccessor {
   // Test ID from host attribute
   private readonly hostTestId = inject(DATA_TESTID, { optional: true });
+
+  protected readonly wrapperTestId = computed(() =>
+    this.hostTestId ? `${this.hostTestId}-wrapper` : null,
+  );
 
   // Input properties
   readonly label = input<string>('');

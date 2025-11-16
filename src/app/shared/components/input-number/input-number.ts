@@ -154,10 +154,15 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
   ],
   host: {
     class: 'block',
+    '[attr.data-testid]': 'wrapperTestId()',
   },
 })
 export class InputNumber implements ControlValueAccessor {
   private readonly hostTestId = inject(DATA_TESTID, { optional: true });
+
+  protected readonly wrapperTestId = computed(() =>
+    this.hostTestId ? `${this.hostTestId}-wrapper` : null,
+  );
 
   // Input properties
   readonly label = input<string>('');

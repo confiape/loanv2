@@ -191,7 +191,7 @@ describe('Accordion', () => {
   });
 
   describe('data-testid support', () => {
-    it('should render test IDs when data-testid attribute is provided', async () => {
+    it('should render test IDs with wrapper pattern when data-testid attribute is provided', async () => {
       @Component({
         template: `
           <app-accordion data-testid="test-accordion">
@@ -225,10 +225,17 @@ describe('Accordion', () => {
       wrapperFixture.detectChanges();
       await wrapperFixture.whenStable();
 
-      const accordionElement = wrapperFixture.nativeElement.querySelector('app-accordion');
+      const hostElement = wrapperFixture.nativeElement.querySelector('app-accordion');
+
+      // Verify host has -wrapper suffix
+      expect(hostElement.getAttribute('data-testid')).toBe('test-accordion-wrapper');
+
+      // Verify container has original ID
+      const container = hostElement.querySelector('div.space-y-2');
+      expect(container?.getAttribute('data-testid')).toBe('test-accordion');
 
       // Verify trigger test IDs on correct element types (buttons)
-      const allButtons = accordionElement.querySelectorAll('button');
+      const allButtons = hostElement.querySelectorAll('button');
       const shippingTrigger = Array.from(allButtons).find(b =>
         b.getAttribute('data-testid') === 'test-accordion-trigger-shipping'
       );
@@ -240,7 +247,7 @@ describe('Accordion', () => {
       expect(paymentTrigger).toBeTruthy();
 
       // Verify panel test IDs on correct element types (divs)
-      const allDivs = accordionElement.querySelectorAll('div');
+      const allDivs = hostElement.querySelectorAll('div');
       const shippingPanel = Array.from(allDivs).find(d =>
         d.getAttribute('data-testid') === 'test-accordion-panel-shipping'
       );

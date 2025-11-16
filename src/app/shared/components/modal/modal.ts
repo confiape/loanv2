@@ -41,22 +41,32 @@ export interface ModalData {
         role="dialog"
         aria-modal="true"
         [attr.aria-labelledby]="data?.title ? 'modal-title' : null"
+        [attr.data-testid]="containerTestId()"
       >
         <ng-content />
       </div>
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '[attr.data-testid]': 'wrapperTestId()',
+  },
 })
 export class Modal {
   private readonly hostTestId = inject(DATA_TESTID, { optional: true });
   readonly dialogRef = inject(DialogRef<unknown>, { optional: true });
   readonly data = inject<ModalData>(DIALOG_DATA, { optional: true });
 
+  protected readonly wrapperTestId = computed(() => {
+    const testId = this.hostTestId ?? this.data?.testId ?? null;
+    return testId ? `${testId}-wrapper` : null;
+  });
+
   readonly size = input<ModalSize>('2xl');
   readonly dismissible = input<boolean>(true);
 
   private readonly testIds = generateModalTestIds(this.hostTestId ?? this.data?.testId ?? null);
+  readonly containerTestId = this.testIds.container;
   readonly overlayTestId = this.testIds.overlay;
 
   readonly modalClasses = computed(() => {

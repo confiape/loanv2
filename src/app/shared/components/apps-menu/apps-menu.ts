@@ -79,10 +79,17 @@ export interface AppMenuItem {
       }
     </div>
   `,
+  host: {
+    '[attr.data-testid]': 'wrapperTestId()',
+  },
 })
 export class AppsMenuComponent {
   private readonly elementRef = inject(ElementRef);
   private readonly hostTestId = inject(DATA_TESTID, { optional: true });
+
+  protected readonly wrapperTestId = computed(() =>
+    this.hostTestId ? `${this.hostTestId}-wrapper` : null,
+  );
 
   // Inputs
   apps = input<AppMenuItem[]>([]);
@@ -95,7 +102,7 @@ export class AppsMenuComponent {
   isOpen = signal(false);
 
   // Test IDs
-  readonly triggerTestId = computed(() => (this.hostTestId ? `${this.hostTestId}-trigger` : null));
+  readonly triggerTestId = computed(() => this.hostTestId);
 
   protected getItemTestId(index: number): string | null {
     return this.hostTestId ? `${this.hostTestId}-item-${index}` : null;

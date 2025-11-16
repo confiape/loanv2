@@ -123,7 +123,7 @@ describe('Alert', () => {
   });
 
   describe('data-testid support', () => {
-    it('should render test ID on alert when data-testid attribute is provided', async () => {
+    it('should render test IDs with wrapper pattern when data-testid attribute is provided', async () => {
       @Component({
         template: `<app-alert data-testid="test-alert" title="Info">Message content</app-alert>`,
         standalone: true,
@@ -141,14 +141,17 @@ describe('Alert', () => {
       wrapperFixture.detectChanges();
       await wrapperFixture.whenStable();
 
-      const alertComponent = wrapperFixture.nativeElement.querySelector('app-alert');
-      const alertDiv = alertComponent.querySelector('[role="alert"]');
+      const hostElement = wrapperFixture.nativeElement.querySelector('app-alert');
 
-      // Verify alert has the test ID
-      expect(alertDiv.getAttribute('data-testid')).toBe('test-alert');
+      // Verify host has -wrapper suffix
+      expect(hostElement.getAttribute('data-testid')).toBe('test-alert-wrapper');
+
+      // Verify main element has original ID
+      const alertDiv = hostElement.querySelector('[role="alert"]');
+      expect(alertDiv?.getAttribute('data-testid')).toBe('test-alert');
     });
 
-    it('should render close button test ID when dismissible', async () => {
+    it('should render close button test ID with wrapper pattern when dismissible', async () => {
       @Component({
         template: `<app-alert data-testid="test-alert" [dismissible]="true">Message</app-alert>`,
         standalone: true,
@@ -166,10 +169,13 @@ describe('Alert', () => {
       wrapperFixture.detectChanges();
       await wrapperFixture.whenStable();
 
-      const alertComponent = wrapperFixture.nativeElement.querySelector('app-alert');
+      const hostElement = wrapperFixture.nativeElement.querySelector('app-alert');
+
+      // Verify host has -wrapper suffix
+      expect(hostElement.getAttribute('data-testid')).toBe('test-alert-wrapper');
 
       // Verify close button test ID on correct element type
-      const closeButton = alertComponent.querySelector('button[aria-label="Close alert"]');
+      const closeButton = hostElement.querySelector('button[aria-label="Close alert"]');
       expect(closeButton?.getAttribute('data-testid')).toBe('test-alert-close');
     });
 

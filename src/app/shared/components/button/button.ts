@@ -70,10 +70,15 @@ export type ButtonType = 'button' | 'submit' | 'reset';
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: 'inline-block',
+    '[attr.data-testid]': 'wrapperTestId()',
   },
 })
 export class Button {
   protected readonly hostTestId = inject(DATA_TESTID, { optional: true });
+
+  protected readonly wrapperTestId = computed(() =>
+    this.hostTestId ? `${this.hostTestId}-wrapper` : null,
+  );
 
   readonly variant = input<ButtonVariant>('solid');
   readonly tone = input<ButtonTone>('primary');

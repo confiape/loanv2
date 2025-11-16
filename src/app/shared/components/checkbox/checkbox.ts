@@ -92,10 +92,15 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
   ],
   host: {
     class: 'block',
+    '[attr.data-testid]': 'wrapperTestId()',
   },
 })
 export class Checkbox implements ControlValueAccessor {
   private readonly hostTestId = inject(DATA_TESTID, { optional: true });
+
+  protected readonly wrapperTestId = computed(() =>
+    this.hostTestId ? `${this.hostTestId}-wrapper` : null,
+  );
 
   // Input properties
   readonly label = input<string>('');
@@ -121,9 +126,7 @@ export class Checkbox implements ControlValueAccessor {
   protected onTouched: () => void = () => undefined;
 
   // Test IDs
-  readonly inputTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-input` : null,
-  );
+  readonly inputTestId = computed(() => this.hostTestId);
   readonly labelTestId = computed(() => (this.hostTestId ? `${this.hostTestId}-label` : null));
   readonly helpTextTestId = computed(() =>
     this.hostTestId ? `${this.hostTestId}-help-text` : null,

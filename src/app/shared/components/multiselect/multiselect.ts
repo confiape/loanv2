@@ -217,11 +217,16 @@ export interface MultiSelectOption {
   ],
   host: {
     class: 'block',
+    '[attr.data-testid]': 'wrapperTestId()',
   },
 })
 export class MultiSelect implements ControlValueAccessor {
   private readonly hostTestId = inject(DATA_TESTID, { optional: true });
   private readonly elementRef = inject(ElementRef);
+
+  protected readonly wrapperTestId = computed(() =>
+    this.hostTestId ? `${this.hostTestId}-wrapper` : null,
+  );
 
   // Input properties
   readonly label = input<string>('');
@@ -263,9 +268,7 @@ export class MultiSelect implements ControlValueAccessor {
   readonly errorMessageTestId = this.testIds.errorMessage;
 
   // MultiSelect-specific test IDs
-  readonly buttonTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-button` : null,
-  );
+  readonly buttonTestId = computed(() => this.hostTestId);
   readonly dropdownTestId = computed(() =>
     this.hostTestId ? `${this.hostTestId}-dropdown` : null,
   );

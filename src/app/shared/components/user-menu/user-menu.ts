@@ -32,11 +32,18 @@ export interface UserMenuItem {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [NgIcon],
   templateUrl: './user-menu.html',
+  host: {
+    '[attr.data-testid]': 'wrapperTestId()',
+  },
 })
 export class UserMenuComponent {
   private readonly elementRef = inject(ElementRef);
   private readonly destroyRef = inject(DestroyRef);
   private readonly hostTestId = inject(DATA_TESTID, { optional: true });
+
+  protected readonly wrapperTestId = computed(() =>
+    this.hostTestId ? `${this.hostTestId}-wrapper` : null,
+  );
 
   // Inputs
   readonly userName = input<string>('User');
@@ -53,7 +60,7 @@ export class UserMenuComponent {
   readonly isOpen = signal(false);
 
   // Test IDs
-  readonly triggerTestId = computed(() => (this.hostTestId ? `${this.hostTestId}-trigger` : null));
+  readonly triggerTestId = computed(() => this.hostTestId);
 
   protected getItemTestId(index: number): string | null {
     return this.hostTestId ? `${this.hostTestId}-item-${index}` : null;

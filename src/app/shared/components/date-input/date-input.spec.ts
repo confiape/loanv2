@@ -168,7 +168,7 @@ describe('DateInput', () => {
   });
 
   describe('data-testid support', () => {
-    it('should render test IDs when data-testid attribute is provided', async () => {
+    it('should render test IDs with wrapper pattern when data-testid attribute is provided', async () => {
       @Component({
         template: `<app-date-input
           data-testid="test-date"
@@ -190,23 +190,27 @@ describe('DateInput', () => {
       wrapperFixture.detectChanges();
       await wrapperFixture.whenStable();
 
-      const dateInputComponent = wrapperFixture.nativeElement.querySelector('app-date-input');
+      const hostElement = wrapperFixture.nativeElement.querySelector('app-date-input');
 
-      // Verify all expected test IDs on correct element types
-      const label = dateInputComponent.querySelector('label');
+      // Verify host has -wrapper suffix
+      expect(hostElement.getAttribute('data-testid')).toBe('test-date-wrapper');
+
+      // Verify main element has original ID (no suffix)
+      const input = hostElement.querySelector('input');
+      expect(input?.getAttribute('data-testid')).toBe('test-date');
+
+      // Verify auxiliary elements have suffixes
+      const label = hostElement.querySelector('label');
       expect(label?.getAttribute('data-testid')).toBe('test-date-label');
 
-      const input = dateInputComponent.querySelector('input');
-      expect(input?.getAttribute('data-testid')).toBe('test-date-input');
-
-      const helpTextParagraphs = dateInputComponent.querySelectorAll('p');
+      const helpTextParagraphs = hostElement.querySelectorAll('p');
       const helpText = Array.from(helpTextParagraphs).find(p =>
         p.getAttribute('data-testid') === 'test-date-help-text'
       );
       expect(helpText).toBeTruthy();
     });
 
-    it('should render error message test ID when validation state is error', async () => {
+    it('should render error message test ID with wrapper pattern when validation state is error', async () => {
       @Component({
         template: `<app-date-input
           data-testid="test-date"
@@ -228,10 +232,13 @@ describe('DateInput', () => {
       wrapperFixture.detectChanges();
       await wrapperFixture.whenStable();
 
-      const dateInputComponent = wrapperFixture.nativeElement.querySelector('app-date-input');
+      const hostElement = wrapperFixture.nativeElement.querySelector('app-date-input');
+
+      // Verify host has -wrapper suffix
+      expect(hostElement.getAttribute('data-testid')).toBe('test-date-wrapper');
 
       // Verify error message test ID on correct element type
-      const errorParagraphs = dateInputComponent.querySelectorAll('p');
+      const errorParagraphs = hostElement.querySelectorAll('p');
       const errorMessage = Array.from(errorParagraphs).find(p =>
         p.getAttribute('data-testid') === 'test-date-error-message'
       );

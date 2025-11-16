@@ -34,9 +34,16 @@ export interface Toast {
   standalone: true,
   templateUrl: './toast.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '[attr.data-testid]': 'wrapperTestId()',
+  },
 })
 export class ToastComponent {
   private readonly hostTestId = inject(DATA_TESTID, { optional: true });
+
+  protected readonly wrapperTestId = computed(() =>
+    this.hostTestId ? `${this.hostTestId}-wrapper` : null,
+  );
 
   readonly toast = input.required<Toast>();
   readonly position = input<ToastPosition>('top-right');

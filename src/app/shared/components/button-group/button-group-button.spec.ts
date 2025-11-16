@@ -134,7 +134,7 @@ describe('ButtonGroupButton', () => {
   });
 
   describe('data-testid support', () => {
-    it('should render test ID when data-testid attribute is provided', async () => {
+    it('should render test IDs with wrapper pattern when data-testid attribute is provided', async () => {
       TestBed.resetTestingModule();
       await TestBed.configureTestingModule({
         imports: [TestWrapperComponent],
@@ -145,10 +145,13 @@ describe('ButtonGroupButton', () => {
       wrapperFixture.detectChanges();
       await wrapperFixture.whenStable();
 
-      const buttonGroupButton = wrapperFixture.nativeElement.querySelector('app-button-group-button');
-      const button = buttonGroupButton?.querySelector('button');
+      const hostElement = wrapperFixture.nativeElement.querySelector('app-button-group-button');
 
-      // Verify button has test ID (same as host)
+      // Verify host has -wrapper suffix
+      expect(hostElement.getAttribute('data-testid')).toBe('test-button-wrapper');
+
+      // Verify main element has original ID
+      const button = hostElement.querySelector('button');
       expect(button?.getAttribute('data-testid')).toBe('test-button');
     });
 

@@ -176,7 +176,7 @@ describe('RadioGroup', () => {
   });
 
   describe('data-testid support', () => {
-    it('should render test IDs when data-testid attribute is provided', async () => {
+    it('should render test IDs with wrapper pattern when data-testid attribute is provided', async () => {
       @Component({
         template: `<app-radio-group
           data-testid="test-radio"
@@ -201,25 +201,32 @@ describe('RadioGroup', () => {
       wrapperFixture.detectChanges();
       await wrapperFixture.whenStable();
 
-      const radioComponent = wrapperFixture.nativeElement.querySelector('app-radio-group');
+      const hostElement = wrapperFixture.nativeElement.querySelector('app-radio-group');
 
-      // Verify group label test ID on correct element type
+      // Verify host has -wrapper suffix
+      expect(hostElement.getAttribute('data-testid')).toBe('test-radio-wrapper');
+
+      // Verify container has original ID
+      const container = hostElement.querySelector('[role="radiogroup"]');
+      expect(container?.getAttribute('data-testid')).toBe('test-radio');
+
+      // Verify auxiliary elements have suffixes
       // Note: The group label is the first label, other labels are for individual options
-      const allLabels = radioComponent.querySelectorAll('label');
+      const allLabels = hostElement.querySelectorAll('label');
       const groupLabel = Array.from(allLabels).find(l =>
         l.getAttribute('data-testid') === 'test-radio-label'
       );
       expect(groupLabel).toBeTruthy();
 
       // Verify help text test ID on correct element type
-      const helpTextParagraphs = radioComponent.querySelectorAll('p');
+      const helpTextParagraphs = hostElement.querySelectorAll('p');
       const helpText = Array.from(helpTextParagraphs).find(p =>
         p.getAttribute('data-testid') === 'test-radio-help-text'
       );
       expect(helpText).toBeTruthy();
 
       // Verify radio input test IDs with indices on correct element types
-      const radioInputs = radioComponent.querySelectorAll('input[type="radio"]');
+      const radioInputs = hostElement.querySelectorAll('input[type="radio"]');
       expect(radioInputs[0]?.getAttribute('data-testid')).toBe('test-radio-radio-0');
       expect(radioInputs[1]?.getAttribute('data-testid')).toBe('test-radio-radio-1');
       expect(radioInputs[2]?.getAttribute('data-testid')).toBe('test-radio-radio-2');
@@ -241,7 +248,7 @@ describe('RadioGroup', () => {
       expect(optionLabel2).toBeTruthy();
     });
 
-    it('should render error message test ID when validation state is error', async () => {
+    it('should render error message test ID with wrapper pattern when validation state is error', async () => {
       @Component({
         template: `<app-radio-group
           data-testid="test-radio"
@@ -266,10 +273,13 @@ describe('RadioGroup', () => {
       wrapperFixture.detectChanges();
       await wrapperFixture.whenStable();
 
-      const radioComponent = wrapperFixture.nativeElement.querySelector('app-radio-group');
+      const hostElement = wrapperFixture.nativeElement.querySelector('app-radio-group');
+
+      // Verify host has -wrapper suffix
+      expect(hostElement.getAttribute('data-testid')).toBe('test-radio-wrapper');
 
       // Verify error message test ID on correct element type
-      const errorParagraphs = radioComponent.querySelectorAll('p');
+      const errorParagraphs = hostElement.querySelectorAll('p');
       const errorMessage = Array.from(errorParagraphs).find(p =>
         p.getAttribute('data-testid') === 'test-radio-error-message'
       );

@@ -30,10 +30,15 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: 'inline-block',
+    '[attr.data-testid]': 'wrapperTestId()',
   },
 })
 export class ButtonGroupButton {
   private readonly hostTestId = inject(DATA_TESTID, { optional: true });
+
+  protected readonly wrapperTestId = computed(() =>
+    this.hostTestId ? `${this.hostTestId}-wrapper` : null,
+  );
 
   readonly type = input<'button' | 'submit' | 'reset'>('button');
   readonly disabled = input<boolean>(false);

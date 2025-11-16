@@ -243,7 +243,7 @@ describe('Input', () => {
   });
 
   describe('data-testid support', () => {
-    it('should render test IDs when data-testid attribute is provided', async () => {
+    it('should render test IDs with wrapper pattern when data-testid attribute is provided', async () => {
       @Component({
         template: `<app-input
           data-testid="test-input"
@@ -267,26 +267,30 @@ describe('Input', () => {
       wrapperFixture.detectChanges();
       await wrapperFixture.whenStable();
 
-      const inputComponent = wrapperFixture.nativeElement.querySelector('app-input');
+      const hostElement = wrapperFixture.nativeElement.querySelector('app-input');
 
-      // Verify all expected test IDs on correct element types
-      const label = inputComponent.querySelector('label');
+      // Verify host has -wrapper suffix
+      expect(hostElement.getAttribute('data-testid')).toBe('test-input-wrapper');
+
+      // Verify main element has original ID (no suffix)
+      const input = hostElement.querySelector('input');
+      expect(input?.getAttribute('data-testid')).toBe('test-input');
+
+      // Verify auxiliary elements have suffixes
+      const label = hostElement.querySelector('label');
       expect(label?.getAttribute('data-testid')).toBe('test-input-label');
 
-      const input = inputComponent.querySelector('input');
-      expect(input?.getAttribute('data-testid')).toBe('test-input-input');
-
-      const button = inputComponent.querySelector('button');
+      const button = hostElement.querySelector('button');
       expect(button?.getAttribute('data-testid')).toBe('test-input-button');
 
-      const helpTextParagraphs = inputComponent.querySelectorAll('p');
+      const helpTextParagraphs = hostElement.querySelectorAll('p');
       const helpText = Array.from(helpTextParagraphs).find(p =>
         p.getAttribute('data-testid') === 'test-input-help-text'
       );
       expect(helpText).toBeTruthy();
     });
 
-    it('should render error message test ID when validation state is error', async () => {
+    it('should render error message test ID with wrapper pattern when validation state is error', async () => {
       @Component({
         template: `<app-input
           data-testid="test-input"
@@ -308,10 +312,13 @@ describe('Input', () => {
       wrapperFixture.detectChanges();
       await wrapperFixture.whenStable();
 
-      const inputComponent = wrapperFixture.nativeElement.querySelector('app-input');
+      const hostElement = wrapperFixture.nativeElement.querySelector('app-input');
+
+      // Verify host has -wrapper suffix
+      expect(hostElement.getAttribute('data-testid')).toBe('test-input-wrapper');
 
       // Verify error message test ID on correct element type
-      const errorParagraphs = inputComponent.querySelectorAll('p');
+      const errorParagraphs = hostElement.querySelectorAll('p');
       const errorMessage = Array.from(errorParagraphs).find(p =>
         p.getAttribute('data-testid') === 'test-input-error-message'
       );

@@ -26,18 +26,18 @@ export interface AccordionItem {
   selector: 'app-accordion',
   standalone: true,
   imports: [CommonModule],
-  template: '<ng-content></ng-content>',
+  template: '<div class="space-y-2" [attr.data-testid]="hostTestId"><ng-content></ng-content></div>',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: 'block',
-    '[attr.data-testid]': 'testId()',
+    '[attr.data-testid]': 'wrapperTestId()',
   },
 })
 export class Accordion {
   // Test ID from host
   private readonly hostTestId = inject(DATA_TESTID, { optional: true });
 
-  readonly testId = computed(() => (this.hostTestId ? `${this.hostTestId}-accordion` : null));
+  readonly wrapperTestId = computed(() => (this.hostTestId ? `${this.hostTestId}-wrapper` : null));
 
   readonly items = input<AccordionItem[]>([]);
   readonly allowMultiple = input(false);

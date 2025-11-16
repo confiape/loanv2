@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   HostAttributeToken,
+  computed,
   inject,
   output,
 } from '@angular/core';
@@ -47,10 +48,17 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '[attr.data-testid]': 'wrapperTestId()',
+  },
 })
 export class ModalHeader {
   private readonly hostTestId = inject(DATA_TESTID, { optional: true });
   private readonly testIds = generateModalTestIds(this.hostTestId);
+
+  protected readonly wrapperTestId = computed(() =>
+    this.hostTestId ? `${this.hostTestId}-wrapper` : null,
+  );
 
   readonly headerTestId = this.testIds.header;
   readonly closeButtonTestId = this.testIds.close;

@@ -26,7 +26,6 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
   imports: [Input],
   template: `
     <app-input
-      [attr.data-testid]="hostTestId"
       [label]="label()"
       [placeholder]="placeholder()"
       [disabled]="isDisabled()"

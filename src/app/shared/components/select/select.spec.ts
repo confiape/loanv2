@@ -217,7 +217,7 @@ describe('Select', () => {
   });
 
   describe('data-testid support', () => {
-    it('should render test IDs when data-testid attribute is provided', async () => {
+    it('should render test IDs with wrapper pattern when data-testid attribute is provided', async () => {
       @Component({
         template: `<app-select
           data-testid="test-select"
@@ -245,23 +245,27 @@ describe('Select', () => {
       wrapperFixture.detectChanges();
       await wrapperFixture.whenStable();
 
-      const selectComponent = wrapperFixture.nativeElement.querySelector('app-select');
+      const hostElement = wrapperFixture.nativeElement.querySelector('app-select');
 
-      // Verify all expected test IDs on correct element types
-      const label = selectComponent.querySelector('label');
+      // Verify host has -wrapper suffix
+      expect(hostElement.getAttribute('data-testid')).toBe('test-select-wrapper');
+
+      // Verify main element has original ID (no suffix)
+      const select = hostElement.querySelector('select');
+      expect(select?.getAttribute('data-testid')).toBe('test-select');
+
+      // Verify auxiliary elements have suffixes
+      const label = hostElement.querySelector('label');
       expect(label?.getAttribute('data-testid')).toBe('test-select-label');
 
-      const select = selectComponent.querySelector('select');
-      expect(select?.getAttribute('data-testid')).toBe('test-select-select');
-
-      const helpTextParagraphs = selectComponent.querySelectorAll('p');
+      const helpTextParagraphs = hostElement.querySelectorAll('p');
       const helpText = Array.from(helpTextParagraphs).find(p =>
         p.getAttribute('data-testid') === 'test-select-help-text'
       );
       expect(helpText).toBeTruthy();
 
       // Verify option test IDs with sanitized values on correct element types
-      const options = selectComponent.querySelectorAll('option');
+      const options = hostElement.querySelectorAll('option');
       const optionUS = Array.from(options).find(o =>
         o.getAttribute('data-testid') === 'test-select-option-us'
       );
@@ -273,7 +277,7 @@ describe('Select', () => {
       expect(optionNewYork).toBeTruthy();
     });
 
-    it('should render error message test ID when validation state is error', async () => {
+    it('should render error message test ID with wrapper pattern when validation state is error', async () => {
       @Component({
         template: `<app-select
           data-testid="test-select"
@@ -295,10 +299,13 @@ describe('Select', () => {
       wrapperFixture.detectChanges();
       await wrapperFixture.whenStable();
 
-      const selectComponent = wrapperFixture.nativeElement.querySelector('app-select');
+      const hostElement = wrapperFixture.nativeElement.querySelector('app-select');
+
+      // Verify host has -wrapper suffix
+      expect(hostElement.getAttribute('data-testid')).toBe('test-select-wrapper');
 
       // Verify error message test ID on correct element type
-      const errorParagraphs = selectComponent.querySelectorAll('p');
+      const errorParagraphs = hostElement.querySelectorAll('p');
       const errorMessage = Array.from(errorParagraphs).find(p =>
         p.getAttribute('data-testid') === 'test-select-error-message'
       );

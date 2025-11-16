@@ -123,7 +123,7 @@ describe('MultiSelect', () => {
   });
 
   describe('data-testid support', () => {
-    it('should render test IDs when data-testid attribute is provided', async () => {
+    it('should render test IDs with wrapper pattern when data-testid attribute is provided', async () => {
       @Component({
         template: `<app-multiselect
           data-testid="test-multiselect"
@@ -148,18 +148,21 @@ describe('MultiSelect', () => {
       wrapperFixture.detectChanges();
       await wrapperFixture.whenStable();
 
-      const multiselectComponent = wrapperFixture.nativeElement.querySelector('app-multiselect');
+      const hostElement = wrapperFixture.nativeElement.querySelector('app-multiselect');
 
-      // Verify label test ID on correct element type
-      const label = multiselectComponent.querySelector('label');
+      // Verify host has -wrapper suffix
+      expect(hostElement.getAttribute('data-testid')).toBe('test-multiselect-wrapper');
+
+      // Verify main element has original ID (no suffix)
+      const button = hostElement.querySelector('button');
+      expect(button?.getAttribute('data-testid')).toBe('test-multiselect');
+
+      // Verify auxiliary elements have suffixes
+      const label = hostElement.querySelector('label');
       expect(label?.getAttribute('data-testid')).toBe('test-multiselect-label');
 
-      // Verify button test ID on correct element type
-      const button = multiselectComponent.querySelector('button');
-      expect(button?.getAttribute('data-testid')).toBe('test-multiselect-button');
-
       // Verify help text test ID on correct element type
-      const helpTextParagraphs = multiselectComponent.querySelectorAll('p');
+      const helpTextParagraphs = hostElement.querySelectorAll('p');
       const helpText = Array.from(helpTextParagraphs).find(p =>
         p.getAttribute('data-testid') === 'test-multiselect-help-text'
       );
@@ -171,7 +174,7 @@ describe('MultiSelect', () => {
       await wrapperFixture.whenStable();
 
       // Verify dropdown test ID on correct element type (div container)
-      const dropdownDivs = multiselectComponent.querySelectorAll('div');
+      const dropdownDivs = hostElement.querySelectorAll('div');
       const dropdown = Array.from(dropdownDivs).find(d =>
         d.getAttribute('data-testid') === 'test-multiselect-dropdown'
       );
@@ -179,7 +182,7 @@ describe('MultiSelect', () => {
 
       // Verify option test IDs with sanitized values on correct element types
       // Options are rendered as checkbox input elements
-      const optionInputs = multiselectComponent.querySelectorAll('input[type="checkbox"]');
+      const optionInputs = hostElement.querySelectorAll('input[type="checkbox"]');
 
       const optionUS = Array.from(optionInputs).find(input =>
         input.getAttribute('data-testid') === 'test-multiselect-option-us'
@@ -197,7 +200,7 @@ describe('MultiSelect', () => {
       expect(optionCA).toBeTruthy();
     });
 
-    it('should render error message test ID when validation state is error', async () => {
+    it('should render error message test ID with wrapper pattern when validation state is error', async () => {
       @Component({
         template: `<app-multiselect
           data-testid="test-multiselect"
@@ -222,10 +225,13 @@ describe('MultiSelect', () => {
       wrapperFixture.detectChanges();
       await wrapperFixture.whenStable();
 
-      const multiselectComponent = wrapperFixture.nativeElement.querySelector('app-multiselect');
+      const hostElement = wrapperFixture.nativeElement.querySelector('app-multiselect');
+
+      // Verify host has -wrapper suffix
+      expect(hostElement.getAttribute('data-testid')).toBe('test-multiselect-wrapper');
 
       // Verify error message test ID on correct element type
-      const errorParagraphs = multiselectComponent.querySelectorAll('p');
+      const errorParagraphs = hostElement.querySelectorAll('p');
       const errorMessage = Array.from(errorParagraphs).find(p =>
         p.getAttribute('data-testid') === 'test-multiselect-error-message'
       );

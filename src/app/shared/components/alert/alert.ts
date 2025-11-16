@@ -71,6 +71,9 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '[attr.data-testid]': 'wrapperTestId()',
+  },
   providers: [
     provideIcons({
       heroInformationCircle,
@@ -83,6 +86,10 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
 })
 export class Alert {
   private readonly hostTestId = inject(DATA_TESTID, { optional: true });
+
+  protected readonly wrapperTestId = computed(() =>
+    this.hostTestId ? `${this.hostTestId}-wrapper` : null,
+  );
 
   readonly variant = input<AlertVariant>('info');
   readonly title = input<string>('');

@@ -36,7 +36,7 @@ export interface RadioOption {
       }
 
       <!-- Radio Options -->
-      <div [class]="containerClasses()">
+      <div [class]="containerClasses()" role="radiogroup" [attr.data-testid]="containerTestId()">
         @for (option of options(); track option.value; let idx = $index) {
           <div class="flex items-center">
             <input
@@ -106,10 +106,15 @@ export interface RadioOption {
   ],
   host: {
     class: 'block',
+    '[attr.data-testid]': 'wrapperTestId()',
   },
 })
 export class RadioGroup implements ControlValueAccessor {
   private readonly hostTestId = inject(DATA_TESTID, { optional: true });
+
+  protected readonly wrapperTestId = computed(() =>
+    this.hostTestId ? `${this.hostTestId}-wrapper` : null,
+  );
 
   // Input properties
   readonly label = input<string>('');
@@ -136,6 +141,7 @@ export class RadioGroup implements ControlValueAccessor {
   protected onTouched: () => void = () => undefined;
 
   // Test IDs
+  readonly containerTestId = computed(() => this.hostTestId);
   readonly labelTestId = computed(() => (this.hostTestId ? `${this.hostTestId}-label` : null));
   readonly helpTextTestId = computed(() =>
     this.hostTestId ? `${this.hostTestId}-help-text` : null,

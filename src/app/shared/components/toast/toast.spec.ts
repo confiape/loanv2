@@ -268,7 +268,7 @@ describe('ToastComponent', () => {
   });
 
   describe('data-testid support', () => {
-    it('should render test IDs when data-testid attribute is provided', async () => {
+    it('should render test IDs with wrapper pattern when data-testid attribute is provided', async () => {
       const toast = createMockToast({ dismissible: true });
 
       @Component({
@@ -290,14 +290,17 @@ describe('ToastComponent', () => {
       wrapperFixture.detectChanges();
       await wrapperFixture.whenStable();
 
-      const toastComponent = wrapperFixture.nativeElement.querySelector('app-toast');
+      const hostElement = wrapperFixture.nativeElement.querySelector('app-toast');
 
-      // Verify toast test ID on correct element type (div with role="alert")
-      const toastContainer = toastComponent.querySelector('div[role="alert"]');
+      // Verify host has -wrapper suffix
+      expect(hostElement.getAttribute('data-testid')).toBe('test-toast-wrapper');
+
+      // Verify main element has original ID (div with role="alert")
+      const toastContainer = hostElement.querySelector('div[role="alert"]');
       expect(toastContainer?.getAttribute('data-testid')).toBe('test-toast');
 
       // Verify close button test ID on correct element type
-      const closeButton = toastComponent.querySelector('button[aria-label="Close"]');
+      const closeButton = hostElement.querySelector('button[aria-label="Close"]');
       expect(closeButton?.getAttribute('data-testid')).toBe('test-toast-close');
     });
 

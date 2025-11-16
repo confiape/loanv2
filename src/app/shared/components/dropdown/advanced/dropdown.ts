@@ -40,11 +40,16 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: 'inline-flex',
+    '[attr.data-testid]': 'wrapperTestId()',
   },
 })
 export class Dropdown {
   private readonly host = inject(ElementRef<HTMLElement>);
   private readonly hostTestId = inject(DATA_TESTID, { optional: true });
+
+  protected readonly wrapperTestId = computed(() =>
+    this.hostTestId ? `${this.hostTestId}-wrapper` : null,
+  );
 
   // Inputs
   readonly trigger = input<DropdownTriggerConfig>({

@@ -65,9 +65,9 @@ describe('ModalHeader', () => {
   });
 
   describe('data-testid support', () => {
-    it('should render test IDs when data-testid attribute is provided', async () => {
+    it('should render test IDs with wrapper pattern when data-testid attribute is provided', async () => {
       @Component({
-        template: `<app-modal-header data-testid="test-modal">Modal Title</app-modal-header>`,
+        template: `<app-modal-header data-testid="test-header">Modal Title</app-modal-header>`,
         standalone: true,
         imports: [ModalHeader],
       })
@@ -83,15 +83,18 @@ describe('ModalHeader', () => {
       wrapperFixture.detectChanges();
       await wrapperFixture.whenStable();
 
-      const modalHeaderComponent = wrapperFixture.nativeElement.querySelector('app-modal-header');
+      const hostElement = wrapperFixture.nativeElement.querySelector('app-modal-header');
 
-      // Verify header test ID on correct element type (div container)
-      const headerDiv = modalHeaderComponent.querySelector('div.flex.items-center.justify-between');
-      expect(headerDiv?.getAttribute('data-testid')).toBe('test-modal-header');
+      // Verify host has -wrapper suffix
+      expect(hostElement.getAttribute('data-testid')).toBe('test-header-wrapper');
+
+      // Verify main element has original ID
+      const headerDiv = hostElement.querySelector('div.flex.items-center.justify-between');
+      expect(headerDiv?.getAttribute('data-testid')).toBe('test-header');
 
       // Verify close button test ID on correct element type
-      const closeButton = modalHeaderComponent.querySelector('button[aria-label="Close modal"]');
-      expect(closeButton?.getAttribute('data-testid')).toBe('test-modal-close');
+      const closeButton = hostElement.querySelector('button[aria-label="Close modal"]');
+      expect(closeButton?.getAttribute('data-testid')).toBe('test-header-close');
     });
 
     it('should not render test IDs when data-testid attribute is not provided', async () => {

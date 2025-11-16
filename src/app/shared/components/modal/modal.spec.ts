@@ -138,7 +138,7 @@ describe('Modal with data', () => {
 });
 
 describe('Modal > data-testid support', () => {
-  it('should render overlay test ID when data-testid attribute is provided', async () => {
+  it('should render test IDs with wrapper pattern when data-testid attribute is provided', async () => {
     @Component({
       template: `<app-modal data-testid="test-modal">Modal content</app-modal>`,
       standalone: true,
@@ -162,10 +162,17 @@ describe('Modal > data-testid support', () => {
     wrapperFixture.detectChanges();
     await wrapperFixture.whenStable();
 
-    const modalComponent = wrapperFixture.nativeElement.querySelector('app-modal');
+    const hostElement = wrapperFixture.nativeElement.querySelector('app-modal');
+
+    // Verify host has -wrapper suffix
+    expect(hostElement.getAttribute('data-testid')).toBe('test-modal-wrapper');
+
+    // Verify container has original ID
+    const container = hostElement.querySelector('[role="dialog"]');
+    expect(container?.getAttribute('data-testid')).toBe('test-modal');
 
     // Verify overlay test ID on correct element type (button with bg-overlay class)
-    const overlayButton = modalComponent.querySelector('button.bg-overlay');
+    const overlayButton = hostElement.querySelector('button.bg-overlay');
     expect(overlayButton?.getAttribute('data-testid')).toBe('test-modal-overlay');
   });
 

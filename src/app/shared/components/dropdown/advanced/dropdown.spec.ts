@@ -152,7 +152,7 @@ describe('Dropdown', () => {
   });
 
   describe('data-testid support', () => {
-    it('should render test IDs when data-testid attribute is provided', async () => {
+    it('should render test IDs with wrapper pattern when data-testid attribute is provided', async () => {
       TestBed.resetTestingModule();
 
       await TestBed.configureTestingModule({
@@ -167,10 +167,13 @@ describe('Dropdown', () => {
       const wrapperOverlayContainer = TestBed.inject(OverlayContainer);
       const wrapperOverlayElement = wrapperOverlayContainer.getContainerElement();
 
-      const dropdown = wrapperFixture.nativeElement.querySelector('app-dropdown');
-      const trigger = dropdown?.querySelector('button');
+      const hostElement = wrapperFixture.nativeElement.querySelector('app-dropdown');
 
-      // Verify trigger has test ID (same as host)
+      // Verify host has -wrapper suffix
+      expect(hostElement.getAttribute('data-testid')).toBe('test-dropdown-wrapper');
+
+      // Verify trigger has original ID (no suffix)
+      const trigger = hostElement.querySelector('button');
       expect(trigger?.getAttribute('data-testid')).toBe('test-dropdown');
 
       // Open dropdown to verify panel and search test IDs
