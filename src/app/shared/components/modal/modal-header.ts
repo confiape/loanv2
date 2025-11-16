@@ -7,6 +7,7 @@ import {
   output,
 } from '@angular/core';
 import { generateModalTestIds } from './modal-helpers';
+import { TestIdPrefixService } from '@loan/app/shared/components/input/testid-prefix.service';
 
 const DATA_TESTID = new HostAttributeToken('data-testid');
 
@@ -53,11 +54,27 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
   },
 })
 export class ModalHeader {
+  // Test ID from host attribute (suffix)
   private readonly hostTestId = inject(DATA_TESTID, { optional: true });
-  private readonly testIds = generateModalTestIds(this.hostTestId);
+
+  // Test ID prefix from parent container (when used inside GenericCrud)
+  private readonly prefixService = inject(TestIdPrefixService, { optional: true });
+
+  // Combine prefix + suffix when both available
+  private readonly effectiveTestId = computed(() => {
+    const prefix = this.prefixService?.prefix();
+    const suffix = this.hostTestId;
+
+    if (prefix && suffix) {
+      return `${prefix}-${suffix}`;
+    }
+    return suffix;
+  });
+
+  private readonly testIds = generateModalTestIds(this.effectiveTestId());
 
   protected readonly wrapperTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-wrapper` : null,
+    this.effectiveTestId() ? `${this.effectiveTestId()}-wrapper` : null,
   );
 
   readonly headerTestId = this.testIds.header;

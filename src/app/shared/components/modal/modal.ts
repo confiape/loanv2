@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { DialogModule, DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { ModalSize, generateModalTestIds, getModalSizeClasses } from './modal-helpers';
+import { TestIdPrefixService } from '@loan/app/shared/components/input/testid-prefix.service';
 
 const DATA_TESTID = new HostAttributeToken('data-testid');
 
@@ -53,19 +54,34 @@ export interface ModalData {
   },
 })
 export class Modal {
+  // Test ID from host attribute (suffix)
   private readonly hostTestId = inject(DATA_TESTID, { optional: true });
   readonly dialogRef = inject(DialogRef<unknown>, { optional: true });
   readonly data = inject<ModalData>(DIALOG_DATA, { optional: true });
 
+  // Test ID prefix from parent container (when used inside GenericCrud)
+  private readonly prefixService = inject(TestIdPrefixService, { optional: true });
+
+  // Combine prefix + suffix when both available
+  private readonly effectiveTestId = computed(() => {
+    const prefix = this.prefixService?.prefix();
+    const suffix = this.hostTestId ?? this.data?.testId ?? null;
+
+    if (prefix && suffix) {
+      return `${prefix}-${suffix}`;
+    }
+    return suffix;
+  });
+
   protected readonly wrapperTestId = computed(() => {
-    const testId = this.hostTestId ?? this.data?.testId ?? null;
+    const testId = this.effectiveTestId();
     return testId ? `${testId}-wrapper` : null;
   });
 
   readonly size = input<ModalSize>('2xl');
   readonly dismissible = input<boolean>(true);
 
-  private readonly testIds = generateModalTestIds(this.hostTestId ?? this.data?.testId ?? null);
+  private readonly testIds = generateModalTestIds(this.effectiveTestId());
   readonly containerTestId = this.testIds.container;
   readonly overlayTestId = this.testIds.overlay;
 

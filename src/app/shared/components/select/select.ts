@@ -19,6 +19,7 @@ import {
   generateInputTestIds,
 } from '../input/input-helpers';
 import { sanitizeTestIdValue } from '@loan/app/shared/helpers';
+import { TestIdPrefixService } from '@loan/app/shared/components/input/testid-prefix.service';
 
 const DATA_TESTID = new HostAttributeToken('data-testid');
 
@@ -115,11 +116,25 @@ export interface SelectOption {
   },
 })
 export class Select implements ControlValueAccessor {
-  // Test ID from host
+  // Test ID from host attribute (suffix)
   private readonly hostTestId = inject(DATA_TESTID, { optional: true });
 
+  // Test ID prefix from parent container (when used inside GenericCrud)
+  private readonly prefixService = inject(TestIdPrefixService, { optional: true });
+
+  // Combine prefix + suffix when both available
+  private readonly effectiveTestId = computed(() => {
+    const prefix = this.prefixService?.prefix();
+    const suffix = this.hostTestId;
+
+    if (prefix && suffix) {
+      return `${prefix}-${suffix}`;
+    }
+    return suffix;
+  });
+
   protected readonly wrapperTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-wrapper` : null,
+    this.effectiveTestId() ? `${this.effectiveTestId()}-wrapper` : null,
   );
 
   // Input properties
@@ -147,14 +162,14 @@ export class Select implements ControlValueAccessor {
   private onChangeCallback: (value: string) => void = () => undefined;
   protected onTouched: () => void = () => undefined;
 
-  // Test IDs using helper
-  private readonly testIds = generateInputTestIds(this.hostTestId);
+  // Test IDs using helper with effectiveTestId
+  private readonly testIds = generateInputTestIds(this.effectiveTestId());
   readonly labelTestId = this.testIds.label;
   readonly helpTextTestId = this.testIds.helpText;
   readonly errorMessageTestId = this.testIds.errorMessage;
 
   // Select-specific test ID
-  readonly selectTestId = computed(() => this.hostTestId);
+  readonly selectTestId = computed(() => this.effectiveTestId());
 
   /**
    * Get test ID for option element with sanitized value

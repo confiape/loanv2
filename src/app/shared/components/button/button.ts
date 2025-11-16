@@ -16,6 +16,7 @@ import {
   generateButtonTestIds,
   getButtonClasses,
 } from './button-helpers';
+import { TestIdPrefixService } from '@loan/app/shared/components/input/testid-prefix.service';
 
 const DATA_TESTID = new HostAttributeToken('data-testid');
 
@@ -31,7 +32,7 @@ export type ButtonType = 'button' | 'submit' | 'reset';
       [disabled]="disabled() || loading()"
       [attr.aria-label]="ariaLabel() || null"
       [attr.aria-busy]="loading()"
-      [attr.data-testid]="hostTestId"
+      [attr.data-testid]="effectiveTestId()"
       [class]="buttonClasses()"
       (click)="handleClick($event)"
     >
@@ -74,10 +75,25 @@ export type ButtonType = 'button' | 'submit' | 'reset';
   },
 })
 export class Button {
-  protected readonly hostTestId = inject(DATA_TESTID, { optional: true });
+  // Read test ID suffix from host attribute
+  private readonly hostTestId = inject(DATA_TESTID, { optional: true });
+
+  // Read test ID prefix from parent (GenericCrud)
+  private readonly prefixService = inject(TestIdPrefixService, { optional: true });
+
+  // Combine prefix + suffix when both available
+  protected readonly effectiveTestId = computed(() => {
+    const prefix = this.prefixService?.prefix();
+    const suffix = this.hostTestId;
+
+    if (prefix && suffix) {
+      return `${prefix}-${suffix}`;
+    }
+    return suffix;
+  });
 
   protected readonly wrapperTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-wrapper` : null,
+    this.effectiveTestId() ? `${this.effectiveTestId()}-wrapper` : null,
   );
 
   readonly variant = input<ButtonVariant>('solid');
@@ -94,7 +110,7 @@ export class Button {
   readonly buttonClick = output<MouseEvent>();
 
   readonly spinnerTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-spinner` : null,
+    this.effectiveTestId() ? `${this.effectiveTestId()}-spinner` : null,
   );
 
   readonly buttonClasses = computed(() =>

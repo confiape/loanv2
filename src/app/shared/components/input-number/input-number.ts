@@ -20,6 +20,7 @@ import {
   getInputClasses,
   generateInputTestIds,
 } from '@loan/app/shared/components/input/input-helpers';
+import { TestIdPrefixService } from '@loan/app/shared/components/input/testid-prefix.service';
 
 const DATA_TESTID = new HostAttributeToken('data-testid');
 
@@ -158,10 +159,25 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
   },
 })
 export class InputNumber implements ControlValueAccessor {
+  // Test ID from host attribute (suffix)
   private readonly hostTestId = inject(DATA_TESTID, { optional: true });
 
+  // Test ID prefix from parent container (when used inside GenericCrud)
+  private readonly prefixService = inject(TestIdPrefixService, { optional: true });
+
+  // Combine prefix + suffix when both available
+  private readonly effectiveTestId = computed(() => {
+    const prefix = this.prefixService?.prefix();
+    const suffix = this.hostTestId;
+
+    if (prefix && suffix) {
+      return `${prefix}-${suffix}`;
+    }
+    return suffix;
+  });
+
   protected readonly wrapperTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-wrapper` : null,
+    this.effectiveTestId() ? `${this.effectiveTestId()}-wrapper` : null,
   );
 
   // Input properties
@@ -198,8 +214,8 @@ export class InputNumber implements ControlValueAccessor {
   private onChange: (value: number | null) => void = () => undefined;
   protected onTouched: () => void = () => undefined;
 
-  // Test IDs using helper
-  private readonly testIds = generateInputTestIds(this.hostTestId);
+  // Test IDs using helper with effectiveTestId
+  private readonly testIds = generateInputTestIds(this.effectiveTestId());
   readonly labelTestId = this.testIds.label;
   readonly inputTestId = this.testIds.input;
   readonly helpTextTestId = this.testIds.helpText;
@@ -207,10 +223,10 @@ export class InputNumber implements ControlValueAccessor {
 
   // Additional test IDs for buttons
   readonly incrementButtonTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-increment` : null,
+    this.effectiveTestId() ? `${this.effectiveTestId()}-increment` : null,
   );
   readonly decrementButtonTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-decrement` : null,
+    this.effectiveTestId() ? `${this.effectiveTestId()}-decrement` : null,
   );
 
   // Computed classes using helpers

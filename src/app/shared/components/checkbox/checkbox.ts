@@ -13,6 +13,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { InputSize, ValidationState } from '../input/input-helpers';
+import { TestIdPrefixService } from '@loan/app/shared/components/input/testid-prefix.service';
 
 const DATA_TESTID = new HostAttributeToken('data-testid');
 
@@ -96,10 +97,25 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
   },
 })
 export class Checkbox implements ControlValueAccessor {
+  // Test ID from host attribute (suffix)
   private readonly hostTestId = inject(DATA_TESTID, { optional: true });
 
+  // Test ID prefix from parent container (when used inside GenericCrud)
+  private readonly prefixService = inject(TestIdPrefixService, { optional: true });
+
+  // Combine prefix + suffix when both available
+  private readonly effectiveTestId = computed(() => {
+    const prefix = this.prefixService?.prefix();
+    const suffix = this.hostTestId;
+
+    if (prefix && suffix) {
+      return `${prefix}-${suffix}`;
+    }
+    return suffix;
+  });
+
   protected readonly wrapperTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-wrapper` : null,
+    this.effectiveTestId() ? `${this.effectiveTestId()}-wrapper` : null,
   );
 
   // Input properties
@@ -125,15 +141,20 @@ export class Checkbox implements ControlValueAccessor {
   private onChangeCallback: (value: boolean) => void = () => undefined;
   protected onTouched: () => void = () => undefined;
 
-  // Test IDs
-  readonly inputTestId = computed(() => this.hostTestId);
-  readonly labelTestId = computed(() => (this.hostTestId ? `${this.hostTestId}-label` : null));
-  readonly helpTextTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-help-text` : null,
-  );
-  readonly errorMessageTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-error-message` : null,
-  );
+  // Test IDs using effectiveTestId
+  readonly inputTestId = computed(() => this.effectiveTestId());
+  readonly labelTestId = computed(() => {
+    const id = this.effectiveTestId();
+    return id ? `${id}-label` : null;
+  });
+  readonly helpTextTestId = computed(() => {
+    const id = this.effectiveTestId();
+    return id ? `${id}-help-text` : null;
+  });
+  readonly errorMessageTestId = computed(() => {
+    const id = this.effectiveTestId();
+    return id ? `${id}-error-message` : null;
+  });
 
   // Computed classes
   readonly labelClasses = computed(() => {

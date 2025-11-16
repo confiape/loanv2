@@ -22,6 +22,7 @@ import {
   generateInputTestIds,
   PARENT_INPUT_TESTID,
 } from '@loan/app/shared/components/input/input-helpers';
+import { TestIdPrefixService } from '@loan/app/shared/components/input/testid-prefix.service';
 
 const DATA_TESTID = new HostAttributeToken('data-testid');
 
@@ -159,8 +160,27 @@ export class Input implements ControlValueAccessor {
   // Test ID from parent component (when used inside PasswordInput)
   private readonly parentTestId = inject(PARENT_INPUT_TESTID, { optional: true, skipSelf: true });
 
-  // Effective test ID: prioritize direct host attribute over parent provider
-  private readonly effectiveTestId = computed(() => this.hostTestId ?? this.parentTestId);
+  // Test ID prefix from parent container (when used inside GenericCrud)
+  private readonly prefixService = inject(TestIdPrefixService, { optional: true });
+
+  // Effective test ID: combine prefix + suffix, or use direct/parent test ID
+  private readonly effectiveTestId = computed(() => {
+    const prefix = this.prefixService?.prefix();
+    const suffix = this.hostTestId;
+
+    // GenericCrud usage: combine prefix + suffix
+    if (prefix && suffix) {
+      return `${prefix}-${suffix}`;
+    }
+
+    // Standalone usage: use direct test ID
+    if (this.hostTestId) {
+      return this.hostTestId;
+    }
+
+    // PasswordInput wrapper: use parent test ID
+    return this.parentTestId;
+  });
 
   protected readonly wrapperTestId = computed(() => {
     const testId = this.effectiveTestId();

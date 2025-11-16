@@ -16,6 +16,7 @@ import type {
   TableSort,
   TableDensity,
 } from './table.models';
+import { TestIdPrefixService } from '@loan/app/shared/components/input/testid-prefix.service';
 
 const DATA_TESTID = new HostAttributeToken('data-testid');
 
@@ -36,10 +37,25 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
   },
 })
 export class Table<T extends Record<string, any> = Record<string, any>> {
+  // Read test ID suffix from host attribute
   private readonly injectedTestId = inject(DATA_TESTID, { optional: true });
 
+  // Read test ID prefix from parent (GenericCrud)
+  private readonly prefixService = inject(TestIdPrefixService, { optional: true });
+
+  // Combine prefix + suffix when both available
+  protected readonly effectiveTestId = computed(() => {
+    const prefix = this.prefixService?.prefix();
+    const suffix = this.injectedTestId;
+
+    if (prefix && suffix) {
+      return `${prefix}-${suffix}`;
+    }
+    return suffix;
+  });
+
   protected readonly wrapperTestId = computed(() =>
-    this.injectedTestId ? `${this.injectedTestId}-wrapper` : null,
+    this.effectiveTestId() ? `${this.effectiveTestId()}-wrapper` : null,
   );
 
   // Exponer Math para el template
@@ -244,7 +260,7 @@ export class Table<T extends Record<string, any> = Record<string, any>> {
    * Test IDs dinámicos para Playwright
    */
   protected readonly testIds = computed(() => {
-    const base = this.injectedTestId;
+    const base = this.effectiveTestId();
     if (!base) {
       return {
         search: null,
