@@ -11,9 +11,9 @@ export interface AlertTestIds {
 
 export function generateAlertTestIds(hostTestId: string | null): AlertTestIds {
   return {
-    alert: computed(() => (hostTestId ? `${hostTestId}-alert` : null)),
+    alert: computed(() => hostTestId),
     icon: computed(() => (hostTestId ? `${hostTestId}-icon` : null)),
-    closeButton: computed(() => (hostTestId ? `${hostTestId}-close` : null)),
+    closeButton: computed(() => (hostTestId ? `${hostTestId}-close-btn` : null)),
     content: computed(() => (hostTestId ? `${hostTestId}-content` : null)),
   };
 }

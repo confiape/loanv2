@@ -8,7 +8,6 @@ import {
   forwardRef,
   effect,
   inject,
-  HostAttributeToken,
   HostListener,
   ElementRef,
 } from '@angular/core';
@@ -20,8 +19,7 @@ import {
   getLabelClasses,
   generateInputTestIds,
 } from '../input/input-helpers';
-
-const DATA_TESTID = new HostAttributeToken('data-testid');
+import { generateItemTestId } from '@loan/app/shared/utils/test-id.utils';
 
 export interface MultiSelectOption {
   value: string;
@@ -220,7 +218,7 @@ export interface MultiSelectOption {
   },
 })
 export class MultiSelect implements ControlValueAccessor {
-  private readonly hostTestId = inject(DATA_TESTID, { optional: true });
+  private readonly dataTestId = input<string | null>(null);
   private readonly elementRef = inject(ElementRef);
 
   // Input properties
@@ -257,24 +255,27 @@ export class MultiSelect implements ControlValueAccessor {
   protected onTouched: () => void = () => undefined;
 
   // Test IDs using helper
-  private readonly testIds = generateInputTestIds(this.hostTestId);
+  private readonly testIds = generateInputTestIds(() => this.dataTestId());
   readonly wrapperTestId = this.testIds.wrapper;
   readonly labelTestId = this.testIds.label;
   readonly helpTextTestId = this.testIds.helpText;
   readonly successMessageTestId = this.testIds.successMessage;
   readonly errorMessageTestId = this.testIds.errorMessage;
 
-  // MultiSelect-specific test IDs
-  readonly buttonTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-button` : null,
-  );
-  readonly dropdownTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-dropdown` : null,
-  );
-  readonly searchInputTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-search` : null,
-  );
-  readonly listTestId = computed(() => (this.hostTestId ? `${this.hostTestId}-list` : null));
+  // MultiSelect-specific test IDs (main element is the button)
+  readonly buttonTestId = computed(() => this.dataTestId());
+  readonly dropdownTestId = computed(() => {
+    const id = this.dataTestId();
+    return id ? `${id}-dropdown` : null;
+  });
+  readonly searchInputTestId = computed(() => {
+    const id = this.dataTestId();
+    return id ? `${id}-search` : null;
+  });
+  readonly listTestId = computed(() => {
+    const id = this.dataTestId();
+    return id ? `${id}-list` : null;
+  });
 
   readonly searchInputId = computed(() => `${this.multiselectId()}-search`);
 
@@ -417,6 +418,6 @@ export class MultiSelect implements ControlValueAccessor {
   }
 
   protected getOptionTestId(value: string): string | null {
-    return this.hostTestId ? `${this.hostTestId}-option-${value}` : null;
+    return generateItemTestId(this.dataTestId(), 'option', value);
   }
 }

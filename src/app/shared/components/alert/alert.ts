@@ -1,9 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  HostAttributeToken,
   computed,
-  inject,
   input,
   output,
 } from '@angular/core';
@@ -17,8 +15,6 @@ import {
 } from '@ng-icons/heroicons/outline';
 
 import { AlertVariant, generateAlertTestIds, getAlertClasses, getAlertIcon } from './alert-helpers';
-
-const DATA_TESTID = new HostAttributeToken('data-testid');
 
 @Component({
   selector: 'app-alert',
@@ -82,7 +78,7 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
   ],
 })
 export class Alert {
-  private readonly hostTestId = inject(DATA_TESTID, { optional: true });
+  private readonly dataTestId = input<string | null>(null);
 
   readonly variant = input<AlertVariant>('info');
   readonly title = input<string>('');
@@ -93,7 +89,7 @@ export class Alert {
 
   readonly dismissed = output<void>();
 
-  private readonly testIds = generateAlertTestIds(this.hostTestId);
+  private readonly testIds = generateAlertTestIds(this.dataTestId());
   readonly alertTestId = this.testIds.alert;
   readonly iconTestId = this.testIds.icon;
   readonly closeButtonTestId = this.testIds.closeButton;
