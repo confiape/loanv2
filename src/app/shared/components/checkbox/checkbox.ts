@@ -7,15 +7,11 @@ import {
   ChangeDetectionStrategy,
   forwardRef,
   effect,
-  inject,
-  HostAttributeToken,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { InputSize, ValidationState } from '../input/input-helpers';
-import { TestIdPrefixService } from '@loan/app/shared/components/input/testid-prefix.service';
 
-const DATA_TESTID = new HostAttributeToken('data-testid');
 
 @Component({
   selector: 'app-checkbox',
@@ -97,25 +93,10 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
   },
 })
 export class Checkbox implements ControlValueAccessor {
-  // Test ID from host attribute (suffix)
-  private readonly hostTestId = inject(DATA_TESTID, { optional: true });
-
-  // Test ID prefix from parent container (when used inside GenericCrud)
-  private readonly prefixService = inject(TestIdPrefixService, { optional: true });
-
-  // Combine prefix + suffix when both available
-  private readonly effectiveTestId = computed(() => {
-    const prefix = this.prefixService?.prefix();
-    const suffix = this.hostTestId;
-
-    if (prefix && suffix) {
-      return `${prefix}-${suffix}`;
-    }
-    return suffix;
-  });
+  readonly testId = input<string>('');
 
   protected readonly wrapperTestId = computed(() =>
-    this.effectiveTestId() ? `${this.effectiveTestId()}-wrapper` : null,
+    this.testId() ? `${this.testId()}-wrapper` : null,
   );
 
   // Input properties
@@ -142,17 +123,17 @@ export class Checkbox implements ControlValueAccessor {
   protected onTouched: () => void = () => undefined;
 
   // Test IDs using effectiveTestId
-  readonly inputTestId = computed(() => this.effectiveTestId());
+  readonly inputTestId = computed(() => this.testId());
   readonly labelTestId = computed(() => {
-    const id = this.effectiveTestId();
+    const id = this.testId();
     return id ? `${id}-label` : null;
   });
   readonly helpTextTestId = computed(() => {
-    const id = this.effectiveTestId();
+    const id = this.testId();
     return id ? `${id}-help-text` : null;
   });
   readonly errorMessageTestId = computed(() => {
-    const id = this.effectiveTestId();
+    const id = this.testId();
     return id ? `${id}-error-message` : null;
   });
 

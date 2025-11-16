@@ -7,10 +7,9 @@ import {
   ChangeDetectionStrategy,
   forwardRef,
   effect,
-  inject,
-  HostAttributeToken,
   HostListener,
   ElementRef,
+  inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
@@ -21,9 +20,7 @@ import {
   generateInputTestIds,
 } from '../input/input-helpers';
 import { sanitizeTestIdValue } from '@loan/app/shared/helpers';
-import { TestIdPrefixService } from '@loan/app/shared/components/input/testid-prefix.service';
 
-const DATA_TESTID = new HostAttributeToken('data-testid');
 
 export interface MultiSelectOption {
   value: string;
@@ -222,26 +219,11 @@ export interface MultiSelectOption {
   },
 })
 export class MultiSelect implements ControlValueAccessor {
-  // Test ID from host attribute (suffix)
-  private readonly hostTestId = inject(DATA_TESTID, { optional: true });
+  readonly testId = input<string>('');
   private readonly elementRef = inject(ElementRef);
 
-  // Test ID prefix from parent container (when used inside GenericCrud)
-  private readonly prefixService = inject(TestIdPrefixService, { optional: true });
-
-  // Combine prefix + suffix when both available
-  private readonly effectiveTestId = computed(() => {
-    const prefix = this.prefixService?.prefix();
-    const suffix = this.hostTestId;
-
-    if (prefix && suffix) {
-      return `${prefix}-${suffix}`;
-    }
-    return suffix;
-  });
-
   protected readonly wrapperTestId = computed(() =>
-    this.effectiveTestId() ? `${this.effectiveTestId()}-wrapper` : null,
+    this.testId() ? `${this.testId()}-wrapper` : null,
   );
 
   // Input properties
@@ -277,24 +259,24 @@ export class MultiSelect implements ControlValueAccessor {
   private onChangeCallback: (value: string[]) => void = () => undefined;
   protected onTouched: () => void = () => undefined;
 
-  // Test IDs using helper with effectiveTestId
-  private readonly testIds = generateInputTestIds(this.effectiveTestId());
+  // Test IDs using helper
+  private readonly testIds = generateInputTestIds(() => this.testId());
   readonly labelTestId = this.testIds.label;
   readonly helpTextTestId = this.testIds.helpText;
   readonly errorMessageTestId = this.testIds.errorMessage;
 
   // MultiSelect-specific test IDs
-  readonly buttonTestId = computed(() => this.effectiveTestId());
+  readonly buttonTestId = computed(() => this.testId());
   readonly dropdownTestId = computed(() => {
-    const id = this.effectiveTestId();
+    const id = this.testId();
     return id ? `${id}-dropdown` : null;
   });
   readonly searchInputTestId = computed(() => {
-    const id = this.effectiveTestId();
+    const id = this.testId();
     return id ? `${id}-search` : null;
   });
   readonly listTestId = computed(() => {
-    const id = this.effectiveTestId();
+    const id = this.testId();
     return id ? `${id}-list` : null;
   });
 
@@ -439,6 +421,7 @@ export class MultiSelect implements ControlValueAccessor {
   }
 
   protected getOptionTestId(value: string): string | null {
-    return this.hostTestId ? `${this.hostTestId}-option-${sanitizeTestIdValue(value)}` : null;
+    const id = this.testId();
+    return id ? `${id}-option-${sanitizeTestIdValue(value)}` : null;
   }
 }

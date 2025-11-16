@@ -40,7 +40,7 @@
             [errorMessage]="getFieldError(field.key) || ''"
             [disabled]="field.disabled || false"
             [readonly]="field.readonly || false"
-            [attr.data-testid]="'input-' + field.key"
+            [testId]="testPrefix() + '-input--' + field.key"
           />
         }
 
@@ -55,7 +55,7 @@
             [errorMessage]="getFieldError(field.key) || ''"
             [disabled]="field.disabled || false"
             [readonly]="field.readonly || false"
-            [attr.data-testid]="'password-' + field.key"
+            [testId]="testPrefix() + '-password--' + field.key"
           />
         }
 
@@ -73,7 +73,7 @@
             [min]="$any(field.min)"
             [max]="$any(field.max)"
             [step]="field.step || 1"
-            [attr.data-testid]="'number-' + field.key"
+            [testId]="testPrefix() + '-number--' + field.key"
           />
         }
 
@@ -90,7 +90,7 @@
             [readonly]="field.readonly || false"
             [min]="$any(field.min)"
             [max]="$any(field.max)"
-            [attr.data-testid]="'date-' + field.key"
+            [testId]="testPrefix() + '-date--' + field.key"
           />
         }
 
@@ -103,7 +103,7 @@
             [validationState]="getValidationState(field.key)"
             [errorMessage]="getFieldError(field.key) || ''"
             [disabled]="field.disabled || false"
-            [attr.data-testid]="'checkbox-' + field.key"
+            [testId]="testPrefix() + '-checkbox--' + field.key"
           />
         }
 
@@ -117,7 +117,7 @@
             [errorMessage]="getFieldError(field.key) || ''"
             [disabled]="field.disabled || false || loadingOptions()"
             [options]="getOptions(field.key)"
-            [attr.data-testid]="'radio-' + field.key"
+            [testId]="testPrefix() + '-radio--' + field.key"
           />
           @if (loadingOptions()) {
             <p class="mt-1 text-sm text-accent flex items-center">
@@ -157,7 +157,7 @@
             [errorMessage]="getFieldError(field.key) || ''"
             [disabled]="field.disabled || false || loadingOptions()"
             [options]="getOptions(field.key)"
-            [attr.data-testid]="'select-' + field.key"
+            [testId]="testPrefix() + '-select--' + field.key"
           />
           @if (loadingOptions()) {
             <p class="mt-1 text-sm text-accent flex items-center">
@@ -198,7 +198,7 @@
             [disabled]="field.disabled || false || loadingOptions()"
             [options]="getOptions(field.key)"
             [searchable]="true"
-            [attr.data-testid]="'multiselect-' + field.key"
+            [testId]="testPrefix() + '-multiselect--' + field.key"
           />
           @if (loadingOptions()) {
             <p class="mt-1 text-sm text-accent flex items-center">

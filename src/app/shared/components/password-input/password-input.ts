@@ -20,7 +20,6 @@ import { Input } from '@loan/app/shared/components/input/input';
 import {
   InputSize,
   ValidationState,
-  PARENT_INPUT_TESTID,
 } from '@loan/app/shared/components/input/input-helpers';
 
 const DATA_TESTID = new HostAttributeToken('data-testid');
@@ -31,6 +30,7 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
   imports: [Input],
   template: `
     <app-input
+      [testId]="testId() || hostTestId || ''"
       [label]="label()"
       [placeholder]="placeholder()"
       [disabled]="isDisabled()"
@@ -61,13 +61,6 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
       multi: true,
     },
     provideIcons({ heroEye, heroEyeSlash }),
-    {
-      provide: PARENT_INPUT_TESTID,
-      useFactory: () => {
-        const testId = inject(DATA_TESTID, { optional: true });
-        return testId;
-      },
-    },
   ],
   host: {
     class: 'block w-full',
@@ -75,10 +68,11 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
   },
 })
 export class PasswordInput implements ControlValueAccessor {
+  readonly testId = input<string>('');
   protected readonly hostTestId = inject(DATA_TESTID, { optional: true });
 
   protected readonly wrapperTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-wrapper` : null,
+    (this.testId() || this.hostTestId) ? `${this.testId() || this.hostTestId}-wrapper` : null,
   );
 
   @ViewChild(Input)

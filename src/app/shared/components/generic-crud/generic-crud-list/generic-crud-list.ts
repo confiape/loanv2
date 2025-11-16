@@ -10,7 +10,6 @@ import { Button } from '@loan/app/shared/components/button/button';
 import { GenericCrudFormComponent } from '../generic-crud-form/generic-crud-form';
 import { ICrudService } from '@loan/app/core/services/crud.interface';
 import { TableColumnMetadata } from '@loan/app/core/models/form-metadata';
-import { TestIdPrefixService } from '@loan/app/shared/components/input/testid-prefix.service';
 
 /**
  * Generic CRUD list component
@@ -42,13 +41,11 @@ import { TestIdPrefixService } from '@loan/app/shared/components/input/testid-pr
     Button,
     GenericCrudFormComponent,
   ],
-  providers: [TestIdPrefixService],
   templateUrl: './generic-crud-list.html',
 })
 export class GenericCrudListComponent<TDto extends { id: string }> implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
-  private testIdPrefixService = inject(TestIdPrefixService);
 
   // Expose Math for template
   protected readonly Math = Math;
@@ -58,11 +55,9 @@ export class GenericCrudListComponent<TDto extends { id: string }> implements On
 
   // Input: Test ID prefix for E2E testing (optional)
   testIdPrefix = input<string>('crud');
+  protected readonly testPrefix = computed(() => this.testIdPrefix());
 
-  // Regular property for template interpolation (updated via effect)
-  protected testPrefix: string = 'crud';
-
-  // Table configuration
+  // Regular property for template interpolation (updated via effect)// Table configuration
   tableColumns = signal<TableColumn<TDto>[]>([]);
   tableActions = signal<TableAction<TDto>[]>([]);
 
@@ -82,15 +77,7 @@ export class GenericCrudListComponent<TDto extends { id: string }> implements On
   });
 
   constructor() {
-    // Update testPrefix when input changes
-    effect(() => {
-      this.testPrefix = this.testIdPrefix();
-    });
-
-    // Provide test ID prefix to child components
-    effect(() => {
-      this.testIdPrefixService.setPrefix(this.testIdPrefix());
-    });
+    // Update testPrefix when input changes// Provide test ID prefix to child components
 
     // Watch for changes in items and route ID to open modal
     effect(() => {

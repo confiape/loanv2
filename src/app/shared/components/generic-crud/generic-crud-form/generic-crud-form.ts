@@ -19,7 +19,6 @@ import { RadioGroup } from '@loan/app/shared/components/radio/radio';
 import { DateInput } from '@loan/app/shared/components/date-input/date-input';
 import { Button } from '@loan/app/shared/components/button/button';
 import { FormFieldMetadata, SelectOption } from '@loan/app/core/models/form-metadata';
-import { TestIdPrefixService } from '@loan/app/shared/components/input/testid-prefix.service';
 
 /**
  * Generic form component that generates form fields based on metadata
@@ -51,12 +50,10 @@ import { TestIdPrefixService } from '@loan/app/shared/components/input/testid-pr
     DateInput,
     Button,
   ],
-  providers: [TestIdPrefixService],
   templateUrl: './generic-crud-form.html',
 })
 export class GenericCrudFormComponent implements OnInit {
   private fb = inject(FormBuilder);
-  private testIdPrefixService = inject(TestIdPrefixService);
 
   // Inputs
   item = input<Record<string, unknown> | null>(null);
@@ -64,11 +61,9 @@ export class GenericCrudFormComponent implements OnInit {
   loading = input<boolean>(false);
   error = input<string | null>(null);
   testIdPrefix = input<string>('crud');
+  protected readonly testPrefix = computed(() => this.testIdPrefix());
 
-  // Regular property for template interpolation (updated via effect)
-  protected testPrefix: string = 'crud';
-
-  // Outputs
+  // Regular property for template interpolation (updated via effect)// Outputs
   formSubmit = output<unknown>();
   formCancel = output<void>();
 
@@ -80,15 +75,7 @@ export class GenericCrudFormComponent implements OnInit {
   private lastItemId: string | null = null;
 
   constructor() {
-    // Update testPrefix when input changes
-    effect(() => {
-      this.testPrefix = this.testIdPrefix();
-    });
-
-    // Provide test ID prefix to child components
-    effect(() => {
-      this.testIdPrefixService.setPrefix(this.testIdPrefix());
-    });
+    // Update testPrefix when input changes// Provide test ID prefix to child components
 
     // Update form when item changes - must be in constructor for injection context
     effect(() => {

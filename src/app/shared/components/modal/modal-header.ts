@@ -1,15 +1,12 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  HostAttributeToken,
   computed,
-  inject,
+  input,
   output,
 } from '@angular/core';
 import { generateModalTestIds } from './modal-helpers';
-import { TestIdPrefixService } from '@loan/app/shared/components/input/testid-prefix.service';
 
-const DATA_TESTID = new HostAttributeToken('data-testid');
 
 @Component({
   selector: 'app-modal-header',
@@ -54,31 +51,17 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
   },
 })
 export class ModalHeader {
-  // Test ID from host attribute (suffix)
-  private readonly hostTestId = inject(DATA_TESTID, { optional: true });
-
-  // Test ID prefix from parent container (when used inside GenericCrud)
-  private readonly prefixService = inject(TestIdPrefixService, { optional: true });
-
-  // Combine prefix + suffix when both available
-  private readonly effectiveTestId = computed(() => {
-    const prefix = this.prefixService?.prefix();
-    const suffix = this.hostTestId;
-
-    if (prefix && suffix) {
-      return `${prefix}-${suffix}`;
-    }
-    return suffix;
-  });
-
-  private readonly testIds = generateModalTestIds(this.effectiveTestId());
+  readonly testId = input<string>('');
 
   protected readonly wrapperTestId = computed(() =>
-    this.effectiveTestId() ? `${this.effectiveTestId()}-wrapper` : null,
+    this.testId() ? `${this.testId()}-wrapper` : null,
   );
 
-  readonly headerTestId = this.testIds.header;
-  readonly closeButtonTestId = this.testIds.close;
+  readonly headerTestId = computed(() => this.testId() || null);
+  readonly closeButtonTestId = computed(() => {
+    const id = this.testId();
+    return id ? `${id}-close` : null;
+  });
 
   readonly closeClick = output<void>();
 }

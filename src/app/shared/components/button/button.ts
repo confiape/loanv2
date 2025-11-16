@@ -1,9 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  HostAttributeToken,
   computed,
-  inject,
   input,
   output,
 } from '@angular/core';
@@ -16,9 +14,6 @@ import {
   generateButtonTestIds,
   getButtonClasses,
 } from './button-helpers';
-import { TestIdPrefixService } from '@loan/app/shared/components/input/testid-prefix.service';
-
-const DATA_TESTID = new HostAttributeToken('data-testid');
 
 export type ButtonType = 'button' | 'submit' | 'reset';
 
@@ -32,7 +27,7 @@ export type ButtonType = 'button' | 'submit' | 'reset';
       [disabled]="disabled() || loading()"
       [attr.aria-label]="ariaLabel() || null"
       [attr.aria-busy]="loading()"
-      [attr.data-testid]="effectiveTestId()"
+      [attr.data-testid]="testId() || null"
       [class]="buttonClasses()"
       (click)="handleClick($event)"
     >
@@ -75,25 +70,10 @@ export type ButtonType = 'button' | 'submit' | 'reset';
   },
 })
 export class Button {
-  // Read test ID suffix from host attribute
-  private readonly hostTestId = inject(DATA_TESTID, { optional: true });
-
-  // Read test ID prefix from parent (GenericCrud)
-  private readonly prefixService = inject(TestIdPrefixService, { optional: true });
-
-  // Combine prefix + suffix when both available
-  protected readonly effectiveTestId = computed(() => {
-    const prefix = this.prefixService?.prefix();
-    const suffix = this.hostTestId;
-
-    if (prefix && suffix) {
-      return `${prefix}-${suffix}`;
-    }
-    return suffix;
-  });
+  readonly testId = input<string>('');
 
   protected readonly wrapperTestId = computed(() =>
-    this.effectiveTestId() ? `${this.effectiveTestId()}-wrapper` : null,
+    this.testId() ? `${this.testId()}-wrapper` : null,
   );
 
   readonly variant = input<ButtonVariant>('solid');
@@ -110,7 +90,7 @@ export class Button {
   readonly buttonClick = output<MouseEvent>();
 
   readonly spinnerTestId = computed(() =>
-    this.effectiveTestId() ? `${this.effectiveTestId()}-spinner` : null,
+    this.testId() ? `${this.testId()}-spinner` : null,
   );
 
   readonly buttonClasses = computed(() =>

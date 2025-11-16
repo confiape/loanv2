@@ -7,8 +7,6 @@ import {
   ChangeDetectionStrategy,
   forwardRef,
   effect,
-  inject,
-  HostAttributeToken,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
@@ -20,11 +18,7 @@ import {
   getInputClasses,
   getSuffixButtonClasses,
   generateInputTestIds,
-  PARENT_INPUT_TESTID,
 } from '@loan/app/shared/components/input/input-helpers';
-import { TestIdPrefixService } from '@loan/app/shared/components/input/testid-prefix.service';
-
-const DATA_TESTID = new HostAttributeToken('data-testid');
 
 export type InputType = 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'search';
 
@@ -154,38 +148,11 @@ export type InputType = 'text' | 'email' | 'password' | 'number' | 'tel' | 'url'
   },
 })
 export class Input implements ControlValueAccessor {
-  // Test ID from host attribute (when used directly: <app-input data-testid="...">)
-  private readonly hostTestId = inject(DATA_TESTID, { optional: true });
+  readonly testId = input<string>('');
 
-  // Test ID from parent component (when used inside PasswordInput)
-  private readonly parentTestId = inject(PARENT_INPUT_TESTID, { optional: true, skipSelf: true });
-
-  // Test ID prefix from parent container (when used inside GenericCrud)
-  private readonly prefixService = inject(TestIdPrefixService, { optional: true });
-
-  // Effective test ID: combine prefix + suffix, or use direct/parent test ID
-  private readonly effectiveTestId = computed(() => {
-    const prefix = this.prefixService?.prefix();
-    const suffix = this.hostTestId;
-
-    // GenericCrud usage: combine prefix + suffix
-    if (prefix && suffix) {
-      return `${prefix}-${suffix}`;
-    }
-
-    // Standalone usage: use direct test ID
-    if (this.hostTestId) {
-      return this.hostTestId;
-    }
-
-    // PasswordInput wrapper: use parent test ID
-    return this.parentTestId;
-  });
-
-  protected readonly wrapperTestId = computed(() => {
-    const testId = this.effectiveTestId();
-    return testId ? `${testId}-wrapper` : null;
-  });
+  protected readonly wrapperTestId = computed(() =>
+    this.testId() ? `${this.testId()}-wrapper` : null,
+  );
 
   // Input properties
   readonly label = input<string>('');
@@ -223,8 +190,8 @@ export class Input implements ControlValueAccessor {
   private onChange: (value: string) => void = () => undefined;
   protected onTouched: () => void = () => undefined;
 
-  // Test IDs using helper - use effectiveTestId instead of hostTestId
-  private readonly testIds = generateInputTestIds(this.effectiveTestId());
+  // Test IDs using helper
+  private readonly testIds = generateInputTestIds(() => this.testId());
   readonly labelTestId = this.testIds.label;
   readonly inputTestId = this.testIds.input;
   readonly buttonTestId = this.testIds.button;
