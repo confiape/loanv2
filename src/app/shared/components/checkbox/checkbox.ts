@@ -7,14 +7,10 @@ import {
   ChangeDetectionStrategy,
   forwardRef,
   effect,
-  inject,
-  HostAttributeToken,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { InputSize, ValidationState } from '../input/input-helpers';
-
-const DATA_TESTID = new HostAttributeToken('data-testid');
 
 @Component({
   selector: 'app-checkbox',
@@ -96,7 +92,7 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
   },
 })
 export class Checkbox implements ControlValueAccessor {
-  private readonly hostTestId = inject(DATA_TESTID, { optional: true });
+  private readonly dataTestId = input<string | null>(null);
 
   // Input properties
   readonly label = input<string>('');
@@ -122,22 +118,32 @@ export class Checkbox implements ControlValueAccessor {
   protected onTouched: () => void = () => undefined;
 
   // Test IDs
-  readonly wrapperTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-wrapper` : null,
-  );
-  readonly checkboxTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-checkbox` : null,
-  );
-  readonly labelTestId = computed(() => (this.hostTestId ? `${this.hostTestId}-label` : null));
-  readonly helpTextTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-help-text` : null,
-  );
-  readonly successMessageTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-success-message` : null,
-  );
-  readonly errorMessageTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-error-message` : null,
-  );
+  readonly wrapperTestId = computed(() => {
+    const id = this.dataTestId();
+    return id ? `${id}-wrapper` : null;
+  });
+
+  readonly checkboxTestId = computed(() => this.dataTestId());
+
+  readonly labelTestId = computed(() => {
+    const id = this.dataTestId();
+    return id ? `${id}-label` : null;
+  });
+
+  readonly helpTextTestId = computed(() => {
+    const id = this.dataTestId();
+    return id ? `${id}-help` : null;
+  });
+
+  readonly successMessageTestId = computed(() => {
+    const id = this.dataTestId();
+    return id ? `${id}-success` : null;
+  });
+
+  readonly errorMessageTestId = computed(() => {
+    const id = this.dataTestId();
+    return id ? `${id}-error` : null;
+  });
 
   // Computed classes
   readonly labelClasses = computed(() => {
