@@ -4,15 +4,23 @@ export type ModalSize = 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 
 export interface ModalTestIds {
   overlay: Signal<string | null>;
-  close: Signal<string | null>;
+  container: Signal<string | null>;
+  content: Signal<string | null>;
   header: Signal<string | null>;
+  closeButton: Signal<string | null>;
+  body: Signal<string | null>;
+  footer: Signal<string | null>;
 }
 
 export function generateModalTestIds(hostTestId: string | null): ModalTestIds {
   return {
     overlay: computed(() => (hostTestId ? `${hostTestId}-overlay` : null)),
-    close: computed(() => (hostTestId ? `${hostTestId}-close` : null)),
+    container: computed(() => (hostTestId ? `${hostTestId}-container` : null)),
+    content: computed(() => (hostTestId ? `${hostTestId}-content` : null)),
     header: computed(() => (hostTestId ? `${hostTestId}-header` : null)),
+    closeButton: computed(() => (hostTestId ? `${hostTestId}-close-btn` : null)),
+    body: computed(() => (hostTestId ? `${hostTestId}-body` : null)),
+    footer: computed(() => (hostTestId ? `${hostTestId}-footer` : null)),
   };
 }
 

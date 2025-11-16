@@ -108,13 +108,16 @@ export function getSuffixButtonClasses(size: InputSize, iconOnly = false): strin
 
 /**
  * Generates test IDs for input components
- * Only generates test IDs for essential testing elements
  */
 export interface InputTestIds {
+  wrapper: Signal<string | null>;
   label: Signal<string | null>;
   input: Signal<string | null>;
-  button: Signal<string | null>;
+  prefixIcon: Signal<string | null>;
+  suffixIcon: Signal<string | null>;
+  suffixButton: Signal<string | null>;
   helpText: Signal<string | null>;
+  successMessage: Signal<string | null>;
   errorMessage: Signal<string | null>;
 }
 
@@ -130,6 +133,10 @@ function resolveHostTestId(source: HostTestIdSource): () => string | null {
 export function generateInputTestIds(hostTestId: HostTestIdSource): InputTestIds {
   const getHostTestId = resolveHostTestId(hostTestId);
   return {
+    wrapper: computed(() => {
+      const id = getHostTestId();
+      return id ? `${id}-wrapper` : null;
+    }),
     label: computed(() => {
       const id = getHostTestId();
       return id ? `${id}-label` : null;
@@ -138,13 +145,25 @@ export function generateInputTestIds(hostTestId: HostTestIdSource): InputTestIds
       const id = getHostTestId();
       return id ? `${id}-input` : null;
     }),
-    button: computed(() => {
+    prefixIcon: computed(() => {
+      const id = getHostTestId();
+      return id ? `${id}-prefix-icon` : null;
+    }),
+    suffixIcon: computed(() => {
+      const id = getHostTestId();
+      return id ? `${id}-suffix-icon` : null;
+    }),
+    suffixButton: computed(() => {
       const id = getHostTestId();
       return id ? `${id}-button` : null;
     }),
     helpText: computed(() => {
       const id = getHostTestId();
       return id ? `${id}-help-text` : null;
+    }),
+    successMessage: computed(() => {
+      const id = getHostTestId();
+      return id ? `${id}-success-message` : null;
     }),
     errorMessage: computed(() => {
       const id = getHostTestId();

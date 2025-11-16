@@ -15,8 +15,8 @@ import { Accordion } from './accordion';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="accordion-item-wrapper">
-      <h2 class="accordion-heading">
+    <div class="accordion-item-wrapper" [attr.data-testid]="itemTestId()">
+      <h2 class="accordion-heading" [attr.data-testid]="headingTestId()">
         <button
           #accordionButton
           type="button"
@@ -25,17 +25,18 @@ import { Accordion } from './accordion';
           [class.!border-b]="isLast()"
           [attr.aria-expanded]="isExpanded()"
           [attr.id]="'accordion-button-' + id()"
-          [attr.data-testid]="triggerTestId()"
+          [attr.data-testid]="buttonTestId()"
           (click)="onToggle()"
           (keydown)="onKeyDown($event)"
           [disabled]="disabled()"
         >
-          <span
+          <span [attr.data-testid]="headerTestId()"
             ><ng-content select="app-accordion-item-header"></ng-content
           ></span>
           <svg
             class="w-3 h-3 rotate-180 shrink-0 transition-transform"
             [class.!rotate-0]="isExpanded()"
+            [attr.data-testid]="iconTestId()"
             aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -55,7 +56,7 @@ import { Accordion } from './accordion';
         class="accordion-body"
         [class.hidden]="!isExpanded()"
         [class.!border-b]="isLast()"
-        [attr.data-testid]="panelTestId()"
+        [attr.data-testid]="bodyTestId()"
       >
         <ng-content select="app-accordion-item-content"></ng-content>
       </div>
@@ -78,14 +79,34 @@ export class AccordionItemComponent {
   // Test IDs
   private readonly testIdPrefix = computed(() => this.accordion.getTestIdPrefix());
 
-  readonly triggerTestId = computed(() => {
+  readonly itemTestId = computed(() => {
     const prefix = this.testIdPrefix();
-    return prefix ? `${prefix}-trigger-${this.id()}` : null;
+    return prefix ? `${prefix}-item-${this.id()}` : null;
   });
 
-  readonly panelTestId = computed(() => {
+  readonly headingTestId = computed(() => {
     const prefix = this.testIdPrefix();
-    return prefix ? `${prefix}-panel-${this.id()}` : null;
+    return prefix ? `${prefix}-heading-${this.id()}` : null;
+  });
+
+  readonly buttonTestId = computed(() => {
+    const prefix = this.testIdPrefix();
+    return prefix ? `${prefix}-button-${this.id()}` : null;
+  });
+
+  readonly headerTestId = computed(() => {
+    const prefix = this.testIdPrefix();
+    return prefix ? `${prefix}-header-${this.id()}` : null;
+  });
+
+  readonly iconTestId = computed(() => {
+    const prefix = this.testIdPrefix();
+    return prefix ? `${prefix}-icon-${this.id()}` : null;
+  });
+
+  readonly bodyTestId = computed(() => {
+    const prefix = this.testIdPrefix();
+    return prefix ? `${prefix}-body-${this.id()}` : null;
   });
 
   isExpanded(): boolean {

@@ -40,6 +40,7 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: 'inline-flex',
+    '[attr.data-testid]': 'componentTestId()',
   },
 })
 export class Dropdown {
@@ -116,11 +117,13 @@ export class Dropdown {
   // Computed
   readonly searchConfig = computed(() => this.search());
 
-  readonly triggerTestId = computed(() => this.hostTestId);
+  readonly componentTestId = computed(() =>
+    this.hostTestId ? `${this.hostTestId}-dropdown` : null,
+  );
+
+  readonly triggerTestId = computed(() => (this.hostTestId ? `${this.hostTestId}-trigger` : null));
 
   readonly panelTestId = computed(() => (this.hostTestId ? `${this.hostTestId}-panel` : null));
-
-  readonly searchTestId = computed(() => (this.hostTestId ? `${this.hostTestId}-search` : null));
 
   readonly visibleSections = computed(() => {
     const sections = this.sections();

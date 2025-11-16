@@ -1,38 +1,44 @@
 # Playwright Test IDs Reference
 
-> Comprehensive reference of `data-testid` attributes for e2e testing with Playwright.
+> Reference of all `data-testid` attributes exposed by components for e2e testing.
 
 ## How It Works
 
-Components accept a `data-testid` host attribute that serves as a prefix for internal elements:
+Components accept a `data-testid` attribute that acts as a **prefix** for all internal elements:
 
 ```html
 <app-input data-testid="email" />
-<!-- Generates: email-input, email-label, email-error-message -->
+<!-- Generates: email-wrapper, email-label, email-input, etc. -->
 ```
 
-If no `data-testid` is provided on the host element, no test IDs are rendered.
+If no `data-testid` is provided, no test IDs are rendered.
 
 ---
 
-## Form Components
+## Component Test IDs
 
 ### Input
 
 **Location:** `src/app/shared/components/input/`
 
-| Test ID | Element |
-|---------|---------|
-| `{prefix}-label` | Label element |
-| `{prefix}-input` | Input field |
-| `{prefix}-button` | Suffix button (search, clear, etc.) |
-| `{prefix}-help-text` | Help message |
-| `{prefix}-error-message` | Error message |
+| Test ID                    | Element                      |
+| -------------------------- | ---------------------------- |
+| `{prefix}-wrapper`         | Main container               |
+| `{prefix}-label`           | Label element                |
+| `{prefix}-input`           | Input field                  |
+| `{prefix}-prefix-icon`     | Icon at start                |
+| `{prefix}-suffix-icon`     | Icon at end                  |
+| `{prefix}-button`          | Suffix button (e.g., search) |
+| `{prefix}-help-text`       | Help message                 |
+| `{prefix}-success-message` | Success message              |
+| `{prefix}-error-message`   | Error message                |
 
 **Example:**
+
 ```html
 <app-input data-testid="email" [label]="'Email'" />
 ```
+
 ```typescript
 await page.getByTestId('email-input').fill('user@example.com');
 await expect(page.getByTestId('email-error-message')).toBeVisible();
@@ -40,156 +46,25 @@ await expect(page.getByTestId('email-error-message')).toBeVisible();
 
 ---
 
-### InputNumber
-
-**Location:** `src/app/shared/components/input-number/`
-
-| Test ID | Element |
-|---------|---------|
-| `{prefix}-label` | Label element |
-| `{prefix}-input` | Input field (type=number) |
-| `{prefix}-increment` | Increment button (+) |
-| `{prefix}-decrement` | Decrement button (-) |
-| `{prefix}-help-text` | Help message |
-| `{prefix}-error-message` | Error message |
-
-**Example:**
-```typescript
-await page.getByTestId('quantity-input').fill('50');
-await page.getByTestId('quantity-increment').click();
-```
-
----
-
-### DateInput
-
-**Location:** `src/app/shared/components/date-input/`
-
-| Test ID | Element |
-|---------|---------|
-| `{prefix}-label` | Label element |
-| `{prefix}-input` | Date input field |
-| `{prefix}-help-text` | Help message |
-| `{prefix}-error-message` | Error message |
-
----
-
-### Select
-
-**Location:** `src/app/shared/components/select/`
-
-| Test ID | Element |
-|---------|---------|
-| `{prefix}-label` | Label element |
-| `{prefix}-select` | Select dropdown |
-| `{prefix}-option-{sanitized-value}` | Each option (value is sanitized) |
-| `{prefix}-help-text` | Help message |
-| `{prefix}-error-message` | Error message |
-
-**Example:**
-```typescript
-await page.getByTestId('country-select').selectOption('US');
-await expect(page.getByTestId('country-option-us')).toBeVisible();
-```
-
----
-
-### Multiselect
-
-**Location:** `src/app/shared/components/multiselect/`
-
-| Test ID | Element |
-|---------|---------|
-| `{prefix}-label` | Label element |
-| `{prefix}-button` | Dropdown toggle button |
-| `{prefix}-dropdown` | Dropdown panel |
-| `{prefix}-search` | Search input (if searchable) |
-| `{prefix}-list` | Options list |
-| `{prefix}-option-{sanitized-value}` | Each checkbox option |
-| `{prefix}-help-text` | Help message |
-| `{prefix}-error-message` | Error message |
-
----
-
-### Checkbox
-
-**Location:** `src/app/shared/components/checkbox/`
-
-| Test ID | Element |
-|---------|---------|
-| `{prefix}-input` | Checkbox input |
-| `{prefix}-label` | Label text |
-| `{prefix}-help-text` | Help message |
-| `{prefix}-error-message` | Error message |
-
----
-
-### Radio Group
-
-**Location:** `src/app/shared/components/radio/`
-
-| Test ID | Element |
-|---------|---------|
-| `{prefix}-radio-{index}` | Radio input (index-based) |
-| `{prefix}-label-{index}` | Radio label (index-based) |
-| `{prefix}-help-text` | Help message |
-| `{prefix}-error-message` | Error message |
-
-**Example:**
-```typescript
-await page.getByTestId('gender-radio-0').check(); // Male
-await page.getByTestId('gender-radio-1').check(); // Female
-```
-
----
-
-## UI Components
-
 ### Button
 
 **Location:** `src/app/shared/components/button/`
 
-| Test ID | Element |
-|---------|---------|
-| `{prefix}` | Button element (host) |
-| `{prefix}-spinner` | Loading spinner |
+| Test ID            | Element                              |
+| ------------------ | ------------------------------------ |
+| `{prefix}`         | Native `<button>` element            |
+| `{prefix}-content` | Slot content wrapper (label + icons) |
+| `{prefix}-spinner` | Loading indicator container          |
 
 **Example:**
+
 ```html
-<app-button data-testid="submit-btn">Submit</app-button>
-```
-```typescript
-await page.getByTestId('submit-btn').click();
-await expect(page.getByTestId('submit-btn-spinner')).toBeVisible();
+<app-button data-testid="primary-cta"> Continue </app-button>
 ```
 
----
-
-### Alert
-
-**Location:** `src/app/shared/components/alert/`
-
-| Test ID | Element |
-|---------|---------|
-| `{prefix}` | Alert container (host) |
-| `{prefix}-close` | Close button (if dismissible) |
-
----
-
-### Modal
-
-**Location:** `src/app/shared/components/modal/`
-
-| Test ID | Element |
-|---------|---------|
-| `{prefix}-overlay` | Modal overlay/backdrop |
-| `{prefix}-close` | Close button |
-| `{prefix}-header` | Modal header |
-
-**Example:**
 ```typescript
-await expect(page.getByTestId('confirm-overlay')).toBeVisible();
-await page.getByTestId('confirm-close').click();
+await page.getByTestId('primary-cta').click();
+await page.getByTestId('primary-cta-spinner').waitFor({ state: 'hidden' });
 ```
 
 ---
@@ -198,12 +73,19 @@ await page.getByTestId('confirm-close').click();
 
 **Location:** `src/app/shared/components/accordion/`
 
-| Test ID | Element |
-|---------|---------|
-| `{prefix}-trigger-{itemId}` | Expand/collapse trigger |
-| `{prefix}-panel-{itemId}` | Accordion panel content |
+| Test ID                          | Element                  |
+| -------------------------------- | ------------------------ |
+| `{prefix}-accordion`             | Main accordion container |
+| `{prefix}-item-{itemId}`         | Accordion item wrapper   |
+| `{prefix}-heading-{itemId}`      | Heading element          |
+| `{prefix}-button-{itemId}`       | Toggle button            |
+| `{prefix}-header-{itemId}`       | Header text              |
+| `{prefix}-icon-{itemId}`         | Expand/collapse icon     |
+| `{prefix}-body-{itemId}`         | Body container           |
+| `{prefix}-body-{itemId}-content` | Body content             |
 
 **Example:**
+
 ```html
 <app-accordion data-testid="faq">
   <app-accordion-item id="shipping">
@@ -212,109 +94,75 @@ await page.getByTestId('confirm-close').click();
   </app-accordion-item>
 </app-accordion>
 ```
+
 ```typescript
-await page.getByTestId('faq-trigger-shipping').click();
-await expect(page.getByTestId('faq-panel-shipping')).toBeVisible();
+await page.getByTestId('faq-button-shipping').click();
+await expect(page.getByTestId('faq-body-shipping')).toBeVisible();
 ```
 
 ---
 
-### Dropdown (Advanced)
+### InputNumber
 
-**Location:** `src/app/shared/components/dropdown/advanced/`
+**Location:** `src/app/shared/components/input-number/`
 
-| Test ID | Element |
-|---------|---------|
-| `{prefix}` | Dropdown container (host) |
-| `{prefix}-panel` | Dropdown panel |
-| `{prefix}-search` | Search input (if enabled) |
-
----
-
-### Toast
-
-**Location:** `src/app/shared/components/toast/`
-
-| Test ID | Element |
-|---------|---------|
-| `{prefix}` | Toast container |
-| `{prefix}-close` | Close button |
-
----
-
-### Button Group Button
-
-**Location:** `src/app/shared/components/button-group/`
-
-| Test ID | Element |
-|---------|---------|
-| `{prefix}` | Button element (host) |
-
----
-
-### Apps Menu
-
-**Location:** `src/app/shared/components/apps-menu/`
-
-| Test ID | Element |
-|---------|---------|
-| `{prefix}-trigger` | Menu trigger button |
-| `{prefix}-item-{index}` | Menu item (index-based) |
+| Test ID                    | Element                               |
+| -------------------------- | ------------------------------------- |
+| `{prefix}-wrapper`         | Main container                        |
+| `{prefix}-label`           | Label element                         |
+| `{prefix}-input`           | Input field (type=number)             |
+| `{prefix}-prefix-icon`     | Icon at start                         |
+| `{prefix}-buttons`         | Increment/decrement buttons container |
+| `{prefix}-increment`       | Increment button (+)                  |
+| `{prefix}-decrement`       | Decrement button (-)                  |
+| `{prefix}-help-text`       | Help message                          |
+| `{prefix}-success-message` | Success message                       |
+| `{prefix}-error-message`   | Error message                         |
 
 **Example:**
+
+```html
+<app-input-number data-testid="quantity" [label]="'Quantity'" [min]="1" [max]="100" />
+```
+
 ```typescript
-await page.getByTestId('apps-trigger').click();
-await page.getByTestId('apps-item-0').click(); // First app
+await page.getByTestId('quantity-input').fill('50');
+await page.getByTestId('quantity-increment').click();
+await expect(page.getByTestId('quantity-input')).toHaveValue('51');
+await page.getByTestId('quantity-decrement').click();
+await expect(page.getByTestId('quantity-input')).toHaveValue('50');
 ```
 
 ---
 
-### User Menu
+### Select
 
-**Location:** `src/app/shared/components/user-menu/`
+**Location:** `src/app/shared/components/select/`
 
-| Test ID | Element |
-|---------|---------|
-| `{prefix}-trigger` | Menu trigger button |
-| `{prefix}-item-{index}` | Menu item (index-based) |
+| Test ID                    | Element                 |
+| -------------------------- | ----------------------- |
+| `{prefix}-wrapper`         | Main container          |
+| `{prefix}-label`           | Label element           |
+| `{prefix}-select`          | Select dropdown element |
+| `{prefix}-help-text`       | Help message            |
+| `{prefix}-success-message` | Success message         |
+| `{prefix}-error-message`   | Error message           |
 
----
+**Example:**
 
-### Table
+```html
+<app-select
+  data-testid="country"
+  [label]="'Country'"
+  [options]="[
+    { value: 'US', label: 'United States' },
+    { value: 'CA', label: 'Canada' }
+  ]"
+/>
+```
 
-**Location:** `src/app/shared/ui/table/`
-
-| Test ID | Element |
-|---------|---------|
-| `{prefix}-search` | Search input |
-| `{prefix}-table` | Table element |
-| `{prefix}-select-all` | Select all checkbox |
-| `{prefix}-row-{id}` | Table row (if item has ID) |
-
----
-
-## Implementation Notes
-
-### Dynamic Values
-Dynamic values (option values, item IDs) are sanitized for safe test IDs:
-- Lowercase transformation
-- Special characters replaced with hyphens
-- Example: `"New York"` → `"new-york"`
-
-### Index-Based IDs
-Components without unique IDs use zero-based indices:
-- Radio buttons: `radio-0`, `radio-1`, `radio-2`
-- Menu items: `item-0`, `item-1`, `item-2`
-
-### No Host Attribute = No Test IDs
-If a component doesn't have a `data-testid` attribute on its host element, no child test IDs are generated. This keeps the DOM clean when testing is not needed.
-
----
-
-## Best Practices
-
-1. **Use Descriptive Prefixes:** `data-testid="user-email"` not `data-testid="input1"`
-2. **Test User Flows:** Focus on elements users interact with
-3. **Avoid Brittle Selectors:** Use test IDs, not class names or complex CSS
-4. **Dynamic Content:** Use sanitized values or indices for lists
-5. **Accessibility First:** Combine with ARIA attributes for robust tests
+```typescript
+await page.getByTestId('country-select').selectOption('US');
+await expect(page.getByTestId('country-select')).toHaveValue('US');
+await expect(page.getByTestId('country-label')).toBeVisible();
+```

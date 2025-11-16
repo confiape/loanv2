@@ -18,7 +18,6 @@ import {
   getLabelClasses,
   generateInputTestIds,
 } from '../input/input-helpers';
-import { sanitizeTestIdValue } from '@loan/app/shared/helpers';
 
 const DATA_TESTID = new HostAttributeToken('data-testid');
 
@@ -33,7 +32,7 @@ export interface SelectOption {
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="w-full">
+    <div class="w-full" [attr.data-testid]="wrapperTestId()">
       <!-- Label -->
       @if (label()) {
         <label [for]="selectId()" [class]="labelClasses()" [attr.data-testid]="labelTestId()">
@@ -60,11 +59,7 @@ export interface SelectOption {
             <option value="" disabled selected>{{ placeholder() }}</option>
           }
           @for (option of options(); track option.value) {
-            <option
-              [value]="option.value"
-              [disabled]="option.disabled || false"
-              [attr.data-testid]="getOptionTestId(option.value)"
-            >
+            <option [value]="option.value" [disabled]="option.disabled || false">
               {{ option.label }}
             </option>
           }
@@ -84,7 +79,11 @@ export interface SelectOption {
 
       <!-- Success Message -->
       @if (successMessage() && validationState() === 'success') {
-        <p [id]="helpTextId()" class="mt-2 text-sm text-success">
+        <p
+          [id]="helpTextId()"
+          class="mt-2 text-sm text-success"
+          [attr.data-testid]="successMessageTestId()"
+        >
           <span class="font-medium">{{ successMessage() }}</span>
         </p>
       }
@@ -144,19 +143,14 @@ export class Select implements ControlValueAccessor {
 
   // Test IDs using helper
   private readonly testIds = generateInputTestIds(this.hostTestId);
+  readonly wrapperTestId = this.testIds.wrapper;
   readonly labelTestId = this.testIds.label;
   readonly helpTextTestId = this.testIds.helpText;
+  readonly successMessageTestId = this.testIds.successMessage;
   readonly errorMessageTestId = this.testIds.errorMessage;
 
   // Select-specific test ID
   readonly selectTestId = computed(() => (this.hostTestId ? `${this.hostTestId}-select` : null));
-
-  /**
-   * Get test ID for option element with sanitized value
-   */
-  protected getOptionTestId(value: string): string | null {
-    return this.hostTestId ? `${this.hostTestId}-option-${sanitizeTestIdValue(value)}` : null;
-  }
 
   // Computed classes
   readonly labelClasses = computed(() => {
