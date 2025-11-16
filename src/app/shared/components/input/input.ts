@@ -20,6 +20,7 @@ import {
   getInputClasses,
   getSuffixButtonClasses,
   generateInputTestIds,
+  PARENT_INPUT_TESTID,
 } from '@loan/app/shared/components/input/input-helpers';
 
 const DATA_TESTID = new HostAttributeToken('data-testid');
@@ -152,12 +153,19 @@ export type InputType = 'text' | 'email' | 'password' | 'number' | 'tel' | 'url'
   },
 })
 export class Input implements ControlValueAccessor {
-  // Test ID from host attribute
+  // Test ID from host attribute (when used directly: <app-input data-testid="...">)
   private readonly hostTestId = inject(DATA_TESTID, { optional: true });
 
-  protected readonly wrapperTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-wrapper` : null,
-  );
+  // Test ID from parent component (when used inside PasswordInput)
+  private readonly parentTestId = inject(PARENT_INPUT_TESTID, { optional: true, skipSelf: true });
+
+  // Effective test ID: prioritize direct host attribute over parent provider
+  private readonly effectiveTestId = computed(() => this.hostTestId ?? this.parentTestId);
+
+  protected readonly wrapperTestId = computed(() => {
+    const testId = this.effectiveTestId();
+    return testId ? `${testId}-wrapper` : null;
+  });
 
   // Input properties
   readonly label = input<string>('');
@@ -195,8 +203,8 @@ export class Input implements ControlValueAccessor {
   private onChange: (value: string) => void = () => undefined;
   protected onTouched: () => void = () => undefined;
 
-  // Test IDs using helper
-  private readonly testIds = generateInputTestIds(this.hostTestId);
+  // Test IDs using helper - use effectiveTestId instead of hostTestId
+  private readonly testIds = generateInputTestIds(this.effectiveTestId());
   readonly labelTestId = this.testIds.label;
   readonly inputTestId = this.testIds.input;
   readonly buttonTestId = this.testIds.button;

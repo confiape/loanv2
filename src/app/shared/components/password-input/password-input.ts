@@ -10,13 +10,18 @@ import {
   HostAttributeToken,
   ViewChild,
   forwardRef,
+  InjectionToken,
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { provideIcons } from '@ng-icons/core';
 import { heroEye, heroEyeSlash } from '@ng-icons/heroicons/outline';
 
 import { Input } from '@loan/app/shared/components/input/input';
-import { InputSize, ValidationState } from '@loan/app/shared/components/input/input-helpers';
+import {
+  InputSize,
+  ValidationState,
+  PARENT_INPUT_TESTID,
+} from '@loan/app/shared/components/input/input-helpers';
 
 const DATA_TESTID = new HostAttributeToken('data-testid');
 
@@ -56,13 +61,25 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
       multi: true,
     },
     provideIcons({ heroEye, heroEyeSlash }),
+    {
+      provide: PARENT_INPUT_TESTID,
+      useFactory: () => {
+        const testId = inject(DATA_TESTID, { optional: true });
+        return testId;
+      },
+    },
   ],
   host: {
     class: 'block w-full',
+    '[attr.data-testid]': 'wrapperTestId()',
   },
 })
 export class PasswordInput implements ControlValueAccessor {
   protected readonly hostTestId = inject(DATA_TESTID, { optional: true });
+
+  protected readonly wrapperTestId = computed(() =>
+    this.hostTestId ? `${this.hostTestId}-wrapper` : null,
+  );
 
   @ViewChild(Input)
   set inputComponent(component: Input | undefined) {

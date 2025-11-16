@@ -2,7 +2,12 @@
  * Shared helper functions for Input and InputNumber components
  */
 
-import { computed, Signal } from '@angular/core';
+import { computed, Signal, InjectionToken } from '@angular/core';
+
+/**
+ * Injection token to share test ID from composite components (like PasswordInput) to Input
+ */
+export const PARENT_INPUT_TESTID = new InjectionToken<string | null>('PARENT_INPUT_TESTID');
 
 export type InputSize = 'small' | 'default' | 'large';
 export type ValidationState = 'none' | 'success' | 'error';
