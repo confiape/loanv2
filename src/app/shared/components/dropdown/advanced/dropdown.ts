@@ -3,7 +3,7 @@ import {
   Component,
   ElementRef,
   HostListener,
-  HostAttributeToken,
+
   computed,
   effect,
   inject,
@@ -30,7 +30,7 @@ import {
 import { DropdownTriggerComponent } from './dropdown-trigger';
 import { DropdownPanelComponent } from './dropdown-panel';
 
-const DATA_TESTID = new HostAttributeToken('data-testid');
+
 
 @Component({
   selector: 'app-dropdown',
@@ -45,7 +45,7 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
 })
 export class Dropdown {
   private readonly host = inject(ElementRef<HTMLElement>);
-  private readonly hostTestId = inject(DATA_TESTID, { optional: true });
+  private readonly dataTestId = input<string | null>(null);
 
   // Inputs
   readonly trigger = input<DropdownTriggerConfig>({
@@ -118,12 +118,12 @@ export class Dropdown {
   readonly searchConfig = computed(() => this.search());
 
   readonly componentTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-dropdown` : null,
+    this.dataTestId() ? `${this.dataTestId()}-dropdown` : null,
   );
 
-  readonly triggerTestId = computed(() => (this.hostTestId ? `${this.hostTestId}-trigger` : null));
+  readonly triggerTestId = computed(() => (this.dataTestId() ? `${this.dataTestId()}-trigger` : null));
 
-  readonly panelTestId = computed(() => (this.hostTestId ? `${this.hostTestId}-panel` : null));
+  readonly panelTestId = computed(() => (this.dataTestId() ? `${this.dataTestId()}-panel` : null));
 
   readonly visibleSections = computed(() => {
     const sections = this.sections();

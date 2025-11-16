@@ -8,7 +8,7 @@ import {
   forwardRef,
   effect,
   inject,
-  HostAttributeToken,
+
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
@@ -21,7 +21,7 @@ import {
   generateInputTestIds,
 } from '@loan/app/shared/components/input/input-helpers';
 
-const DATA_TESTID = new HostAttributeToken('data-testid');
+
 
 @Component({
   selector: 'app-input-number',

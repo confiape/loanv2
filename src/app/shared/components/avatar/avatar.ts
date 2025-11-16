@@ -4,11 +4,11 @@ import {
   ChangeDetectionStrategy,
   computed,
   inject,
-  HostAttributeToken,
+
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-const DATA_TESTID = new HostAttributeToken('data-testid');
+
 
 export type AvatarSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 export type AvatarShape = 'full' | 'sm';
@@ -139,7 +139,7 @@ const STATUS_POSITIONS: Record<string, string> = {
 })
 export class Avatar {
   // Test ID from host
-  private readonly hostTestId = inject(DATA_TESTID, { optional: true });
+  private readonly dataTestId = input<string | null>(null);
 
   // Inputs
   readonly variant = input<AvatarVariant>('placeholder');
@@ -194,19 +194,19 @@ export class Avatar {
   });
 
   // Test ID computed values
-  readonly componentTestId = computed(() => (this.hostTestId ? `${this.hostTestId}-avatar` : null));
+  readonly componentTestId = computed(() => (this.dataTestId() ? `${this.dataTestId()}-avatar` : null));
 
-  readonly imageTestId = computed(() => (this.hostTestId ? `${this.hostTestId}-image` : null));
+  readonly imageTestId = computed(() => (this.dataTestId() ? `${this.dataTestId()}-image` : null));
 
   readonly initialsTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-initials` : null,
+    this.dataTestId() ? `${this.dataTestId()}-initials` : null,
   );
 
   readonly placeholderTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-placeholder` : null,
+    this.dataTestId() ? `${this.dataTestId()}-placeholder` : null,
   );
 
   readonly indicatorTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-indicator` : null,
+    this.dataTestId() ? `${this.dataTestId()}-indicator` : null,
   );
 }

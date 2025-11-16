@@ -1,13 +1,13 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  HostAttributeToken,
+
   inject,
   output,
 } from '@angular/core';
 import { generateModalTestIds } from './modal-helpers';
 
-const DATA_TESTID = new HostAttributeToken('data-testid');
+
 
 @Component({
   selector: 'app-modal-header',
@@ -49,8 +49,8 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ModalHeader {
-  private readonly hostTestId = inject(DATA_TESTID, { optional: true });
-  private readonly testIds = generateModalTestIds(this.hostTestId);
+  private readonly dataTestId = input<string | null>(null);
+  private readonly testIds = generateModalTestIds(this.dataTestId());
 
   readonly headerTestId = this.testIds.header;
   readonly closeButtonTestId = this.testIds.closeButton;
