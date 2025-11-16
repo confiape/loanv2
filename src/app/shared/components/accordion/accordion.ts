@@ -26,7 +26,7 @@ export interface AccordionItem {
   selector: 'app-accordion',
   standalone: true,
   imports: [CommonModule],
-  template: '<div class="space-y-2" [attr.data-testid]="hostTestId"><ng-content></ng-content></div>',
+  template: '<div class="space-y-2"><ng-content></ng-content></div>',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: 'block',
