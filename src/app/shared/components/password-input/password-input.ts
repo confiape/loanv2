@@ -26,7 +26,7 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
   imports: [Input],
   template: `
     <app-input
-      [attr.data-testid]="hostTestId"
+      [attr.data-testid]="hostTestId()"
       [label]="label()"
       [placeholder]="placeholder()"
       [disabled]="isDisabled()"
@@ -63,7 +63,9 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
   },
 })
 export class PasswordInput implements ControlValueAccessor {
-  protected readonly hostTestId = inject(DATA_TESTID, { optional: true });
+  private readonly injectedTestId = inject(DATA_TESTID, { optional: true });
+  readonly dataTestId = input<string | null>(null);
+  protected readonly hostTestId = computed(() => this.dataTestId() ?? this.injectedTestId ?? null);
 
   @ViewChild(Input)
   set inputComponent(component: Input | undefined) {

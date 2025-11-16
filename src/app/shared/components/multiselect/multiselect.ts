@@ -20,7 +20,6 @@ import {
   getLabelClasses,
   generateInputTestIds,
 } from '../input/input-helpers';
-import { sanitizeTestIdValue } from '@loan/app/shared/helpers';
 
 const DATA_TESTID = new HostAttributeToken('data-testid');
 
@@ -35,7 +34,7 @@ export interface MultiSelectOption {
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="w-full relative">
+    <div class="w-full relative" [attr.data-testid]="wrapperTestId()">
       <!-- Label -->
       @if (label()) {
         <label
@@ -190,6 +189,7 @@ export interface MultiSelectOption {
         <p
           [id]="helpTextId()"
           class="mt-2 text-sm text-success"
+          [attr.data-testid]="successMessageTestId()"
         >
           <span class="font-medium">{{ successMessage() }}</span>
         </p>
@@ -258,8 +258,10 @@ export class MultiSelect implements ControlValueAccessor {
 
   // Test IDs using helper
   private readonly testIds = generateInputTestIds(this.hostTestId);
+  readonly wrapperTestId = this.testIds.wrapper;
   readonly labelTestId = this.testIds.label;
   readonly helpTextTestId = this.testIds.helpText;
+  readonly successMessageTestId = this.testIds.successMessage;
   readonly errorMessageTestId = this.testIds.errorMessage;
 
   // MultiSelect-specific test IDs
@@ -415,6 +417,6 @@ export class MultiSelect implements ControlValueAccessor {
   }
 
   protected getOptionTestId(value: string): string | null {
-    return this.hostTestId ? `${this.hostTestId}-option-${sanitizeTestIdValue(value)}` : null;
+    return this.hostTestId ? `${this.hostTestId}-option-${value}` : null;
   }
 }

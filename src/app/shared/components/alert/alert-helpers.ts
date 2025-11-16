@@ -4,13 +4,17 @@ export type AlertVariant = 'info' | 'success' | 'error' | 'warning' | 'neutral';
 
 export interface AlertTestIds {
   alert: Signal<string | null>;
-  close: Signal<string | null>;
+  icon: Signal<string | null>;
+  closeButton: Signal<string | null>;
+  content: Signal<string | null>;
 }
 
 export function generateAlertTestIds(hostTestId: string | null): AlertTestIds {
   return {
-    alert: computed(() => hostTestId),
-    close: computed(() => (hostTestId ? `${hostTestId}-close` : null)),
+    alert: computed(() => (hostTestId ? `${hostTestId}-alert` : null)),
+    icon: computed(() => (hostTestId ? `${hostTestId}-icon` : null)),
+    closeButton: computed(() => (hostTestId ? `${hostTestId}-close` : null)),
+    content: computed(() => (hostTestId ? `${hostTestId}-content` : null)),
   };
 }
 

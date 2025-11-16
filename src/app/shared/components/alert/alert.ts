@@ -33,12 +33,12 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
     >
       <div class="flex items-center">
         @if (showIcon()) {
-          <div class="shrink-0 inline me-3" aria-hidden="true">
+          <div [attr.data-testid]="iconTestId()" class="shrink-0 inline me-3" aria-hidden="true">
             <ng-icon [name]="iconName()" size="18" [class]="iconClasses()"></ng-icon>
           </div>
         }
 
-        <div class="flex-1">
+        <div [attr.data-testid]="contentTestId()" class="flex-1">
           @if (title()) {
             <span [class]="'font-medium ' + textClasses()">{{ title() }}</span>
           }
@@ -95,7 +95,9 @@ export class Alert {
 
   private readonly testIds = generateAlertTestIds(this.hostTestId);
   readonly alertTestId = this.testIds.alert;
-  readonly closeButtonTestId = this.testIds.close;
+  readonly iconTestId = this.testIds.icon;
+  readonly closeButtonTestId = this.testIds.closeButton;
+  readonly contentTestId = this.testIds.content;
 
   protected readonly classes = computed(() => getAlertClasses(this.variant(), this.withBorder()));
 
