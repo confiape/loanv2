@@ -10,7 +10,7 @@
     <app-button
       [variant]="'solid'"
       [tone]="'primary'"
-      [attr.data-testid]="testIdPrefix() + '-btn-new'"
+      data-testid="{{testIdPrefix()}}-btn-new"
       (buttonClick)="service().onNewItem()"
     >
       <svg
@@ -57,7 +57,7 @@
       <input
         type="text"
         [value]="service().searchTerm()"
-        [attr.data-testid]="testIdPrefix() + '-search-input'"
+        data-testid="{{testIdPrefix()}}-search-input"
         class="block w-full p-2.5 ps-10 text-sm text-text-primary border border-border rounded-lg bg-bg-secondary focus:ring-accent focus:border-accent focus:outline-none transition-colors"
         placeholder="Search..."
         (input)="onSearch($any($event.target).value)"
@@ -69,7 +69,7 @@
   @if (service().hasSelection()) {
     <div
       class="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg"
-      [attr.data-testid]="testIdPrefix() + '-selected-items'"
+      data-testid="{{testIdPrefix()}}-selected-items"
     >
       <div class="flex items-center justify-between flex-wrap gap-2">
         <div class="flex items-center gap-2 flex-wrap">
@@ -84,7 +84,7 @@
               <button
                 type="button"
                 (click)="service().removeFromSelection(item.id)"
-                [attr.data-testid]="testIdPrefix() + '-btn-remove-selection-' + item.id"
+                data-testid="{{testIdPrefix()}}-btn-remove-selection-{{item.id}}"
                 class="ml-1 text-text-secondary hover:text-error focus:outline-none"
                 [attr.aria-label]="
                   'Remove ' + service().getItemDisplayName(item) + ' from selection'
@@ -112,7 +112,7 @@
           <button
             type="button"
             (click)="service().clearSelection()"
-            [attr.data-testid]="testIdPrefix() + '-btn-clear-selection'"
+            data-testid="{{testIdPrefix()}}-btn-clear-selection"
             class="text-sm text-blue-700 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300 font-medium"
           >
             Clear all
@@ -121,7 +121,7 @@
             [variant]="'solid'"
             [tone]="'danger'"
             [size]="'sm'"
-            [attr.data-testid]="testIdPrefix() + '-btn-bulk-delete'"
+            data-testid="{{testIdPrefix()}}-btn-bulk-delete"
             (buttonClick)="service().onBulkDelete()"
           >
             Delete Selected
@@ -139,7 +139,7 @@
     [actions]="tableActions()"
     [hoverable]="true"
     [sortable]="true"
-    [attr.data-testid]="testIdPrefix() + '-table'"
+    data-testid="{{testIdPrefix()}}-table"
     (selectionChange)="onSelectionChange($event)"
   />
 
@@ -163,7 +163,7 @@
           [tone]="'neutral'"
           [size]="'sm'"
           [disabled]="service().currentPage() === 1"
-          [attr.data-testid]="testIdPrefix() + '-btn-prev-page'"
+          data-testid="{{testIdPrefix()}}-btn-prev-page"
           (buttonClick)="service().onPageChange(service().currentPage() - 1)"
         >
           Previous
@@ -175,7 +175,7 @@
           [disabled]="
             service().currentPage() * service().pageSize() >= service().filteredItems().length
           "
-          [attr.data-testid]="testIdPrefix() + '-btn-next-page'"
+          data-testid="{{testIdPrefix()}}-btn-next-page"
           (buttonClick)="service().onPageChange(service().currentPage() + 1)"
         >
           Next
@@ -189,7 +189,7 @@
     <app-modal
       [size]="'2xl'"
       [dismissible]="true"
-      [attr.data-testid]="testIdPrefix() + '-modal'"
+      data-testid="{{testIdPrefix()}}-modal"
     >
       <app-modal-header (closeClick)="closeFormModal()">
         {{ modalTitle() }}
@@ -213,7 +213,7 @@
     <app-modal
       [size]="'sm'"
       [dismissible]="true"
-      [attr.data-testid]="testIdPrefix() + '-delete-modal'"
+      data-testid="{{testIdPrefix()}}-delete-modal"
     >
       <app-modal-header (closeClick)="closeDeleteModal()">
         Confirm Delete
@@ -242,7 +242,7 @@
             <app-button
               [variant]="'outline'"
               [tone]="'neutral'"
-              [attr.data-testid]="testIdPrefix() + '-btn-cancel-delete'"
+              data-testid="{{testIdPrefix()}}-btn-cancel-delete"
               (buttonClick)="closeDeleteModal()"
             >
               Cancel
@@ -250,7 +250,7 @@
             <app-button
               [variant]="'solid'"
               [tone]="'danger'"
-              [attr.data-testid]="testIdPrefix() + '-btn-confirm-delete'"
+              data-testid="{{testIdPrefix()}}-btn-confirm-delete"
               (buttonClick)="confirmDelete()"
             >
               Delete

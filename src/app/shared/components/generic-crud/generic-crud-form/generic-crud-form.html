@@ -4,7 +4,7 @@
     <div
       class="flex items-center p-4 mb-4 text-sm text-error bg-bg-error border border-error rounded-lg"
       role="alert"
-      [attr.data-testid]="testIdPrefix() + '-form-error'"
+      data-testid="{{testIdPrefix()}}-form-error"
     >
       <svg
         class="flex-shrink-0 inline w-4 h-4 me-3"
@@ -40,7 +40,7 @@
             [errorMessage]="getFieldError(field.key) || ''"
             [disabled]="field.disabled || false"
             [readonly]="field.readonly || false"
-            [attr.data-testid]="testIdPrefix() + '-input-' + field.key"
+            data-testid="{{testIdPrefix()}}-input-{{field.key}}"
           />
         }
 
@@ -55,7 +55,7 @@
             [errorMessage]="getFieldError(field.key) || ''"
             [disabled]="field.disabled || false"
             [readonly]="field.readonly || false"
-            [attr.data-testid]="testIdPrefix() + '-password-' + field.key"
+            data-testid="{{testIdPrefix()}}-password-{{field.key}}"
           />
         }
 
@@ -73,7 +73,7 @@
             [min]="$any(field.min)"
             [max]="$any(field.max)"
             [step]="field.step || 1"
-            [attr.data-testid]="testIdPrefix() + '-number-' + field.key"
+            data-testid="{{testIdPrefix()}}-number-{{field.key}}"
           />
         }
 
@@ -90,7 +90,7 @@
             [readonly]="field.readonly || false"
             [min]="$any(field.min)"
             [max]="$any(field.max)"
-            [attr.data-testid]="testIdPrefix() + '-date-' + field.key"
+            data-testid="{{testIdPrefix()}}-date-{{field.key}}"
           />
         }
 
@@ -103,7 +103,7 @@
             [validationState]="getValidationState(field.key)"
             [errorMessage]="getFieldError(field.key) || ''"
             [disabled]="field.disabled || false"
-            [attr.data-testid]="testIdPrefix() + '-checkbox-' + field.key"
+            data-testid="{{testIdPrefix()}}-checkbox-{{field.key}}"
           />
         }
 
@@ -117,7 +117,7 @@
             [errorMessage]="getFieldError(field.key) || ''"
             [disabled]="field.disabled || false || loadingOptions()"
             [options]="getOptions(field.key)"
-            [attr.data-testid]="testIdPrefix() + '-radio-' + field.key"
+            data-testid="{{testIdPrefix()}}-radio-{{field.key}}"
           />
           @if (loadingOptions()) {
             <p class="mt-1 text-sm text-accent flex items-center">
@@ -157,7 +157,7 @@
             [errorMessage]="getFieldError(field.key) || ''"
             [disabled]="field.disabled || false || loadingOptions()"
             [options]="getOptions(field.key)"
-            [attr.data-testid]="testIdPrefix() + '-select-' + field.key"
+            data-testid="{{testIdPrefix()}}-select-{{field.key}}"
           />
           @if (loadingOptions()) {
             <p class="mt-1 text-sm text-accent flex items-center">
@@ -198,7 +198,7 @@
             [disabled]="field.disabled || false || loadingOptions()"
             [options]="getOptions(field.key)"
             [searchable]="true"
-            [attr.data-testid]="testIdPrefix() + '-multiselect-' + field.key"
+            data-testid="{{testIdPrefix()}}-multiselect-{{field.key}}"
           />
           @if (loadingOptions()) {
             <p class="mt-1 text-sm text-accent flex items-center">
@@ -236,7 +236,7 @@
       type="button"
       [variant]="'outline'"
       [tone]="'neutral'"
-      [attr.data-testid]="testIdPrefix() + '-btn-cancel'"
+      data-testid="{{testIdPrefix()}}-btn-cancel"
       (buttonClick)="onCancel()"
     >
       Cancel
@@ -248,7 +248,7 @@
       [disabled]="loading() || form.invalid"
       [loading]="loading()"
       [loadingText]="'Saving...'"
-      [attr.data-testid]="testIdPrefix() + '-btn-submit'"
+      data-testid="{{testIdPrefix()}}-btn-submit"
     >
       {{ isEditMode ? 'Update' : 'Create' }}
     </app-button>
