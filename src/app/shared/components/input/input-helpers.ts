@@ -9,6 +9,12 @@ import { computed, Signal, InjectionToken } from '@angular/core';
  */
 export const PARENT_INPUT_TESTID = new InjectionToken<string | null>('PARENT_INPUT_TESTID');
 
+/**
+ * Injection token to share test ID prefix from parent containers (like GenericCrud)
+ * This allows child components to automatically generate their test IDs
+ */
+export const PARENT_TESTID_PREFIX = new InjectionToken<string | null>('PARENT_TESTID_PREFIX');
+
 export type InputSize = 'small' | 'default' | 'large';
 export type ValidationState = 'none' | 'success' | 'error';
 

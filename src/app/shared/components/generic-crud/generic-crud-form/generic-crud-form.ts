@@ -1,4 +1,4 @@
-import { Component, input, output, effect, signal, inject, OnInit } from '@angular/core';
+import { Component, input, output, effect, signal, inject, OnInit, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
@@ -19,6 +19,7 @@ import { RadioGroup } from '@loan/app/shared/components/radio/radio';
 import { DateInput } from '@loan/app/shared/components/date-input/date-input';
 import { Button } from '@loan/app/shared/components/button/button';
 import { FormFieldMetadata, SelectOption } from '@loan/app/core/models/form-metadata';
+import { TestIdPrefixService } from '@loan/app/shared/components/input/testid-prefix.service';
 
 /**
  * Generic form component that generates form fields based on metadata
@@ -50,10 +51,12 @@ import { FormFieldMetadata, SelectOption } from '@loan/app/core/models/form-meta
     DateInput,
     Button,
   ],
+  providers: [TestIdPrefixService],
   templateUrl: './generic-crud-form.html',
 })
 export class GenericCrudFormComponent implements OnInit {
   private fb = inject(FormBuilder);
+  private testIdPrefixService = inject(TestIdPrefixService);
 
   // Inputs
   item = input<Record<string, unknown> | null>(null);
@@ -61,6 +64,9 @@ export class GenericCrudFormComponent implements OnInit {
   loading = input<boolean>(false);
   error = input<string | null>(null);
   testIdPrefix = input<string>('crud');
+
+  // Regular property for template interpolation (updated via effect)
+  protected testPrefix: string = 'crud';
 
   // Outputs
   formSubmit = output<unknown>();
@@ -74,6 +80,16 @@ export class GenericCrudFormComponent implements OnInit {
   private lastItemId: string | null = null;
 
   constructor() {
+    // Update testPrefix when input changes
+    effect(() => {
+      this.testPrefix = this.testIdPrefix();
+    });
+
+    // Provide test ID prefix to child components
+    effect(() => {
+      this.testIdPrefixService.setPrefix(this.testIdPrefix());
+    });
+
     // Update form when item changes - must be in constructor for injection context
     effect(() => {
       const currentItem = this.item();

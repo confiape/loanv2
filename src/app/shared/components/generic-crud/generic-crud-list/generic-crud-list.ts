@@ -10,6 +10,7 @@ import { Button } from '@loan/app/shared/components/button/button';
 import { GenericCrudFormComponent } from '../generic-crud-form/generic-crud-form';
 import { ICrudService } from '@loan/app/core/services/crud.interface';
 import { TableColumnMetadata } from '@loan/app/core/models/form-metadata';
+import { TestIdPrefixService } from '@loan/app/shared/components/input/testid-prefix.service';
 
 /**
  * Generic CRUD list component
@@ -41,11 +42,13 @@ import { TableColumnMetadata } from '@loan/app/core/models/form-metadata';
     Button,
     GenericCrudFormComponent,
   ],
+  providers: [TestIdPrefixService],
   templateUrl: './generic-crud-list.html',
 })
 export class GenericCrudListComponent<TDto extends { id: string }> implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private testIdPrefixService = inject(TestIdPrefixService);
 
   // Expose Math for template
   protected readonly Math = Math;
@@ -55,6 +58,9 @@ export class GenericCrudListComponent<TDto extends { id: string }> implements On
 
   // Input: Test ID prefix for E2E testing (optional)
   testIdPrefix = input<string>('crud');
+
+  // Regular property for template interpolation (updated via effect)
+  protected testPrefix: string = 'crud';
 
   // Table configuration
   tableColumns = signal<TableColumn<TDto>[]>([]);
@@ -76,6 +82,16 @@ export class GenericCrudListComponent<TDto extends { id: string }> implements On
   });
 
   constructor() {
+    // Update testPrefix when input changes
+    effect(() => {
+      this.testPrefix = this.testIdPrefix();
+    });
+
+    // Provide test ID prefix to child components
+    effect(() => {
+      this.testIdPrefixService.setPrefix(this.testIdPrefix());
+    });
+
     // Watch for changes in items and route ID to open modal
     effect(() => {
       const items = this.service().items();
