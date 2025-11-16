@@ -30,9 +30,17 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
   templateUrl: './table.html',
   styleUrls: ['./table.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    class: 'block',
+    '[attr.data-testid]': 'wrapperTestId()',
+  },
 })
 export class Table<T extends Record<string, any> = Record<string, any>> {
   private readonly injectedTestId = inject(DATA_TESTID, { optional: true });
+
+  protected readonly wrapperTestId = computed(() =>
+    this.injectedTestId ? `${this.injectedTestId}-wrapper` : null,
+  );
 
   // Exponer Math para el template
   protected readonly Math = Math;
@@ -239,7 +247,6 @@ export class Table<T extends Record<string, any> = Record<string, any>> {
     const base = this.injectedTestId;
     if (!base) {
       return {
-        wrapper: null,
         search: null,
         table: null,
         selectAll: null,
@@ -248,9 +255,8 @@ export class Table<T extends Record<string, any> = Record<string, any>> {
     }
 
     return {
-      wrapper: `${base}-wrapper`,
       search: `${base}-search`,
-      table: `${base}-table`,
+      table: base, // Main element gets original ID (no suffix)
       selectAll: `${base}-select-all`,
       pagination: `${base}-pagination`,
     };
