@@ -6,11 +6,8 @@ import {
   signal,
   computed,
   effect,
-  inject,
-  HostAttributeToken,
   ViewChild,
   forwardRef,
-  InjectionToken,
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { provideIcons } from '@ng-icons/core';
@@ -22,15 +19,13 @@ import {
   ValidationState,
 } from '@loan/app/shared/components/input/input-helpers';
 
-const DATA_TESTID = new HostAttributeToken('data-testid');
-
 @Component({
   selector: 'app-password-input',
   standalone: true,
   imports: [Input],
   template: `
     <app-input
-      [testId]="testId() || hostTestId || ''"
+      [testId]="testId()"
       [label]="label()"
       [placeholder]="placeholder()"
       [disabled]="isDisabled()"
@@ -69,10 +64,9 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
 })
 export class PasswordInput implements ControlValueAccessor {
   readonly testId = input<string>('');
-  protected readonly hostTestId = inject(DATA_TESTID, { optional: true });
 
   protected readonly wrapperTestId = computed(() =>
-    (this.testId() || this.hostTestId) ? `${this.testId() || this.hostTestId}-wrapper` : null,
+    this.testId() ? `${this.testId()}-wrapper` : null,
   );
 
   @ViewChild(Input)

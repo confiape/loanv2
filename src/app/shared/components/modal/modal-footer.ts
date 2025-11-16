@@ -1,7 +1,4 @@
-import { ChangeDetectionStrategy, Component, HostAttributeToken, inject } from '@angular/core';
-import { generateModalTestIds } from './modal-helpers';
-
-const DATA_TESTID = new HostAttributeToken('data-testid');
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
   selector: 'app-modal-footer',

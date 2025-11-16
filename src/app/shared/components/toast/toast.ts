@@ -5,11 +5,7 @@ import {
   effect,
   input,
   output,
-  inject,
-  HostAttributeToken,
 } from '@angular/core';
-
-const DATA_TESTID = new HostAttributeToken('data-testid');
 
 export type ToastType = 'success' | 'error' | 'warning' | 'info';
 export type ToastPosition =
@@ -39,10 +35,10 @@ export interface Toast {
   },
 })
 export class ToastComponent {
-  private readonly hostTestId = inject(DATA_TESTID, { optional: true });
+  readonly testId = input<string>('');
 
   protected readonly wrapperTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-wrapper` : null,
+    this.testId() ? `${this.testId()}-wrapper` : null,
   );
 
   readonly toast = input.required<Toast>();
@@ -51,8 +47,11 @@ export class ToastComponent {
   readonly dismissed = output<string>();
 
   // Test IDs
-  readonly toastTestId = computed(() => (this.hostTestId ? this.hostTestId : null));
-  readonly closeTestId = computed(() => (this.hostTestId ? `${this.hostTestId}-close` : null));
+  readonly toastTestId = computed(() => this.testId() || null);
+  readonly closeTestId = computed(() => {
+    const id = this.testId();
+    return id ? `${id}-close` : null;
+  });
 
   readonly containerClasses = computed(() => {
     const type = this.toast().type;

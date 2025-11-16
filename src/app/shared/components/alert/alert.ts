@@ -1,9 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  HostAttributeToken,
   computed,
-  inject,
   input,
   output,
 } from '@angular/core';
@@ -16,9 +14,7 @@ import {
   heroXMark,
 } from '@ng-icons/heroicons/outline';
 
-import { AlertVariant, generateAlertTestIds, getAlertClasses, getAlertIcon } from './alert-helpers';
-
-const DATA_TESTID = new HostAttributeToken('data-testid');
+import { AlertVariant, getAlertClasses, getAlertIcon } from './alert-helpers';
 
 @Component({
   selector: 'app-alert',
@@ -85,10 +81,10 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
   ],
 })
 export class Alert {
-  private readonly hostTestId = inject(DATA_TESTID, { optional: true });
+  readonly testId = input<string>('');
 
   protected readonly wrapperTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-wrapper` : null,
+    this.testId() ? `${this.testId()}-wrapper` : null,
   );
 
   readonly variant = input<AlertVariant>('info');
@@ -100,9 +96,11 @@ export class Alert {
 
   readonly dismissed = output<void>();
 
-  private readonly testIds = generateAlertTestIds(this.hostTestId);
-  readonly alertTestId = this.testIds.alert;
-  readonly closeButtonTestId = this.testIds.close;
+  readonly alertTestId = computed(() => this.testId() || null);
+  readonly closeButtonTestId = computed(() => {
+    const id = this.testId();
+    return id ? `${id}-close` : null;
+  });
 
   protected readonly classes = computed(() => getAlertClasses(this.variant(), this.withBorder()));
 

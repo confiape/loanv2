@@ -8,10 +8,7 @@ import {
   DestroyRef,
   ChangeDetectionStrategy,
   ElementRef,
-  HostAttributeToken,
 } from '@angular/core';
-
-const DATA_TESTID = new HostAttributeToken('data-testid');
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { fromEvent } from 'rxjs';
 import { filter } from 'rxjs/operators';
@@ -39,10 +36,10 @@ export interface UserMenuItem {
 export class UserMenuComponent {
   private readonly elementRef = inject(ElementRef);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly hostTestId = inject(DATA_TESTID, { optional: true });
+  readonly testId = input<string>('');
 
   protected readonly wrapperTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-wrapper` : null,
+    this.testId() ? `${this.testId()}-wrapper` : null,
   );
 
   // Inputs
@@ -60,10 +57,11 @@ export class UserMenuComponent {
   readonly isOpen = signal(false);
 
   // Test IDs
-  readonly triggerTestId = computed(() => this.hostTestId);
+  readonly triggerTestId = computed(() => this.testId() || null);
 
   protected getItemTestId(index: number): string | null {
-    return this.hostTestId ? `${this.hostTestId}-item-${index}` : null;
+    const id = this.testId();
+    return id ? `${id}-item-${index}` : null;
   }
 
   // Computed signals - mejor que métodos en template

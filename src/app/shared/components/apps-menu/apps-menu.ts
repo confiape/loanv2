@@ -7,10 +7,7 @@ import {
   HostListener,
   ElementRef,
   inject,
-  HostAttributeToken,
 } from '@angular/core';
-
-const DATA_TESTID = new HostAttributeToken('data-testid');
 
 export interface AppMenuItem {
   id: string;
@@ -85,10 +82,10 @@ export interface AppMenuItem {
 })
 export class AppsMenuComponent {
   private readonly elementRef = inject(ElementRef);
-  private readonly hostTestId = inject(DATA_TESTID, { optional: true });
+  readonly testId = input<string>('');
 
   protected readonly wrapperTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-wrapper` : null,
+    this.testId() ? `${this.testId()}-wrapper` : null,
   );
 
   // Inputs
@@ -102,10 +99,11 @@ export class AppsMenuComponent {
   isOpen = signal(false);
 
   // Test IDs
-  readonly triggerTestId = computed(() => this.hostTestId);
+  readonly triggerTestId = computed(() => this.testId() || null);
 
   protected getItemTestId(index: number): string | null {
-    return this.hostTestId ? `${this.hostTestId}-item-${index}` : null;
+    const id = this.testId();
+    return id ? `${id}-item-${index}` : null;
   }
 
   // Click outside to close
