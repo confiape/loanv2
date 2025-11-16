@@ -96,63 +96,63 @@ describe('GenericCrudFormComponent - data-testid', () => {
     const formElement = fixture.nativeElement.querySelector('app-generic-crud-form');
 
     // Verify text input
-    const nameInput = formElement.querySelector('app-input[data-testid="user-form-input-name"]');
+    const nameInput = formElement.querySelector('app-input[data-testid="user-form-input-name-wrapper"]');
     expect(nameInput).toBeTruthy();
 
     // Verify email input
-    const emailInput = formElement.querySelector('app-input[data-testid="user-form-input-email"]');
+    const emailInput = formElement.querySelector('app-input[data-testid="user-form-input-email-wrapper"]');
     expect(emailInput).toBeTruthy();
 
     // Verify password input
     const passwordInput = formElement.querySelector(
-      'app-password-input[data-testid="user-form-password-password"]'
+      'app-password-input[data-testid="user-form-password-password-wrapper"]'
     );
     expect(passwordInput).toBeTruthy();
 
     // Verify number input
     const ageInput = formElement.querySelector(
-      'app-input-number[data-testid="user-form-number-age"]'
+      'app-input-number[data-testid="user-form-number-age-wrapper"]'
     );
     expect(ageInput).toBeTruthy();
 
     // Verify date input
     const birthdateInput = formElement.querySelector(
-      'app-date-input[data-testid="user-form-date-birthdate"]'
+      'app-date-input[data-testid="user-form-date-birthdate-wrapper"]'
     );
     expect(birthdateInput).toBeTruthy();
 
     // Verify checkbox
     const activeCheckbox = formElement.querySelector(
-      'app-checkbox[data-testid="user-form-checkbox-active"]'
+      'app-checkbox[data-testid="user-form-checkbox-active-wrapper"]'
     );
     expect(activeCheckbox).toBeTruthy();
 
     // Verify radio group
     const genderRadio = formElement.querySelector(
-      'app-radio-group[data-testid="user-form-radio-gender"]'
+      'app-radio-group[data-testid="user-form-radio-gender-wrapper"]'
     );
     expect(genderRadio).toBeTruthy();
 
     // Verify select
     const countrySelect = formElement.querySelector(
-      'app-select[data-testid="user-form-select-country"]'
+      'app-select[data-testid="user-form-select-country-wrapper"]'
     );
     expect(countrySelect).toBeTruthy();
 
     // Verify multiselect
     const languagesMultiselect = formElement.querySelector(
-      'app-multiselect[data-testid="user-form-multiselect-languages"]'
+      'app-multiselect[data-testid="user-form-multiselect-languages-wrapper"]'
     );
     expect(languagesMultiselect).toBeTruthy();
 
     // Verify form buttons
     const cancelButton = formElement.querySelector(
-      'app-button[data-testid="user-form-btn-cancel"]'
+      'app-button[data-testid="user-form-btn-cancel-wrapper"]'
     );
     expect(cancelButton).toBeTruthy();
 
     const submitButton = formElement.querySelector(
-      'app-button[data-testid="user-form-btn-submit"]'
+      'app-button[data-testid="user-form-btn-submit-wrapper"]'
     );
     expect(submitButton).toBeTruthy();
   });
@@ -235,7 +235,7 @@ describe('GenericCrudFormComponent - data-testid', () => {
 
     // Verify submit button exists and is in loading state
     const submitButton = formElement.querySelector(
-      'app-button[data-testid="user-form-btn-submit"]'
+      'app-button[data-testid="user-form-btn-submit-wrapper"]'
     );
     expect(submitButton).toBeTruthy();
     // Button component should handle loading state internally
@@ -285,7 +285,7 @@ describe('GenericCrudFormComponent - data-testid', () => {
 
     // Fill in the form
     const nameInputHost = formElement.querySelector(
-      'app-input[data-testid="user-form-input-name"]'
+      'app-input[data-testid="user-form-input-name-wrapper"]'
     );
     const nameInput = nameInputHost.querySelector('input');
     nameInput.value = 'John Doe';
@@ -346,7 +346,7 @@ describe('GenericCrudFormComponent - data-testid', () => {
 
     // Click cancel button
     const cancelButton = formElement.querySelector(
-      'app-button[data-testid="user-form-btn-cancel"]'
+      'app-button[data-testid="user-form-btn-cancel-wrapper"]'
     );
     cancelButton.click();
     fixture.detectChanges();

@@ -186,7 +186,7 @@ describe('GenericCrudListComponent - data-testid', () => {
     const listElement = fixture.nativeElement.querySelector('app-generic-crud-list');
 
     // Verify new button
-    const newButton = listElement.querySelector('app-button[data-testid="users-btn-new"]');
+    const newButton = listElement.querySelector('app-button[data-testid="users-btn-new-wrapper"]');
     expect(newButton).toBeTruthy();
 
     // Verify search input
@@ -194,7 +194,7 @@ describe('GenericCrudListComponent - data-testid', () => {
     expect(searchInput).toBeTruthy();
 
     // Verify table
-    const table = listElement.querySelector('app-table[data-testid="users-table"]');
+    const table = listElement.querySelector('app-table[data-testid="users-table-wrapper"]');
     expect(table).toBeTruthy();
   });
 
@@ -248,7 +248,7 @@ describe('GenericCrudListComponent - data-testid', () => {
 
     // Verify bulk delete button
     const bulkDeleteButton = listElement.querySelector(
-      'app-button[data-testid="users-btn-bulk-delete"]'
+      'app-button[data-testid="users-btn-bulk-delete-wrapper"]'
     );
     expect(bulkDeleteButton).toBeTruthy();
   });
@@ -286,11 +286,11 @@ describe('GenericCrudListComponent - data-testid', () => {
     const listElement = fixture.nativeElement.querySelector('app-generic-crud-list');
 
     // Verify previous page button
-    const prevButton = listElement.querySelector('app-button[data-testid="users-btn-prev-page"]');
+    const prevButton = listElement.querySelector('app-button[data-testid="users-btn-prev-page-wrapper"]');
     expect(prevButton).toBeTruthy();
 
     // Verify next page button
-    const nextButton = listElement.querySelector('app-button[data-testid="users-btn-next-page"]');
+    const nextButton = listElement.querySelector('app-button[data-testid="users-btn-next-page-wrapper"]');
     expect(nextButton).toBeTruthy();
   });
 
@@ -322,7 +322,7 @@ describe('GenericCrudListComponent - data-testid', () => {
     const listElement = fixture.nativeElement.querySelector('app-generic-crud-list');
 
     // Verify modal
-    const modal = listElement.querySelector('app-modal[data-testid="users-modal"]');
+    const modal = listElement.querySelector('app-modal[data-testid="users-modal-wrapper"]');
     expect(modal).toBeTruthy();
 
     // Verify form inside modal
@@ -359,18 +359,18 @@ describe('GenericCrudListComponent - data-testid', () => {
     const listElement = fixture.nativeElement.querySelector('app-generic-crud-list');
 
     // Verify delete modal
-    const deleteModal = listElement.querySelector('app-modal[data-testid="users-delete-modal"]');
+    const deleteModal = listElement.querySelector('app-modal[data-testid="users-delete-modal-wrapper"]');
     expect(deleteModal).toBeTruthy();
 
     // Verify cancel button
     const cancelButton = listElement.querySelector(
-      'app-button[data-testid="users-btn-cancel-delete"]'
+      'app-button[data-testid="users-btn-cancel-delete-wrapper"]'
     );
     expect(cancelButton).toBeTruthy();
 
     // Verify confirm button
     const confirmButton = listElement.querySelector(
-      'app-button[data-testid="users-btn-confirm-delete"]'
+      'app-button[data-testid="users-btn-confirm-delete-wrapper"]'
     );
     expect(confirmButton).toBeTruthy();
   });
@@ -400,7 +400,7 @@ describe('GenericCrudListComponent - data-testid', () => {
     const listElement = fixture.nativeElement.querySelector('app-generic-crud-list');
 
     // Click new button
-    const newButton = listElement.querySelector('app-button[data-testid="users-btn-new"]');
+    const newButton = listElement.querySelector('app-button[data-testid="users-btn-new-wrapper"]');
     newButton.click();
     fixture.detectChanges();
 
