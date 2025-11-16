@@ -5,7 +5,7 @@ import { UserMenuComponent, UserMenuItem } from './user-menu';
 
 // Wrapper component for testing data-testid attribute
 @Component({
-  template: `<app-user-menu data-testid="test-user-menu" [menuItems]="mockMenuItems"></app-user-menu>`,
+  template: `<app-user-menu [testId]="'test-user-menu'" [menuItems]="mockMenuItems"></app-user-menu>`,
   standalone: true,
   imports: [UserMenuComponent],
 })
@@ -253,17 +253,17 @@ describe('UserMenuComponent', () => {
       // Verify item test IDs with indices on correct element types (button or anchor elements with role="menuitem")
       const allMenuItems = hostElement.querySelectorAll('[role="menuitem"]');
 
-      const item0 = Array.from(allMenuItems || []).find(el =>
+      const item0 = (Array.from(allMenuItems || []).find(el =>
         el.getAttribute('data-testid') === 'test-user-menu-item-0'
       );
       expect(item0).toBeTruthy();
 
-      const item1 = Array.from(allMenuItems || []).find(el =>
+      const item1 = (Array.from(allMenuItems || []).find(el =>
         el.getAttribute('data-testid') === 'test-user-menu-item-1'
       );
       expect(item1).toBeTruthy();
 
-      const item2 = Array.from(allMenuItems || []).find(el =>
+      const item2 = (Array.from(allMenuItems || []).find(el =>
         el.getAttribute('data-testid') === 'test-user-menu-item-2'
       );
       expect(item2).toBeTruthy();

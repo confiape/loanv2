@@ -93,10 +93,10 @@ describe('Button', () => {
     expect(button.className).toContain('w-full');
   });
 
-  describe('data-testid support', () => {
-    it('should render test IDs with wrapper pattern when data-testid attribute is provided', async () => {
+  describe('testId input support', () => {
+    it('should render test IDs with wrapper pattern when testId input is provided', async () => {
       @Component({
-        template: `<app-button data-testid="test-button">Click me</app-button>`,
+        template: `<app-button [testId]="'test-button'">Click me</app-button>`,
         standalone: true,
         imports: [Button],
       })
@@ -124,7 +124,7 @@ describe('Button', () => {
 
     it('should render spinner test ID with wrapper pattern when loading', async () => {
       @Component({
-        template: `<app-button data-testid="test-button" [loading]="true">Submit</app-button>`,
+        template: `<app-button [testId]="'test-button'" [loading]="true">Submit</app-button>`,
         standalone: true,
         imports: [Button],
       })
@@ -150,7 +150,7 @@ describe('Button', () => {
       expect(spinnerSpan?.getAttribute('data-testid')).toBe('test-button-spinner');
     });
 
-    it('should not render test IDs when data-testid attribute is not provided', async () => {
+    it('should not render test IDs when testId input is not provided', async () => {
       TestBed.resetTestingModule();
       await TestBed.configureTestingModule({
         imports: [Button],

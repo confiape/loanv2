@@ -140,7 +140,7 @@ describe('Modal with data', () => {
 describe('Modal > data-testid support', () => {
   it('should render test IDs with wrapper pattern when data-testid attribute is provided', async () => {
     @Component({
-      template: `<app-modal data-testid="test-modal">Modal content</app-modal>`,
+      template: `<app-modal [testId]="'test-modal'">Modal content</app-modal>`,
       standalone: true,
       imports: [Modal, DialogModule],
     })

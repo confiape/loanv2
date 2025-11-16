@@ -194,7 +194,7 @@ describe('Accordion', () => {
     it('should render test IDs with wrapper pattern when data-testid attribute is provided', async () => {
       @Component({
         template: `
-          <app-accordion data-testid="test-accordion">
+          <app-accordion [testId]="'test-accordion'">
             <app-accordion-item [id]="'shipping'">
               <app-accordion-item-header>Shipping Info</app-accordion-item-header>
               <app-accordion-item-content>Shipping content</app-accordion-item-content>
@@ -236,24 +236,24 @@ describe('Accordion', () => {
 
       // Verify trigger test IDs on correct element types (buttons)
       const allButtons = hostElement.querySelectorAll('button');
-      const shippingTrigger = Array.from(allButtons).find(b =>
+      const shippingTrigger = (Array.from(allButtons) as Element[]).find(b =>
         b.getAttribute('data-testid') === 'test-accordion-trigger-shipping'
       );
       expect(shippingTrigger).toBeTruthy();
 
-      const paymentTrigger = Array.from(allButtons).find(b =>
+      const paymentTrigger = (Array.from(allButtons) as Element[]).find(b =>
         b.getAttribute('data-testid') === 'test-accordion-trigger-payment'
       );
       expect(paymentTrigger).toBeTruthy();
 
       // Verify panel test IDs on correct element types (divs)
       const allDivs = hostElement.querySelectorAll('div');
-      const shippingPanel = Array.from(allDivs).find(d =>
+      const shippingPanel = (Array.from(allDivs) as Element[]).find(d =>
         d.getAttribute('data-testid') === 'test-accordion-panel-shipping'
       );
       expect(shippingPanel).toBeTruthy();
 
-      const paymentPanel = Array.from(allDivs).find(d =>
+      const paymentPanel = (Array.from(allDivs) as Element[]).find(d =>
         d.getAttribute('data-testid') === 'test-accordion-panel-payment'
       );
       expect(paymentPanel).toBeTruthy();

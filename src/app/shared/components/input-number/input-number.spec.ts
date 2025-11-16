@@ -285,7 +285,7 @@ describe('InputNumber', () => {
     it('should render test IDs with wrapper pattern when data-testid attribute is provided', async () => {
       @Component({
         template: `<app-input-number
-          data-testid="test-input"
+          [testId]="'test-input'"
           label="Quantity"
           helpText="Enter quantity"
           [showButtons]="true"
@@ -323,18 +323,18 @@ describe('InputNumber', () => {
 
       // Verify increment and decrement buttons on correct element types
       const buttons = hostElement.querySelectorAll('button');
-      const incrementButton = Array.from(buttons).find(b =>
+      const incrementButton = (Array.from(buttons) as Element[]).find(b =>
         b.getAttribute('data-testid') === 'test-input-increment'
       );
       expect(incrementButton).toBeTruthy();
 
-      const decrementButton = Array.from(buttons).find(b =>
+      const decrementButton = (Array.from(buttons) as Element[]).find(b =>
         b.getAttribute('data-testid') === 'test-input-decrement'
       );
       expect(decrementButton).toBeTruthy();
 
       const helpTextParagraphs = hostElement.querySelectorAll('p');
-      const helpText = Array.from(helpTextParagraphs).find(p =>
+      const helpText = (Array.from(helpTextParagraphs) as Element[]).find(p =>
         p.getAttribute('data-testid') === 'test-input-help-text'
       );
       expect(helpText).toBeTruthy();
@@ -343,7 +343,7 @@ describe('InputNumber', () => {
     it('should render error message test ID with wrapper pattern when validation state is error', async () => {
       @Component({
         template: `<app-input-number
-          data-testid="test-input"
+          [testId]="'test-input'"
           validationState="error"
           errorMessage="This field is required"
         ></app-input-number>`,
@@ -369,7 +369,7 @@ describe('InputNumber', () => {
 
       // Verify error message test ID on correct element type
       const errorParagraphs = hostElement.querySelectorAll('p');
-      const errorMessage = Array.from(errorParagraphs).find(p =>
+      const errorMessage = (Array.from(errorParagraphs) as Element[]).find(p =>
         p.getAttribute('data-testid') === 'test-input-error-message'
       );
       expect(errorMessage).toBeTruthy();

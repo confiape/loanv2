@@ -4,7 +4,7 @@ import { ButtonGroupButton } from './button-group-button';
 
 // Wrapper component for testing data-testid attribute
 @Component({
-  template: `<app-button-group-button data-testid="test-button">Test</app-button-group-button>`,
+  template: `<app-button-group-button [testId]="'test-button'">Test</app-button-group-button>`,
   standalone: true,
   imports: [ButtonGroupButton],
 })

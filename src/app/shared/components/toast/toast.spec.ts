@@ -272,7 +272,7 @@ describe('ToastComponent', () => {
       const toast = createMockToast({ dismissible: true });
 
       @Component({
-        template: `<app-toast data-testid="test-toast" [toast]="toast"></app-toast>`,
+        template: `<app-toast [testId]="'test-toast'" [toast]="toast"></app-toast>`,
         standalone: true,
         imports: [ToastComponent],
       })

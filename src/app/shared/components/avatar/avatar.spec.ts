@@ -74,7 +74,7 @@ async function renderAvatar(options: RenderOptions = {}): Promise<RenderResult> 
   imports: [Avatar],
   template: `
     <app-avatar
-      data-testid="user-avatar"
+      [testId]="'user-avatar'"
       [variant]="variant"
       [imageSrc]="imageSrc"
       [statusIndicator]="statusIndicator"

@@ -125,7 +125,7 @@ describe('Alert', () => {
   describe('data-testid support', () => {
     it('should render test IDs with wrapper pattern when data-testid attribute is provided', async () => {
       @Component({
-        template: `<app-alert data-testid="test-alert" title="Info">Message content</app-alert>`,
+        template: `<app-alert [testId]="'test-alert'" title="Info">Message content</app-alert>`,
         standalone: true,
         imports: [Alert],
       })
@@ -153,7 +153,7 @@ describe('Alert', () => {
 
     it('should render close button test ID with wrapper pattern when dismissible', async () => {
       @Component({
-        template: `<app-alert data-testid="test-alert" [dismissible]="true">Message</app-alert>`,
+        template: `<app-alert [testId]="'test-alert'" [dismissible]="true">Message</app-alert>`,
         standalone: true,
         imports: [Alert],
       })

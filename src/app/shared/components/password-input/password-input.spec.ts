@@ -5,7 +5,7 @@ import { PasswordInput } from '@loan/app/shared/components/password-input/passwo
 
 // Wrapper component for testing data-testid attribute
 @Component({
-  template: `<app-password-input data-testid="pwd-field"></app-password-input>`,
+  template: `<app-password-input [testId]="'pwd-field'"></app-password-input>`,
   standalone: true,
   imports: [PasswordInput],
 })

@@ -67,7 +67,7 @@ describe('ModalHeader', () => {
   describe('data-testid support', () => {
     it('should render test IDs with wrapper pattern when data-testid attribute is provided', async () => {
       @Component({
-        template: `<app-modal-header data-testid="test-header">Modal Title</app-modal-header>`,
+        template: `<app-modal-header [testId]="'test-header'">Modal Title</app-modal-header>`,
         standalone: true,
         imports: [ModalHeader],
       })

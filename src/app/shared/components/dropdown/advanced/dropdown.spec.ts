@@ -6,7 +6,7 @@ import { DropdownSection } from './dropdown.types';
 
 // Wrapper component for testing data-testid attribute
 @Component({
-  template: `<app-dropdown data-testid="test-dropdown" [sections]="sections" [search]="{ placeholder: 'Search' }"></app-dropdown>`,
+  template: `<app-dropdown [testId]="'test-dropdown'" [sections]="sections" [search]="{ placeholder: 'Search' }"></app-dropdown>`,
   standalone: true,
   imports: [Dropdown],
 })
@@ -183,7 +183,7 @@ describe('Dropdown', () => {
 
       // Verify panel test ID on correct element type (div container)
       const panelDivs = wrapperOverlayElement.querySelectorAll('div');
-      const panel = Array.from(panelDivs).find(d =>
+      const panel = (Array.from(panelDivs).find(d =>
         d.getAttribute('data-testid') === 'test-dropdown-panel'
       );
       expect(panel).toBeTruthy();

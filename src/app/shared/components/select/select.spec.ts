@@ -220,7 +220,7 @@ describe('Select', () => {
     it('should render test IDs with wrapper pattern when data-testid attribute is provided', async () => {
       @Component({
         template: `<app-select
-          data-testid="test-select"
+          [testId]="'test-select'"
           label="Country"
           helpText="Select your country"
           [options]="options"
@@ -259,19 +259,19 @@ describe('Select', () => {
       expect(label?.getAttribute('data-testid')).toBe('test-select-label');
 
       const helpTextParagraphs = hostElement.querySelectorAll('p');
-      const helpText = Array.from(helpTextParagraphs).find(p =>
+      const helpText = (Array.from(helpTextParagraphs).find(p =>
         p.getAttribute('data-testid') === 'test-select-help-text'
       );
       expect(helpText).toBeTruthy();
 
       // Verify option test IDs with sanitized values on correct element types
       const options = hostElement.querySelectorAll('option');
-      const optionUS = Array.from(options).find(o =>
+      const optionUS = (Array.from(options).find(o =>
         o.getAttribute('data-testid') === 'test-select-option-us'
       );
       expect(optionUS).toBeTruthy();
 
-      const optionNewYork = Array.from(options).find(o =>
+      const optionNewYork = (Array.from(options).find(o =>
         o.getAttribute('data-testid') === 'test-select-option-new-york'
       );
       expect(optionNewYork).toBeTruthy();
@@ -280,7 +280,7 @@ describe('Select', () => {
     it('should render error message test ID with wrapper pattern when validation state is error', async () => {
       @Component({
         template: `<app-select
-          data-testid="test-select"
+          [testId]="'test-select'"
           validationState="error"
           errorMessage="This field is required"
         ></app-select>`,
@@ -306,7 +306,7 @@ describe('Select', () => {
 
       // Verify error message test ID on correct element type
       const errorParagraphs = hostElement.querySelectorAll('p');
-      const errorMessage = Array.from(errorParagraphs).find(p =>
+      const errorMessage = (Array.from(errorParagraphs).find(p =>
         p.getAttribute('data-testid') === 'test-select-error-message'
       );
       expect(errorMessage).toBeTruthy();

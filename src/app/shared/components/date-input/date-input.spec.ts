@@ -171,7 +171,7 @@ describe('DateInput', () => {
     it('should render test IDs with wrapper pattern when data-testid attribute is provided', async () => {
       @Component({
         template: `<app-date-input
-          data-testid="test-date"
+          [testId]="'test-date'"
           label="Birth Date"
           helpText="Enter your birth date"
         ></app-date-input>`,
@@ -204,7 +204,7 @@ describe('DateInput', () => {
       expect(label?.getAttribute('data-testid')).toBe('test-date-label');
 
       const helpTextParagraphs = hostElement.querySelectorAll('p');
-      const helpText = Array.from(helpTextParagraphs).find(p =>
+      const helpText = (Array.from(helpTextParagraphs) as Element[]).find(p =>
         p.getAttribute('data-testid') === 'test-date-help-text'
       );
       expect(helpText).toBeTruthy();
@@ -213,7 +213,7 @@ describe('DateInput', () => {
     it('should render error message test ID with wrapper pattern when validation state is error', async () => {
       @Component({
         template: `<app-date-input
-          data-testid="test-date"
+          [testId]="'test-date'"
           validationState="error"
           errorMessage="Invalid date"
         ></app-date-input>`,
@@ -239,7 +239,7 @@ describe('DateInput', () => {
 
       // Verify error message test ID on correct element type
       const errorParagraphs = hostElement.querySelectorAll('p');
-      const errorMessage = Array.from(errorParagraphs).find(p =>
+      const errorMessage = (Array.from(errorParagraphs) as Element[]).find(p =>
         p.getAttribute('data-testid') === 'test-date-error-message'
       );
       expect(errorMessage).toBeTruthy();

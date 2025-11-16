@@ -246,7 +246,7 @@ describe('Input', () => {
     it('should render test IDs with wrapper pattern when data-testid attribute is provided', async () => {
       @Component({
         template: `<app-input
-          data-testid="test-input"
+          [testId]="'test-input'"
           label="Username"
           helpText="Enter your username"
           [suffixButton]="true"
@@ -284,7 +284,7 @@ describe('Input', () => {
       expect(button?.getAttribute('data-testid')).toBe('test-input-button');
 
       const helpTextParagraphs = hostElement.querySelectorAll('p');
-      const helpText = Array.from(helpTextParagraphs).find(p =>
+      const helpText = (Array.from(helpTextParagraphs).find(p =>
         p.getAttribute('data-testid') === 'test-input-help-text'
       );
       expect(helpText).toBeTruthy();
@@ -293,7 +293,7 @@ describe('Input', () => {
     it('should render error message test ID with wrapper pattern when validation state is error', async () => {
       @Component({
         template: `<app-input
-          data-testid="test-input"
+          [testId]="'test-input'"
           validationState="error"
           errorMessage="This field is required"
         ></app-input>`,
@@ -319,7 +319,7 @@ describe('Input', () => {
 
       // Verify error message test ID on correct element type
       const errorParagraphs = hostElement.querySelectorAll('p');
-      const errorMessage = Array.from(errorParagraphs).find(p =>
+      const errorMessage = (Array.from(errorParagraphs).find(p =>
         p.getAttribute('data-testid') === 'test-input-error-message'
       );
       expect(errorMessage).toBeTruthy();

@@ -5,7 +5,7 @@ import { AppsMenuComponent, AppMenuItem } from '@loan/app/shared/components/apps
 
 // Wrapper component for testing data-testid attribute
 @Component({
-  template: `<app-apps-menu data-testid="test-apps" [apps]="mockApps"></app-apps-menu>`,
+  template: `<app-apps-menu [testId]="'test-apps'" [apps]="mockApps"></app-apps-menu>`,
   standalone: true,
   imports: [AppsMenuComponent],
 })
@@ -596,17 +596,17 @@ describe('AppsMenuComponent', () => {
       // Verify item test IDs with indices on correct element types (anchor links)
       const allLinks = hostElement.querySelectorAll('a[role="menuitem"]');
 
-      const item0 = Array.from(allLinks || []).find(a =>
+      const item0 = (Array.from(allLinks || []) as Element[]).find(a =>
         a.getAttribute('data-testid') === 'test-apps-item-0'
       );
       expect(item0).toBeTruthy();
 
-      const item1 = Array.from(allLinks || []).find(a =>
+      const item1 = (Array.from(allLinks || []) as Element[]).find(a =>
         a.getAttribute('data-testid') === 'test-apps-item-1'
       );
       expect(item1).toBeTruthy();
 
-      const item2 = Array.from(allLinks || []).find(a =>
+      const item2 = (Array.from(allLinks || []) as Element[]).find(a =>
         a.getAttribute('data-testid') === 'test-apps-item-2'
       );
       expect(item2).toBeTruthy();

@@ -45,7 +45,7 @@ describe('Checkbox', () => {
     fixture.componentRef.setInput('disabled', true);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    const checkbox = compiled.querySelector('input[type="checkbox"]');
+    const checkbox = compiled.querySelector('input[type="checkbox"]') as HTMLInputElement;
     expect(checkbox?.disabled).toBe(true);
   });
 
@@ -145,7 +145,7 @@ describe('Checkbox', () => {
     it('should render test IDs with wrapper pattern when data-testid attribute is provided', async () => {
       @Component({
         template: `<app-checkbox
-          data-testid="test-checkbox"
+          [testId]="'test-checkbox'"
           label="Accept Terms"
           helpText="You must accept"
         ></app-checkbox>`,
@@ -178,7 +178,7 @@ describe('Checkbox', () => {
       expect(label?.getAttribute('data-testid')).toBe('test-checkbox-label');
 
       const helpTextParagraphs = hostElement.querySelectorAll('p');
-      const helpText = Array.from(helpTextParagraphs).find(p =>
+      const helpText = (Array.from(helpTextParagraphs) as Element[]).find(p =>
         p.getAttribute('data-testid') === 'test-checkbox-help-text'
       );
       expect(helpText).toBeTruthy();
@@ -187,7 +187,7 @@ describe('Checkbox', () => {
     it('should render error message test ID with wrapper pattern when validation state is error', async () => {
       @Component({
         template: `<app-checkbox
-          data-testid="test-checkbox"
+          [testId]="'test-checkbox'"
           validationState="error"
           errorMessage="Required field"
         ></app-checkbox>`,
@@ -213,7 +213,7 @@ describe('Checkbox', () => {
 
       // Verify error message test ID on correct element type
       const errorParagraphs = hostElement.querySelectorAll('p');
-      const errorMessage = Array.from(errorParagraphs).find(p =>
+      const errorMessage = (Array.from(errorParagraphs) as Element[]).find(p =>
         p.getAttribute('data-testid') === 'test-checkbox-error-message'
       );
       expect(errorMessage).toBeTruthy();
