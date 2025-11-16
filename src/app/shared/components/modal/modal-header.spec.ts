@@ -85,9 +85,13 @@ describe('ModalHeader', () => {
 
       const modalHeaderComponent = wrapperFixture.nativeElement.querySelector('app-modal-header');
 
-      // Verify header and close button test IDs
-      expect(modalHeaderComponent.querySelector('[data-testid="test-modal-header"]')).toBeTruthy();
-      expect(modalHeaderComponent.querySelector('[data-testid="test-modal-close"]')).toBeTruthy();
+      // Verify header test ID on correct element type (div container)
+      const headerDiv = modalHeaderComponent.querySelector('div.flex.items-center.justify-between');
+      expect(headerDiv?.getAttribute('data-testid')).toBe('test-modal-header');
+
+      // Verify close button test ID on correct element type
+      const closeButton = modalHeaderComponent.querySelector('button[aria-label="Close modal"]');
+      expect(closeButton?.getAttribute('data-testid')).toBe('test-modal-close');
     });
 
     it('should not render test IDs when data-testid attribute is not provided', async () => {

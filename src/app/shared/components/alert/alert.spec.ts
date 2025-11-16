@@ -168,8 +168,9 @@ describe('Alert', () => {
 
       const alertComponent = wrapperFixture.nativeElement.querySelector('app-alert');
 
-      // Verify close button test ID
-      expect(alertComponent.querySelector('[data-testid="test-alert-close"]')).toBeTruthy();
+      // Verify close button test ID on correct element type
+      const closeButton = alertComponent.querySelector('button[aria-label="Close alert"]');
+      expect(closeButton?.getAttribute('data-testid')).toBe('test-alert-close');
     });
 
     it('should not render test IDs when data-testid attribute is not provided', async () => {

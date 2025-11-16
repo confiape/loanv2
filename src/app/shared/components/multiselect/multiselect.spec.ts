@@ -150,24 +150,51 @@ describe('MultiSelect', () => {
 
       const multiselectComponent = wrapperFixture.nativeElement.querySelector('app-multiselect');
 
-      // Verify label, button, and help text test IDs
-      expect(multiselectComponent.querySelector('[data-testid="test-multiselect-label"]')).toBeTruthy();
-      expect(multiselectComponent.querySelector('[data-testid="test-multiselect-button"]')).toBeTruthy();
-      expect(multiselectComponent.querySelector('[data-testid="test-multiselect-help-text"]')).toBeTruthy();
+      // Verify label test ID on correct element type
+      const label = multiselectComponent.querySelector('label');
+      expect(label?.getAttribute('data-testid')).toBe('test-multiselect-label');
+
+      // Verify button test ID on correct element type
+      const button = multiselectComponent.querySelector('button');
+      expect(button?.getAttribute('data-testid')).toBe('test-multiselect-button');
+
+      // Verify help text test ID on correct element type
+      const helpTextParagraphs = multiselectComponent.querySelectorAll('p');
+      const helpText = Array.from(helpTextParagraphs).find(p =>
+        p.getAttribute('data-testid') === 'test-multiselect-help-text'
+      );
+      expect(helpText).toBeTruthy();
 
       // Open dropdown to verify dropdown and option test IDs
-      const button = multiselectComponent.querySelector('button') as HTMLButtonElement;
-      button.click();
+      button?.click();
       wrapperFixture.detectChanges();
       await wrapperFixture.whenStable();
 
-      // Verify dropdown test ID
-      expect(multiselectComponent.querySelector('[data-testid="test-multiselect-dropdown"]')).toBeTruthy();
+      // Verify dropdown test ID on correct element type (div container)
+      const dropdownDivs = multiselectComponent.querySelectorAll('div');
+      const dropdown = Array.from(dropdownDivs).find(d =>
+        d.getAttribute('data-testid') === 'test-multiselect-dropdown'
+      );
+      expect(dropdown).toBeTruthy();
 
-      // Verify option test IDs with sanitized values
-      expect(multiselectComponent.querySelector('[data-testid="test-multiselect-option-us"]')).toBeTruthy();
-      expect(multiselectComponent.querySelector('[data-testid="test-multiselect-option-new-york"]')).toBeTruthy();
-      expect(multiselectComponent.querySelector('[data-testid="test-multiselect-option-ca"]')).toBeTruthy();
+      // Verify option test IDs with sanitized values on correct element types
+      // Options are rendered as checkbox input elements
+      const optionInputs = multiselectComponent.querySelectorAll('input[type="checkbox"]');
+
+      const optionUS = Array.from(optionInputs).find(input =>
+        input.getAttribute('data-testid') === 'test-multiselect-option-us'
+      );
+      expect(optionUS).toBeTruthy();
+
+      const optionNewYork = Array.from(optionInputs).find(input =>
+        input.getAttribute('data-testid') === 'test-multiselect-option-new-york'
+      );
+      expect(optionNewYork).toBeTruthy();
+
+      const optionCA = Array.from(optionInputs).find(input =>
+        input.getAttribute('data-testid') === 'test-multiselect-option-ca'
+      );
+      expect(optionCA).toBeTruthy();
     });
 
     it('should render error message test ID when validation state is error', async () => {
@@ -197,8 +224,12 @@ describe('MultiSelect', () => {
 
       const multiselectComponent = wrapperFixture.nativeElement.querySelector('app-multiselect');
 
-      // Verify error message test ID
-      expect(multiselectComponent.querySelector('[data-testid="test-multiselect-error-message"]')).toBeTruthy();
+      // Verify error message test ID on correct element type
+      const errorParagraphs = multiselectComponent.querySelectorAll('p');
+      const errorMessage = Array.from(errorParagraphs).find(p =>
+        p.getAttribute('data-testid') === 'test-multiselect-error-message'
+      );
+      expect(errorMessage).toBeTruthy();
     });
 
     it('should not render test IDs when data-testid attribute is not provided', async () => {

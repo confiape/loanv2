@@ -166,10 +166,18 @@ describe('Checkbox', () => {
 
       const checkboxComponent = wrapperFixture.nativeElement.querySelector('app-checkbox');
 
-      // Verify all expected test IDs (note: input, not checkbox)
-      expect(checkboxComponent.querySelector('[data-testid="test-checkbox-input"]')).toBeTruthy();
-      expect(checkboxComponent.querySelector('[data-testid="test-checkbox-label"]')).toBeTruthy();
-      expect(checkboxComponent.querySelector('[data-testid="test-checkbox-help-text"]')).toBeTruthy();
+      // Verify all expected test IDs on correct element types
+      const input = checkboxComponent.querySelector('input[type="checkbox"]');
+      expect(input?.getAttribute('data-testid')).toBe('test-checkbox-input');
+
+      const label = checkboxComponent.querySelector('label');
+      expect(label?.getAttribute('data-testid')).toBe('test-checkbox-label');
+
+      const helpTextParagraphs = checkboxComponent.querySelectorAll('p');
+      const helpText = Array.from(helpTextParagraphs).find(p =>
+        p.getAttribute('data-testid') === 'test-checkbox-help-text'
+      );
+      expect(helpText).toBeTruthy();
     });
 
     it('should render error message test ID when validation state is error', async () => {
@@ -196,8 +204,12 @@ describe('Checkbox', () => {
 
       const checkboxComponent = wrapperFixture.nativeElement.querySelector('app-checkbox');
 
-      // Verify error message test ID
-      expect(checkboxComponent.querySelector('[data-testid="test-checkbox-error-message"]')).toBeTruthy();
+      // Verify error message test ID on correct element type
+      const errorParagraphs = checkboxComponent.querySelectorAll('p');
+      const errorMessage = Array.from(errorParagraphs).find(p =>
+        p.getAttribute('data-testid') === 'test-checkbox-error-message'
+      );
+      expect(errorMessage).toBeTruthy();
     });
 
     it('should not render test IDs when data-testid attribute is not provided', async () => {

@@ -292,10 +292,13 @@ describe('ToastComponent', () => {
 
       const toastComponent = wrapperFixture.nativeElement.querySelector('app-toast');
 
-      // Verify toast test ID on host
-      expect(toastComponent.querySelector('[data-testid="test-toast"]')).toBeTruthy();
-      // Verify close button test ID
-      expect(toastComponent.querySelector('[data-testid="test-toast-close"]')).toBeTruthy();
+      // Verify toast test ID on correct element type (div with role="alert")
+      const toastContainer = toastComponent.querySelector('div[role="alert"]');
+      expect(toastContainer?.getAttribute('data-testid')).toBe('test-toast');
+
+      // Verify close button test ID on correct element type
+      const closeButton = toastComponent.querySelector('button[aria-label="Close"]');
+      expect(closeButton?.getAttribute('data-testid')).toBe('test-toast-close');
     });
 
     it('should not render test IDs when data-testid attribute is not provided', async () => {

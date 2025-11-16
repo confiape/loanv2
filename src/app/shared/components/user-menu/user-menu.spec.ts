@@ -239,7 +239,7 @@ describe('UserMenuComponent', () => {
       const userMenu = wrapperFixture.nativeElement.querySelector('app-user-menu');
       const button = userMenu?.querySelector('button');
 
-      // Verify trigger test ID
+      // Verify trigger test ID on correct element type (button)
       expect(button?.getAttribute('data-testid')).toBe('test-user-menu-trigger');
 
       // Open menu by clicking button to verify item test IDs
@@ -247,10 +247,23 @@ describe('UserMenuComponent', () => {
       wrapperFixture.detectChanges();
       await wrapperFixture.whenStable();
 
-      // Verify item test IDs with indices
-      expect(userMenu?.querySelector('[data-testid="test-user-menu-item-0"]')).toBeTruthy();
-      expect(userMenu?.querySelector('[data-testid="test-user-menu-item-1"]')).toBeTruthy();
-      expect(userMenu?.querySelector('[data-testid="test-user-menu-item-2"]')).toBeTruthy();
+      // Verify item test IDs with indices on correct element types (button or anchor elements with role="menuitem")
+      const allMenuItems = userMenu?.querySelectorAll('[role="menuitem"]');
+
+      const item0 = Array.from(allMenuItems || []).find(el =>
+        el.getAttribute('data-testid') === 'test-user-menu-item-0'
+      );
+      expect(item0).toBeTruthy();
+
+      const item1 = Array.from(allMenuItems || []).find(el =>
+        el.getAttribute('data-testid') === 'test-user-menu-item-1'
+      );
+      expect(item1).toBeTruthy();
+
+      const item2 = Array.from(allMenuItems || []).find(el =>
+        el.getAttribute('data-testid') === 'test-user-menu-item-2'
+      );
+      expect(item2).toBeTruthy();
     });
 
     it('should not render test IDs when data-testid attribute is not provided', async () => {

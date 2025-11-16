@@ -203,18 +203,42 @@ describe('RadioGroup', () => {
 
       const radioComponent = wrapperFixture.nativeElement.querySelector('app-radio-group');
 
-      // Verify group label and help text test IDs
-      expect(radioComponent.querySelector('[data-testid="test-radio-label"]')).toBeTruthy();
-      expect(radioComponent.querySelector('[data-testid="test-radio-help-text"]')).toBeTruthy();
+      // Verify group label test ID on correct element type
+      // Note: The group label is the first label, other labels are for individual options
+      const allLabels = radioComponent.querySelectorAll('label');
+      const groupLabel = Array.from(allLabels).find(l =>
+        l.getAttribute('data-testid') === 'test-radio-label'
+      );
+      expect(groupLabel).toBeTruthy();
 
-      // Verify radio and label test IDs with indices
-      expect(radioComponent.querySelector('[data-testid="test-radio-radio-0"]')).toBeTruthy();
-      expect(radioComponent.querySelector('[data-testid="test-radio-radio-1"]')).toBeTruthy();
-      expect(radioComponent.querySelector('[data-testid="test-radio-radio-2"]')).toBeTruthy();
+      // Verify help text test ID on correct element type
+      const helpTextParagraphs = radioComponent.querySelectorAll('p');
+      const helpText = Array.from(helpTextParagraphs).find(p =>
+        p.getAttribute('data-testid') === 'test-radio-help-text'
+      );
+      expect(helpText).toBeTruthy();
 
-      expect(radioComponent.querySelector('[data-testid="test-radio-label-0"]')).toBeTruthy();
-      expect(radioComponent.querySelector('[data-testid="test-radio-label-1"]')).toBeTruthy();
-      expect(radioComponent.querySelector('[data-testid="test-radio-label-2"]')).toBeTruthy();
+      // Verify radio input test IDs with indices on correct element types
+      const radioInputs = radioComponent.querySelectorAll('input[type="radio"]');
+      expect(radioInputs[0]?.getAttribute('data-testid')).toBe('test-radio-radio-0');
+      expect(radioInputs[1]?.getAttribute('data-testid')).toBe('test-radio-radio-1');
+      expect(radioInputs[2]?.getAttribute('data-testid')).toBe('test-radio-radio-2');
+
+      // Verify label test IDs with indices on correct element types
+      const optionLabel0 = Array.from(allLabels).find(l =>
+        l.getAttribute('data-testid') === 'test-radio-label-0'
+      );
+      expect(optionLabel0).toBeTruthy();
+
+      const optionLabel1 = Array.from(allLabels).find(l =>
+        l.getAttribute('data-testid') === 'test-radio-label-1'
+      );
+      expect(optionLabel1).toBeTruthy();
+
+      const optionLabel2 = Array.from(allLabels).find(l =>
+        l.getAttribute('data-testid') === 'test-radio-label-2'
+      );
+      expect(optionLabel2).toBeTruthy();
     });
 
     it('should render error message test ID when validation state is error', async () => {
@@ -244,8 +268,12 @@ describe('RadioGroup', () => {
 
       const radioComponent = wrapperFixture.nativeElement.querySelector('app-radio-group');
 
-      // Verify error message test ID
-      expect(radioComponent.querySelector('[data-testid="test-radio-error-message"]')).toBeTruthy();
+      // Verify error message test ID on correct element type
+      const errorParagraphs = radioComponent.querySelectorAll('p');
+      const errorMessage = Array.from(errorParagraphs).find(p =>
+        p.getAttribute('data-testid') === 'test-radio-error-message'
+      );
+      expect(errorMessage).toBeTruthy();
     });
 
     it('should not render test IDs when data-testid attribute is not provided', async () => {

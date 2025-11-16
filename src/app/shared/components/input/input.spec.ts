@@ -269,11 +269,21 @@ describe('Input', () => {
 
       const inputComponent = wrapperFixture.nativeElement.querySelector('app-input');
 
-      // Verify all expected test IDs
-      expect(inputComponent.querySelector('[data-testid="test-input-label"]')).toBeTruthy();
-      expect(inputComponent.querySelector('[data-testid="test-input-input"]')).toBeTruthy();
-      expect(inputComponent.querySelector('[data-testid="test-input-button"]')).toBeTruthy();
-      expect(inputComponent.querySelector('[data-testid="test-input-help-text"]')).toBeTruthy();
+      // Verify all expected test IDs on correct element types
+      const label = inputComponent.querySelector('label');
+      expect(label?.getAttribute('data-testid')).toBe('test-input-label');
+
+      const input = inputComponent.querySelector('input');
+      expect(input?.getAttribute('data-testid')).toBe('test-input-input');
+
+      const button = inputComponent.querySelector('button');
+      expect(button?.getAttribute('data-testid')).toBe('test-input-button');
+
+      const helpTextParagraphs = inputComponent.querySelectorAll('p');
+      const helpText = Array.from(helpTextParagraphs).find(p =>
+        p.getAttribute('data-testid') === 'test-input-help-text'
+      );
+      expect(helpText).toBeTruthy();
     });
 
     it('should render error message test ID when validation state is error', async () => {
@@ -300,8 +310,12 @@ describe('Input', () => {
 
       const inputComponent = wrapperFixture.nativeElement.querySelector('app-input');
 
-      // Verify error message test ID
-      expect(inputComponent.querySelector('[data-testid="test-input-error-message"]')).toBeTruthy();
+      // Verify error message test ID on correct element type
+      const errorParagraphs = inputComponent.querySelectorAll('p');
+      const errorMessage = Array.from(errorParagraphs).find(p =>
+        p.getAttribute('data-testid') === 'test-input-error-message'
+      );
+      expect(errorMessage).toBeTruthy();
     });
 
     it('should not render test IDs when data-testid attribute is not provided', async () => {

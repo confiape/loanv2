@@ -582,7 +582,7 @@ describe('AppsMenuComponent', () => {
       const appsMenu = wrapperFixture.nativeElement.querySelector('app-apps-menu');
       const button = appsMenu?.querySelector('button');
 
-      // Verify trigger test ID
+      // Verify trigger test ID on correct element type (button)
       expect(button?.getAttribute('data-testid')).toBe('test-apps-trigger');
 
       // Open menu by clicking button to verify item test IDs
@@ -590,10 +590,23 @@ describe('AppsMenuComponent', () => {
       wrapperFixture.detectChanges();
       await wrapperFixture.whenStable();
 
-      // Verify item test IDs with indices
-      expect(appsMenu?.querySelector('[data-testid="test-apps-item-0"]')).toBeTruthy();
-      expect(appsMenu?.querySelector('[data-testid="test-apps-item-1"]')).toBeTruthy();
-      expect(appsMenu?.querySelector('[data-testid="test-apps-item-2"]')).toBeTruthy();
+      // Verify item test IDs with indices on correct element types (anchor links)
+      const allLinks = appsMenu?.querySelectorAll('a[role="menuitem"]');
+
+      const item0 = Array.from(allLinks || []).find(a =>
+        a.getAttribute('data-testid') === 'test-apps-item-0'
+      );
+      expect(item0).toBeTruthy();
+
+      const item1 = Array.from(allLinks || []).find(a =>
+        a.getAttribute('data-testid') === 'test-apps-item-1'
+      );
+      expect(item1).toBeTruthy();
+
+      const item2 = Array.from(allLinks || []).find(a =>
+        a.getAttribute('data-testid') === 'test-apps-item-2'
+      );
+      expect(item2).toBeTruthy();
     });
 
     it('should not render test IDs when data-testid attribute is not provided', async () => {

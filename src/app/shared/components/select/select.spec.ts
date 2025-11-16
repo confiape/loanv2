@@ -247,14 +247,30 @@ describe('Select', () => {
 
       const selectComponent = wrapperFixture.nativeElement.querySelector('app-select');
 
-      // Verify all expected test IDs
-      expect(selectComponent.querySelector('[data-testid="test-select-label"]')).toBeTruthy();
-      expect(selectComponent.querySelector('[data-testid="test-select-select"]')).toBeTruthy();
-      expect(selectComponent.querySelector('[data-testid="test-select-help-text"]')).toBeTruthy();
+      // Verify all expected test IDs on correct element types
+      const label = selectComponent.querySelector('label');
+      expect(label?.getAttribute('data-testid')).toBe('test-select-label');
 
-      // Verify option test IDs with sanitized values
-      expect(selectComponent.querySelector('[data-testid="test-select-option-us"]')).toBeTruthy();
-      expect(selectComponent.querySelector('[data-testid="test-select-option-new-york"]')).toBeTruthy();
+      const select = selectComponent.querySelector('select');
+      expect(select?.getAttribute('data-testid')).toBe('test-select-select');
+
+      const helpTextParagraphs = selectComponent.querySelectorAll('p');
+      const helpText = Array.from(helpTextParagraphs).find(p =>
+        p.getAttribute('data-testid') === 'test-select-help-text'
+      );
+      expect(helpText).toBeTruthy();
+
+      // Verify option test IDs with sanitized values on correct element types
+      const options = selectComponent.querySelectorAll('option');
+      const optionUS = Array.from(options).find(o =>
+        o.getAttribute('data-testid') === 'test-select-option-us'
+      );
+      expect(optionUS).toBeTruthy();
+
+      const optionNewYork = Array.from(options).find(o =>
+        o.getAttribute('data-testid') === 'test-select-option-new-york'
+      );
+      expect(optionNewYork).toBeTruthy();
     });
 
     it('should render error message test ID when validation state is error', async () => {
@@ -281,8 +297,12 @@ describe('Select', () => {
 
       const selectComponent = wrapperFixture.nativeElement.querySelector('app-select');
 
-      // Verify error message test ID
-      expect(selectComponent.querySelector('[data-testid="test-select-error-message"]')).toBeTruthy();
+      // Verify error message test ID on correct element type
+      const errorParagraphs = selectComponent.querySelectorAll('p');
+      const errorMessage = Array.from(errorParagraphs).find(p =>
+        p.getAttribute('data-testid') === 'test-select-error-message'
+      );
+      expect(errorMessage).toBeTruthy();
     });
 
     it('should not render test IDs when data-testid attribute is not provided', async () => {

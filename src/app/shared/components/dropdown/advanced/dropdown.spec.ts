@@ -178,13 +178,16 @@ describe('Dropdown', () => {
       wrapperFixture.detectChanges();
       await wrapperFixture.whenStable();
 
-      // Verify panel test ID
-      const panel = wrapperOverlayElement.querySelector('[data-testid="test-dropdown-panel"]');
+      // Verify panel test ID on correct element type (div container)
+      const panelDivs = wrapperOverlayElement.querySelectorAll('div');
+      const panel = Array.from(panelDivs).find(d =>
+        d.getAttribute('data-testid') === 'test-dropdown-panel'
+      );
       expect(panel).toBeTruthy();
 
-      // Verify search input test ID
-      const searchInput = wrapperOverlayElement.querySelector('[data-testid="test-dropdown-search"]');
-      expect(searchInput).toBeTruthy();
+      // Verify search input test ID on correct element type
+      const searchInput = wrapperOverlayElement.querySelector('input[type="text"]');
+      expect(searchInput?.getAttribute('data-testid')).toBe('test-dropdown-search');
 
       wrapperOverlayContainer.ngOnDestroy();
     });

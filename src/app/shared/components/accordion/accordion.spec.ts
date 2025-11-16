@@ -227,11 +227,29 @@ describe('Accordion', () => {
 
       const accordionElement = wrapperFixture.nativeElement.querySelector('app-accordion');
 
-      // Verify trigger and panel test IDs with the item IDs
-      expect(accordionElement.querySelector('[data-testid="test-accordion-trigger-shipping"]')).toBeTruthy();
-      expect(accordionElement.querySelector('[data-testid="test-accordion-panel-shipping"]')).toBeTruthy();
-      expect(accordionElement.querySelector('[data-testid="test-accordion-trigger-payment"]')).toBeTruthy();
-      expect(accordionElement.querySelector('[data-testid="test-accordion-panel-payment"]')).toBeTruthy();
+      // Verify trigger test IDs on correct element types (buttons)
+      const allButtons = accordionElement.querySelectorAll('button');
+      const shippingTrigger = Array.from(allButtons).find(b =>
+        b.getAttribute('data-testid') === 'test-accordion-trigger-shipping'
+      );
+      expect(shippingTrigger).toBeTruthy();
+
+      const paymentTrigger = Array.from(allButtons).find(b =>
+        b.getAttribute('data-testid') === 'test-accordion-trigger-payment'
+      );
+      expect(paymentTrigger).toBeTruthy();
+
+      // Verify panel test IDs on correct element types (divs)
+      const allDivs = accordionElement.querySelectorAll('div');
+      const shippingPanel = Array.from(allDivs).find(d =>
+        d.getAttribute('data-testid') === 'test-accordion-panel-shipping'
+      );
+      expect(shippingPanel).toBeTruthy();
+
+      const paymentPanel = Array.from(allDivs).find(d =>
+        d.getAttribute('data-testid') === 'test-accordion-panel-payment'
+      );
+      expect(paymentPanel).toBeTruthy();
     });
 
     it('should not render test IDs when data-testid attribute is not provided', async () => {

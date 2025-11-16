@@ -139,8 +139,9 @@ describe('Button', () => {
 
       const buttonComponent = wrapperFixture.nativeElement.querySelector('app-button');
 
-      // Verify spinner test ID
-      expect(buttonComponent.querySelector('[data-testid="test-button-spinner"]')).toBeTruthy();
+      // Verify spinner test ID on correct element type (span containing the SVG)
+      const spinnerSpan = buttonComponent.querySelector('span[aria-live="polite"]');
+      expect(spinnerSpan?.getAttribute('data-testid')).toBe('test-button-spinner');
     });
 
     it('should not render test IDs when data-testid attribute is not provided', async () => {

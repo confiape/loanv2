@@ -164,8 +164,9 @@ describe('Modal > data-testid support', () => {
 
     const modalComponent = wrapperFixture.nativeElement.querySelector('app-modal');
 
-    // Verify overlay test ID
-    expect(modalComponent.querySelector('[data-testid="test-modal-overlay"]')).toBeTruthy();
+    // Verify overlay test ID on correct element type (button with bg-overlay class)
+    const overlayButton = modalComponent.querySelector('button.bg-overlay');
+    expect(overlayButton?.getAttribute('data-testid')).toBe('test-modal-overlay');
   });
 
   it('should not render test IDs when data-testid attribute is not provided', async () => {

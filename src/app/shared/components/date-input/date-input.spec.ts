@@ -192,10 +192,18 @@ describe('DateInput', () => {
 
       const dateInputComponent = wrapperFixture.nativeElement.querySelector('app-date-input');
 
-      // Verify all expected test IDs
-      expect(dateInputComponent.querySelector('[data-testid="test-date-label"]')).toBeTruthy();
-      expect(dateInputComponent.querySelector('[data-testid="test-date-input"]')).toBeTruthy();
-      expect(dateInputComponent.querySelector('[data-testid="test-date-help-text"]')).toBeTruthy();
+      // Verify all expected test IDs on correct element types
+      const label = dateInputComponent.querySelector('label');
+      expect(label?.getAttribute('data-testid')).toBe('test-date-label');
+
+      const input = dateInputComponent.querySelector('input');
+      expect(input?.getAttribute('data-testid')).toBe('test-date-input');
+
+      const helpTextParagraphs = dateInputComponent.querySelectorAll('p');
+      const helpText = Array.from(helpTextParagraphs).find(p =>
+        p.getAttribute('data-testid') === 'test-date-help-text'
+      );
+      expect(helpText).toBeTruthy();
     });
 
     it('should render error message test ID when validation state is error', async () => {
@@ -222,8 +230,12 @@ describe('DateInput', () => {
 
       const dateInputComponent = wrapperFixture.nativeElement.querySelector('app-date-input');
 
-      // Verify error message test ID
-      expect(dateInputComponent.querySelector('[data-testid="test-date-error-message"]')).toBeTruthy();
+      // Verify error message test ID on correct element type
+      const errorParagraphs = dateInputComponent.querySelectorAll('p');
+      const errorMessage = Array.from(errorParagraphs).find(p =>
+        p.getAttribute('data-testid') === 'test-date-error-message'
+      );
+      expect(errorMessage).toBeTruthy();
     });
 
     it('should not render test IDs when data-testid attribute is not provided', async () => {
