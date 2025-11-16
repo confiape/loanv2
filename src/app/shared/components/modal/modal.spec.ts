@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideZonelessChangeDetection } from '@angular/core';
+import { Component, provideZonelessChangeDetection } from '@angular/core';
 import { DialogModule, DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { Modal, ModalData } from './modal';
 import { vi } from 'vitest';
@@ -134,5 +134,59 @@ describe('Modal with data', () => {
   it('should set aria-labelledby when title is provided', () => {
     const content = fixture.nativeElement.querySelector('[role="dialog"]');
     expect(content.getAttribute('aria-labelledby')).toBe('modal-title');
+  });
+});
+
+describe('Modal > data-testid support', () => {
+  it('should render overlay test ID when data-testid attribute is provided', async () => {
+    @Component({
+      template: `<app-modal data-testid="test-modal">Modal content</app-modal>`,
+      standalone: true,
+      imports: [Modal, DialogModule],
+    })
+    class TestWrapper {}
+
+    const mockDialogRef = { close: vi.fn() };
+
+    TestBed.resetTestingModule();
+    await TestBed.configureTestingModule({
+      imports: [TestWrapper, DialogModule],
+      providers: [
+        provideZonelessChangeDetection(),
+        { provide: DialogRef, useValue: mockDialogRef },
+        { provide: DIALOG_DATA, useValue: null },
+      ],
+    }).compileComponents();
+
+    const wrapperFixture = TestBed.createComponent(TestWrapper);
+    wrapperFixture.detectChanges();
+    await wrapperFixture.whenStable();
+
+    const modalComponent = wrapperFixture.nativeElement.querySelector('app-modal');
+
+    // Verify overlay test ID
+    expect(modalComponent.querySelector('[data-testid="test-modal-overlay"]')).toBeTruthy();
+  });
+
+  it('should not render test IDs when data-testid attribute is not provided', async () => {
+    const mockDialogRef = { close: vi.fn() };
+
+    TestBed.resetTestingModule();
+    await TestBed.configureTestingModule({
+      imports: [Modal, DialogModule],
+      providers: [
+        provideZonelessChangeDetection(),
+        { provide: DialogRef, useValue: mockDialogRef },
+        { provide: DIALOG_DATA, useValue: null },
+      ],
+    }).compileComponents();
+
+    const standaloneFixture = TestBed.createComponent(Modal);
+    standaloneFixture.detectChanges();
+
+    // Verify NO test IDs are rendered
+    const element = standaloneFixture.nativeElement;
+    const elementsWithTestId = element.querySelectorAll('[data-testid]');
+    expect(elementsWithTestId.length).toBe(0);
   });
 });

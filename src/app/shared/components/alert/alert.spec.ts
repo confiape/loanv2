@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideZonelessChangeDetection } from '@angular/core';
+import { Component, provideZonelessChangeDetection } from '@angular/core';
 import { Alert } from './alert';
 
 describe('Alert', () => {
@@ -120,5 +120,73 @@ describe('Alert', () => {
   it('should hide icon aria from screen readers', () => {
     const iconContainer = fixture.nativeElement.querySelector('.shrink-0');
     expect(iconContainer.getAttribute('aria-hidden')).toBe('true');
+  });
+
+  describe('data-testid support', () => {
+    it('should render test ID on alert when data-testid attribute is provided', async () => {
+      @Component({
+        template: `<app-alert data-testid="test-alert" title="Info">Message content</app-alert>`,
+        standalone: true,
+        imports: [Alert],
+      })
+      class TestWrapper {}
+
+      TestBed.resetTestingModule();
+      await TestBed.configureTestingModule({
+        imports: [TestWrapper],
+        providers: [provideZonelessChangeDetection()],
+      }).compileComponents();
+
+      const wrapperFixture = TestBed.createComponent(TestWrapper);
+      wrapperFixture.detectChanges();
+      await wrapperFixture.whenStable();
+
+      const alertComponent = wrapperFixture.nativeElement.querySelector('app-alert');
+      const alertDiv = alertComponent.querySelector('[role="alert"]');
+
+      // Verify alert has the test ID
+      expect(alertDiv.getAttribute('data-testid')).toBe('test-alert');
+    });
+
+    it('should render close button test ID when dismissible', async () => {
+      @Component({
+        template: `<app-alert data-testid="test-alert" [dismissible]="true">Message</app-alert>`,
+        standalone: true,
+        imports: [Alert],
+      })
+      class TestWrapper {}
+
+      TestBed.resetTestingModule();
+      await TestBed.configureTestingModule({
+        imports: [TestWrapper],
+        providers: [provideZonelessChangeDetection()],
+      }).compileComponents();
+
+      const wrapperFixture = TestBed.createComponent(TestWrapper);
+      wrapperFixture.detectChanges();
+      await wrapperFixture.whenStable();
+
+      const alertComponent = wrapperFixture.nativeElement.querySelector('app-alert');
+
+      // Verify close button test ID
+      expect(alertComponent.querySelector('[data-testid="test-alert-close"]')).toBeTruthy();
+    });
+
+    it('should not render test IDs when data-testid attribute is not provided', async () => {
+      TestBed.resetTestingModule();
+      await TestBed.configureTestingModule({
+        imports: [Alert],
+        providers: [provideZonelessChangeDetection()],
+      }).compileComponents();
+
+      const standaloneFixture = TestBed.createComponent(Alert);
+      standaloneFixture.componentRef.setInput('dismissible', true);
+      standaloneFixture.detectChanges();
+
+      // Verify NO test IDs are rendered
+      const element = standaloneFixture.nativeElement;
+      const elementsWithTestId = element.querySelectorAll('[data-testid]');
+      expect(elementsWithTestId.length).toBe(0);
+    });
   });
 });

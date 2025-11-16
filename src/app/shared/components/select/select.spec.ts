@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Component, provideZonelessChangeDetection } from '@angular/core';
 import { Select } from './select';
-import { provideZonelessChangeDetection } from '@angular/core';
 
 describe('Select', () => {
   let component: Select;
@@ -213,6 +213,97 @@ describe('Select', () => {
       select.dispatchEvent(new Event('blur'));
 
       expect(touched).toBe(true);
+    });
+  });
+
+  describe('data-testid support', () => {
+    it('should render test IDs when data-testid attribute is provided', async () => {
+      @Component({
+        template: `<app-select
+          data-testid="test-select"
+          label="Country"
+          helpText="Select your country"
+          [options]="options"
+        ></app-select>`,
+        standalone: true,
+        imports: [Select],
+      })
+      class TestWrapper {
+        options = [
+          { value: 'US', label: 'United States' },
+          { value: 'New York', label: 'New York' },
+        ];
+      }
+
+      TestBed.resetTestingModule();
+      await TestBed.configureTestingModule({
+        imports: [TestWrapper],
+        providers: [provideZonelessChangeDetection()],
+      }).compileComponents();
+
+      const wrapperFixture = TestBed.createComponent(TestWrapper);
+      wrapperFixture.detectChanges();
+      await wrapperFixture.whenStable();
+
+      const selectComponent = wrapperFixture.nativeElement.querySelector('app-select');
+
+      // Verify all expected test IDs
+      expect(selectComponent.querySelector('[data-testid="test-select-label"]')).toBeTruthy();
+      expect(selectComponent.querySelector('[data-testid="test-select-select"]')).toBeTruthy();
+      expect(selectComponent.querySelector('[data-testid="test-select-help-text"]')).toBeTruthy();
+
+      // Verify option test IDs with sanitized values
+      expect(selectComponent.querySelector('[data-testid="test-select-option-us"]')).toBeTruthy();
+      expect(selectComponent.querySelector('[data-testid="test-select-option-new-york"]')).toBeTruthy();
+    });
+
+    it('should render error message test ID when validation state is error', async () => {
+      @Component({
+        template: `<app-select
+          data-testid="test-select"
+          validationState="error"
+          errorMessage="This field is required"
+        ></app-select>`,
+        standalone: true,
+        imports: [Select],
+      })
+      class TestWrapper {}
+
+      TestBed.resetTestingModule();
+      await TestBed.configureTestingModule({
+        imports: [TestWrapper],
+        providers: [provideZonelessChangeDetection()],
+      }).compileComponents();
+
+      const wrapperFixture = TestBed.createComponent(TestWrapper);
+      wrapperFixture.detectChanges();
+      await wrapperFixture.whenStable();
+
+      const selectComponent = wrapperFixture.nativeElement.querySelector('app-select');
+
+      // Verify error message test ID
+      expect(selectComponent.querySelector('[data-testid="test-select-error-message"]')).toBeTruthy();
+    });
+
+    it('should not render test IDs when data-testid attribute is not provided', async () => {
+      TestBed.resetTestingModule();
+      await TestBed.configureTestingModule({
+        imports: [Select],
+        providers: [provideZonelessChangeDetection()],
+      }).compileComponents();
+
+      const standaloneFixture = TestBed.createComponent(Select);
+      standaloneFixture.componentRef.setInput('label', 'Test Label');
+      standaloneFixture.componentRef.setInput('helpText', 'Help text');
+      standaloneFixture.componentRef.setInput('options', [
+        { value: 'US', label: 'United States' },
+      ]);
+      standaloneFixture.detectChanges();
+
+      // Verify NO test IDs are rendered
+      const element = standaloneFixture.nativeElement;
+      const elementsWithTestId = element.querySelectorAll('[data-testid]');
+      expect(elementsWithTestId.length).toBe(0);
     });
   });
 });

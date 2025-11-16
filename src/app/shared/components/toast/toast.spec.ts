@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideZonelessChangeDetection } from '@angular/core';
+import { Component, provideZonelessChangeDetection } from '@angular/core';
 import { ToastComponent, Toast, ToastPosition } from './toast';
 
 type ToastInputs = Partial<{
@@ -264,6 +264,47 @@ describe('ToastComponent', () => {
 
       const closeButton = host.querySelector('button[aria-label="Close"]');
       expect(closeButton?.getAttribute('aria-label')).toBe('Close');
+    });
+  });
+
+  describe('data-testid support', () => {
+    it('should render test IDs when data-testid attribute is provided', async () => {
+      const toast = createMockToast({ dismissible: true });
+
+      @Component({
+        template: `<app-toast data-testid="test-toast" [toast]="toast"></app-toast>`,
+        standalone: true,
+        imports: [ToastComponent],
+      })
+      class TestWrapper {
+        toast = toast;
+      }
+
+      TestBed.resetTestingModule();
+      await TestBed.configureTestingModule({
+        imports: [TestWrapper],
+        providers: [provideZonelessChangeDetection()],
+      }).compileComponents();
+
+      const wrapperFixture = TestBed.createComponent(TestWrapper);
+      wrapperFixture.detectChanges();
+      await wrapperFixture.whenStable();
+
+      const toastComponent = wrapperFixture.nativeElement.querySelector('app-toast');
+
+      // Verify toast test ID on host
+      expect(toastComponent.querySelector('[data-testid="test-toast"]')).toBeTruthy();
+      // Verify close button test ID
+      expect(toastComponent.querySelector('[data-testid="test-toast-close"]')).toBeTruthy();
+    });
+
+    it('should not render test IDs when data-testid attribute is not provided', async () => {
+      const toast = createMockToast({ dismissible: true });
+      const { host } = await renderToast({ inputs: { toast } });
+
+      // Verify NO test IDs are rendered
+      const elementsWithTestId = host.querySelectorAll('[data-testid]');
+      expect(elementsWithTestId.length).toBe(0);
     });
   });
 });

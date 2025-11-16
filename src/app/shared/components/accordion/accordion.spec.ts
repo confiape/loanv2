@@ -189,4 +189,85 @@ describe('Accordion', () => {
       expect(accordionComponent.isExpanded('item2')).toBe(true);
     });
   });
+
+  describe('data-testid support', () => {
+    it('should render test IDs when data-testid attribute is provided', async () => {
+      @Component({
+        template: `
+          <app-accordion data-testid="test-accordion">
+            <app-accordion-item [id]="'shipping'">
+              <app-accordion-item-header>Shipping Info</app-accordion-item-header>
+              <app-accordion-item-content>Shipping content</app-accordion-item-content>
+            </app-accordion-item>
+            <app-accordion-item [id]="'payment'">
+              <app-accordion-item-header>Payment</app-accordion-item-header>
+              <app-accordion-item-content>Payment content</app-accordion-item-content>
+            </app-accordion-item>
+          </app-accordion>
+        `,
+        standalone: true,
+        imports: [
+          Accordion,
+          AccordionItemComponent,
+          AccordionItemHeaderComponent,
+          AccordionItemContentComponent,
+        ],
+      })
+      class TestWrapper {}
+
+      TestBed.resetTestingModule();
+      await TestBed.configureTestingModule({
+        imports: [TestWrapper],
+        providers: [provideZonelessChangeDetection()],
+      }).compileComponents();
+
+      const wrapperFixture = TestBed.createComponent(TestWrapper);
+      wrapperFixture.detectChanges();
+      await wrapperFixture.whenStable();
+
+      const accordionElement = wrapperFixture.nativeElement.querySelector('app-accordion');
+
+      // Verify trigger and panel test IDs with the item IDs
+      expect(accordionElement.querySelector('[data-testid="test-accordion-trigger-shipping"]')).toBeTruthy();
+      expect(accordionElement.querySelector('[data-testid="test-accordion-panel-shipping"]')).toBeTruthy();
+      expect(accordionElement.querySelector('[data-testid="test-accordion-trigger-payment"]')).toBeTruthy();
+      expect(accordionElement.querySelector('[data-testid="test-accordion-panel-payment"]')).toBeTruthy();
+    });
+
+    it('should not render test IDs when data-testid attribute is not provided', async () => {
+      @Component({
+        template: `
+          <app-accordion>
+            <app-accordion-item [id]="'item1'">
+              <app-accordion-item-header>Header</app-accordion-item-header>
+              <app-accordion-item-content>Content</app-accordion-item-content>
+            </app-accordion-item>
+          </app-accordion>
+        `,
+        standalone: true,
+        imports: [
+          Accordion,
+          AccordionItemComponent,
+          AccordionItemHeaderComponent,
+          AccordionItemContentComponent,
+        ],
+      })
+      class TestWrapper {}
+
+      TestBed.resetTestingModule();
+      await TestBed.configureTestingModule({
+        imports: [TestWrapper],
+        providers: [provideZonelessChangeDetection()],
+      }).compileComponents();
+
+      const wrapperFixture = TestBed.createComponent(TestWrapper);
+      wrapperFixture.detectChanges();
+      await wrapperFixture.whenStable();
+
+      // Verify NO test IDs are rendered
+      const element = wrapperFixture.nativeElement;
+      const elementsWithTestId = element.querySelectorAll('[data-testid]');
+      expect(elementsWithTestId.length).toBe(0);
+    });
+  });
 });

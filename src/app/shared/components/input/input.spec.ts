@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideZonelessChangeDetection } from '@angular/core';
+import { Component, provideZonelessChangeDetection } from '@angular/core';
 import { provideIcons } from '@ng-icons/core';
 import { heroMagnifyingGlass, heroEyeSlash } from '@ng-icons/heroicons/outline';
 
@@ -239,6 +239,88 @@ describe('Input', () => {
       input.dispatchEvent(new Event('blur'));
 
       expect(touched).toBe(true);
+    });
+  });
+
+  describe('data-testid support', () => {
+    it('should render test IDs when data-testid attribute is provided', async () => {
+      @Component({
+        template: `<app-input
+          data-testid="test-input"
+          label="Username"
+          helpText="Enter your username"
+          [suffixButton]="true"
+          suffixButtonText="Clear"
+        ></app-input>`,
+        standalone: true,
+        imports: [Input],
+      })
+      class TestWrapper {}
+
+      TestBed.resetTestingModule();
+      await TestBed.configureTestingModule({
+        imports: [TestWrapper],
+        providers: [provideZonelessChangeDetection()],
+      }).compileComponents();
+
+      const wrapperFixture = TestBed.createComponent(TestWrapper);
+      wrapperFixture.detectChanges();
+      await wrapperFixture.whenStable();
+
+      const inputComponent = wrapperFixture.nativeElement.querySelector('app-input');
+
+      // Verify all expected test IDs
+      expect(inputComponent.querySelector('[data-testid="test-input-label"]')).toBeTruthy();
+      expect(inputComponent.querySelector('[data-testid="test-input-input"]')).toBeTruthy();
+      expect(inputComponent.querySelector('[data-testid="test-input-button"]')).toBeTruthy();
+      expect(inputComponent.querySelector('[data-testid="test-input-help-text"]')).toBeTruthy();
+    });
+
+    it('should render error message test ID when validation state is error', async () => {
+      @Component({
+        template: `<app-input
+          data-testid="test-input"
+          validationState="error"
+          errorMessage="This field is required"
+        ></app-input>`,
+        standalone: true,
+        imports: [Input],
+      })
+      class TestWrapper {}
+
+      TestBed.resetTestingModule();
+      await TestBed.configureTestingModule({
+        imports: [TestWrapper],
+        providers: [provideZonelessChangeDetection()],
+      }).compileComponents();
+
+      const wrapperFixture = TestBed.createComponent(TestWrapper);
+      wrapperFixture.detectChanges();
+      await wrapperFixture.whenStable();
+
+      const inputComponent = wrapperFixture.nativeElement.querySelector('app-input');
+
+      // Verify error message test ID
+      expect(inputComponent.querySelector('[data-testid="test-input-error-message"]')).toBeTruthy();
+    });
+
+    it('should not render test IDs when data-testid attribute is not provided', async () => {
+      TestBed.resetTestingModule();
+      await TestBed.configureTestingModule({
+        imports: [Input],
+        providers: [provideZonelessChangeDetection()],
+      }).compileComponents();
+
+      const standaloneFixture = TestBed.createComponent(Input);
+      standaloneFixture.componentRef.setInput('label', 'Test Label');
+      standaloneFixture.componentRef.setInput('helpText', 'Help text');
+      standaloneFixture.componentRef.setInput('suffixButton', true);
+      standaloneFixture.detectChanges();
+
+      // Verify NO test IDs are rendered
+      const element = standaloneFixture.nativeElement;
+      const elementsWithTestId = element.querySelectorAll('[data-testid]');
+      expect(elementsWithTestId.length).toBe(0);
     });
   });
 });

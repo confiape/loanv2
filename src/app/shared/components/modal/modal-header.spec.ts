@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideZonelessChangeDetection } from '@angular/core';
+import { Component, provideZonelessChangeDetection } from '@angular/core';
 import { ModalHeader } from './modal-header';
 
 describe('ModalHeader', () => {
@@ -62,5 +62,48 @@ describe('ModalHeader', () => {
     const srOnly = fixture.nativeElement.querySelector('.sr-only');
     expect(srOnly).toBeTruthy();
     expect(srOnly.textContent).toBe('Close modal');
+  });
+
+  describe('data-testid support', () => {
+    it('should render test IDs when data-testid attribute is provided', async () => {
+      @Component({
+        template: `<app-modal-header data-testid="test-modal">Modal Title</app-modal-header>`,
+        standalone: true,
+        imports: [ModalHeader],
+      })
+      class TestWrapper {}
+
+      TestBed.resetTestingModule();
+      await TestBed.configureTestingModule({
+        imports: [TestWrapper],
+        providers: [provideZonelessChangeDetection()],
+      }).compileComponents();
+
+      const wrapperFixture = TestBed.createComponent(TestWrapper);
+      wrapperFixture.detectChanges();
+      await wrapperFixture.whenStable();
+
+      const modalHeaderComponent = wrapperFixture.nativeElement.querySelector('app-modal-header');
+
+      // Verify header and close button test IDs
+      expect(modalHeaderComponent.querySelector('[data-testid="test-modal-header"]')).toBeTruthy();
+      expect(modalHeaderComponent.querySelector('[data-testid="test-modal-close"]')).toBeTruthy();
+    });
+
+    it('should not render test IDs when data-testid attribute is not provided', async () => {
+      TestBed.resetTestingModule();
+      await TestBed.configureTestingModule({
+        imports: [ModalHeader],
+        providers: [provideZonelessChangeDetection()],
+      }).compileComponents();
+
+      const standaloneFixture = TestBed.createComponent(ModalHeader);
+      standaloneFixture.detectChanges();
+
+      // Verify NO test IDs are rendered
+      const element = standaloneFixture.nativeElement;
+      const elementsWithTestId = element.querySelectorAll('[data-testid]');
+      expect(elementsWithTestId.length).toBe(0);
+    });
   });
 });
