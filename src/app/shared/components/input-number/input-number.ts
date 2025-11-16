@@ -160,11 +160,8 @@ import {
   },
 })
 export class InputNumber implements ControlValueAccessor {
-  private readonly injectedTestId = inject(DATA_TESTID, { optional: true });
+  // Test ID input
   readonly dataTestId = input<string | null>(null);
-  private readonly resolvedTestId = computed(
-    () => this.dataTestId() ?? this.injectedTestId ?? null,
-  );
 
   // Input properties
   readonly label = input<string>('');
@@ -201,7 +198,7 @@ export class InputNumber implements ControlValueAccessor {
   protected onTouched: () => void = () => undefined;
 
   // Test IDs using helper
-  private readonly testIds = generateInputTestIds(() => this.resolvedTestId());
+  private readonly testIds = generateInputTestIds(() => this.dataTestId());
   readonly wrapperTestId = this.testIds.wrapper;
   readonly labelTestId = this.testIds.label;
   readonly inputTestId = this.testIds.input;
@@ -212,15 +209,15 @@ export class InputNumber implements ControlValueAccessor {
 
   // Additional test IDs for buttons
   readonly buttonsContainerTestId = computed(() => {
-    const id = this.resolvedTestId();
+    const id = this.dataTestId();
     return id ? `${id}-buttons` : null;
   });
   readonly incrementButtonTestId = computed(() => {
-    const id = this.resolvedTestId();
+    const id = this.dataTestId();
     return id ? `${id}-increment` : null;
   });
   readonly decrementButtonTestId = computed(() => {
-    const id = this.resolvedTestId();
+    const id = this.dataTestId();
     return id ? `${id}-decrement` : null;
   });
 

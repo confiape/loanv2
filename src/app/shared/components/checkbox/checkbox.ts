@@ -92,7 +92,7 @@ import { InputSize, ValidationState } from '../input/input-helpers';
   },
 })
 export class Checkbox implements ControlValueAccessor {
-  private readonly dataTestId = input<string | null>(null);
+  readonly dataTestId = input<string | null>(null);
 
   // Input properties
   readonly label = input<string>('');

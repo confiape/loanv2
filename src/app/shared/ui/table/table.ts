@@ -29,7 +29,7 @@ import { generateItemTestId } from '@loan/app/shared/utils/test-id.utils';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Table<T extends Record<string, any> = Record<string, any>> {
-  private readonly dataTestId = input<string | null>(null);
+  readonly dataTestId = input<string | null>(null);
 
   // Exponer Math para el template
   protected readonly Math = Math;

@@ -33,7 +33,7 @@ import { ButtonGroupPosition, ButtonGroupVariant } from './button-group-helpers'
   },
 })
 export class ButtonGroupButton {
-  private readonly dataTestId = input<string | null>(null);
+  readonly dataTestId = input<string | null>(null);
 
   readonly type = input<'button' | 'submit' | 'reset'>('button');
   readonly disabled = input<boolean>(false);

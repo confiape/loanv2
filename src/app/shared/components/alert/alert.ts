@@ -78,7 +78,7 @@ import { AlertVariant, generateAlertTestIds, getAlertClasses, getAlertIcon } fro
   ],
 })
 export class Alert {
-  private readonly dataTestId = input<string | null>(null);
+  readonly dataTestId = input<string | null>(null);
 
   readonly variant = input<AlertVariant>('info');
   readonly title = input<string>('');
@@ -89,7 +89,7 @@ export class Alert {
 
   readonly dismissed = output<void>();
 
-  private readonly testIds = generateAlertTestIds(this.dataTestId());
+  private readonly testIds = generateAlertTestIds(() => this.dataTestId());
   readonly alertTestId = this.testIds.alert;
   readonly iconTestId = this.testIds.icon;
   readonly closeButtonTestId = this.testIds.closeButton;

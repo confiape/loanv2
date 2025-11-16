@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
-
+  input,
   inject,
   output,
 } from '@angular/core';
@@ -49,7 +49,7 @@ import { generateModalTestIds } from './modal-helpers';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ModalHeader {
-  private readonly dataTestId = input<string | null>(null);
+  readonly dataTestId = input<string | null>(null);
   private readonly testIds = generateModalTestIds(this.dataTestId());
 
   readonly headerTestId = this.testIds.header;

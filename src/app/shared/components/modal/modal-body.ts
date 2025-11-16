@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { generateModalTestIds } from './modal-helpers';
 
 
@@ -14,7 +14,7 @@ import { generateModalTestIds } from './modal-helpers';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ModalBody {
-  private readonly dataTestId = input<string | null>(null);
+  readonly dataTestId = input<string | null>(null);
   private readonly testIds = generateModalTestIds(this.dataTestId());
 
   readonly bodyTestId = this.testIds.body;

@@ -218,7 +218,7 @@ export interface MultiSelectOption {
   },
 })
 export class MultiSelect implements ControlValueAccessor {
-  private readonly dataTestId = input<string | null>(null);
+  readonly dataTestId = input<string | null>(null);
   private readonly elementRef = inject(ElementRef);
 
   // Input properties

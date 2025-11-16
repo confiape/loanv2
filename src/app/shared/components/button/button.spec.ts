@@ -92,7 +92,6 @@ describe('Button', () => {
     const button = getButtonElement();
     expect(button.className).toContain('w-full');
   });
-});
 
   describe('data-testid rendering', () => {
     it('should not render data-testid when not provided', () => {

@@ -215,7 +215,6 @@ describe('Select', () => {
       expect(touched).toBe(true);
     });
   });
-});
 
   describe('data-testid rendering', () => {
     it('should not render any data-testid attributes when dataTestId is not provided', () => {

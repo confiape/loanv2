@@ -70,7 +70,7 @@ type DropdownOpenStrategy = 'click' | 'hover';
 })
 export class DropdownBasic {
   private readonly host = inject(ElementRef<HTMLElement>);
-  private readonly dataTestId = input<string | null>(null);
+  readonly dataTestId = input<string | null>(null);
 
   // Inputs
   readonly triggerConfig = input<{

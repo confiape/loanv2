@@ -139,7 +139,7 @@ const STATUS_POSITIONS: Record<string, string> = {
 })
 export class Avatar {
   // Test ID from host
-  private readonly dataTestId = input<string | null>(null);
+  readonly dataTestId = input<string | null>(null);
 
   // Inputs
   readonly variant = input<AvatarVariant>('placeholder');

@@ -115,7 +115,7 @@ export interface SelectOption {
 })
 export class Select implements ControlValueAccessor {
   // Test ID input
-  private readonly dataTestId = input<string | null>(null);
+  readonly dataTestId = input<string | null>(null);
 
   // Input properties
   readonly label = input<string>('');

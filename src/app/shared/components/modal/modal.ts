@@ -48,7 +48,7 @@ export interface ModalData {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Modal {
-  private readonly dataTestId = input<string | null>(null);
+  readonly dataTestId = input<string | null>(null);
   readonly dialogRef = inject(DialogRef<unknown>, { optional: true });
   readonly data = inject<ModalData>(DIALOG_DATA, { optional: true });
 

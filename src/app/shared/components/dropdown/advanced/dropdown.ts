@@ -45,7 +45,7 @@ import { DropdownPanelComponent } from './dropdown-panel';
 })
 export class Dropdown {
   private readonly host = inject(ElementRef<HTMLElement>);
-  private readonly dataTestId = input<string | null>(null);
+  readonly dataTestId = input<string | null>(null);
 
   // Inputs
   readonly trigger = input<DropdownTriggerConfig>({

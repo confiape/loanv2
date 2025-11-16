@@ -121,7 +121,6 @@ describe('Alert', () => {
     const iconContainer = fixture.nativeElement.querySelector('.shrink-0');
     expect(iconContainer.getAttribute('aria-hidden')).toBe('true');
   });
-});
 
   describe('data-testid rendering', () => {
     it('should not render data-testid when not provided', () => {

@@ -107,7 +107,7 @@ export interface RadioOption {
   },
 })
 export class RadioGroup implements ControlValueAccessor {
-  private readonly dataTestId = input<string | null>(null);
+  readonly dataTestId = input<string | null>(null);
 
   // Input properties
   readonly label = input<string>('');

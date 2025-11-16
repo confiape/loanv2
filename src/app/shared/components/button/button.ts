@@ -69,7 +69,7 @@ export type ButtonType = 'button' | 'submit' | 'reset';
   },
 })
 export class Button {
-  private readonly dataTestId = input<string | null>(null);
+  readonly dataTestId = input<string | null>(null);
 
   readonly variant = input<ButtonVariant>('solid');
   readonly tone = input<ButtonTone>('primary');
@@ -84,7 +84,7 @@ export class Button {
 
   readonly buttonClick = output<MouseEvent>();
 
-  private readonly testIds = generateButtonTestIds(this.dataTestId());
+  private readonly testIds = generateButtonTestIds(() => this.dataTestId());
   readonly buttonTestId = this.testIds.button;
   readonly contentTestId = this.testIds.content;
   readonly spinnerTestId = this.testIds.spinner;

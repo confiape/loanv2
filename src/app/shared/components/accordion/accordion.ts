@@ -30,7 +30,7 @@ export interface AccordionItem {
   },
 })
 export class Accordion {
-  private readonly dataTestId = input<string | null>(null);
+  readonly dataTestId = input<string | null>(null);
 
   readonly testId = computed(() => this.dataTestId());
 
