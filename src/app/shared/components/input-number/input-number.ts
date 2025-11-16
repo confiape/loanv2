@@ -7,8 +7,6 @@ import {
   ChangeDetectionStrategy,
   forwardRef,
   effect,
-  inject,
-  HostAttributeToken,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
@@ -20,8 +18,6 @@ import {
   getInputClasses,
   generateInputTestIds,
 } from '@loan/app/shared/components/input/input-helpers';
-
-const DATA_TESTID = new HostAttributeToken('data-testid');
 
 @Component({
   selector: 'app-input-number',
@@ -154,10 +150,15 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
   ],
   host: {
     class: 'block',
+    '[attr.data-testid]': 'wrapperTestId()',
   },
 })
 export class InputNumber implements ControlValueAccessor {
-  private readonly hostTestId = inject(DATA_TESTID, { optional: true });
+  readonly testId = input<string>('');
+
+  protected readonly wrapperTestId = computed(() =>
+    this.testId() ? `${this.testId()}-wrapper` : null,
+  );
 
   // Input properties
   readonly label = input<string>('');
@@ -194,7 +195,7 @@ export class InputNumber implements ControlValueAccessor {
   protected onTouched: () => void = () => undefined;
 
   // Test IDs using helper
-  private readonly testIds = generateInputTestIds(this.hostTestId);
+  private readonly testIds = generateInputTestIds(() => this.testId());
   readonly labelTestId = this.testIds.label;
   readonly inputTestId = this.testIds.input;
   readonly helpTextTestId = this.testIds.helpText;
@@ -202,10 +203,10 @@ export class InputNumber implements ControlValueAccessor {
 
   // Additional test IDs for buttons
   readonly incrementButtonTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-increment` : null,
+    this.testId() ? `${this.testId()}-increment` : null,
   );
   readonly decrementButtonTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-decrement` : null,
+    this.testId() ? `${this.testId()}-decrement` : null,
   );
 
   // Computed classes using helpers

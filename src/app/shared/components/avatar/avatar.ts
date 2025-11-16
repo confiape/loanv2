@@ -3,12 +3,8 @@ import {
   input,
   ChangeDetectionStrategy,
   computed,
-  inject,
-  HostAttributeToken,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-const DATA_TESTID = new HostAttributeToken('data-testid');
 
 export type AvatarSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 export type AvatarShape = 'full' | 'sm';
@@ -82,7 +78,6 @@ const STATUS_POSITIONS: Record<string, string> = {
     <div
       class="inline-flex items-center justify-center relative"
       [class]="containerClasses()"
-      [attr.data-testid]="componentTestId()"
     >
       <!-- Image Avatar -->
       @if (variant() === 'image') {
@@ -134,12 +129,11 @@ const STATUS_POSITIONS: Record<string, string> = {
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    '[attr.data-testid]': 'componentTestId()',
+    '[attr.data-testid]': 'wrapperTestId()',
   },
 })
 export class Avatar {
-  // Test ID from host
-  private readonly hostTestId = inject(DATA_TESTID, { optional: true });
+  readonly testId = input<string>('');
 
   // Inputs
   readonly variant = input<AvatarVariant>('placeholder');
@@ -194,19 +188,33 @@ export class Avatar {
   });
 
   // Test ID computed values
-  readonly componentTestId = computed(() => (this.hostTestId ? `${this.hostTestId}-avatar` : null));
+  readonly wrapperTestId = computed(() => {
+    const id = this.testId();
+    return id ? `${id}-wrapper` : null;
+  });
 
-  readonly imageTestId = computed(() => (this.hostTestId ? `${this.hostTestId}-image` : null));
+  readonly componentTestId = computed(() => {
+    const id = this.testId();
+    return id ? `${id}-avatar` : null;
+  });
 
-  readonly initialsTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-initials` : null,
-  );
+  readonly imageTestId = computed(() => {
+    const id = this.testId();
+    return id ? `${id}-image` : null;
+  });
 
-  readonly placeholderTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-placeholder` : null,
-  );
+  readonly initialsTestId = computed(() => {
+    const id = this.testId();
+    return id ? `${id}-initials` : null;
+  });
 
-  readonly indicatorTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-indicator` : null,
-  );
+  readonly placeholderTestId = computed(() => {
+    const id = this.testId();
+    return id ? `${id}-placeholder` : null;
+  });
+
+  readonly indicatorTestId = computed(() => {
+    const id = this.testId();
+    return id ? `${id}-indicator` : null;
+  });
 }

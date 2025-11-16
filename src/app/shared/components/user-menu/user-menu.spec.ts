@@ -1,7 +1,21 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideZonelessChangeDetection } from '@angular/core';
+import { Component, provideZonelessChangeDetection } from '@angular/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { UserMenuComponent, UserMenuItem } from './user-menu';
+
+// Wrapper component for testing data-testid attribute
+@Component({
+  template: `<app-user-menu [testId]="'test-user-menu'" [menuItems]="mockMenuItems"></app-user-menu>`,
+  standalone: true,
+  imports: [UserMenuComponent],
+})
+class TestWrapperComponent {
+  mockMenuItems: UserMenuItem[] = [
+    { id: '1', label: 'Profile', icon: 'user', action: 'profile' },
+    { id: '2', label: 'Settings', icon: 'settings', action: 'settings' },
+    { id: '3', label: 'Logout', icon: 'logout', action: 'logout' },
+  ];
+}
 
 describe('UserMenuComponent', () => {
   let component: UserMenuComponent;
@@ -207,5 +221,70 @@ describe('UserMenuComponent', () => {
     fixture.detectChanges();
 
     expect(component.hasUserInfo()).toBe(false);
+  });
+
+  describe('data-testid support', () => {
+    it('should render test IDs with wrapper pattern when data-testid attribute is provided', async () => {
+      TestBed.resetTestingModule();
+
+      await TestBed.configureTestingModule({
+        imports: [TestWrapperComponent],
+        providers: [provideZonelessChangeDetection()],
+      }).compileComponents();
+
+      const wrapperFixture = TestBed.createComponent(TestWrapperComponent);
+      wrapperFixture.detectChanges();
+      await wrapperFixture.whenStable();
+
+      const hostElement = wrapperFixture.nativeElement.querySelector('app-user-menu');
+
+      // Verify host has -wrapper suffix
+      expect(hostElement.getAttribute('data-testid')).toBe('test-user-menu-wrapper');
+
+      // Verify trigger has original ID (no suffix)
+      const button = hostElement.querySelector('button');
+      expect(button?.getAttribute('data-testid')).toBe('test-user-menu');
+
+      // Open menu by clicking button to verify item test IDs
+      button?.dispatchEvent(new MouseEvent('click'));
+      wrapperFixture.detectChanges();
+      await wrapperFixture.whenStable();
+
+      // Verify item test IDs with indices on correct element types (button or anchor elements with role="menuitem")
+      const allMenuItems = hostElement.querySelectorAll('[role="menuitem"]');
+
+      const item0 = (Array.from(allMenuItems || []) as Element[]).find(el =>
+        el.getAttribute('data-testid') === 'test-user-menu-item-0'
+      );
+      expect(item0).toBeTruthy();
+
+      const item1 = (Array.from(allMenuItems || []) as Element[]).find(el =>
+        el.getAttribute('data-testid') === 'test-user-menu-item-1'
+      );
+      expect(item1).toBeTruthy();
+
+      const item2 = (Array.from(allMenuItems || []) as Element[]).find(el =>
+        el.getAttribute('data-testid') === 'test-user-menu-item-2'
+      );
+      expect(item2).toBeTruthy();
+    });
+
+    it('should not render test IDs when data-testid attribute is not provided', async () => {
+      fixture.componentRef.setInput('menuItems', mockMenuItems);
+      fixture.detectChanges();
+
+      const button = compiled.querySelector('button');
+
+      // Verify trigger has NO test ID
+      expect(button?.hasAttribute('data-testid')).toBe(false);
+
+      // Open menu to verify no item test IDs
+      component.toggle();
+      fixture.detectChanges();
+
+      // Verify NO test IDs in menu
+      const elementsWithTestId = compiled.querySelectorAll('[data-testid]');
+      expect(elementsWithTestId.length).toBe(0);
+    });
   });
 });

@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideZonelessChangeDetection } from '@angular/core';
+import { Component, provideZonelessChangeDetection } from '@angular/core';
 import { Button } from './button';
 
 describe('Button', () => {
@@ -91,5 +91,80 @@ describe('Button', () => {
 
     const button = getButtonElement();
     expect(button.className).toContain('w-full');
+  });
+
+  describe('testId input support', () => {
+    it('should render test IDs with wrapper pattern when testId input is provided', async () => {
+      @Component({
+        template: `<app-button [testId]="'test-button'">Click me</app-button>`,
+        standalone: true,
+        imports: [Button],
+      })
+      class TestWrapper {}
+
+      TestBed.resetTestingModule();
+      await TestBed.configureTestingModule({
+        imports: [TestWrapper],
+        providers: [provideZonelessChangeDetection()],
+      }).compileComponents();
+
+      const wrapperFixture = TestBed.createComponent(TestWrapper);
+      wrapperFixture.detectChanges();
+      await wrapperFixture.whenStable();
+
+      const hostElement = wrapperFixture.nativeElement.querySelector('app-button');
+
+      // Verify host has -wrapper suffix
+      expect(hostElement.getAttribute('data-testid')).toBe('test-button-wrapper');
+
+      // Verify main element has original ID
+      const button = hostElement.querySelector('button');
+      expect(button?.getAttribute('data-testid')).toBe('test-button');
+    });
+
+    it('should render spinner test ID with wrapper pattern when loading', async () => {
+      @Component({
+        template: `<app-button [testId]="'test-button'" [loading]="true">Submit</app-button>`,
+        standalone: true,
+        imports: [Button],
+      })
+      class TestWrapper {}
+
+      TestBed.resetTestingModule();
+      await TestBed.configureTestingModule({
+        imports: [TestWrapper],
+        providers: [provideZonelessChangeDetection()],
+      }).compileComponents();
+
+      const wrapperFixture = TestBed.createComponent(TestWrapper);
+      wrapperFixture.detectChanges();
+      await wrapperFixture.whenStable();
+
+      const hostElement = wrapperFixture.nativeElement.querySelector('app-button');
+
+      // Verify host has -wrapper suffix
+      expect(hostElement.getAttribute('data-testid')).toBe('test-button-wrapper');
+
+      // Verify spinner test ID on correct element type (span containing the SVG)
+      const spinnerSpan = hostElement.querySelector('span[aria-live="polite"]');
+      expect(spinnerSpan?.getAttribute('data-testid')).toBe('test-button-spinner');
+    });
+
+    it('should not render test IDs when testId input is not provided', async () => {
+      TestBed.resetTestingModule();
+      await TestBed.configureTestingModule({
+        imports: [Button],
+        providers: [provideZonelessChangeDetection()],
+      }).compileComponents();
+
+      const standaloneFixture = TestBed.createComponent(Button);
+      standaloneFixture.componentRef.setInput('loading', true);
+      standaloneFixture.detectChanges();
+
+      // Verify NO test IDs are rendered
+      const element = standaloneFixture.nativeElement;
+      const elementsWithTestId = element.querySelectorAll('[data-testid]');
+      expect(elementsWithTestId.length).toBe(0);
+    });
   });
 });

@@ -3,14 +3,10 @@ import {
   input,
   output,
   computed,
-  inject,
   ChangeDetectionStrategy,
-  HostAttributeToken,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonGroupPosition, ButtonGroupVariant } from './button-group-helpers';
-
-const DATA_TESTID = new HostAttributeToken('data-testid');
 
 @Component({
   selector: 'app-button-group-button',
@@ -30,10 +26,15 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: 'inline-block',
+    '[attr.data-testid]': 'wrapperTestId()',
   },
 })
 export class ButtonGroupButton {
-  private readonly hostTestId = inject(DATA_TESTID, { optional: true });
+  readonly testId = input<string>('');
+
+  protected readonly wrapperTestId = computed(() =>
+    this.testId() ? `${this.testId()}-wrapper` : null,
+  );
 
   readonly type = input<'button' | 'submit' | 'reset'>('button');
   readonly disabled = input<boolean>(false);
@@ -42,7 +43,7 @@ export class ButtonGroupButton {
 
   readonly buttonClick = output<MouseEvent>();
 
-  protected readonly buttonTestId = computed(() => this.hostTestId);
+  protected readonly buttonTestId = computed(() => this.testId() || null);
 
   protected readonly buttonClasses = computed(() => {
     const position = this.position();

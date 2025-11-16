@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideZonelessChangeDetection } from '@angular/core';
+import { Component, provideZonelessChangeDetection } from '@angular/core';
 import { ModalHeader } from './modal-header';
 
 describe('ModalHeader', () => {
@@ -62,5 +62,55 @@ describe('ModalHeader', () => {
     const srOnly = fixture.nativeElement.querySelector('.sr-only');
     expect(srOnly).toBeTruthy();
     expect(srOnly.textContent).toBe('Close modal');
+  });
+
+  describe('data-testid support', () => {
+    it('should render test IDs with wrapper pattern when data-testid attribute is provided', async () => {
+      @Component({
+        template: `<app-modal-header [testId]="'test-header'">Modal Title</app-modal-header>`,
+        standalone: true,
+        imports: [ModalHeader],
+      })
+      class TestWrapper {}
+
+      TestBed.resetTestingModule();
+      await TestBed.configureTestingModule({
+        imports: [TestWrapper],
+        providers: [provideZonelessChangeDetection()],
+      }).compileComponents();
+
+      const wrapperFixture = TestBed.createComponent(TestWrapper);
+      wrapperFixture.detectChanges();
+      await wrapperFixture.whenStable();
+
+      const hostElement = wrapperFixture.nativeElement.querySelector('app-modal-header');
+
+      // Verify host has -wrapper suffix
+      expect(hostElement.getAttribute('data-testid')).toBe('test-header-wrapper');
+
+      // Verify main element has original ID
+      const headerDiv = hostElement.querySelector('div.flex.items-center.justify-between');
+      expect(headerDiv?.getAttribute('data-testid')).toBe('test-header');
+
+      // Verify close button test ID on correct element type
+      const closeButton = hostElement.querySelector('button[aria-label="Close modal"]');
+      expect(closeButton?.getAttribute('data-testid')).toBe('test-header-close');
+    });
+
+    it('should not render test IDs when data-testid attribute is not provided', async () => {
+      TestBed.resetTestingModule();
+      await TestBed.configureTestingModule({
+        imports: [ModalHeader],
+        providers: [provideZonelessChangeDetection()],
+      }).compileComponents();
+
+      const standaloneFixture = TestBed.createComponent(ModalHeader);
+      standaloneFixture.detectChanges();
+
+      // Verify NO test IDs are rendered
+      const element = standaloneFixture.nativeElement;
+      const elementsWithTestId = element.querySelectorAll('[data-testid]');
+      expect(elementsWithTestId.length).toBe(0);
+    });
   });
 });

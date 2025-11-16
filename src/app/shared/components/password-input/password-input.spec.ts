@@ -5,7 +5,7 @@ import { PasswordInput } from '@loan/app/shared/components/password-input/passwo
 
 // Wrapper component for testing data-testid attribute
 @Component({
-  template: `<app-password-input data-testid="pwd-field"></app-password-input>`,
+  template: `<app-password-input [testId]="'pwd-field'"></app-password-input>`,
   standalone: true,
   imports: [PasswordInput],
 })
@@ -90,7 +90,7 @@ describe('PasswordInput', () => {
     expect(input.disabled).toBe(true);
   });
 
-  it('should forward host data-testid to inner input', async () => {
+  it('should render test IDs with wrapper pattern when data-testid attribute is provided', async () => {
     // Reset TestBed to configure it fresh for this test
     TestBed.resetTestingModule();
 
@@ -105,11 +105,24 @@ describe('PasswordInput', () => {
     wrapperFixture.detectChanges();
     await wrapperFixture.whenStable();
 
-    // Find the inner app-input element
-    const passwordInput = wrapperFixture.nativeElement.querySelector('app-password-input');
-    const inner = passwordInput.querySelector('app-input');
+    // Find the password input host element
+    const passwordInputHost = wrapperFixture.nativeElement.querySelector('app-password-input');
 
-    // Verify that data-testid was forwarded to the inner input component
-    expect(inner.getAttribute('data-testid')).toBe('pwd-field');
+    // Verify PasswordInput host has -wrapper suffix
+    expect(passwordInputHost.getAttribute('data-testid')).toBe('pwd-field-wrapper');
+
+    // Find the inner Input host element
+    const innerInputHost = passwordInputHost.querySelector('app-input');
+
+    // Verify inner Input host also has -wrapper suffix (nested wrapper pattern)
+    expect(innerInputHost.getAttribute('data-testid')).toBe('pwd-field-wrapper');
+
+    // Verify the actual <input> element has the original ID (main element)
+    const actualInput = innerInputHost.querySelector('input');
+    expect(actualInput?.getAttribute('data-testid')).toBe('pwd-field');
+
+    // Verify auxiliary elements have suffixes
+    const toggleButton = passwordInputHost.querySelector('button');
+    expect(toggleButton?.getAttribute('data-testid')).toBe('pwd-field-button');
   });
 });

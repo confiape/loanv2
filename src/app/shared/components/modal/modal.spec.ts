@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideZonelessChangeDetection } from '@angular/core';
+import { Component, provideZonelessChangeDetection } from '@angular/core';
 import { DialogModule, DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { Modal, ModalData } from './modal';
 import { vi } from 'vitest';
@@ -134,5 +134,67 @@ describe('Modal with data', () => {
   it('should set aria-labelledby when title is provided', () => {
     const content = fixture.nativeElement.querySelector('[role="dialog"]');
     expect(content.getAttribute('aria-labelledby')).toBe('modal-title');
+  });
+});
+
+describe('Modal > data-testid support', () => {
+  it('should render test IDs with wrapper pattern when data-testid attribute is provided', async () => {
+    @Component({
+      template: `<app-modal [testId]="'test-modal'">Modal content</app-modal>`,
+      standalone: true,
+      imports: [Modal, DialogModule],
+    })
+    class TestWrapper {}
+
+    const mockDialogRef = { close: vi.fn() };
+
+    TestBed.resetTestingModule();
+    await TestBed.configureTestingModule({
+      imports: [TestWrapper, DialogModule],
+      providers: [
+        provideZonelessChangeDetection(),
+        { provide: DialogRef, useValue: mockDialogRef },
+        { provide: DIALOG_DATA, useValue: null },
+      ],
+    }).compileComponents();
+
+    const wrapperFixture = TestBed.createComponent(TestWrapper);
+    wrapperFixture.detectChanges();
+    await wrapperFixture.whenStable();
+
+    const hostElement = wrapperFixture.nativeElement.querySelector('app-modal');
+
+    // Verify host has -wrapper suffix
+    expect(hostElement.getAttribute('data-testid')).toBe('test-modal-wrapper');
+
+    // Verify container has original ID
+    const container = hostElement.querySelector('[role="dialog"]');
+    expect(container?.getAttribute('data-testid')).toBe('test-modal');
+
+    // Verify overlay test ID on correct element type (button with bg-overlay class)
+    const overlayButton = hostElement.querySelector('button.bg-overlay');
+    expect(overlayButton?.getAttribute('data-testid')).toBe('test-modal-overlay');
+  });
+
+  it('should not render test IDs when data-testid attribute is not provided', async () => {
+    const mockDialogRef = { close: vi.fn() };
+
+    TestBed.resetTestingModule();
+    await TestBed.configureTestingModule({
+      imports: [Modal, DialogModule],
+      providers: [
+        provideZonelessChangeDetection(),
+        { provide: DialogRef, useValue: mockDialogRef },
+        { provide: DIALOG_DATA, useValue: null },
+      ],
+    }).compileComponents();
+
+    const standaloneFixture = TestBed.createComponent(Modal);
+    standaloneFixture.detectChanges();
+
+    // Verify NO test IDs are rendered
+    const element = standaloneFixture.nativeElement;
+    const elementsWithTestId = element.querySelectorAll('[data-testid]');
+    expect(elementsWithTestId.length).toBe(0);
   });
 });

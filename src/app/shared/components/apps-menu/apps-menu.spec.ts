@@ -1,7 +1,39 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideZonelessChangeDetection } from '@angular/core';
+import { Component, provideZonelessChangeDetection } from '@angular/core';
 import { AppsMenuComponent, AppMenuItem } from '@loan/app/shared/components/apps-menu/apps-menu';
+
+// Wrapper component for testing data-testid attribute
+@Component({
+  template: `<app-apps-menu [testId]="'test-apps'" [apps]="mockApps"></app-apps-menu>`,
+  standalone: true,
+  imports: [AppsMenuComponent],
+})
+class TestWrapperComponent {
+  mockApps: AppMenuItem[] = [
+    {
+      id: 'sales',
+      label: 'Sales',
+      icon: '<svg>sales</svg>',
+      href: '/sales',
+      action: 'sales',
+    },
+    {
+      id: 'users',
+      label: 'Users',
+      icon: '<svg>users</svg>',
+      href: '/users',
+      action: 'users',
+    },
+    {
+      id: 'inbox',
+      label: 'Inbox',
+      icon: '<svg>inbox</svg>',
+      href: '/inbox',
+      action: 'inbox',
+    },
+  ];
+}
 
 describe('AppsMenuComponent', () => {
   let fixture: ComponentFixture<AppsMenuComponent>;
@@ -531,6 +563,71 @@ describe('AppsMenuComponent', () => {
 
       const dropdown = host.querySelector('div[role="menu"]') as HTMLElement;
       expect(dropdown.className).toContain('z-50');
+    });
+  });
+
+  describe('data-testid support', () => {
+    it('should render test IDs with wrapper pattern when data-testid attribute is provided', async () => {
+      TestBed.resetTestingModule();
+
+      await TestBed.configureTestingModule({
+        imports: [TestWrapperComponent],
+        providers: [provideZonelessChangeDetection()],
+      }).compileComponents();
+
+      const wrapperFixture = TestBed.createComponent(TestWrapperComponent);
+      wrapperFixture.detectChanges();
+      await wrapperFixture.whenStable();
+
+      const hostElement = wrapperFixture.nativeElement.querySelector('app-apps-menu');
+
+      // Verify host has -wrapper suffix
+      expect(hostElement.getAttribute('data-testid')).toBe('test-apps-wrapper');
+
+      // Verify trigger has original ID (no suffix)
+      const button = hostElement.querySelector('button');
+      expect(button?.getAttribute('data-testid')).toBe('test-apps');
+
+      // Open menu by clicking button to verify item test IDs
+      button?.dispatchEvent(new MouseEvent('click'));
+      wrapperFixture.detectChanges();
+      await wrapperFixture.whenStable();
+
+      // Verify item test IDs with indices on correct element types (anchor links)
+      const allLinks = hostElement.querySelectorAll('a[role="menuitem"]');
+
+      const item0 = (Array.from(allLinks || []) as Element[]).find(a =>
+        a.getAttribute('data-testid') === 'test-apps-item-0'
+      );
+      expect(item0).toBeTruthy();
+
+      const item1 = (Array.from(allLinks || []) as Element[]).find(a =>
+        a.getAttribute('data-testid') === 'test-apps-item-1'
+      );
+      expect(item1).toBeTruthy();
+
+      const item2 = (Array.from(allLinks || []) as Element[]).find(a =>
+        a.getAttribute('data-testid') === 'test-apps-item-2'
+      );
+      expect(item2).toBeTruthy();
+    });
+
+    it('should not render test IDs when data-testid attribute is not provided', async () => {
+      fixture.componentRef.setInput('apps', mockApps);
+      fixture.detectChanges();
+
+      const button = host.querySelector('button');
+
+      // Verify trigger has NO test ID
+      expect(button?.hasAttribute('data-testid')).toBe(false);
+
+      // Open menu to verify no item test IDs
+      component.toggle();
+      fixture.detectChanges();
+
+      // Verify NO test IDs in menu
+      const elementsWithTestId = host.querySelectorAll('[data-testid]');
+      expect(elementsWithTestId.length).toBe(0);
     });
   });
 });

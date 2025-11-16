@@ -4,12 +4,24 @@
 
 ## How It Works
 
-Components accept a `data-testid` host attribute that serves as a prefix for internal elements:
+Components use a **wrapper pattern** for test IDs:
 
 ```html
 <app-input data-testid="email" />
-<!-- Generates: email-input, email-label, email-error-message -->
+<!-- Generates:
+  - Host element: email-wrapper
+  - Main element (input): email
+  - Label: email-label
+  - Error message: email-error-message
+-->
 ```
+
+### Wrapper Pattern Rules
+
+1. **Host Element**: Always receives `-wrapper` suffix (e.g., `email-wrapper`)
+2. **Main Element**: Receives the original test ID (e.g., `email`)
+3. **Auxiliary Elements**: Receive test ID with descriptive suffix (e.g., `email-label`, `email-error-message`)
+4. **Composite Components**: Components that wrap other components (like `PasswordInput`) keep the original test ID on their host without the wrapper pattern
 
 If no `data-testid` is provided on the host element, no test IDs are rendered.
 
@@ -23,8 +35,9 @@ If no `data-testid` is provided on the host element, no test IDs are rendered.
 
 | Test ID | Element |
 |---------|---------|
+| `{prefix}-wrapper` | Host element |
+| `{prefix}` | Input field (main element) |
 | `{prefix}-label` | Label element |
-| `{prefix}-input` | Input field |
 | `{prefix}-button` | Suffix button (search, clear, etc.) |
 | `{prefix}-help-text` | Help message |
 | `{prefix}-error-message` | Error message |
@@ -34,7 +47,8 @@ If no `data-testid` is provided on the host element, no test IDs are rendered.
 <app-input data-testid="email" [label]="'Email'" />
 ```
 ```typescript
-await page.getByTestId('email-input').fill('user@example.com');
+await page.getByTestId('email').fill('user@example.com'); // Main input
+await expect(page.getByTestId('email-label')).toHaveText('Email');
 await expect(page.getByTestId('email-error-message')).toBeVisible();
 ```
 
@@ -46,8 +60,9 @@ await expect(page.getByTestId('email-error-message')).toBeVisible();
 
 | Test ID | Element |
 |---------|---------|
+| `{prefix}-wrapper` | Host element |
+| `{prefix}` | Input field (type=number, main element) |
 | `{prefix}-label` | Label element |
-| `{prefix}-input` | Input field (type=number) |
 | `{prefix}-increment` | Increment button (+) |
 | `{prefix}-decrement` | Decrement button (-) |
 | `{prefix}-help-text` | Help message |
@@ -55,7 +70,7 @@ await expect(page.getByTestId('email-error-message')).toBeVisible();
 
 **Example:**
 ```typescript
-await page.getByTestId('quantity-input').fill('50');
+await page.getByTestId('quantity').fill('50');
 await page.getByTestId('quantity-increment').click();
 ```
 
@@ -67,8 +82,9 @@ await page.getByTestId('quantity-increment').click();
 
 | Test ID | Element |
 |---------|---------|
+| `{prefix}-wrapper` | Host element |
+| `{prefix}` | Date input field (main element) |
 | `{prefix}-label` | Label element |
-| `{prefix}-input` | Date input field |
 | `{prefix}-help-text` | Help message |
 | `{prefix}-error-message` | Error message |
 
@@ -80,15 +96,16 @@ await page.getByTestId('quantity-increment').click();
 
 | Test ID | Element |
 |---------|---------|
+| `{prefix}-wrapper` | Host element |
+| `{prefix}` | Select dropdown (main element) |
 | `{prefix}-label` | Label element |
-| `{prefix}-select` | Select dropdown |
 | `{prefix}-option-{sanitized-value}` | Each option (value is sanitized) |
 | `{prefix}-help-text` | Help message |
 | `{prefix}-error-message` | Error message |
 
 **Example:**
 ```typescript
-await page.getByTestId('country-select').selectOption('US');
+await page.getByTestId('country').selectOption('US');
 await expect(page.getByTestId('country-option-us')).toBeVisible();
 ```
 
@@ -151,7 +168,8 @@ await page.getByTestId('gender-radio-1').check(); // Female
 
 | Test ID | Element |
 |---------|---------|
-| `{prefix}` | Button element (host) |
+| `{prefix}-wrapper` | Host element |
+| `{prefix}` | Button element (main element) |
 | `{prefix}-spinner` | Loading spinner |
 
 **Example:**
@@ -159,7 +177,7 @@ await page.getByTestId('gender-radio-1').check(); // Female
 <app-button data-testid="submit-btn">Submit</app-button>
 ```
 ```typescript
-await page.getByTestId('submit-btn').click();
+await page.getByTestId('submit-btn').click(); // Main button
 await expect(page.getByTestId('submit-btn-spinner')).toBeVisible();
 ```
 
@@ -171,7 +189,8 @@ await expect(page.getByTestId('submit-btn-spinner')).toBeVisible();
 
 | Test ID | Element |
 |---------|---------|
-| `{prefix}` | Alert container (host) |
+| `{prefix}-wrapper` | Host element |
+| `{prefix}` | Alert container (main element) |
 | `{prefix}-close` | Close button (if dismissible) |
 
 ---
@@ -295,6 +314,40 @@ await page.getByTestId('apps-item-0').click(); // First app
 
 ## Implementation Notes
 
+### Wrapper Pattern
+
+All components implement a **wrapper pattern** for test IDs:
+
+- **Host Element**: Always gets `-wrapper` suffix (e.g., `email-wrapper`)
+- **Main Element**: Gets the original test ID (e.g., `email` on the `<input>` element)
+- **Auxiliary Elements**: Get descriptive suffixes (e.g., `email-label`, `email-error-message`)
+
+**Example:**
+```html
+<app-input data-testid="username" label="Username">
+<!-- Generates:
+  - <app-input data-testid="username-wrapper"> (host)
+    - <input data-testid="username"> (main element)
+    - <label data-testid="username-label"> (auxiliary)
+-->
+```
+
+### Composite Components
+
+Components that wrap other components (e.g., `PasswordInput` wraps `Input`) do **not** use the wrapper pattern on their host:
+
+- **PasswordInput**: Host keeps original test ID (e.g., `password`)
+- This is because `HostAttributeToken` doesn't work with bound attributes
+- The actual `<input>` element inside is still accessible via DOM queries
+
+**Example:**
+```html
+<app-password-input data-testid="password">
+<!-- Host element: password (no -wrapper suffix)
+     Inner elements accessible via passwordInput.querySelector('input')
+-->
+```
+
 ### Dynamic Values
 Dynamic values (option values, item IDs) are sanitized for safe test IDs:
 - Lowercase transformation
@@ -303,8 +356,8 @@ Dynamic values (option values, item IDs) are sanitized for safe test IDs:
 
 ### Index-Based IDs
 Components without unique IDs use zero-based indices:
-- Radio buttons: `radio-0`, `radio-1`, `radio-2`
-- Menu items: `item-0`, `item-1`, `item-2`
+- Radio buttons: `{prefix}-radio-0`, `{prefix}-radio-1`, `{prefix}-radio-2`
+- Menu items: `{prefix}-item-0`, `{prefix}-item-1`, `{prefix}-item-2`
 
 ### No Host Attribute = No Test IDs
 If a component doesn't have a `data-testid` attribute on its host element, no child test IDs are generated. This keeps the DOM clean when testing is not needed.

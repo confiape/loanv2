@@ -26,6 +26,7 @@ let dropdownSearchId = 0;
             class="w-full rounded-md border border-border bg-bg-secondary py-2 ps-9 pe-3 text-sm text-text-primary placeholder-text-secondary focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent"
             [placeholder]="config()?.placeholder"
             [value]="searchTerm()"
+            [attr.data-testid]="testId()"
             (input)="onInput($event)"
           />
         </div>
@@ -38,6 +39,7 @@ export class DropdownSearchComponent {
   readonly config = input<DropdownSearchConfig | null>(null);
   readonly searchTerm = input<string>('');
   readonly debounceDelay = input<number>(300);
+  readonly testId = input<string | null>(null);
 
   readonly searchChange = output<string>();
   protected readonly searchInputId = `dropdown-search-${++dropdownSearchId}`;

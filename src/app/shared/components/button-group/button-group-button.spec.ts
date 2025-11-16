@@ -1,6 +1,14 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideZonelessChangeDetection } from '@angular/core';
+import { Component, provideZonelessChangeDetection } from '@angular/core';
 import { ButtonGroupButton } from './button-group-button';
+
+// Wrapper component for testing data-testid attribute
+@Component({
+  template: `<app-button-group-button [testId]="'test-button'">Test</app-button-group-button>`,
+  standalone: true,
+  imports: [ButtonGroupButton],
+})
+class TestWrapperComponent {}
 
 describe('ButtonGroupButton', () => {
   let fixture: ComponentFixture<ButtonGroupButton>;
@@ -123,5 +131,37 @@ describe('ButtonGroupButton', () => {
     expect(button.disabled).toBeTruthy();
     expect(button.className).toContain('opacity-50');
     expect(button.className).toContain('cursor-not-allowed');
+  });
+
+  describe('data-testid support', () => {
+    it('should render test IDs with wrapper pattern when data-testid attribute is provided', async () => {
+      TestBed.resetTestingModule();
+      await TestBed.configureTestingModule({
+        imports: [TestWrapperComponent],
+        providers: [provideZonelessChangeDetection()],
+      }).compileComponents();
+
+      const wrapperFixture = TestBed.createComponent(TestWrapperComponent);
+      wrapperFixture.detectChanges();
+      await wrapperFixture.whenStable();
+
+      const hostElement = wrapperFixture.nativeElement.querySelector('app-button-group-button');
+
+      // Verify host has -wrapper suffix
+      expect(hostElement.getAttribute('data-testid')).toBe('test-button-wrapper');
+
+      // Verify main element has original ID
+      const button = hostElement.querySelector('button');
+      expect(button?.getAttribute('data-testid')).toBe('test-button');
+    });
+
+    it('should not render test ID when data-testid attribute is not provided', async () => {
+      fixture.detectChanges();
+
+      const button = fixture.nativeElement.querySelector('button');
+
+      // Verify NO test ID
+      expect(button?.hasAttribute('data-testid')).toBe(false);
+    });
   });
 });

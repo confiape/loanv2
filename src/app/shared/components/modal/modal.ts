@@ -1,15 +1,13 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  HostAttributeToken,
   computed,
-  inject,
   input,
+  inject,
 } from '@angular/core';
 import { DialogModule, DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { ModalSize, generateModalTestIds, getModalSizeClasses } from './modal-helpers';
 
-const DATA_TESTID = new HostAttributeToken('data-testid');
 
 export interface ModalData {
   title?: string;
@@ -41,23 +39,37 @@ export interface ModalData {
         role="dialog"
         aria-modal="true"
         [attr.aria-labelledby]="data?.title ? 'modal-title' : null"
+        [attr.data-testid]="containerTestId()"
       >
         <ng-content />
       </div>
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '[attr.data-testid]': 'wrapperTestId()',
+  },
 })
 export class Modal {
-  private readonly hostTestId = inject(DATA_TESTID, { optional: true });
+  readonly testId = input<string>('');
   readonly dialogRef = inject(DialogRef<unknown>, { optional: true });
   readonly data = inject<ModalData>(DIALOG_DATA, { optional: true });
+
+  protected readonly effectiveTestId = computed(() => this.testId() || this.data?.testId || null);
+
+  protected readonly wrapperTestId = computed(() => {
+    const testId = this.effectiveTestId();
+    return testId ? `${testId}-wrapper` : null;
+  });
 
   readonly size = input<ModalSize>('2xl');
   readonly dismissible = input<boolean>(true);
 
-  private readonly testIds = generateModalTestIds(this.hostTestId ?? this.data?.testId ?? null);
-  readonly overlayTestId = this.testIds.overlay;
+  readonly containerTestId = computed(() => this.effectiveTestId());
+  readonly overlayTestId = computed(() => {
+    const id = this.effectiveTestId();
+    return id ? `${id}-overlay` : null;
+  });
 
   readonly modalClasses = computed(() => {
     const baseClasses = 'relative w-full max-h-full bg-bg-primary rounded-lg shadow-sm';

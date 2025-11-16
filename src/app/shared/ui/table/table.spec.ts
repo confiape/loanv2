@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideZonelessChangeDetection } from '@angular/core';
+import { Component, provideZonelessChangeDetection } from '@angular/core';
 import { Table } from './table';
 import type { TableColumn, TableAction } from './table.models';
 
@@ -505,6 +505,68 @@ describe('Table Component', () => {
       fixture.detectChanges();
 
       expect(fixture.nativeElement.textContent).toContain('$99.50');
+    });
+  });
+
+  describe('data-testid support', () => {
+    it('should render test IDs with wrapper pattern when data-testid attribute is provided', async () => {
+      @Component({
+        template: `
+          <app-table
+            [testId]="'products-table'"
+            [columns]="columns"
+            [data]="data"
+            [searchable]="true"
+            [paginated]="true"
+          />
+        `,
+        standalone: true,
+        imports: [Table],
+      })
+      class TestWrapper {
+        columns = mockColumns;
+        data = mockData;
+      }
+
+      TestBed.resetTestingModule();
+      await TestBed.configureTestingModule({
+        imports: [TestWrapper],
+        providers: [provideZonelessChangeDetection()],
+      }).compileComponents();
+
+      const wrapperFixture = TestBed.createComponent(TestWrapper);
+      wrapperFixture.detectChanges();
+      await wrapperFixture.whenStable();
+
+      const hostElement = wrapperFixture.nativeElement.querySelector('app-table');
+
+      // Verify host has -wrapper suffix
+      expect(hostElement.getAttribute('data-testid')).toBe('products-table-wrapper');
+
+      // Verify main table element has original ID (no suffix)
+      const tableElement = hostElement.querySelector('table');
+      expect(tableElement?.getAttribute('data-testid')).toBe('products-table');
+
+      // Verify auxiliary elements have suffixes
+      const searchInput = hostElement.querySelector('input[type="text"]');
+      expect(searchInput?.getAttribute('data-testid')).toBe('products-table-search');
+    });
+
+    it('should not render test IDs when data-testid attribute is not provided', () => {
+      fixture.componentRef.setInput('columns', mockColumns);
+      fixture.componentRef.setInput('data', mockData);
+      fixture.componentRef.setInput('searchable', true);
+      fixture.detectChanges();
+
+      // When rendering directly, fixture.nativeElement is the host element itself
+      const hostElement = fixture.nativeElement;
+      expect(hostElement.getAttribute('data-testid')).toBeNull();
+
+      const tableElement = hostElement.querySelector('table');
+      expect(tableElement?.getAttribute('data-testid')).toBeNull();
+
+      const searchInput = hostElement.querySelector('input[type="text"]');
+      expect(searchInput?.getAttribute('data-testid')).toBeNull();
     });
   });
 });

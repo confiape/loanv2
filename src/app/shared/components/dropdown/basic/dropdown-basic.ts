@@ -3,7 +3,6 @@ import {
   Component,
   ElementRef,
   HostListener,
-  HostAttributeToken,
   computed,
   inject,
   input,
@@ -14,8 +13,6 @@ import { ConnectedPosition, OverlayModule } from '@angular/cdk/overlay';
 
 type DropdownPlacement = 'bottom-start' | 'bottom-end' | 'top-start' | 'top-end';
 type DropdownOpenStrategy = 'click' | 'hover';
-
-const DATA_TESTID = new HostAttributeToken('data-testid');
 
 @Component({
   selector: 'app-dropdown-basic',
@@ -65,12 +62,12 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: 'inline-flex',
-    '[attr.data-testid]': 'componentTestId()',
+    '[attr.data-testid]': 'wrapperTestId()',
   },
 })
 export class DropdownBasic {
   private readonly host = inject(ElementRef<HTMLElement>);
-  private readonly hostTestId = inject(DATA_TESTID, { optional: true });
+  readonly testId = input<string>('');
 
   // Inputs
   readonly triggerConfig = input<{
@@ -93,13 +90,25 @@ export class DropdownBasic {
   private hoverCloseTimeout: ReturnType<typeof setTimeout> | null = null;
 
   // Computed
-  readonly componentTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-dropdown-basic` : null,
-  );
+  readonly wrapperTestId = computed(() => {
+    const id = this.testId();
+    return id ? `${id}-wrapper` : null;
+  });
 
-  readonly triggerTestId = computed(() => (this.hostTestId ? `${this.hostTestId}-trigger` : null));
+  readonly componentTestId = computed(() => {
+    const id = this.testId();
+    return id ? `${id}-dropdown-basic` : null;
+  });
 
-  readonly panelTestId = computed(() => (this.hostTestId ? `${this.hostTestId}-panel` : null));
+  readonly triggerTestId = computed(() => {
+    const id = this.testId();
+    return id ? `${id}-trigger` : null;
+  });
+
+  readonly panelTestId = computed(() => {
+    const id = this.testId();
+    return id ? `${id}-panel` : null;
+  });
 
   readonly triggerClasses = computed(() => {
     const config = this.triggerConfig();

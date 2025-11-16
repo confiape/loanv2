@@ -1,13 +1,12 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  HostAttributeToken,
-  inject,
+  computed,
+  input,
   output,
 } from '@angular/core';
 import { generateModalTestIds } from './modal-helpers';
 
-const DATA_TESTID = new HostAttributeToken('data-testid');
 
 @Component({
   selector: 'app-modal-header',
@@ -47,13 +46,22 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '[attr.data-testid]': 'wrapperTestId()',
+  },
 })
 export class ModalHeader {
-  private readonly hostTestId = inject(DATA_TESTID, { optional: true });
-  private readonly testIds = generateModalTestIds(this.hostTestId);
+  readonly testId = input<string>('');
 
-  readonly headerTestId = this.testIds.header;
-  readonly closeButtonTestId = this.testIds.close;
+  protected readonly wrapperTestId = computed(() =>
+    this.testId() ? `${this.testId()}-wrapper` : null,
+  );
+
+  readonly headerTestId = computed(() => this.testId() || null);
+  readonly closeButtonTestId = computed(() => {
+    const id = this.testId();
+    return id ? `${id}-close` : null;
+  });
 
   readonly closeClick = output<void>();
 }

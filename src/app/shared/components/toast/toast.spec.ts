@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideZonelessChangeDetection } from '@angular/core';
+import { Component, provideZonelessChangeDetection } from '@angular/core';
 import { ToastComponent, Toast, ToastPosition } from './toast';
 
 type ToastInputs = Partial<{
@@ -264,6 +264,53 @@ describe('ToastComponent', () => {
 
       const closeButton = host.querySelector('button[aria-label="Close"]');
       expect(closeButton?.getAttribute('aria-label')).toBe('Close');
+    });
+  });
+
+  describe('data-testid support', () => {
+    it('should render test IDs with wrapper pattern when data-testid attribute is provided', async () => {
+      const toast = createMockToast({ dismissible: true });
+
+      @Component({
+        template: `<app-toast [testId]="'test-toast'" [toast]="toast"></app-toast>`,
+        standalone: true,
+        imports: [ToastComponent],
+      })
+      class TestWrapper {
+        toast = toast;
+      }
+
+      TestBed.resetTestingModule();
+      await TestBed.configureTestingModule({
+        imports: [TestWrapper],
+        providers: [provideZonelessChangeDetection()],
+      }).compileComponents();
+
+      const wrapperFixture = TestBed.createComponent(TestWrapper);
+      wrapperFixture.detectChanges();
+      await wrapperFixture.whenStable();
+
+      const hostElement = wrapperFixture.nativeElement.querySelector('app-toast');
+
+      // Verify host has -wrapper suffix
+      expect(hostElement.getAttribute('data-testid')).toBe('test-toast-wrapper');
+
+      // Verify main element has original ID (div with role="alert")
+      const toastContainer = hostElement.querySelector('div[role="alert"]');
+      expect(toastContainer?.getAttribute('data-testid')).toBe('test-toast');
+
+      // Verify close button test ID on correct element type
+      const closeButton = hostElement.querySelector('button[aria-label="Close"]');
+      expect(closeButton?.getAttribute('data-testid')).toBe('test-toast-close');
+    });
+
+    it('should not render test IDs when data-testid attribute is not provided', async () => {
+      const toast = createMockToast({ dismissible: true });
+      const { host } = await renderToast({ inputs: { toast } });
+
+      // Verify NO test IDs are rendered
+      const elementsWithTestId = host.querySelectorAll('[data-testid]');
+      expect(elementsWithTestId.length).toBe(0);
     });
   });
 });

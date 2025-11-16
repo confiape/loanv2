@@ -2,11 +2,9 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  inject,
   input,
   output,
   signal,
-  HostAttributeToken,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import type {
@@ -16,8 +14,6 @@ import type {
   TableSort,
   TableDensity,
 } from './table.models';
-
-const DATA_TESTID = new HostAttributeToken('data-testid');
 
 /**
  * Componente Table reutilizable
@@ -30,9 +26,17 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
   templateUrl: './table.html',
   styleUrls: ['./table.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    class: 'block',
+    '[attr.data-testid]': 'wrapperTestId()',
+  },
 })
 export class Table<T extends Record<string, any> = Record<string, any>> {
-  private readonly injectedTestId = inject(DATA_TESTID, { optional: true });
+  readonly testId = input<string>('');
+
+  protected readonly wrapperTestId = computed(() =>
+    this.testId() ? `${this.testId()}-wrapper` : null,
+  );
 
   // Exponer Math para el template
   protected readonly Math = Math;
@@ -236,10 +240,9 @@ export class Table<T extends Record<string, any> = Record<string, any>> {
    * Test IDs dinámicos para Playwright
    */
   protected readonly testIds = computed(() => {
-    const base = this.injectedTestId;
+    const base = this.testId();
     if (!base) {
       return {
-        wrapper: null,
         search: null,
         table: null,
         selectAll: null,
@@ -248,9 +251,8 @@ export class Table<T extends Record<string, any> = Record<string, any>> {
     }
 
     return {
-      wrapper: `${base}-wrapper`,
       search: `${base}-search`,
-      table: `${base}-table`,
+      table: base, // Main element gets original ID (no suffix)
       selectAll: `${base}-select-all`,
       pagination: `${base}-pagination`,
     };

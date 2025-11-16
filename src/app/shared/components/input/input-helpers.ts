@@ -136,7 +136,7 @@ export function generateInputTestIds(hostTestId: HostTestIdSource): InputTestIds
     }),
     input: computed(() => {
       const id = getHostTestId();
-      return id ? `${id}-input` : null;
+      return id || null;
     }),
     button: computed(() => {
       const id = getHostTestId();

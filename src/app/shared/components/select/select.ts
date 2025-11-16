@@ -7,8 +7,6 @@ import {
   ChangeDetectionStrategy,
   forwardRef,
   effect,
-  inject,
-  HostAttributeToken,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
@@ -20,7 +18,6 @@ import {
 } from '../input/input-helpers';
 import { sanitizeTestIdValue } from '@loan/app/shared/helpers';
 
-const DATA_TESTID = new HostAttributeToken('data-testid');
 
 export interface SelectOption {
   value: string;
@@ -111,11 +108,15 @@ export interface SelectOption {
   ],
   host: {
     class: 'block',
+    '[attr.data-testid]': 'wrapperTestId()',
   },
 })
 export class Select implements ControlValueAccessor {
-  // Test ID from host
-  private readonly hostTestId = inject(DATA_TESTID, { optional: true });
+  readonly testId = input<string>('');
+
+  protected readonly wrapperTestId = computed(() =>
+    this.testId() ? `${this.testId()}-wrapper` : null,
+  );
 
   // Input properties
   readonly label = input<string>('');
@@ -143,19 +144,20 @@ export class Select implements ControlValueAccessor {
   protected onTouched: () => void = () => undefined;
 
   // Test IDs using helper
-  private readonly testIds = generateInputTestIds(this.hostTestId);
+  private readonly testIds = generateInputTestIds(() => this.testId());
   readonly labelTestId = this.testIds.label;
   readonly helpTextTestId = this.testIds.helpText;
   readonly errorMessageTestId = this.testIds.errorMessage;
 
   // Select-specific test ID
-  readonly selectTestId = computed(() => (this.hostTestId ? `${this.hostTestId}-select` : null));
+  readonly selectTestId = computed(() => this.testId() || null);
 
   /**
    * Get test ID for option element with sanitized value
    */
   protected getOptionTestId(value: string): string | null {
-    return this.hostTestId ? `${this.hostTestId}-option-${sanitizeTestIdValue(value)}` : null;
+    const id = this.testId();
+    return id ? `${id}-option-${sanitizeTestIdValue(value)}` : null;
   }
 
   // Computed classes

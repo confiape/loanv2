@@ -1,9 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  HostAttributeToken,
   computed,
-  inject,
   input,
   output,
 } from '@angular/core';
@@ -17,8 +15,6 @@ import {
   getButtonClasses,
 } from './button-helpers';
 
-const DATA_TESTID = new HostAttributeToken('data-testid');
-
 export type ButtonType = 'button' | 'submit' | 'reset';
 
 @Component({
@@ -31,7 +27,7 @@ export type ButtonType = 'button' | 'submit' | 'reset';
       [disabled]="disabled() || loading()"
       [attr.aria-label]="ariaLabel() || null"
       [attr.aria-busy]="loading()"
-      [attr.data-testid]="hostTestId"
+      [attr.data-testid]="testId() || null"
       [class]="buttonClasses()"
       (click)="handleClick($event)"
     >
@@ -70,10 +66,15 @@ export type ButtonType = 'button' | 'submit' | 'reset';
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: 'inline-block',
+    '[attr.data-testid]': 'wrapperTestId()',
   },
 })
 export class Button {
-  protected readonly hostTestId = inject(DATA_TESTID, { optional: true });
+  readonly testId = input<string>('');
+
+  protected readonly wrapperTestId = computed(() =>
+    this.testId() ? `${this.testId()}-wrapper` : null,
+  );
 
   readonly variant = input<ButtonVariant>('solid');
   readonly tone = input<ButtonTone>('primary');
@@ -89,7 +90,7 @@ export class Button {
   readonly buttonClick = output<MouseEvent>();
 
   readonly spinnerTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-spinner` : null,
+    this.testId() ? `${this.testId()}-spinner` : null,
   );
 
   readonly buttonClasses = computed(() =>

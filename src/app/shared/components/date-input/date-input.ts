@@ -7,8 +7,6 @@ import {
   ChangeDetectionStrategy,
   forwardRef,
   effect,
-  inject,
-  HostAttributeToken,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
@@ -19,8 +17,6 @@ import {
   getInputClasses,
   generateInputTestIds,
 } from '../input/input-helpers';
-
-const DATA_TESTID = new HostAttributeToken('data-testid');
 
 @Component({
   selector: 'app-date-input',
@@ -120,10 +116,15 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
   ],
   host: {
     class: 'block',
+    '[attr.data-testid]': 'wrapperTestId()',
   },
 })
 export class DateInput implements ControlValueAccessor {
-  private readonly hostTestId = inject(DATA_TESTID, { optional: true });
+  readonly testId = input<string>('');
+
+  protected readonly wrapperTestId = computed(() =>
+    this.testId() ? `${this.testId()}-wrapper` : null,
+  );
 
   // Input properties
   readonly label = input<string>('');
@@ -155,7 +156,7 @@ export class DateInput implements ControlValueAccessor {
   protected onTouched: () => void = () => undefined;
 
   // Test IDs using helper
-  private readonly testIds = generateInputTestIds(this.hostTestId);
+  private readonly testIds = generateInputTestIds(() => this.testId());
   readonly labelTestId = this.testIds.label;
   readonly inputTestId = this.testIds.input;
   readonly helpTextTestId = this.testIds.helpText;

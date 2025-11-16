@@ -1,4 +1,4 @@
-import { Component, input, output, effect, signal, inject, OnInit } from '@angular/core';
+import { Component, input, output, effect, signal, inject, OnInit, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
@@ -61,8 +61,9 @@ export class GenericCrudFormComponent implements OnInit {
   loading = input<boolean>(false);
   error = input<string | null>(null);
   testIdPrefix = input<string>('crud');
+  protected readonly testPrefix = computed(() => this.testIdPrefix());
 
-  // Outputs
+  // Regular property for template interpolation (updated via effect)// Outputs
   formSubmit = output<unknown>();
   formCancel = output<void>();
 
@@ -74,6 +75,8 @@ export class GenericCrudFormComponent implements OnInit {
   private lastItemId: string | null = null;
 
   constructor() {
+    // Update testPrefix when input changes// Provide test ID prefix to child components
+
     // Update form when item changes - must be in constructor for injection context
     effect(() => {
       const currentItem = this.item();

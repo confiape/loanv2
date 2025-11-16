@@ -40,6 +40,7 @@ import { DropdownFooterComponent } from './dropdown-footer';
         [config]="searchConfig()"
         [searchTerm]="searchTerm()"
         [debounceDelay]="searchDebounceDelay()"
+        [testId]="searchTestId()"
         (searchChange)="searchChange.emit($event)"
       />
 
@@ -74,6 +75,7 @@ export class DropdownPanelComponent {
   readonly panelWidth = input<number | null>(176);
   readonly panelMaxHeight = input<number | null>(null);
   readonly testId = input<string | null>(null);
+  readonly searchTestId = input<string | null>(null);
   readonly activePath = input<string[]>([]);
   readonly checkboxStates = input<Record<string, boolean>>({});
 

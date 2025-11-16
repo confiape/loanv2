@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideZonelessChangeDetection } from '@angular/core';
+import { Component, provideZonelessChangeDetection } from '@angular/core';
 import { provideIcons } from '@ng-icons/core';
 import { heroMagnifyingGlass, heroChevronUp, heroChevronDown } from '@ng-icons/heroicons/outline';
 
@@ -278,6 +278,123 @@ describe('InputNumber', () => {
       input.dispatchEvent(new Event('blur'));
 
       expect(touched).toBe(true);
+    });
+  });
+
+  describe('data-testid support', () => {
+    it('should render test IDs with wrapper pattern when data-testid attribute is provided', async () => {
+      @Component({
+        template: `<app-input-number
+          [testId]="'test-input'"
+          label="Quantity"
+          helpText="Enter quantity"
+          [showButtons]="true"
+        ></app-input-number>`,
+        standalone: true,
+        imports: [InputNumber],
+      })
+      class TestWrapper {}
+
+      TestBed.resetTestingModule();
+      await TestBed.configureTestingModule({
+        imports: [TestWrapper],
+        providers: [
+          provideZonelessChangeDetection(),
+          provideIcons({ heroChevronUp, heroChevronDown }),
+        ],
+      }).compileComponents();
+
+      const wrapperFixture = TestBed.createComponent(TestWrapper);
+      wrapperFixture.detectChanges();
+      await wrapperFixture.whenStable();
+
+      const hostElement = wrapperFixture.nativeElement.querySelector('app-input-number');
+
+      // Verify host has -wrapper suffix
+      expect(hostElement.getAttribute('data-testid')).toBe('test-input-wrapper');
+
+      // Verify main element has original ID (no suffix)
+      const input = hostElement.querySelector('input');
+      expect(input?.getAttribute('data-testid')).toBe('test-input');
+
+      // Verify auxiliary elements have suffixes
+      const label = hostElement.querySelector('label');
+      expect(label?.getAttribute('data-testid')).toBe('test-input-label');
+
+      // Verify increment and decrement buttons on correct element types
+      const buttons = hostElement.querySelectorAll('button');
+      const incrementButton = (Array.from(buttons) as Element[]).find(b =>
+        b.getAttribute('data-testid') === 'test-input-increment'
+      );
+      expect(incrementButton).toBeTruthy();
+
+      const decrementButton = (Array.from(buttons) as Element[]).find(b =>
+        b.getAttribute('data-testid') === 'test-input-decrement'
+      );
+      expect(decrementButton).toBeTruthy();
+
+      const helpTextParagraphs = hostElement.querySelectorAll('p');
+      const helpText = (Array.from(helpTextParagraphs) as Element[]).find(p =>
+        p.getAttribute('data-testid') === 'test-input-help-text'
+      );
+      expect(helpText).toBeTruthy();
+    });
+
+    it('should render error message test ID with wrapper pattern when validation state is error', async () => {
+      @Component({
+        template: `<app-input-number
+          [testId]="'test-input'"
+          validationState="error"
+          errorMessage="This field is required"
+        ></app-input-number>`,
+        standalone: true,
+        imports: [InputNumber],
+      })
+      class TestWrapper {}
+
+      TestBed.resetTestingModule();
+      await TestBed.configureTestingModule({
+        imports: [TestWrapper],
+        providers: [provideZonelessChangeDetection()],
+      }).compileComponents();
+
+      const wrapperFixture = TestBed.createComponent(TestWrapper);
+      wrapperFixture.detectChanges();
+      await wrapperFixture.whenStable();
+
+      const hostElement = wrapperFixture.nativeElement.querySelector('app-input-number');
+
+      // Verify host has -wrapper suffix
+      expect(hostElement.getAttribute('data-testid')).toBe('test-input-wrapper');
+
+      // Verify error message test ID on correct element type
+      const errorParagraphs = hostElement.querySelectorAll('p');
+      const errorMessage = (Array.from(errorParagraphs) as Element[]).find(p =>
+        p.getAttribute('data-testid') === 'test-input-error-message'
+      );
+      expect(errorMessage).toBeTruthy();
+    });
+
+    it('should not render test IDs when data-testid attribute is not provided', async () => {
+      TestBed.resetTestingModule();
+      await TestBed.configureTestingModule({
+        imports: [InputNumber],
+        providers: [
+          provideZonelessChangeDetection(),
+          provideIcons({ heroChevronUp, heroChevronDown }),
+        ],
+      }).compileComponents();
+
+      const standaloneFixture = TestBed.createComponent(InputNumber);
+      standaloneFixture.componentRef.setInput('label', 'Test Label');
+      standaloneFixture.componentRef.setInput('helpText', 'Help text');
+      standaloneFixture.componentRef.setInput('showButtons', true);
+      standaloneFixture.detectChanges();
+
+      // Verify NO test IDs are rendered
+      const element = standaloneFixture.nativeElement;
+      const elementsWithTestId = element.querySelectorAll('[data-testid]');
+      expect(elementsWithTestId.length).toBe(0);
     });
   });
 });

@@ -3,7 +3,6 @@ import {
   Component,
   ElementRef,
   HostListener,
-  HostAttributeToken,
   computed,
   effect,
   inject,
@@ -30,8 +29,6 @@ import {
 import { DropdownTriggerComponent } from './dropdown-trigger';
 import { DropdownPanelComponent } from './dropdown-panel';
 
-const DATA_TESTID = new HostAttributeToken('data-testid');
-
 @Component({
   selector: 'app-dropdown',
   standalone: true,
@@ -40,11 +37,16 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: 'inline-flex',
+    '[attr.data-testid]': 'wrapperTestId()',
   },
 })
 export class Dropdown {
   private readonly host = inject(ElementRef<HTMLElement>);
-  private readonly hostTestId = inject(DATA_TESTID, { optional: true });
+  readonly testId = input<string>('');
+
+  protected readonly wrapperTestId = computed(() =>
+    this.testId() ? `${this.testId()}-wrapper` : null,
+  );
 
   // Inputs
   readonly trigger = input<DropdownTriggerConfig>({
@@ -116,11 +118,17 @@ export class Dropdown {
   // Computed
   readonly searchConfig = computed(() => this.search());
 
-  readonly triggerTestId = computed(() => this.hostTestId);
+  readonly triggerTestId = computed(() => this.testId() || null);
 
-  readonly panelTestId = computed(() => (this.hostTestId ? `${this.hostTestId}-panel` : null));
+  readonly panelTestId = computed(() => {
+    const id = this.testId();
+    return id ? `${id}-panel` : null;
+  });
 
-  readonly searchTestId = computed(() => (this.hostTestId ? `${this.hostTestId}-search` : null));
+  readonly searchTestId = computed(() => {
+    const id = this.testId();
+    return id ? `${id}-search` : null;
+  });
 
   readonly visibleSections = computed(() => {
     const sections = this.sections();

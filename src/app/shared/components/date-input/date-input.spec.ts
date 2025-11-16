@@ -1,24 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Component, provideZonelessChangeDetection } from '@angular/core';
-import { provideIcons } from '@ng-icons/core';
-import { heroMagnifyingGlass, heroEyeSlash } from '@ng-icons/heroicons/outline';
+import { DateInput } from './date-input';
 
-import { Input } from '@loan/app/shared/components/input/input';
-
-describe('Input', () => {
-  let component: Input;
-  let fixture: ComponentFixture<Input>;
+describe('DateInput', () => {
+  let component: DateInput;
+  let fixture: ComponentFixture<DateInput>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Input],
-      providers: [
-        provideZonelessChangeDetection(),
-        provideIcons({ heroMagnifyingGlass, heroEyeSlash }),
-      ],
+      imports: [DateInput],
+      providers: [provideZonelessChangeDetection()],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(Input);
+    fixture = TestBed.createComponent(DateInput);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -33,18 +27,18 @@ describe('Input', () => {
     expect(input).toBeTruthy();
   });
 
-  it('should apply default type', () => {
+  it('should apply date type', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     const input = compiled.querySelector('input');
-    expect(input?.type).toBe('text');
+    expect(input?.type).toBe('date');
   });
 
   it('should render label when provided', () => {
-    fixture.componentRef.setInput('label', 'Test Label');
+    fixture.componentRef.setInput('label', 'Birth Date');
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
     const label = compiled.querySelector('label');
-    expect(label?.textContent?.trim()).toBe('Test Label');
+    expect(label?.textContent?.trim()).toBe('Birth Date');
   });
 
   it('should not render label when not provided', () => {
@@ -54,11 +48,11 @@ describe('Input', () => {
   });
 
   it('should apply placeholder', () => {
-    fixture.componentRef.setInput('placeholder', 'Enter text');
+    fixture.componentRef.setInput('placeholder', 'Select date');
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
     const input = compiled.querySelector('input');
-    expect(input?.placeholder).toBe('Enter text');
+    expect(input?.placeholder).toBe('Select date');
   });
 
   it('should apply disabled state', () => {
@@ -77,6 +71,22 @@ describe('Input', () => {
     expect(input?.readOnly).toBe(true);
   });
 
+  it('should apply min date', () => {
+    fixture.componentRef.setInput('min', '2024-01-01');
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    const input = compiled.querySelector('input');
+    expect(input?.min).toBe('2024-01-01');
+  });
+
+  it('should apply max date', () => {
+    fixture.componentRef.setInput('max', '2024-12-31');
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    const input = compiled.querySelector('input');
+    expect(input?.max).toBe('2024-12-31');
+  });
+
   it('should emit valueChange on input', () => {
     let emittedValue = '';
     component.valueChange.subscribe((value) => {
@@ -85,133 +95,48 @@ describe('Input', () => {
 
     const compiled = fixture.nativeElement as HTMLElement;
     const input = compiled.querySelector('input') as HTMLInputElement;
-    input.value = 'test value';
+    input.value = '2024-03-15';
     input.dispatchEvent(new Event('input'));
 
-    expect(emittedValue).toBe('test value');
+    expect(emittedValue).toBe('2024-03-15');
   });
 
   it('should render help text', () => {
-    fixture.componentRef.setInput('helpText', 'This is help text');
+    fixture.componentRef.setInput('helpText', 'Select your birth date');
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
     const helpText = compiled.querySelector('p');
-    expect(helpText?.textContent?.trim()).toBe('This is help text');
+    expect(helpText?.textContent?.trim()).toBe('Select your birth date');
   });
 
   it('should render success message when validation state is success', () => {
     fixture.componentRef.setInput('validationState', 'success');
-    fixture.componentRef.setInput('successMessage', 'Success!');
+    fixture.componentRef.setInput('successMessage', 'Date is valid!');
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
     const message = compiled.querySelector('p');
-    expect(message?.textContent).toContain('Success!');
+    expect(message?.textContent).toContain('Date is valid!');
   });
 
   it('should render error message when validation state is error', () => {
     fixture.componentRef.setInput('validationState', 'error');
-    fixture.componentRef.setInput('errorMessage', 'Error!');
+    fixture.componentRef.setInput('errorMessage', 'Invalid date');
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
     const message = compiled.querySelector('p');
-    expect(message?.textContent).toContain('Error!');
+    expect(message?.textContent).toContain('Invalid date');
   });
 
-  it('should render prefix icon when provided', () => {
-    fixture.componentRef.setInput('prefixIcon', 'heroMagnifyingGlass');
-    fixture.detectChanges();
+  it('should render calendar icon', () => {
     const compiled = fixture.nativeElement as HTMLElement;
-    const icon = compiled.querySelector('ng-icon');
+    const icon = compiled.querySelector('svg');
     expect(icon).toBeTruthy();
-  });
-
-  it('should render suffix icon when provided', () => {
-    fixture.componentRef.setInput('suffixIcon', 'heroEyeSlash');
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    const icon = compiled.querySelector('ng-icon');
-    expect(icon).toBeTruthy();
-  });
-
-  it('should render suffix button when enabled', () => {
-    fixture.componentRef.setInput('suffixButton', true);
-    fixture.componentRef.setInput('suffixButtonText', 'Search');
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    const button = compiled.querySelector('button');
-    expect(button?.textContent?.trim()).toBe('Search');
-  });
-
-  it('should render suffix button icon when provided', () => {
-    fixture.componentRef.setInput('suffixButton', true);
-    fixture.componentRef.setInput('suffixButtonIcon', 'heroEyeSlash');
-    fixture.componentRef.setInput('suffixButtonAriaLabel', 'Toggle');
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    const icon = compiled.querySelector('button ng-icon');
-    const button = compiled.querySelector('button');
-    expect(icon).toBeTruthy();
-    expect(button?.getAttribute('aria-label')).toBe('Toggle');
-  });
-
-  it('should emit suffixButtonClick when suffix button is clicked', () => {
-    let clicked = false;
-    component.suffixButtonClick.subscribe(() => {
-      clicked = true;
-    });
-
-    fixture.componentRef.setInput('suffixButton', true);
-    fixture.componentRef.setInput('suffixButtonText', 'Click');
-    fixture.detectChanges();
-
-    const compiled = fixture.nativeElement as HTMLElement;
-    const button = compiled.querySelector('button') as HTMLButtonElement;
-    button.click();
-
-    expect(clicked).toBe(true);
-  });
-
-  it('should apply small size classes', () => {
-    fixture.componentRef.setInput('size', 'small');
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    const input = compiled.querySelector('input');
-    expect(input?.className).toContain('p-2');
-    expect(input?.className).toContain('text-xs');
-  });
-
-  it('should apply large size classes', () => {
-    fixture.componentRef.setInput('size', 'large');
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    const input = compiled.querySelector('input');
-    expect(input?.className).toContain('p-4');
-    expect(input?.className).toContain('text-base');
-  });
-
-  it('should apply custom input id', () => {
-    fixture.componentRef.setInput('inputId', 'custom-id');
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    const input = compiled.querySelector('input');
-    expect(input?.id).toBe('custom-id');
-  });
-
-  it('should link label to input via for attribute', () => {
-    fixture.componentRef.setInput('label', 'Test');
-    fixture.componentRef.setInput('inputId', 'test-id');
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    const label = compiled.querySelector('label');
-    const input = compiled.querySelector('input');
-    expect(label?.getAttribute('for')).toBe('test-id');
-    expect(input?.id).toBe('test-id');
   });
 
   describe('ControlValueAccessor', () => {
     it('should write value', () => {
-      component.writeValue('test');
-      expect(component.value()).toBe('test');
+      component.writeValue('2024-03-15');
+      expect(component.value()).toBe('2024-03-15');
     });
 
     it('should call onChange when input changes', () => {
@@ -222,10 +147,10 @@ describe('Input', () => {
 
       const compiled = fixture.nativeElement as HTMLElement;
       const input = compiled.querySelector('input') as HTMLInputElement;
-      input.value = 'new value';
+      input.value = '2024-03-15';
       input.dispatchEvent(new Event('input'));
 
-      expect(changedValue).toBe('new value');
+      expect(changedValue).toBe('2024-03-15');
     });
 
     it('should call onTouched when input loses focus', () => {
@@ -245,15 +170,13 @@ describe('Input', () => {
   describe('data-testid support', () => {
     it('should render test IDs with wrapper pattern when data-testid attribute is provided', async () => {
       @Component({
-        template: `<app-input
-          [testId]="'test-input'"
-          label="Username"
-          helpText="Enter your username"
-          [suffixButton]="true"
-          suffixButtonText="Clear"
-        ></app-input>`,
+        template: `<app-date-input
+          [testId]="'test-date'"
+          label="Birth Date"
+          helpText="Enter your birth date"
+        ></app-date-input>`,
         standalone: true,
-        imports: [Input],
+        imports: [DateInput],
       })
       class TestWrapper {}
 
@@ -267,38 +190,35 @@ describe('Input', () => {
       wrapperFixture.detectChanges();
       await wrapperFixture.whenStable();
 
-      const hostElement = wrapperFixture.nativeElement.querySelector('app-input');
+      const hostElement = wrapperFixture.nativeElement.querySelector('app-date-input');
 
       // Verify host has -wrapper suffix
-      expect(hostElement.getAttribute('data-testid')).toBe('test-input-wrapper');
+      expect(hostElement.getAttribute('data-testid')).toBe('test-date-wrapper');
 
       // Verify main element has original ID (no suffix)
       const input = hostElement.querySelector('input');
-      expect(input?.getAttribute('data-testid')).toBe('test-input');
+      expect(input?.getAttribute('data-testid')).toBe('test-date');
 
       // Verify auxiliary elements have suffixes
       const label = hostElement.querySelector('label');
-      expect(label?.getAttribute('data-testid')).toBe('test-input-label');
-
-      const button = hostElement.querySelector('button');
-      expect(button?.getAttribute('data-testid')).toBe('test-input-button');
+      expect(label?.getAttribute('data-testid')).toBe('test-date-label');
 
       const helpTextParagraphs = hostElement.querySelectorAll('p');
       const helpText = (Array.from(helpTextParagraphs) as Element[]).find(p =>
-        p.getAttribute('data-testid') === 'test-input-help-text'
+        p.getAttribute('data-testid') === 'test-date-help-text'
       );
       expect(helpText).toBeTruthy();
     });
 
     it('should render error message test ID with wrapper pattern when validation state is error', async () => {
       @Component({
-        template: `<app-input
-          [testId]="'test-input'"
+        template: `<app-date-input
+          [testId]="'test-date'"
           validationState="error"
-          errorMessage="This field is required"
-        ></app-input>`,
+          errorMessage="Invalid date"
+        ></app-date-input>`,
         standalone: true,
-        imports: [Input],
+        imports: [DateInput],
       })
       class TestWrapper {}
 
@@ -312,15 +232,15 @@ describe('Input', () => {
       wrapperFixture.detectChanges();
       await wrapperFixture.whenStable();
 
-      const hostElement = wrapperFixture.nativeElement.querySelector('app-input');
+      const hostElement = wrapperFixture.nativeElement.querySelector('app-date-input');
 
       // Verify host has -wrapper suffix
-      expect(hostElement.getAttribute('data-testid')).toBe('test-input-wrapper');
+      expect(hostElement.getAttribute('data-testid')).toBe('test-date-wrapper');
 
       // Verify error message test ID on correct element type
       const errorParagraphs = hostElement.querySelectorAll('p');
       const errorMessage = (Array.from(errorParagraphs) as Element[]).find(p =>
-        p.getAttribute('data-testid') === 'test-input-error-message'
+        p.getAttribute('data-testid') === 'test-date-error-message'
       );
       expect(errorMessage).toBeTruthy();
     });
@@ -328,14 +248,13 @@ describe('Input', () => {
     it('should not render test IDs when data-testid attribute is not provided', async () => {
       TestBed.resetTestingModule();
       await TestBed.configureTestingModule({
-        imports: [Input],
+        imports: [DateInput],
         providers: [provideZonelessChangeDetection()],
       }).compileComponents();
 
-      const standaloneFixture = TestBed.createComponent(Input);
+      const standaloneFixture = TestBed.createComponent(DateInput);
       standaloneFixture.componentRef.setInput('label', 'Test Label');
       standaloneFixture.componentRef.setInput('helpText', 'Help text');
-      standaloneFixture.componentRef.setInput('suffixButton', true);
       standaloneFixture.detectChanges();
 
       // Verify NO test IDs are rendered

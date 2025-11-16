@@ -55,8 +55,9 @@ export class GenericCrudListComponent<TDto extends { id: string }> implements On
 
   // Input: Test ID prefix for E2E testing (optional)
   testIdPrefix = input<string>('crud');
+  protected readonly testPrefix = computed(() => this.testIdPrefix());
 
-  // Table configuration
+  // Regular property for template interpolation (updated via effect)// Table configuration
   tableColumns = signal<TableColumn<TDto>[]>([]);
   tableActions = signal<TableAction<TDto>[]>([]);
 
@@ -76,6 +77,8 @@ export class GenericCrudListComponent<TDto extends { id: string }> implements On
   });
 
   constructor() {
+    // Update testPrefix when input changes// Provide test ID prefix to child components
+
     // Watch for changes in items and route ID to open modal
     effect(() => {
       const items = this.service().items();

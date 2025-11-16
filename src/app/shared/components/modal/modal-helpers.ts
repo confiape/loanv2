@@ -3,6 +3,7 @@ import { computed, Signal } from '@angular/core';
 export type ModalSize = 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 
 export interface ModalTestIds {
+  container: Signal<string | null>;
   overlay: Signal<string | null>;
   close: Signal<string | null>;
   header: Signal<string | null>;
@@ -10,9 +11,10 @@ export interface ModalTestIds {
 
 export function generateModalTestIds(hostTestId: string | null): ModalTestIds {
   return {
+    container: computed(() => hostTestId),
     overlay: computed(() => (hostTestId ? `${hostTestId}-overlay` : null)),
     close: computed(() => (hostTestId ? `${hostTestId}-close` : null)),
-    header: computed(() => (hostTestId ? `${hostTestId}-header` : null)),
+    header: computed(() => hostTestId),
   };
 }
 

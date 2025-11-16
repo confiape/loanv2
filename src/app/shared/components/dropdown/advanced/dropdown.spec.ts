@@ -1,8 +1,29 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideZonelessChangeDetection } from '@angular/core';
+import { Component, provideZonelessChangeDetection } from '@angular/core';
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { Dropdown } from './dropdown';
 import { DropdownSection } from './dropdown.types';
+
+// Wrapper component for testing data-testid attribute
+@Component({
+  template: `<app-dropdown [testId]="'test-dropdown'" [sections]="sections" [search]="{ placeholder: 'Search' }"></app-dropdown>`,
+  standalone: true,
+  imports: [Dropdown],
+})
+class TestWrapperComponent {
+  sections: DropdownSection[] = [
+    {
+      id: 'actions',
+      items: [
+        {
+          type: 'action',
+          id: 'dashboard',
+          label: 'Dashboard',
+        },
+      ],
+    },
+  ];
+}
 
 describe('Dropdown', () => {
   let fixture: ComponentFixture<Dropdown>;
@@ -128,5 +149,72 @@ describe('Dropdown', () => {
     const items = overlayElement.querySelectorAll('ul li button');
     expect(items.length).toBe(1);
     expect(items[0]?.textContent?.trim()).toBe('Earnings');
+  });
+
+  describe('data-testid support', () => {
+    it('should render test IDs with wrapper pattern when data-testid attribute is provided', async () => {
+      TestBed.resetTestingModule();
+
+      await TestBed.configureTestingModule({
+        imports: [TestWrapperComponent],
+        providers: [provideZonelessChangeDetection()],
+      }).compileComponents();
+
+      const wrapperFixture = TestBed.createComponent(TestWrapperComponent);
+      wrapperFixture.detectChanges();
+      await wrapperFixture.whenStable();
+
+      const wrapperOverlayContainer = TestBed.inject(OverlayContainer);
+      const wrapperOverlayElement = wrapperOverlayContainer.getContainerElement();
+
+      const hostElement = wrapperFixture.nativeElement.querySelector('app-dropdown');
+
+      // Verify host has -wrapper suffix
+      expect(hostElement.getAttribute('data-testid')).toBe('test-dropdown-wrapper');
+
+      // Verify trigger has original ID (no suffix)
+      const trigger = hostElement.querySelector('button');
+      expect(trigger?.getAttribute('data-testid')).toBe('test-dropdown');
+
+      // Open dropdown to verify panel and search test IDs
+      trigger?.dispatchEvent(new MouseEvent('click'));
+      wrapperFixture.detectChanges();
+      await wrapperFixture.whenStable();
+
+      // Verify panel test ID on correct element type (div container)
+      const panelDivs = wrapperOverlayElement.querySelectorAll('div');
+      const panel = (Array.from(panelDivs) as Element[]).find(d =>
+        d.getAttribute('data-testid') === 'test-dropdown-panel'
+      );
+      expect(panel).toBeTruthy();
+
+      // Verify search input test ID on correct element type
+      const searchInput = wrapperOverlayElement.querySelector('input[type="text"]');
+      expect(searchInput?.getAttribute('data-testid')).toBe('test-dropdown-search');
+
+      wrapperOverlayContainer.ngOnDestroy();
+    });
+
+    it('should not render test IDs when data-testid attribute is not provided', async () => {
+      fixture.componentRef.setInput('sections', baseSections);
+      fixture.componentRef.setInput('search', {
+        placeholder: 'Search',
+      });
+      fixture.detectChanges();
+
+      const compiled = fixture.nativeElement as HTMLElement;
+      const trigger = compiled.querySelector('button');
+
+      // Verify trigger has NO test ID
+      expect(trigger?.hasAttribute('data-testid')).toBe(false);
+
+      // Open dropdown to verify no panel and search test IDs
+      trigger?.dispatchEvent(new MouseEvent('click'));
+      fixture.detectChanges();
+
+      // Verify NO test IDs in overlay
+      const elementsWithTestId = overlayElement.querySelectorAll('[data-testid]');
+      expect(elementsWithTestId.length).toBe(0);
+    });
   });
 });

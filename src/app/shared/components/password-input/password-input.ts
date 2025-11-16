@@ -6,8 +6,6 @@ import {
   signal,
   computed,
   effect,
-  inject,
-  HostAttributeToken,
   ViewChild,
   forwardRef,
 } from '@angular/core';
@@ -16,9 +14,10 @@ import { provideIcons } from '@ng-icons/core';
 import { heroEye, heroEyeSlash } from '@ng-icons/heroicons/outline';
 
 import { Input } from '@loan/app/shared/components/input/input';
-import { InputSize, ValidationState } from '@loan/app/shared/components/input/input-helpers';
-
-const DATA_TESTID = new HostAttributeToken('data-testid');
+import {
+  InputSize,
+  ValidationState,
+} from '@loan/app/shared/components/input/input-helpers';
 
 @Component({
   selector: 'app-password-input',
@@ -26,7 +25,7 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
   imports: [Input],
   template: `
     <app-input
-      [attr.data-testid]="hostTestId"
+      [testId]="testId()"
       [label]="label()"
       [placeholder]="placeholder()"
       [disabled]="isDisabled()"
@@ -60,10 +59,15 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
   ],
   host: {
     class: 'block w-full',
+    '[attr.data-testid]': 'wrapperTestId()',
   },
 })
 export class PasswordInput implements ControlValueAccessor {
-  protected readonly hostTestId = inject(DATA_TESTID, { optional: true });
+  readonly testId = input<string>('');
+
+  protected readonly wrapperTestId = computed(() =>
+    this.testId() ? `${this.testId()}-wrapper` : null,
+  );
 
   @ViewChild(Input)
   set inputComponent(component: Input | undefined) {
