@@ -22,7 +22,7 @@ export interface AccordionItem {
   selector: 'app-accordion',
   standalone: true,
   imports: [CommonModule],
-  template: '<div class="space-y-2"><ng-content></ng-content></div>',
+  template: '<div class="space-y-2" [attr.data-testid]="containerTestId()"><ng-content></ng-content></div>',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: 'block',
@@ -33,6 +33,7 @@ export class Accordion {
   readonly testId = input<string>('');
 
   readonly wrapperTestId = computed(() => (this.testId() ? `${this.testId()}-wrapper` : null));
+  readonly containerTestId = computed(() => this.testId() || null);
 
   readonly items = input<AccordionItem[]>([]);
   readonly allowMultiple = input(false);

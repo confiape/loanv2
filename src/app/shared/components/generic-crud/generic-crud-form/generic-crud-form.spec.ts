@@ -345,9 +345,10 @@ describe('GenericCrudFormComponent - data-testid', () => {
     const component = fixture.componentInstance;
 
     // Click cancel button
-    const cancelButton = formElement.querySelector(
+    const cancelButtonHost = formElement.querySelector(
       'app-button[data-testid="user-form-btn-cancel-wrapper"]'
     );
+    const cancelButton = cancelButtonHost.querySelector('button');
     cancelButton.click();
     fixture.detectChanges();
 

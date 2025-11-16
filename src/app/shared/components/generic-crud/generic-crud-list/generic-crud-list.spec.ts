@@ -328,7 +328,9 @@ describe('GenericCrudListComponent - data-testid', () => {
     // Verify form inside modal
     const form = listElement.querySelector('app-generic-crud-form');
     expect(form).toBeTruthy();
-    expect(form.getAttribute('ng-reflect-test-id-prefix')).toBe('users');
+    // Verify that form buttons have the correct testId prefix
+    const submitButton = modal.querySelector('app-button[data-testid="users-btn-submit-wrapper"]');
+    expect(submitButton).toBeTruthy();
   });
 
   it('should render delete confirmation modal with correct test ID when shown', async () => {
@@ -400,7 +402,8 @@ describe('GenericCrudListComponent - data-testid', () => {
     const listElement = fixture.nativeElement.querySelector('app-generic-crud-list');
 
     // Click new button
-    const newButton = listElement.querySelector('app-button[data-testid="users-btn-new-wrapper"]');
+    const newButtonHost = listElement.querySelector('app-button[data-testid="users-btn-new-wrapper"]');
+    const newButton = newButtonHost.querySelector('button');
     newButton.click();
     fixture.detectChanges();
 
