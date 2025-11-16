@@ -253,17 +253,17 @@ describe('UserMenuComponent', () => {
       // Verify item test IDs with indices on correct element types (button or anchor elements with role="menuitem")
       const allMenuItems = hostElement.querySelectorAll('[role="menuitem"]');
 
-      const item0 = (Array.from(allMenuItems || []).find(el =>
+      const item0 = (Array.from(allMenuItems || []) as Element[]).find(el =>
         el.getAttribute('data-testid') === 'test-user-menu-item-0'
       );
       expect(item0).toBeTruthy();
 
-      const item1 = (Array.from(allMenuItems || []).find(el =>
+      const item1 = (Array.from(allMenuItems || []) as Element[]).find(el =>
         el.getAttribute('data-testid') === 'test-user-menu-item-1'
       );
       expect(item1).toBeTruthy();
 
-      const item2 = (Array.from(allMenuItems || []).find(el =>
+      const item2 = (Array.from(allMenuItems || []) as Element[]).find(el =>
         el.getAttribute('data-testid') === 'test-user-menu-item-2'
       );
       expect(item2).toBeTruthy();

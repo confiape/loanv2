@@ -280,7 +280,7 @@ describe('NotificationButtonComponent', () => {
       component.toggle();
       fixture.detectChanges();
 
-      const markAllButton = (Array.from(host.querySelectorAll('button')).find((btn) =>
+      const markAllButton = (Array.from(host.querySelectorAll('button')) as Element[]).find((btn) =>
         btn.textContent?.includes('Mark all as read'),
       );
       expect(markAllButton).toBeTruthy();
@@ -291,7 +291,7 @@ describe('NotificationButtonComponent', () => {
       component.toggle();
       fixture.detectChanges();
 
-      const markAllButton = (Array.from(host.querySelectorAll('button')).find((btn) =>
+      const markAllButton = (Array.from(host.querySelectorAll('button')) as Element[]).find((btn) =>
         btn.textContent?.includes('Mark all as read'),
       );
       expect(markAllButton).toBeFalsy();
@@ -321,7 +321,7 @@ describe('NotificationButtonComponent', () => {
       component.toggle();
       fixture.detectChanges();
 
-      const viewAllButton = (Array.from(host.querySelectorAll('button')).find((btn) =>
+      const viewAllButton = (Array.from(host.querySelectorAll('button')) as Element[]).find((btn) =>
         btn.textContent?.includes('View all'),
       );
       expect(viewAllButton).toBeTruthy();

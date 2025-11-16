@@ -183,7 +183,7 @@ describe('Dropdown', () => {
 
       // Verify panel test ID on correct element type (div container)
       const panelDivs = wrapperOverlayElement.querySelectorAll('div');
-      const panel = (Array.from(panelDivs).find(d =>
+      const panel = (Array.from(panelDivs) as Element[]).find(d =>
         d.getAttribute('data-testid') === 'test-dropdown-panel'
       );
       expect(panel).toBeTruthy();

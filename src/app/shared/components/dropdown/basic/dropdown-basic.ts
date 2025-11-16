@@ -62,7 +62,7 @@ type DropdownOpenStrategy = 'click' | 'hover';
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: 'inline-flex',
-    '[attr.data-testid]': 'componentTestId()',
+    '[attr.data-testid]': 'wrapperTestId()',
   },
 })
 export class DropdownBasic {
@@ -90,6 +90,11 @@ export class DropdownBasic {
   private hoverCloseTimeout: ReturnType<typeof setTimeout> | null = null;
 
   // Computed
+  readonly wrapperTestId = computed(() => {
+    const id = this.testId();
+    return id ? `${id}-wrapper` : null;
+  });
+
   readonly componentTestId = computed(() => {
     const id = this.testId();
     return id ? `${id}-dropdown-basic` : null;

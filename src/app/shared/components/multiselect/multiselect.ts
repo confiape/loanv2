@@ -266,7 +266,7 @@ export class MultiSelect implements ControlValueAccessor {
   readonly errorMessageTestId = this.testIds.errorMessage;
 
   // MultiSelect-specific test IDs
-  readonly buttonTestId = computed(() => this.testId());
+  readonly buttonTestId = computed(() => this.testId() || null);
   readonly dropdownTestId = computed(() => {
     const id = this.testId();
     return id ? `${id}-dropdown` : null;

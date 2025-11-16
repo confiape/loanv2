@@ -123,7 +123,7 @@ export class Checkbox implements ControlValueAccessor {
   protected onTouched: () => void = () => undefined;
 
   // Test IDs using effectiveTestId
-  readonly inputTestId = computed(() => this.testId());
+  readonly inputTestId = computed(() => this.testId() || null);
   readonly labelTestId = computed(() => {
     const id = this.testId();
     return id ? `${id}-label` : null;

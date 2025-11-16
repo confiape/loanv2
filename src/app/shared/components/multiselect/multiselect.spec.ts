@@ -163,7 +163,7 @@ describe('MultiSelect', () => {
 
       // Verify help text test ID on correct element type
       const helpTextParagraphs = hostElement.querySelectorAll('p');
-      const helpText = (Array.from(helpTextParagraphs).find(p =>
+      const helpText = (Array.from(helpTextParagraphs) as Element[]).find(p =>
         p.getAttribute('data-testid') === 'test-multiselect-help-text'
       );
       expect(helpText).toBeTruthy();
@@ -175,7 +175,7 @@ describe('MultiSelect', () => {
 
       // Verify dropdown test ID on correct element type (div container)
       const dropdownDivs = hostElement.querySelectorAll('div');
-      const dropdown = (Array.from(dropdownDivs).find(d =>
+      const dropdown = (Array.from(dropdownDivs) as Element[]).find(d =>
         d.getAttribute('data-testid') === 'test-multiselect-dropdown'
       );
       expect(dropdown).toBeTruthy();
@@ -184,17 +184,17 @@ describe('MultiSelect', () => {
       // Options are rendered as checkbox input elements
       const optionInputs = hostElement.querySelectorAll('input[type="checkbox"]');
 
-      const optionUS = (Array.from(optionInputs).find(input =>
+      const optionUS = (Array.from(optionInputs) as Element[]).find(input =>
         input.getAttribute('data-testid') === 'test-multiselect-option-us'
       );
       expect(optionUS).toBeTruthy();
 
-      const optionNewYork = (Array.from(optionInputs).find(input =>
+      const optionNewYork = (Array.from(optionInputs) as Element[]).find(input =>
         input.getAttribute('data-testid') === 'test-multiselect-option-new-york'
       );
       expect(optionNewYork).toBeTruthy();
 
-      const optionCA = (Array.from(optionInputs).find(input =>
+      const optionCA = (Array.from(optionInputs) as Element[]).find(input =>
         input.getAttribute('data-testid') === 'test-multiselect-option-ca'
       );
       expect(optionCA).toBeTruthy();
@@ -232,7 +232,7 @@ describe('MultiSelect', () => {
 
       // Verify error message test ID on correct element type
       const errorParagraphs = hostElement.querySelectorAll('p');
-      const errorMessage = (Array.from(errorParagraphs).find(p =>
+      const errorMessage = (Array.from(errorParagraphs) as Element[]).find(p =>
         p.getAttribute('data-testid') === 'test-multiselect-error-message'
       );
       expect(errorMessage).toBeTruthy();

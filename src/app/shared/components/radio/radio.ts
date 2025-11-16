@@ -138,7 +138,7 @@ export class RadioGroup implements ControlValueAccessor {
   protected onTouched: () => void = () => undefined;
 
   // Test IDs
-  readonly containerTestId = computed(() => this.testId());
+  readonly containerTestId = computed(() => this.testId() || null);
   readonly labelTestId = computed(() => {
     const id = this.testId();
     return id ? `${id}-label` : null;

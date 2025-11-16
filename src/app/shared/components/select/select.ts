@@ -150,7 +150,7 @@ export class Select implements ControlValueAccessor {
   readonly errorMessageTestId = this.testIds.errorMessage;
 
   // Select-specific test ID
-  readonly selectTestId = computed(() => this.testId());
+  readonly selectTestId = computed(() => this.testId() || null);
 
   /**
    * Get test ID for option element with sanitized value

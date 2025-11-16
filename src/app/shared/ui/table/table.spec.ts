@@ -513,7 +513,7 @@ describe('Table Component', () => {
       @Component({
         template: `
           <app-table
-            data-testid="products-table"
+            [testId]="'products-table'"
             [columns]="columns"
             [data]="data"
             [searchable]="true"

@@ -284,7 +284,7 @@ describe('Input', () => {
       expect(button?.getAttribute('data-testid')).toBe('test-input-button');
 
       const helpTextParagraphs = hostElement.querySelectorAll('p');
-      const helpText = (Array.from(helpTextParagraphs).find(p =>
+      const helpText = (Array.from(helpTextParagraphs) as Element[]).find(p =>
         p.getAttribute('data-testid') === 'test-input-help-text'
       );
       expect(helpText).toBeTruthy();
@@ -319,7 +319,7 @@ describe('Input', () => {
 
       // Verify error message test ID on correct element type
       const errorParagraphs = hostElement.querySelectorAll('p');
-      const errorMessage = (Array.from(errorParagraphs).find(p =>
+      const errorMessage = (Array.from(errorParagraphs) as Element[]).find(p =>
         p.getAttribute('data-testid') === 'test-input-error-message'
       );
       expect(errorMessage).toBeTruthy();

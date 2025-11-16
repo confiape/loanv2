@@ -78,7 +78,6 @@ const STATUS_POSITIONS: Record<string, string> = {
     <div
       class="inline-flex items-center justify-center relative"
       [class]="containerClasses()"
-      [attr.data-testid]="componentTestId()"
     >
       <!-- Image Avatar -->
       @if (variant() === 'image') {
@@ -130,7 +129,7 @@ const STATUS_POSITIONS: Record<string, string> = {
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    '[attr.data-testid]': 'componentTestId()',
+    '[attr.data-testid]': 'wrapperTestId()',
   },
 })
 export class Avatar {
@@ -189,6 +188,11 @@ export class Avatar {
   });
 
   // Test ID computed values
+  readonly wrapperTestId = computed(() => {
+    const id = this.testId();
+    return id ? `${id}-wrapper` : null;
+  });
+
   readonly componentTestId = computed(() => {
     const id = this.testId();
     return id ? `${id}-avatar` : null;

@@ -302,14 +302,16 @@ describe('Avatar', () => {
       const hostElement = fixture.nativeElement.querySelector('app-avatar') as HTMLElement;
       const avatarInstance = fixture.componentInstance.avatar;
 
+      expect(avatarInstance.wrapperTestId()).toBe('user-avatar-wrapper');
       expect(avatarInstance.componentTestId()).toBe('user-avatar-avatar');
       expect(avatarInstance.imageTestId()).toBe('user-avatar-image');
       expect(avatarInstance.indicatorTestId()).toBe('user-avatar-indicator');
-      expect(hostElement.getAttribute('data-testid')).toBe('user-avatar-avatar');
+      expect(hostElement.getAttribute('data-testid')).toBe('user-avatar-wrapper');
     });
 
     it('returns null when no host attribute is provided', async () => {
       const { component } = await renderAvatar();
+      expect(component.wrapperTestId()).toBeNull();
       expect(component.componentTestId()).toBeNull();
       expect(component.imageTestId()).toBeNull();
       expect(component.initialsTestId()).toBeNull();
