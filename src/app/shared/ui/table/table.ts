@@ -2,11 +2,9 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  inject,
   input,
   output,
   signal,
-  HostAttributeToken,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import type {
@@ -16,8 +14,7 @@ import type {
   TableSort,
   TableDensity,
 } from './table.models';
-
-const DATA_TESTID = new HostAttributeToken('data-testid');
+import { generateItemTestId } from '@loan/app/shared/utils/test-id.utils';
 
 /**
  * Componente Table reutilizable
@@ -32,7 +29,7 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Table<T extends Record<string, any> = Record<string, any>> {
-  private readonly injectedTestId = inject(DATA_TESTID, { optional: true });
+  private readonly dataTestId = input<string | null>(null);
 
   // Exponer Math para el template
   protected readonly Math = Math;
@@ -236,12 +233,14 @@ export class Table<T extends Record<string, any> = Record<string, any>> {
    * Test IDs dinámicos para Playwright
    */
   protected readonly testIds = computed(() => {
-    const base = this.injectedTestId;
+    const base = this.dataTestId();
     if (!base) {
       return {
         wrapper: null,
         search: null,
         table: null,
+        header: null,
+        body: null,
         selectAll: null,
         pagination: null,
       };
@@ -250,11 +249,33 @@ export class Table<T extends Record<string, any> = Record<string, any>> {
     return {
       wrapper: `${base}-wrapper`,
       search: `${base}-search`,
-      table: `${base}-table`,
+      table: base,
+      header: `${base}-header`,
+      body: `${base}-body`,
       selectAll: `${base}-select-all`,
       pagination: `${base}-pagination`,
     };
   });
+
+  /**
+   * Generate test ID for a table row
+   * Uses row ID if available, otherwise uses index
+   */
+  protected getRowTestId(row: T, index: number): string | null {
+    const base = this.dataTestId();
+    if (!base) {
+      return null;
+    }
+
+    // Try to use 'id' property from row if available
+    const rowId = (row as any).id;
+    if (rowId !== undefined && rowId !== null) {
+      return generateItemTestId(base, 'row', rowId);
+    }
+
+    // Fall back to index
+    return generateItemTestId(base, 'row', index);
+  }
 
   /**
    * Clases de densidad

@@ -76,37 +76,44 @@ export class AccordionItemComponent {
   private readonly accordion = inject(Accordion);
   private readonly buttonRef = viewChild<ElementRef<HTMLButtonElement>>('accordionButton');
 
-  // Test IDs
+  // Test IDs (using index instead of id for predictable test IDs)
   private readonly testIdPrefix = computed(() => this.accordion.getTestIdPrefix());
+  private readonly itemIndex = computed(() => this.accordion.getItemIndex(this.id()));
 
   readonly itemTestId = computed(() => {
     const prefix = this.testIdPrefix();
-    return prefix ? `${prefix}-item-${this.id()}` : null;
+    const index = this.itemIndex();
+    return prefix && index !== -1 ? `${prefix}-item-${index}` : null;
   });
 
   readonly headingTestId = computed(() => {
     const prefix = this.testIdPrefix();
-    return prefix ? `${prefix}-heading-${this.id()}` : null;
+    const index = this.itemIndex();
+    return prefix && index !== -1 ? `${prefix}-header-${index}` : null;
   });
 
   readonly buttonTestId = computed(() => {
     const prefix = this.testIdPrefix();
-    return prefix ? `${prefix}-button-${this.id()}` : null;
+    const index = this.itemIndex();
+    return prefix && index !== -1 ? `${prefix}-button-${index}` : null;
   });
 
   readonly headerTestId = computed(() => {
     const prefix = this.testIdPrefix();
-    return prefix ? `${prefix}-header-${this.id()}` : null;
+    const index = this.itemIndex();
+    return prefix && index !== -1 ? `${prefix}-header-${index}` : null;
   });
 
   readonly iconTestId = computed(() => {
     const prefix = this.testIdPrefix();
-    return prefix ? `${prefix}-icon-${this.id()}` : null;
+    const index = this.itemIndex();
+    return prefix && index !== -1 ? `${prefix}-icon-${index}` : null;
   });
 
   readonly bodyTestId = computed(() => {
     const prefix = this.testIdPrefix();
-    return prefix ? `${prefix}-body-${this.id()}` : null;
+    const index = this.itemIndex();
+    return prefix && index !== -1 ? `${prefix}-content-${index}` : null;
   });
 
   isExpanded(): boolean {
