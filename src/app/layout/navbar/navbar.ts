@@ -1,4 +1,4 @@
-import { Component, input, output, inject } from '@angular/core';
+import { Component, input, output, inject, DestroyRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, tap } from 'rxjs/operators';
@@ -25,6 +25,7 @@ export class NavbarComponent {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   readonly userState = inject(UserStateService);
+  private readonly destroyRef = inject(DestroyRef);
 
   // Inputs
   readonly appTitle = input<string>('Loan UI');
@@ -93,7 +94,7 @@ export class NavbarComponent {
           this.router.navigate(['/login']);
           return EMPTY;
         }),
-        takeUntilDestroyed(),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
   }
