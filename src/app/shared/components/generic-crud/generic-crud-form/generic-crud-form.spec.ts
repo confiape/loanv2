@@ -1,7 +1,8 @@
-import { provideZonelessChangeDetection } from '@angular/core';
-import { render } from '@testing-library/angular';
+import { provideZonelessChangeDetection, inputBinding, signal } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
 import { GenericCrudFormComponent } from './generic-crud-form';
 import { FormFieldMetadata } from '@loan/app/core/models/form-metadata';
+import { describe, it, expect } from 'vitest';
 
 describe('GenericCrudFormComponent', () => {
   const mockFields: FormFieldMetadata[] = [
@@ -61,193 +62,221 @@ describe('GenericCrudFormComponent', () => {
     },
   ];
 
-  it('should create', async () => {
-    const { container } = await render(GenericCrudFormComponent, {
-      componentInputs: {
-        fields: mockFields,
-        dataTestId: 'test-form',
-      },
+  it('should create', () => {
+    const fixture = TestBed.configureTestingModule({
       providers: [provideZonelessChangeDetection()],
+    }).createComponent(GenericCrudFormComponent, {
+      bindings: [
+        inputBinding('fields', () => mockFields),
+        inputBinding('dataTestId', () => 'test-form'),
+      ],
     });
+    TestBed.tick();
 
-    expect(container).toBeTruthy();
+    expect(fixture.nativeElement).toBeTruthy();
   });
 
   describe('data-testid propagation', () => {
-    it('should render data-testid on text input field', async () => {
-      const { container } = await render(GenericCrudFormComponent, {
-        componentInputs: {
-          fields: mockFields,
-          dataTestId: 'test-form',
-        },
+    it('should render data-testid on text input field', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
+      }).createComponent(GenericCrudFormComponent, {
+        bindings: [
+          inputBinding('fields', () => mockFields),
+          inputBinding('dataTestId', () => 'test-form'),
+        ],
       });
+      TestBed.tick();
 
-      const textInput = container.querySelector('input[data-testid="test-form-input-name"]');
+      const textInput = fixture.nativeElement.querySelector('input[data-testid="test-form-input-name"]');
       expect(textInput).toBeTruthy();
     });
 
-    it('should render data-testid on email input field', async () => {
-      const { container } = await render(GenericCrudFormComponent, {
-        componentInputs: {
-          fields: mockFields,
-          dataTestId: 'test-form',
-        },
+    it('should render data-testid on email input field', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
+      }).createComponent(GenericCrudFormComponent, {
+        bindings: [
+          inputBinding('fields', () => mockFields),
+          inputBinding('dataTestId', () => 'test-form'),
+        ],
       });
+      TestBed.tick();
 
-      const emailInput = container.querySelector('input[data-testid="test-form-input-email"]');
+      const emailInput = fixture.nativeElement.querySelector('input[data-testid="test-form-input-email"]');
       expect(emailInput).toBeTruthy();
     });
 
-    it('should render data-testid on number input field', async () => {
-      const { container } = await render(GenericCrudFormComponent, {
-        componentInputs: {
-          fields: mockFields,
-          dataTestId: 'test-form',
-        },
+    it('should render data-testid on number input field', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
+      }).createComponent(GenericCrudFormComponent, {
+        bindings: [
+          inputBinding('fields', () => mockFields),
+          inputBinding('dataTestId', () => 'test-form'),
+        ],
       });
+      TestBed.tick();
 
-      const numberInput = container.querySelector('input[data-testid="test-form-number-age"]');
+      const numberInput = fixture.nativeElement.querySelector('input[data-testid="test-form-number-age"]');
       expect(numberInput).toBeTruthy();
     });
 
-    it('should render data-testid on date input field', async () => {
-      const { container } = await render(GenericCrudFormComponent, {
-        componentInputs: {
-          fields: mockFields,
-          dataTestId: 'test-form',
-        },
+    it('should render data-testid on date input field', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
+      }).createComponent(GenericCrudFormComponent, {
+        bindings: [
+          inputBinding('fields', () => mockFields),
+          inputBinding('dataTestId', () => 'test-form'),
+        ],
       });
+      TestBed.tick();
 
-      const dateInput = container.querySelector(
+      const dateInput = fixture.nativeElement.querySelector(
         'input[data-testid="test-form-date-birthDate"]',
       );
       expect(dateInput).toBeTruthy();
     });
 
-    it('should render data-testid on checkbox field', async () => {
-      const { container } = await render(GenericCrudFormComponent, {
-        componentInputs: {
-          fields: mockFields,
-          dataTestId: 'test-form',
-        },
+    it('should render data-testid on checkbox field', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
+      }).createComponent(GenericCrudFormComponent, {
+        bindings: [
+          inputBinding('fields', () => mockFields),
+          inputBinding('dataTestId', () => 'test-form'),
+        ],
       });
+      TestBed.tick();
 
-      const checkbox = container.querySelector('input[data-testid="test-form-checkbox-active"]');
+      const checkbox = fixture.nativeElement.querySelector('input[data-testid="test-form-checkbox-active"]');
       expect(checkbox).toBeTruthy();
     });
 
-    it('should render data-testid on select field', async () => {
-      const { container } = await render(GenericCrudFormComponent, {
-        componentInputs: {
-          fields: mockFields,
-          dataTestId: 'test-form',
-        },
+    it('should render data-testid on select field', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
+      }).createComponent(GenericCrudFormComponent, {
+        bindings: [
+          inputBinding('fields', () => mockFields),
+          inputBinding('dataTestId', () => 'test-form'),
+        ],
       });
+      TestBed.tick();
 
-      const select = container.querySelector('select[data-testid="test-form-select-role"]');
+      const select = fixture.nativeElement.querySelector('select[data-testid="test-form-select-role"]');
       expect(select).toBeTruthy();
     });
 
-    it('should render data-testid on multiselect field', async () => {
-      const { container } = await render(GenericCrudFormComponent, {
-        componentInputs: {
-          fields: mockFields,
-          dataTestId: 'test-form',
-        },
+    it('should render data-testid on multiselect field', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
+      }).createComponent(GenericCrudFormComponent, {
+        bindings: [
+          inputBinding('fields', () => mockFields),
+          inputBinding('dataTestId', () => 'test-form'),
+        ],
       });
+      TestBed.tick();
 
-      const multiselect = container.querySelector(
+      const multiselect = fixture.nativeElement.querySelector(
         'button[data-testid="test-form-multiselect-permissions"]',
       );
       expect(multiselect).toBeTruthy();
     });
 
-    it('should render data-testid on radio group field', async () => {
-      const { container } = await render(GenericCrudFormComponent, {
-        componentInputs: {
-          fields: mockFields,
-          dataTestId: 'test-form',
-        },
+    it('should render data-testid on radio group field', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
+      }).createComponent(GenericCrudFormComponent, {
+        bindings: [
+          inputBinding('fields', () => mockFields),
+          inputBinding('dataTestId', () => 'test-form'),
+        ],
       });
+      TestBed.tick();
 
-      const radioOption = container.querySelector(
+      const radioOption = fixture.nativeElement.querySelector(
         'input[data-testid="test-form-radio-gender-option-male"]',
       );
       expect(radioOption).toBeTruthy();
     });
 
-    it('should render data-testid on submit button', async () => {
-      const { container } = await render(GenericCrudFormComponent, {
-        componentInputs: {
-          fields: mockFields,
-          dataTestId: 'test-form',
-        },
+    it('should render data-testid on submit button', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
+      }).createComponent(GenericCrudFormComponent, {
+        bindings: [
+          inputBinding('fields', () => mockFields),
+          inputBinding('dataTestId', () => 'test-form'),
+        ],
       });
+      TestBed.tick();
 
-      const submitBtn = container.querySelector('button[data-testid="test-form-btn-submit"]');
+      const submitBtn = fixture.nativeElement.querySelector('button[data-testid="test-form-btn-submit"]');
       expect(submitBtn).toBeTruthy();
     });
 
-    it('should render data-testid on cancel button', async () => {
-      const { container } = await render(GenericCrudFormComponent, {
-        componentInputs: {
-          fields: mockFields,
-          dataTestId: 'test-form',
-        },
+    it('should render data-testid on cancel button', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
+      }).createComponent(GenericCrudFormComponent, {
+        bindings: [
+          inputBinding('fields', () => mockFields),
+          inputBinding('dataTestId', () => 'test-form'),
+        ],
       });
+      TestBed.tick();
 
-      const cancelBtn = container.querySelector('button[data-testid="test-form-btn-cancel"]');
+      const cancelBtn = fixture.nativeElement.querySelector('button[data-testid="test-form-btn-cancel"]');
       expect(cancelBtn).toBeTruthy();
     });
 
-    it('should render all field test IDs with correct prefix', async () => {
-      const { container } = await render(GenericCrudFormComponent, {
-        componentInputs: {
-          fields: mockFields,
-          dataTestId: 'test-form',
-        },
+    it('should render all field test IDs with correct prefix', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
+      }).createComponent(GenericCrudFormComponent, {
+        bindings: [
+          inputBinding('fields', () => mockFields),
+          inputBinding('dataTestId', () => 'test-form'),
+        ],
       });
+      TestBed.tick();
 
-      const allTestIds = container.querySelectorAll('[data-testid^="test-form-"]');
+      const allTestIds = fixture.nativeElement.querySelectorAll('[data-testid^="test-form-"]');
       expect(allTestIds.length).toBeGreaterThan(mockFields.length);
     });
 
-    it('should display error message when error input is provided', async () => {
-      const { container } = await render(GenericCrudFormComponent, {
-        componentInputs: {
-          fields: mockFields,
-          dataTestId: 'test-form',
-          error: 'Test error message',
-        },
+    it('should display error message when error input is provided', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
+      }).createComponent(GenericCrudFormComponent, {
+        bindings: [
+          inputBinding('fields', () => mockFields),
+          inputBinding('dataTestId', () => 'test-form'),
+          inputBinding('error', () => 'Test error message'),
+        ],
       });
+      TestBed.tick();
 
-      const errorAlert = container.querySelector('[role="alert"]');
+      const errorAlert = fixture.nativeElement.querySelector('[role="alert"]');
       expect(errorAlert).toBeTruthy();
       expect(errorAlert?.textContent).toContain('Test error message');
     });
   });
 
   describe('form behavior', () => {
-    it('should emit formSubmit when form is valid and submitted', async () => {
-      const { fixture } = await render(GenericCrudFormComponent, {
-        componentInputs: {
-          fields: mockFields,
-          dataTestId: 'test-form',
-        },
+    it('should emit formSubmit when form is valid and submitted', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
+      }).createComponent(GenericCrudFormComponent, {
+        bindings: [
+          inputBinding('fields', () => mockFields),
+          inputBinding('dataTestId', () => 'test-form'),
+        ],
       });
+      TestBed.tick();
 
       const component = fixture.componentInstance;
       let emittedData: unknown = null;
@@ -261,14 +290,16 @@ describe('GenericCrudFormComponent', () => {
       expect(emittedData).toBeTruthy();
     });
 
-    it('should emit formCancel when cancel button is clicked', async () => {
-      const { fixture } = await render(GenericCrudFormComponent, {
-        componentInputs: {
-          fields: mockFields,
-          dataTestId: 'test-form',
-        },
+    it('should emit formCancel when cancel button is clicked', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
+      }).createComponent(GenericCrudFormComponent, {
+        bindings: [
+          inputBinding('fields', () => mockFields),
+          inputBinding('dataTestId', () => 'test-form'),
+        ],
       });
+      TestBed.tick();
 
       const component = fixture.componentInstance;
       let cancelled = false;

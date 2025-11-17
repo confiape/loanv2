@@ -1,5 +1,5 @@
 import { Component, signal } from '@angular/core';
-import { render } from '@testing-library/angular';
+import { TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { describe, expect, it, afterEach, vi } from 'vitest';
@@ -88,20 +88,22 @@ describe('DropdownBasic', () => {
   });
 
   describe('Component Creation & Initialization', () => {
-    it('should create the component successfully', async () => {
-      const { fixture } = await render(TestHostComponent, {
+    it('should create the component successfully', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
-      });
+      }).createComponent(TestHostComponent);
+      TestBed.tick();
       overlayContainer = fixture.debugElement.injector.get(OverlayContainer);
 
       const dropdownEl = fixture.nativeElement.querySelector('app-dropdown-basic');
       expect(dropdownEl).toBeTruthy();
     });
 
-    it('should render with default configuration', async () => {
-      const { fixture } = await render(TestHostComponent, {
+    it('should render with default configuration', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
-      });
+      }).createComponent(TestHostComponent);
+      TestBed.tick();
       overlayContainer = fixture.debugElement.injector.get(OverlayContainer);
 
       const trigger = fixture.nativeElement.querySelector('button');
@@ -112,10 +114,11 @@ describe('DropdownBasic', () => {
       expect(dropdown.isOpen()).toBe(false);
     });
 
-    it('should apply correct trigger classes for solid variant', async () => {
-      const { fixture } = await render(TestHostComponent, {
+    it('should apply correct trigger classes for solid variant', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
-      });
+      }).createComponent(TestHostComponent);
+      TestBed.tick();
       overlayContainer = fixture.debugElement.injector.get(OverlayContainer);
 
       const trigger = fixture.nativeElement.querySelector('button');
@@ -124,10 +127,11 @@ describe('DropdownBasic', () => {
       expect(trigger.className).toContain('hover:bg-accent-hover');
     });
 
-    it('should apply correct trigger classes for medium size', async () => {
-      const { fixture } = await render(TestHostComponent, {
+    it('should apply correct trigger classes for medium size', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
-      });
+      }).createComponent(TestHostComponent);
+      TestBed.tick();
       overlayContainer = fixture.debugElement.injector.get(OverlayContainer);
 
       const trigger = fixture.nativeElement.querySelector('button');
@@ -135,30 +139,33 @@ describe('DropdownBasic', () => {
       expect(trigger.className).toContain('py-2');
     });
 
-    it('should have inline-flex host class', async () => {
-      const { fixture } = await render(TestHostComponent, {
+    it('should have inline-flex host class', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
-      });
+      }).createComponent(TestHostComponent);
+      TestBed.tick();
       overlayContainer = fixture.debugElement.injector.get(OverlayContainer);
 
       const host = fixture.nativeElement.querySelector('app-dropdown-basic');
       expect(host?.classList.contains('inline-flex')).toBe(true);
     });
 
-    it('should set aria-expanded to false when closed', async () => {
-      const { fixture } = await render(TestHostComponent, {
+    it('should set aria-expanded to false when closed', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
-      });
+      }).createComponent(TestHostComponent);
+      TestBed.tick();
       overlayContainer = fixture.debugElement.injector.get(OverlayContainer);
 
       const trigger = fixture.nativeElement.querySelector('button');
       expect(trigger.getAttribute('aria-expanded')).toBe('false');
     });
 
-    it('should set aria-haspopup to true', async () => {
-      const { fixture } = await render(TestHostComponent, {
+    it('should set aria-haspopup to true', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
-      });
+      }).createComponent(TestHostComponent);
+      TestBed.tick();
       overlayContainer = fixture.debugElement.injector.get(OverlayContainer);
 
       const trigger = fixture.nativeElement.querySelector('button');
@@ -167,10 +174,11 @@ describe('DropdownBasic', () => {
   });
 
   describe('Click Strategy Interaction', () => {
-    it('should open panel when trigger clicked', async () => {
-      const { fixture } = await render(TestHostComponent, {
+    it('should open panel when trigger clicked', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
-      });
+      }).createComponent(TestHostComponent);
+      TestBed.tick();
       overlayContainer = fixture.debugElement.injector.get(OverlayContainer);
       const dropdown = fixture.debugElement.children[0].componentInstance as DropdownBasic;
       const overlayElement = overlayContainer.getContainerElement();
@@ -185,10 +193,11 @@ describe('DropdownBasic', () => {
       expect(panel).toBeTruthy();
     });
 
-    it('should close panel when trigger clicked again', async () => {
-      const { fixture } = await render(TestHostComponent, {
+    it('should close panel when trigger clicked again', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
-      });
+      }).createComponent(TestHostComponent);
+      TestBed.tick();
       overlayContainer = fixture.debugElement.injector.get(OverlayContainer);
       const dropdown = fixture.debugElement.children[0].componentInstance as DropdownBasic;
 
@@ -201,10 +210,11 @@ describe('DropdownBasic', () => {
       expect(dropdown.isOpen()).toBe(false);
     });
 
-    it('should emit openChange event when opening', async () => {
-      const { fixture } = await render(TestHostComponent, {
+    it('should emit openChange event when opening', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
-      });
+      }).createComponent(TestHostComponent);
+      TestBed.tick();
       overlayContainer = fixture.debugElement.injector.get(OverlayContainer);
       const hostComponent = fixture.componentInstance as TestHostComponent;
 
@@ -214,10 +224,11 @@ describe('DropdownBasic', () => {
       expect(hostComponent.openChangeEvents).toContain(true);
     });
 
-    it('should emit openChange event when closing', async () => {
-      const { fixture } = await render(TestHostComponent, {
+    it('should emit openChange event when closing', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
-      });
+      }).createComponent(TestHostComponent);
+      TestBed.tick();
       overlayContainer = fixture.debugElement.injector.get(OverlayContainer);
       const hostComponent = fixture.componentInstance as TestHostComponent;
 
@@ -231,10 +242,11 @@ describe('DropdownBasic', () => {
       expect(hostComponent.openChangeEvents).toContain(false);
     });
 
-    it('should set aria-expanded to true when opened', async () => {
-      const { fixture } = await render(TestHostComponent, {
+    it('should set aria-expanded to true when opened', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
-      });
+      }).createComponent(TestHostComponent);
+      TestBed.tick();
       overlayContainer = fixture.debugElement.injector.get(OverlayContainer);
 
       const trigger = fixture.nativeElement.querySelector('button');
@@ -243,10 +255,11 @@ describe('DropdownBasic', () => {
       expect(trigger.getAttribute('aria-expanded')).toBe('true');
     });
 
-    it('should close panel when clicking backdrop', async () => {
-      const { fixture } = await render(TestHostComponent, {
+    it('should close panel when clicking backdrop', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
-      });
+      }).createComponent(TestHostComponent);
+      TestBed.tick();
       overlayContainer = fixture.debugElement.injector.get(OverlayContainer);
       const dropdown = fixture.debugElement.children[0].componentInstance as DropdownBasic;
       const overlayElement = overlayContainer.getContainerElement();
@@ -261,10 +274,11 @@ describe('DropdownBasic', () => {
       expect(dropdown.isOpen()).toBe(false);
     });
 
-    it('should close panel on Escape key', async () => {
-      const { fixture } = await render(TestHostComponent, {
+    it('should close panel on Escape key', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
-      });
+      }).createComponent(TestHostComponent);
+      TestBed.tick();
       overlayContainer = fixture.debugElement.injector.get(OverlayContainer);
       const dropdown = fixture.debugElement.children[0].componentInstance as DropdownBasic;
 
@@ -278,10 +292,11 @@ describe('DropdownBasic', () => {
       expect(dropdown.isOpen()).toBe(false);
     });
 
-    it('should not respond to mouse hover when using click strategy', async () => {
-      const { fixture } = await render(TestHostComponent, {
+    it('should not respond to mouse hover when using click strategy', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
-      });
+      }).createComponent(TestHostComponent);
+      TestBed.tick();
       overlayContainer = fixture.debugElement.injector.get(OverlayContainer);
       const dropdown = fixture.debugElement.children[0].componentInstance as DropdownBasic;
 
@@ -295,10 +310,11 @@ describe('DropdownBasic', () => {
   });
 
   describe('Keyboard Navigation', () => {
-    it('should open panel on Enter key press', async () => {
-      const { fixture } = await render(TestHostComponent, {
+    it('should open panel on Enter key press', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
-      });
+      }).createComponent(TestHostComponent);
+      TestBed.tick();
       overlayContainer = fixture.debugElement.injector.get(OverlayContainer);
       const dropdown = fixture.debugElement.children[0].componentInstance as DropdownBasic;
 
@@ -311,10 +327,11 @@ describe('DropdownBasic', () => {
       expect(dropdown.isOpen()).toBe(true);
     });
 
-    it('should close panel on Enter key press when open', async () => {
-      const { fixture } = await render(TestHostComponent, {
+    it('should close panel on Enter key press when open', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
-      });
+      }).createComponent(TestHostComponent);
+      TestBed.tick();
       overlayContainer = fixture.debugElement.injector.get(OverlayContainer);
       const dropdown = fixture.debugElement.children[0].componentInstance as DropdownBasic;
 
@@ -329,10 +346,11 @@ describe('DropdownBasic', () => {
       expect(dropdown.isOpen()).toBe(false);
     });
 
-    it('should toggle panel on Space key press', async () => {
-      const { fixture } = await render(TestHostComponent, {
+    it('should toggle panel on Space key press', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
-      });
+      }).createComponent(TestHostComponent);
+      TestBed.tick();
       overlayContainer = fixture.debugElement.injector.get(OverlayContainer);
       const dropdown = fixture.debugElement.children[0].componentInstance as DropdownBasic;
 
@@ -347,10 +365,11 @@ describe('DropdownBasic', () => {
       expect(dropdown.isOpen()).toBe(false);
     });
 
-    it('should open panel on ArrowDown key press', async () => {
-      const { fixture } = await render(TestHostComponent, {
+    it('should open panel on ArrowDown key press', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
-      });
+      }).createComponent(TestHostComponent);
+      TestBed.tick();
       overlayContainer = fixture.debugElement.injector.get(OverlayContainer);
       const dropdown = fixture.debugElement.children[0].componentInstance as DropdownBasic;
 
@@ -363,10 +382,11 @@ describe('DropdownBasic', () => {
       expect(dropdown.isOpen()).toBe(true);
     });
 
-    it('should not close panel on ArrowDown when already open', async () => {
-      const { fixture } = await render(TestHostComponent, {
+    it('should not close panel on ArrowDown when already open', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
-      });
+      }).createComponent(TestHostComponent);
+      TestBed.tick();
       overlayContainer = fixture.debugElement.injector.get(OverlayContainer);
       const dropdown = fixture.debugElement.children[0].componentInstance as DropdownBasic;
 
@@ -381,10 +401,11 @@ describe('DropdownBasic', () => {
       expect(dropdown.isOpen()).toBe(true);
     });
 
-    it('should close panel on ArrowUp key press when open', async () => {
-      const { fixture } = await render(TestHostComponent, {
+    it('should close panel on ArrowUp key press when open', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
-      });
+      }).createComponent(TestHostComponent);
+      TestBed.tick();
       overlayContainer = fixture.debugElement.injector.get(OverlayContainer);
       const dropdown = fixture.debugElement.children[0].componentInstance as DropdownBasic;
 
@@ -399,10 +420,11 @@ describe('DropdownBasic', () => {
       expect(dropdown.isOpen()).toBe(false);
     });
 
-    it('should not open panel on ArrowUp when closed', async () => {
-      const { fixture } = await render(TestHostComponent, {
+    it('should not open panel on ArrowUp when closed', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
-      });
+      }).createComponent(TestHostComponent);
+      TestBed.tick();
       overlayContainer = fixture.debugElement.injector.get(OverlayContainer);
       const dropdown = fixture.debugElement.children[0].componentInstance as DropdownBasic;
 
@@ -415,10 +437,11 @@ describe('DropdownBasic', () => {
       expect(dropdown.isOpen()).toBe(false);
     });
 
-    it('should prevent default on keyboard events', async () => {
-      const { fixture } = await render(TestHostComponent, {
+    it('should prevent default on keyboard events', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
-      });
+      }).createComponent(TestHostComponent);
+      TestBed.tick();
       overlayContainer = fixture.debugElement.injector.get(OverlayContainer);
 
       const trigger = fixture.nativeElement.querySelector('button');
@@ -432,10 +455,11 @@ describe('DropdownBasic', () => {
   });
 
   describe('Item Click Behavior', () => {
-    it('should emit itemClick when item is clicked', async () => {
-      const { fixture } = await render(TestHostComponent, {
+    it('should emit itemClick when item is clicked', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
-      });
+      }).createComponent(TestHostComponent);
+      TestBed.tick();
       overlayContainer = fixture.debugElement.injector.get(OverlayContainer);
       const hostComponent = fixture.componentInstance as TestHostComponent;
       const overlayElement = overlayContainer.getContainerElement();
@@ -449,10 +473,11 @@ describe('DropdownBasic', () => {
       expect(hostComponent.itemClickEvents).toContain('value1');
     });
 
-    it('should emit itemClick from item component directly', async () => {
-      const { fixture } = await render(TestHostComponent, {
+    it('should emit itemClick from item component directly', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
-      });
+      }).createComponent(TestHostComponent);
+      TestBed.tick();
       overlayContainer = fixture.debugElement.injector.get(OverlayContainer);
       const hostComponent = fixture.componentInstance as TestHostComponent;
       const overlayElement = overlayContainer.getContainerElement();
@@ -466,10 +491,11 @@ describe('DropdownBasic', () => {
       expect(hostComponent.itemClickDirectEvents).toContain('value1');
     });
 
-    it('should close panel after item click when closeOnSelect is true', async () => {
-      const { fixture } = await render(TestHostComponent, {
+    it('should close panel after item click when closeOnSelect is true', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
-      });
+      }).createComponent(TestHostComponent);
+      TestBed.tick();
       overlayContainer = fixture.debugElement.injector.get(OverlayContainer);
       const dropdown = fixture.debugElement.children[0].componentInstance as DropdownBasic;
       const overlayElement = overlayContainer.getContainerElement();
@@ -484,10 +510,11 @@ describe('DropdownBasic', () => {
       expect(dropdown.isOpen()).toBe(false);
     });
 
-    it('should not emit itemClick when item is disabled', async () => {
-      const { fixture } = await render(TestHostComponent, {
+    it('should not emit itemClick when item is disabled', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
-      });
+      }).createComponent(TestHostComponent);
+      TestBed.tick();
       overlayContainer = fixture.debugElement.injector.get(OverlayContainer);
       const hostComponent = fixture.componentInstance as TestHostComponent;
       const overlayElement = overlayContainer.getContainerElement();
@@ -503,10 +530,11 @@ describe('DropdownBasic', () => {
       expect(hostComponent.itemClickEvents).not.toContain('value3');
     });
 
-    it('should apply disabled styles to disabled items', async () => {
-      const { fixture } = await render(TestHostComponent, {
+    it('should apply disabled styles to disabled items', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
-      });
+      }).createComponent(TestHostComponent);
+      TestBed.tick();
       overlayContainer = fixture.debugElement.injector.get(OverlayContainer);
       const overlayElement = overlayContainer.getContainerElement();
 
@@ -523,10 +551,11 @@ describe('DropdownBasic', () => {
   });
 
   describe('Overlay Positioning', () => {
-    it('should calculate positions for bottom-end placement', async () => {
-      const { fixture } = await render(TestHostComponent, {
+    it('should calculate positions for bottom-end placement', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
-      });
+      }).createComponent(TestHostComponent);
+      TestBed.tick();
       overlayContainer = fixture.debugElement.injector.get(OverlayContainer);
       const dropdown = fixture.debugElement.children[0].componentInstance as DropdownBasic;
 
@@ -540,10 +569,11 @@ describe('DropdownBasic', () => {
       });
     });
 
-    it('should include horizontal flip positions', async () => {
-      const { fixture } = await render(TestHostComponent, {
+    it('should include horizontal flip positions', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
-      });
+      }).createComponent(TestHostComponent);
+      TestBed.tick();
       overlayContainer = fixture.debugElement.injector.get(OverlayContainer);
       const dropdown = fixture.debugElement.children[0].componentInstance as DropdownBasic;
 
@@ -555,10 +585,11 @@ describe('DropdownBasic', () => {
       });
     });
 
-    it('should include vertical flip positions', async () => {
-      const { fixture } = await render(TestHostComponent, {
+    it('should include vertical flip positions', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
-      });
+      }).createComponent(TestHostComponent);
+      TestBed.tick();
       overlayContainer = fixture.debugElement.injector.get(OverlayContainer);
       const dropdown = fixture.debugElement.children[0].componentInstance as DropdownBasic;
 
@@ -569,10 +600,11 @@ describe('DropdownBasic', () => {
       });
     });
 
-    it('should apply minPanelWidth style', async () => {
-      const { fixture } = await render(TestHostComponent, {
+    it('should apply minPanelWidth style', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
-      });
+      }).createComponent(TestHostComponent);
+      TestBed.tick();
       overlayContainer = fixture.debugElement.injector.get(OverlayContainer);
       const overlayElement = overlayContainer.getContainerElement();
 
@@ -586,10 +618,11 @@ describe('DropdownBasic', () => {
   });
 
   describe('Header and Footer Content', () => {
-    it('should render items without header or footer by default', async () => {
-      const { fixture } = await render(TestHostComponent, {
+    it('should render items without header or footer by default', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
-      });
+      }).createComponent(TestHostComponent);
+      TestBed.tick();
       overlayContainer = fixture.debugElement.injector.get(OverlayContainer);
       const overlayElement = overlayContainer.getContainerElement();
 
@@ -607,10 +640,11 @@ describe('DropdownBasic', () => {
   });
 
   describe('Edge Cases', () => {
-    it('should handle rapid open/close toggling', async () => {
-      const { fixture } = await render(TestHostComponent, {
+    it('should handle rapid open/close toggling', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
-      });
+      }).createComponent(TestHostComponent);
+      TestBed.tick();
       overlayContainer = fixture.debugElement.injector.get(OverlayContainer);
       const dropdown = fixture.debugElement.children[0].componentInstance as DropdownBasic;
 
@@ -624,10 +658,11 @@ describe('DropdownBasic', () => {
       expect(dropdown.isOpen()).toBe(false);
     });
 
-    it('should handle opening when already open (no-op)', async () => {
-      const { fixture } = await render(TestHostComponent, {
+    it('should handle opening when already open (no-op)', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
-      });
+      }).createComponent(TestHostComponent);
+      TestBed.tick();
       overlayContainer = fixture.debugElement.injector.get(OverlayContainer);
       const dropdown = fixture.debugElement.children[0].componentInstance as DropdownBasic;
       const hostComponent = fixture.componentInstance as TestHostComponent;
@@ -643,10 +678,11 @@ describe('DropdownBasic', () => {
       expect(hostComponent.openChangeEvents.length).toBe(openEvents);
     });
 
-    it('should handle closing when already closed (no-op)', async () => {
-      const { fixture } = await render(TestHostComponent, {
+    it('should handle closing when already closed (no-op)', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
-      });
+      }).createComponent(TestHostComponent);
+      TestBed.tick();
       overlayContainer = fixture.debugElement.injector.get(OverlayContainer);
       const dropdown = fixture.debugElement.children[0].componentInstance as DropdownBasic;
       const hostComponent = fixture.componentInstance as TestHostComponent;
@@ -660,10 +696,11 @@ describe('DropdownBasic', () => {
       expect(hostComponent.openChangeEvents.filter((e) => !e).length).toBe(closeEvents);
     });
 
-    it('should not emit duplicate events on no-op operations', async () => {
-      const { fixture } = await render(TestHostComponent, {
+    it('should not emit duplicate events on no-op operations', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
-      });
+      }).createComponent(TestHostComponent);
+      TestBed.tick();
       overlayContainer = fixture.debugElement.injector.get(OverlayContainer);
       const dropdown = fixture.debugElement.children[0].componentInstance as DropdownBasic;
       const hostComponent = fixture.componentInstance as TestHostComponent;
@@ -678,10 +715,11 @@ describe('DropdownBasic', () => {
       expect(hostComponent.openChangeEvents.length).toBe(eventCount);
     });
 
-    it('should stop event propagation on trigger click', async () => {
-      const { fixture } = await render(TestHostComponent, {
+    it('should stop event propagation on trigger click', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
-      });
+      }).createComponent(TestHostComponent);
+      TestBed.tick();
       overlayContainer = fixture.debugElement.injector.get(OverlayContainer);
 
       const trigger = fixture.nativeElement.querySelector('button');
@@ -693,10 +731,11 @@ describe('DropdownBasic', () => {
       expect(stopPropagationSpy).toHaveBeenCalled();
     });
 
-    it('should stop event propagation on item click', async () => {
-      const { fixture } = await render(TestHostComponent, {
+    it('should stop event propagation on item click', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
-      });
+      }).createComponent(TestHostComponent);
+      TestBed.tick();
       overlayContainer = fixture.debugElement.injector.get(OverlayContainer);
       const overlayElement = overlayContainer.getContainerElement();
 
@@ -712,10 +751,11 @@ describe('DropdownBasic', () => {
       expect(stopPropagationSpy).toHaveBeenCalled();
     });
 
-    it('should reset hover states when closing', async () => {
-      const { fixture } = await render(TestHostComponent, {
+    it('should reset hover states when closing', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
-      });
+      }).createComponent(TestHostComponent);
+      TestBed.tick();
       overlayContainer = fixture.debugElement.injector.get(OverlayContainer);
       const dropdown = fixture.debugElement.children[0].componentInstance as DropdownBasic;
 
@@ -733,20 +773,22 @@ describe('DropdownBasic', () => {
   });
 
   describe('Test ID System', () => {
-    it('should not render test IDs when no host attribute provided', async () => {
-      const { fixture } = await render(DropdownBasic, {
+    it('should not render test IDs when no host attribute provided', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
-      });
+      }).createComponent(DropdownBasic);
+      TestBed.tick();
       overlayContainer = fixture.debugElement.injector.get(OverlayContainer);
 
       const host = fixture.nativeElement.querySelector('[data-testid]');
       expect(host).toBeFalsy();
     });
 
-    it('should return null test IDs when no static attribute provided', async () => {
-      const { fixture } = await render(TestHostComponent, {
+    it('should return null test IDs when no static attribute provided', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
-      });
+      }).createComponent(TestHostComponent);
+      TestBed.tick();
       overlayContainer = fixture.debugElement.injector.get(OverlayContainer);
       const dropdown = fixture.debugElement.children[0].componentInstance as DropdownBasic;
 
@@ -757,10 +799,11 @@ describe('DropdownBasic', () => {
       expect(dropdown.panelTestId()).toBeNull();
     });
 
-    it('should not render test ID attributes when HostAttributeToken is null', async () => {
-      const { fixture } = await render(TestHostComponent, {
+    it('should not render test ID attributes when HostAttributeToken is null', () => {
+      const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
-      });
+      }).createComponent(TestHostComponent);
+      TestBed.tick();
       overlayContainer = fixture.debugElement.injector.get(OverlayContainer);
       const overlayElement = overlayContainer.getContainerElement();
 
@@ -787,9 +830,10 @@ describe('DropdownBasic - Hover Strategy', () => {
   });
 
   it('should open panel on mouse enter', async () => {
-    const { fixture } = await render(TestHostComponent, {
+    const fixture = TestBed.configureTestingModule({
       providers: [provideZonelessChangeDetection()],
-    });
+    }).createComponent(TestHostComponent);
+    TestBed.tick();
     overlayContainerLocal = fixture.debugElement.injector.get(OverlayContainer);
 
     const hostComponent = fixture.componentInstance as TestHostComponent;
@@ -806,9 +850,10 @@ describe('DropdownBasic - Hover Strategy', () => {
   });
 
   it('should close panel on mouse leave after delay', async () => {
-    const { fixture } = await render(TestHostComponent, {
+    const fixture = TestBed.configureTestingModule({
       providers: [provideZonelessChangeDetection()],
-    });
+    }).createComponent(TestHostComponent);
+    TestBed.tick();
     overlayContainerLocal = fixture.debugElement.injector.get(OverlayContainer);
 
     const hostComponent = fixture.componentInstance as TestHostComponent;
@@ -831,9 +876,10 @@ describe('DropdownBasic - Hover Strategy', () => {
   });
 
   it('should not close if re-entering trigger before timeout', async () => {
-    const { fixture } = await render(TestHostComponent, {
+    const fixture = TestBed.configureTestingModule({
       providers: [provideZonelessChangeDetection()],
-    });
+    }).createComponent(TestHostComponent);
+    TestBed.tick();
     overlayContainerLocal = fixture.debugElement.injector.get(OverlayContainer);
 
     const hostComponent = fixture.componentInstance as TestHostComponent;
@@ -860,9 +906,10 @@ describe('DropdownBasic - Hover Strategy', () => {
   });
 
   it('should not close if hovering over panel', async () => {
-    const { fixture } = await render(TestHostComponent, {
+    const fixture = TestBed.configureTestingModule({
       providers: [provideZonelessChangeDetection()],
-    });
+    }).createComponent(TestHostComponent);
+    TestBed.tick();
     overlayContainerLocal = fixture.debugElement.injector.get(OverlayContainer);
     const overlayElement = overlayContainerLocal.getContainerElement();
 
@@ -891,9 +938,10 @@ describe('DropdownBasic - Hover Strategy', () => {
   });
 
   it('should close when leaving both trigger and panel', async () => {
-    const { fixture } = await render(TestHostComponent, {
+    const fixture = TestBed.configureTestingModule({
       providers: [provideZonelessChangeDetection()],
-    });
+    }).createComponent(TestHostComponent);
+    TestBed.tick();
     overlayContainerLocal = fixture.debugElement.injector.get(OverlayContainer);
     const overlayElement = overlayContainerLocal.getContainerElement();
 
@@ -922,9 +970,10 @@ describe('DropdownBasic - Hover Strategy', () => {
   });
 
   it('should not respond to click events when using hover strategy', async () => {
-    const { fixture } = await render(TestHostComponent, {
+    const fixture = TestBed.configureTestingModule({
       providers: [provideZonelessChangeDetection()],
-    });
+    }).createComponent(TestHostComponent);
+    TestBed.tick();
     overlayContainerLocal = fixture.debugElement.injector.get(OverlayContainer);
 
     const hostComponent = fixture.componentInstance as TestHostComponent;
@@ -941,9 +990,10 @@ describe('DropdownBasic - Hover Strategy', () => {
   });
 
   it('should not create backdrop when using hover strategy', async () => {
-    const { fixture } = await render(TestHostComponent, {
+    const fixture = TestBed.configureTestingModule({
       providers: [provideZonelessChangeDetection()],
-    });
+    }).createComponent(TestHostComponent);
+    TestBed.tick();
     overlayContainerLocal = fixture.debugElement.injector.get(OverlayContainer);
     const overlayElement = overlayContainerLocal.getContainerElement();
 
@@ -969,10 +1019,11 @@ describe('DropdownBasic - Different Variants', () => {
     overlayContainerLocal = null;
   });
 
-  it('should apply soft variant classes', async () => {
-    const { fixture } = await render(TestHostComponent, {
+  it('should apply soft variant classes', () => {
+    const fixture = TestBed.configureTestingModule({
       providers: [provideZonelessChangeDetection()],
-    });
+    }).createComponent(TestHostComponent);
+    TestBed.tick();
     overlayContainerLocal = fixture.debugElement.injector.get(OverlayContainer);
 
     const hostComponent = fixture.componentInstance as TestHostComponent;
@@ -984,10 +1035,11 @@ describe('DropdownBasic - Different Variants', () => {
     expect(trigger.className).toContain('hover:bg-bg-surface');
   });
 
-  it('should apply ghost variant classes', async () => {
-    const { fixture } = await render(TestHostComponent, {
+  it('should apply ghost variant classes', () => {
+    const fixture = TestBed.configureTestingModule({
       providers: [provideZonelessChangeDetection()],
-    });
+    }).createComponent(TestHostComponent);
+    TestBed.tick();
     overlayContainerLocal = fixture.debugElement.injector.get(OverlayContainer);
 
     const hostComponent = fixture.componentInstance as TestHostComponent;
@@ -999,10 +1051,11 @@ describe('DropdownBasic - Different Variants', () => {
     expect(trigger.className).toContain('hover:bg-bg-secondary');
   });
 
-  it('should apply small size classes', async () => {
-    const { fixture } = await render(TestHostComponent, {
+  it('should apply small size classes', () => {
+    const fixture = TestBed.configureTestingModule({
       providers: [provideZonelessChangeDetection()],
-    });
+    }).createComponent(TestHostComponent);
+    TestBed.tick();
     overlayContainerLocal = fixture.debugElement.injector.get(OverlayContainer);
 
     const hostComponent = fixture.componentInstance as TestHostComponent;
@@ -1013,10 +1066,11 @@ describe('DropdownBasic - Different Variants', () => {
     expect(trigger.className).toContain('py-1.5');
   });
 
-  it('should calculate positions for bottom-start placement', async () => {
-    const { fixture } = await render(TestHostComponent, {
+  it('should calculate positions for bottom-start placement', () => {
+    const fixture = TestBed.configureTestingModule({
       providers: [provideZonelessChangeDetection()],
-    });
+    }).createComponent(TestHostComponent);
+    TestBed.tick();
     overlayContainerLocal = fixture.debugElement.injector.get(OverlayContainer);
 
     const hostComponent = fixture.componentInstance as TestHostComponent;
@@ -1031,13 +1085,15 @@ describe('DropdownBasic - Different Variants', () => {
       overlayX: 'start',
       overlayY: 'top',
       offsetY: 8,
-    });
+    }).createComponent(TestHostComponent);
+    TestBed.tick();
   });
 
-  it('should calculate positions for top-end placement', async () => {
-    const { fixture } = await render(TestHostComponent, {
+  it('should calculate positions for top-end placement', () => {
+    const fixture = TestBed.configureTestingModule({
       providers: [provideZonelessChangeDetection()],
-    });
+    }).createComponent(TestHostComponent);
+    TestBed.tick();
     overlayContainerLocal = fixture.debugElement.injector.get(OverlayContainer);
 
     const hostComponent = fixture.componentInstance as TestHostComponent;
@@ -1052,13 +1108,15 @@ describe('DropdownBasic - Different Variants', () => {
       overlayX: 'end',
       overlayY: 'bottom',
       offsetY: -8,
-    });
+    }).createComponent(TestHostComponent);
+    TestBed.tick();
   });
 
-  it('should calculate positions for top-start placement', async () => {
-    const { fixture } = await render(TestHostComponent, {
+  it('should calculate positions for top-start placement', () => {
+    const fixture = TestBed.configureTestingModule({
       providers: [provideZonelessChangeDetection()],
-    });
+    }).createComponent(TestHostComponent);
+    TestBed.tick();
     overlayContainerLocal = fixture.debugElement.injector.get(OverlayContainer);
 
     const hostComponent = fixture.componentInstance as TestHostComponent;
@@ -1073,13 +1131,15 @@ describe('DropdownBasic - Different Variants', () => {
       overlayX: 'start',
       overlayY: 'bottom',
       offsetY: -8,
-    });
+    }).createComponent(TestHostComponent);
+    TestBed.tick();
   });
 
-  it('should not close panel when closeOnSelect is false', async () => {
-    const { fixture } = await render(TestHostComponent, {
+  it('should not close panel when closeOnSelect is false', () => {
+    const fixture = TestBed.configureTestingModule({
       providers: [provideZonelessChangeDetection()],
-    });
+    }).createComponent(TestHostComponent);
+    TestBed.tick();
     overlayContainerLocal = fixture.debugElement.injector.get(OverlayContainer);
     const overlayElement = overlayContainerLocal.getContainerElement();
 
@@ -1102,10 +1162,11 @@ describe('DropdownBasic - Different Variants', () => {
     expect(dropdown.isOpen()).toBe(true);
   });
 
-  it('should render header when provided', async () => {
-    const { fixture } = await render(TestHostComponent, {
+  it('should render header when provided', () => {
+    const fixture = TestBed.configureTestingModule({
       providers: [provideZonelessChangeDetection()],
-    });
+    }).createComponent(TestHostComponent);
+    TestBed.tick();
     overlayContainerLocal = fixture.debugElement.injector.get(OverlayContainer);
     const overlayElement = overlayContainerLocal.getContainerElement();
 
@@ -1120,10 +1181,11 @@ describe('DropdownBasic - Different Variants', () => {
     expect(header?.textContent?.trim()).toBe('Header Content');
   });
 
-  it('should render footer when provided', async () => {
-    const { fixture } = await render(TestHostComponent, {
+  it('should render footer when provided', () => {
+    const fixture = TestBed.configureTestingModule({
       providers: [provideZonelessChangeDetection()],
-    });
+    }).createComponent(TestHostComponent);
+    TestBed.tick();
     overlayContainerLocal = fixture.debugElement.injector.get(OverlayContainer);
     const overlayElement = overlayContainerLocal.getContainerElement();
 
@@ -1138,10 +1200,11 @@ describe('DropdownBasic - Different Variants', () => {
     expect(footer?.textContent?.trim()).toBe('Footer Content');
   });
 
-  it('should apply custom minPanelWidth', async () => {
-    const { fixture } = await render(TestHostComponent, {
+  it('should apply custom minPanelWidth', () => {
+    const fixture = TestBed.configureTestingModule({
       providers: [provideZonelessChangeDetection()],
-    });
+    }).createComponent(TestHostComponent);
+    TestBed.tick();
     overlayContainerLocal = fixture.debugElement.injector.get(OverlayContainer);
     const overlayElement = overlayContainerLocal.getContainerElement();
 
