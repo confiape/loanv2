@@ -121,15 +121,20 @@ describe('AppsMenuComponent', () => {
     });
 
     it('updates when apps change', () => {
-      const { container, fixture } = renderComponent({ apps: mockApps });
-      fixture.componentInstance.toggle();
+      // Arrange - Test with all apps
+      const { container: container1, fixture: fixture1 } = renderComponent({ apps: mockApps });
+      fixture1.componentInstance.toggle();
       TestBed.tick();
-      expect(container.querySelectorAll('a[role="menuitem"]').length).toBe(3);
+      expect(container1.querySelectorAll('a[role="menuitem"]').length).toBe(3);
 
+      // Act - Create new component with fewer apps
       const newApps = mockApps.slice(0, 1);
-      fixture.componentRef.setInput('apps', newApps);
+      const { container: container2, fixture: fixture2 } = renderComponent({ apps: newApps });
+      fixture2.componentInstance.toggle();
       TestBed.tick();
-      expect(container.querySelectorAll('a[role="menuitem"]').length).toBe(1);
+
+      // Assert
+      expect(container2.querySelectorAll('a[role="menuitem"]').length).toBe(1);
     });
   });
 

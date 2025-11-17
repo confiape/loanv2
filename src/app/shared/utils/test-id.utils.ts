@@ -39,7 +39,7 @@ export function generateTestId(base: string | null, suffix?: string): string | n
   if (!base) {
     return null;
   }
-  return suffix ? `${base}-${suffix}` : base;
+  return suffix !== undefined ? `${base}-${suffix}` : base;
 }
 
 /**
