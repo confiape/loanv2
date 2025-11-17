@@ -305,8 +305,8 @@ describe('Avatar', () => {
       expect(avatarInstance.wrapperTestId()).toBe('user-avatar-wrapper');
       expect(avatarInstance.componentTestId()).toBe('user-avatar-avatar');
       expect(avatarInstance.imageTestId()).toBe('user-avatar-image');
-      expect(avatarInstance.indicatorTestId()).toBe('user-avatar-indicator');
       expect(hostElement.getAttribute('data-testid')).toBe('user-avatar-wrapper');
+      // indicatorTestId eliminado - verificar indicator por clase CSS en vez de testId
     });
 
     it('returns null when no host attribute is provided', async () => {
@@ -315,8 +315,7 @@ describe('Avatar', () => {
       expect(component.componentTestId()).toBeNull();
       expect(component.imageTestId()).toBeNull();
       expect(component.initialsTestId()).toBeNull();
-      expect(component.placeholderTestId()).toBeNull();
-      expect(component.indicatorTestId()).toBeNull();
+      // placeholderTestId e indicatorTestId eliminados - no necesarios para testing
     });
   });
 

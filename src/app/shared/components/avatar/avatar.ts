@@ -96,12 +96,11 @@ const STATUS_POSITIONS: Record<string, string> = {
         </span>
       }
 
-      <!-- Placeholder Icon Avatar -->
+      <!-- Placeholder Icon Avatar (No testId - decorativo) -->
       @if (variant() === 'placeholder') {
         <div
           class="relative overflow-hidden"
           [class]="containerClasses()"
-          [attr.data-testid]="placeholderTestId()"
         >
           <svg
             class="absolute text-text-secondary dark:text-gray-400"
@@ -121,9 +120,9 @@ const STATUS_POSITIONS: Record<string, string> = {
         </div>
       }
 
-      <!-- Status Indicator -->
+      <!-- Status Indicator (No testId - se verifica por clase CSS) -->
       @if (statusIndicator() !== null) {
-        <span [class]="indicatorClasses()" [attr.data-testid]="indicatorTestId()"></span>
+        <span [class]="indicatorClasses()"></span>
       }
     </div>
   `,
@@ -188,6 +187,7 @@ export class Avatar {
   });
 
   // Test ID computed values
+  // Solo testIds para elementos que necesitan verificación/interacción
   readonly wrapperTestId = computed(() => {
     const id = this.testId();
     return id ? `${id}-wrapper` : null;
@@ -208,13 +208,6 @@ export class Avatar {
     return id ? `${id}-initials` : null;
   });
 
-  readonly placeholderTestId = computed(() => {
-    const id = this.testId();
-    return id ? `${id}-placeholder` : null;
-  });
-
-  readonly indicatorTestId = computed(() => {
-    const id = this.testId();
-    return id ? `${id}-indicator` : null;
-  });
+  // placeholderTestId ELIMINADO - SVG decorativo, no necesita testId
+  // indicatorTestId ELIMINADO - Se verifica por clase CSS, no por testId
 }
