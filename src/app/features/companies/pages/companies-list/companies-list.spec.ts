@@ -42,7 +42,7 @@ describe('CompaniesListComponent', () => {
       removeFromSelection: vi.fn(),
       clearSelection: vi.fn(),
       hasSelection: vi.fn().mockReturnValue(false),
-      selectedItemsData: vi.fn().mockReturnValue([]),
+      selectedItemsData: signal([]),
       getTableData: vi.fn().mockReturnValue(mockCompanies),
       deleteMessage: signal('Are you sure?'),
       loadAllItems: vi.fn().mockReturnValue(of(mockCompanies)),

@@ -287,7 +287,7 @@ describe('NotificationButtonComponent', () => {
       TestBed.tick();
 
       const markAllButton = Array.from(container.querySelectorAll('button')).find((btn) =>
-        btn.textContent?.includes('Mark all as read'),
+        (btn as HTMLElement).textContent?.includes('Mark all as read'),
       );
       expect(markAllButton).toBeTruthy();
     });
@@ -298,7 +298,7 @@ describe('NotificationButtonComponent', () => {
       TestBed.tick();
 
       const markAllButton = Array.from(container.querySelectorAll('button')).find((btn) =>
-        btn.textContent?.includes('Mark all as read'),
+        (btn as HTMLElement).textContent?.includes('Mark all as read'),
       );
       expect(markAllButton).toBeFalsy();
     });
@@ -330,7 +330,7 @@ describe('NotificationButtonComponent', () => {
       TestBed.tick();
 
       const viewAllButton = Array.from(container.querySelectorAll('button')).find((btn) =>
-        btn.textContent?.includes('View all'),
+        (btn as HTMLElement).textContent?.includes('View all'),
       );
       expect(viewAllButton).toBeTruthy();
     });

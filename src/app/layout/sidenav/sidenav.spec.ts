@@ -900,7 +900,7 @@ describe('SidenavComponent', () => {
       // Assert
       const disabledItem = Array.from(fixture.nativeElement.querySelectorAll('a')).find(
         (link: any) => link.textContent?.includes('Settings'),
-      );
+      ) as HTMLElement | undefined;
       expect(disabledItem?.getAttribute('aria-disabled')).toBe('true');
     });
 
@@ -916,7 +916,7 @@ describe('SidenavComponent', () => {
       // Assert
       const disabledItem = Array.from(fixture.nativeElement.querySelectorAll('a')).find(
         (link: any) => link.textContent?.includes('Settings'),
-      );
+      ) as HTMLElement | undefined;
       expect(disabledItem?.getAttribute('tabindex')).toBe('-1');
     });
 
@@ -935,7 +935,7 @@ describe('SidenavComponent', () => {
       // Assert
       const selectedItem = Array.from(fixture.nativeElement.querySelectorAll('a')).find(
         (link: any) => link.textContent?.includes('Dashboard'),
-      );
+      ) as HTMLElement | undefined;
       expect(selectedItem?.getAttribute('aria-current')).toBe('page');
     });
   });

@@ -1085,7 +1085,7 @@ describe('DropdownBasic - Different Variants', () => {
       overlayX: 'start',
       overlayY: 'top',
       offsetY: 8,
-    }).createComponent(TestHostComponent);
+    });
     TestBed.tick();
   });
 
@@ -1108,7 +1108,7 @@ describe('DropdownBasic - Different Variants', () => {
       overlayX: 'end',
       overlayY: 'bottom',
       offsetY: -8,
-    }).createComponent(TestHostComponent);
+    });
     TestBed.tick();
   });
 
@@ -1131,7 +1131,7 @@ describe('DropdownBasic - Different Variants', () => {
       overlayX: 'start',
       overlayY: 'bottom',
       offsetY: -8,
-    }).createComponent(TestHostComponent);
+    });
     TestBed.tick();
   });
 

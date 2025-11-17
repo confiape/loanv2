@@ -115,7 +115,7 @@ describe('AppsMenuComponent', () => {
       const dropdown = container.querySelector('[role="menu"]');
       const links = dropdown?.querySelectorAll('a[role="menuitem"]');
       expect(links?.length).toBe(mockApps.length);
-      links?.forEach((link, index) => {
+      links?.forEach((link: Element, index: number) => {
         expect(link.getAttribute('href')).toBe(mockApps[index].href);
       });
     });
@@ -400,7 +400,7 @@ describe('AppsMenuComponent', () => {
       TestBed.tick();
 
       const links = container.querySelectorAll('a[role="menuitem"]');
-      links.forEach((link, index) => {
+      links.forEach((link: any, index: number) => {
         expect(link.getAttribute('aria-label')).toBe(mockApps[index].label);
       });
     });
@@ -445,7 +445,7 @@ describe('AppsMenuComponent', () => {
       TestBed.tick();
 
       const links = container.querySelectorAll('a[role="menuitem"]');
-      links.forEach((link) => {
+      links.forEach((link: any) => {
         expect(link.className).toContain('hover:bg-bg-secondary');
         expect(link.className).toContain('group');
       });

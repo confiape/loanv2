@@ -135,7 +135,7 @@ describe('Button', () => {
     // Assert
     const button = queries.getByRole('button');
     const spinner = queries.getByRole('button').querySelector('svg.animate-spin');
-    expect(button).toBeDisabled();
+    expect(button.hasAttribute('disabled')).toBe(true);
     expect(spinner).toBeTruthy();
   });
 
