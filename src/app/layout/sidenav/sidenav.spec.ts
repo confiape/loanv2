@@ -194,36 +194,57 @@ describe('SidenavComponent', () => {
       expect(fixture.componentInstance.isCollapsed()).toBe(true);
     });
 
-    it('updates currentWidth based on collapsed state', () => {
+    it('uses expanded width when not collapsed', () => {
       // Arrange
       const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      }).createComponent(SidenavComponent);
+      }).createComponent(SidenavComponent, {
+        bindings: [inputBinding('collapsed', () => false)],
+      });
       TestBed.tick();
 
+      // Assert
       expect(fixture.componentInstance.currentWidth()).toBe('16rem');
+    });
 
-      // Act
-      fixture.componentInstance.collapsed.set(true);
+    it('uses collapsed width when collapsed', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(SidenavComponent, {
+        bindings: [inputBinding('collapsed', () => true)],
+      });
       TestBed.tick();
 
       // Assert
       expect(fixture.componentInstance.currentWidth()).toBe('4rem');
     });
 
-    it('applies correct width styles', () => {
+    it('applies expanded width style when not collapsed', () => {
       // Arrange
       const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      }).createComponent(SidenavComponent);
+      }).createComponent(SidenavComponent, {
+        bindings: [inputBinding('collapsed', () => false)],
+      });
       TestBed.tick();
 
       const aside = fixture.nativeElement.querySelector('aside') as HTMLElement;
-      expect(aside.style.width).toBe('16rem');
 
-      // Act
-      fixture.componentInstance.collapsed.set(true);
+      // Assert
+      expect(aside.style.width).toBe('16rem');
+    });
+
+    it('applies collapsed width style when collapsed', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(SidenavComponent, {
+        bindings: [inputBinding('collapsed', () => true)],
+      });
       TestBed.tick();
+
+      const aside = fixture.nativeElement.querySelector('aside') as HTMLElement;
 
       // Assert
       expect(aside.style.width).toBe('4rem');

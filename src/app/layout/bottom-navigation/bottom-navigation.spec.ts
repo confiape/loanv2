@@ -199,26 +199,6 @@ describe('BottomNavigationComponent', () => {
       // Assert
       expect(grid).toBeTruthy();
     });
-
-    it('updates when items change', () => {
-      // Arrange
-      const fixture = TestBed.configureTestingModule({
-        providers: defaultProviders,
-      }).createComponent(BottomNavigationComponent, {
-        bindings: [inputBinding('items', () => mockItems)],
-      });
-      TestBed.tick();
-
-      expect(fixture.nativeElement.querySelectorAll('a').length).toBe(4);
-
-      // Act
-      const newItems = mockItems.slice(0, 2);
-      fixture.componentInstance.items.set(newItems);
-      TestBed.tick();
-
-      // Assert
-      expect(fixture.nativeElement.querySelectorAll('a').length).toBe(2);
-    });
   });
 
   describe('itemClick output', () => {

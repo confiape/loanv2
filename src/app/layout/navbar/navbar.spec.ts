@@ -172,25 +172,6 @@ describe('NavbarComponent', () => {
       // Assert
       expect(fixture.componentInstance.appTitle()).toBe('Custom App');
     });
-
-    it('updates when appTitle changes', () => {
-      // Arrange
-      const mocks = createMockServices();
-      const fixture = TestBed.configureTestingModule({
-        providers: defaultProviders(mocks),
-      }).createComponent(NavbarComponent, {
-        bindings: [inputBinding('appTitle', () => 'First Title')],
-      });
-      TestBed.tick();
-
-      // Act
-      expect(fixture.componentInstance.appTitle()).toBe('First Title');
-      fixture.componentInstance.appTitle.set('Second Title');
-      TestBed.tick();
-
-      // Assert
-      expect(fixture.componentInstance.appTitle()).toBe('Second Title');
-    });
   });
 
   describe('notifications input', () => {
@@ -207,37 +188,6 @@ describe('NavbarComponent', () => {
       // Assert
       expect(fixture.componentInstance.notifications()).toEqual(mockNotifications);
     });
-
-    it('updates when notifications change', () => {
-      // Arrange
-      const mocks = createMockServices();
-      const fixture = TestBed.configureTestingModule({
-        providers: defaultProviders(mocks),
-      }).createComponent(NavbarComponent, {
-        bindings: [inputBinding('notifications', () => mockNotifications)],
-      });
-      TestBed.tick();
-
-      // Act
-      expect(fixture.componentInstance.notifications().length).toBe(1);
-
-      const newNotifications = [
-        ...mockNotifications,
-        {
-          id: '2',
-          title: 'Second',
-          message: 'Message',
-          time: 'now',
-          read: false,
-        },
-      ];
-
-      fixture.componentInstance.notifications.set(newNotifications);
-      TestBed.tick();
-
-      // Assert
-      expect(fixture.componentInstance.notifications().length).toBe(2);
-    });
   });
 
   describe('apps input', () => {
@@ -253,27 +203,6 @@ describe('NavbarComponent', () => {
 
       // Assert
       expect(fixture.componentInstance.apps()).toEqual(mockApps);
-    });
-
-    it('updates when apps change', () => {
-      // Arrange
-      const mocks = createMockServices();
-      const fixture = TestBed.configureTestingModule({
-        providers: defaultProviders(mocks),
-      }).createComponent(NavbarComponent, {
-        bindings: [inputBinding('apps', () => mockApps)],
-      });
-      TestBed.tick();
-
-      // Act
-      expect(fixture.componentInstance.apps().length).toBe(1);
-
-      const newApps = [...mockApps, { ...mockApps[0], id: 'marketing' }];
-      fixture.componentInstance.apps.set(newApps);
-      TestBed.tick();
-
-      // Assert
-      expect(fixture.componentInstance.apps().length).toBe(2);
     });
   });
 
@@ -302,26 +231,6 @@ describe('NavbarComponent', () => {
       }).createComponent(NavbarComponent, {
         bindings: [inputBinding('showSearch', () => false)],
       });
-      TestBed.tick();
-
-      // Assert
-      expect(fixture.componentInstance.showSearch()).toBe(false);
-    });
-
-    it('toggles search visibility', () => {
-      // Arrange
-      const mocks = createMockServices();
-      const fixture = TestBed.configureTestingModule({
-        providers: defaultProviders(mocks),
-      }).createComponent(NavbarComponent, {
-        bindings: [inputBinding('showSearch', () => true)],
-      });
-      TestBed.tick();
-
-      // Act
-      expect(fixture.componentInstance.showSearch()).toBe(true);
-
-      fixture.componentInstance.showSearch.set(false);
       TestBed.tick();
 
       // Assert

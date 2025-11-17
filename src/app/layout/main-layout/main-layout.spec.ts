@@ -1,12 +1,16 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render } from '@testing-library/angular';
+// Angular testing
+import { TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
+
+// Testing library
+import { within } from '@testing-library/dom';
+
+// Vitest
+import { describe, it, expect, vi } from 'vitest';
+
+// Component and dependencies
 import { MainLayoutComponent } from '@loan/app/layout/main-layout/main-layout';
-import { NavbarComponent } from '@loan/app/layout/navbar/navbar';
-import { SidenavComponent } from '@loan/app/layout/sidenav/sidenav';
-import { BottomNavigationComponent } from '@loan/app/layout/bottom-navigation/bottom-navigation';
-import { ToastContainerComponent } from '@loan/app/shared/components/toast/toast-container';
 import { AuthService } from '@loan/app/core/services/auth.service';
 import { UserStateService } from '@loan/app/core/services/user.service';
 
@@ -31,35 +35,23 @@ describe('MainLayoutComponent', () => {
   ];
 
   describe('initialization', () => {
-    it('creates the component', async () => {
-      // Arrange & Act
-      const { container } = await render(MainLayoutComponent, {
-        imports: [
-          MainLayoutComponent,
-          NavbarComponent,
-          SidenavComponent,
-          BottomNavigationComponent,
-          ToastContainerComponent,
-        ],
+    it('creates the component', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(MainLayoutComponent);
+      TestBed.tick();
 
       // Assert
-      expect(container).toBeTruthy();
+      expect(fixture.componentInstance).toBeTruthy();
     });
 
-    it('initializes with default configuration values', async () => {
-      // Arrange & Act
-      const { fixture } = await render(MainLayoutComponent, {
-        imports: [
-          MainLayoutComponent,
-          NavbarComponent,
-          SidenavComponent,
-          BottomNavigationComponent,
-          ToastContainerComponent,
-        ],
+    it('initializes with default configuration values', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(MainLayoutComponent);
+      TestBed.tick();
 
       // Assert
       expect(fixture.componentInstance.appTitle).toBe('Loan UI');
@@ -68,18 +60,12 @@ describe('MainLayoutComponent', () => {
       expect(fixture.componentInstance.userAvatar).toBe('');
     });
 
-    it('loads sidenav items from config', async () => {
-      // Arrange & Act
-      const { fixture } = await render(MainLayoutComponent, {
-        imports: [
-          MainLayoutComponent,
-          NavbarComponent,
-          SidenavComponent,
-          BottomNavigationComponent,
-          ToastContainerComponent,
-        ],
+    it('loads sidenav items from config', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(MainLayoutComponent);
+      TestBed.tick();
 
       // Assert
       expect(fixture.componentInstance.sidenavItems).toBeDefined();
@@ -87,18 +73,12 @@ describe('MainLayoutComponent', () => {
       expect(fixture.componentInstance.sidenavItems.length).toBeGreaterThan(0);
     });
 
-    it('loads apps menu items from config', async () => {
-      // Arrange & Act
-      const { fixture } = await render(MainLayoutComponent, {
-        imports: [
-          MainLayoutComponent,
-          NavbarComponent,
-          SidenavComponent,
-          BottomNavigationComponent,
-          ToastContainerComponent,
-        ],
+    it('loads apps menu items from config', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(MainLayoutComponent);
+      TestBed.tick();
 
       // Assert
       expect(fixture.componentInstance.appsMenuItems).toBeDefined();
@@ -106,18 +86,12 @@ describe('MainLayoutComponent', () => {
       expect(fixture.componentInstance.appsMenuItems.length).toBeGreaterThan(0);
     });
 
-    it('loads user menu items from config', async () => {
-      // Arrange & Act
-      const { fixture } = await render(MainLayoutComponent, {
-        imports: [
-          MainLayoutComponent,
-          NavbarComponent,
-          SidenavComponent,
-          BottomNavigationComponent,
-          ToastContainerComponent,
-        ],
+    it('loads user menu items from config', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(MainLayoutComponent);
+      TestBed.tick();
 
       // Assert
       expect(fixture.componentInstance.userMenuItems).toBeDefined();
@@ -125,18 +99,12 @@ describe('MainLayoutComponent', () => {
       expect(fixture.componentInstance.userMenuItems.length).toBeGreaterThan(0);
     });
 
-    it('loads bottom navigation items from config', async () => {
-      // Arrange & Act
-      const { fixture } = await render(MainLayoutComponent, {
-        imports: [
-          MainLayoutComponent,
-          NavbarComponent,
-          SidenavComponent,
-          BottomNavigationComponent,
-          ToastContainerComponent,
-        ],
+    it('loads bottom navigation items from config', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(MainLayoutComponent);
+      TestBed.tick();
 
       // Assert
       expect(fixture.componentInstance.bottomNavItems).toBeDefined();
@@ -144,18 +112,12 @@ describe('MainLayoutComponent', () => {
       expect(fixture.componentInstance.bottomNavItems.length).toBeGreaterThan(0);
     });
 
-    it('initializes notifications signal with mock data', async () => {
-      // Arrange & Act
-      const { fixture } = await render(MainLayoutComponent, {
-        imports: [
-          MainLayoutComponent,
-          NavbarComponent,
-          SidenavComponent,
-          BottomNavigationComponent,
-          ToastContainerComponent,
-        ],
+    it('initializes notifications signal with mock data', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(MainLayoutComponent);
+      TestBed.tick();
 
       const notifications = fixture.componentInstance.notifications();
 
@@ -164,18 +126,12 @@ describe('MainLayoutComponent', () => {
       expect(notifications.length).toBeGreaterThan(0);
     });
 
-    it('initializes mobile menu as closed', async () => {
-      // Arrange & Act
-      const { fixture } = await render(MainLayoutComponent, {
-        imports: [
-          MainLayoutComponent,
-          NavbarComponent,
-          SidenavComponent,
-          BottomNavigationComponent,
-          ToastContainerComponent,
-        ],
+    it('initializes mobile menu as closed', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(MainLayoutComponent);
+      TestBed.tick();
 
       // Assert
       expect(fixture.componentInstance.isMobileMenuOpen()).toBe(false);
@@ -183,21 +139,16 @@ describe('MainLayoutComponent', () => {
   });
 
   describe('mobile menu state', () => {
-    it('toggles mobile menu state', async () => {
-      // Arrange & Act
-      const { fixture } = await render(MainLayoutComponent, {
-        imports: [
-          MainLayoutComponent,
-          NavbarComponent,
-          SidenavComponent,
-          BottomNavigationComponent,
-          ToastContainerComponent,
-        ],
+    it('toggles mobile menu state', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(MainLayoutComponent);
+      TestBed.tick();
 
       expect(fixture.componentInstance.isMobileMenuOpen()).toBe(false);
 
+      // Act
       fixture.componentInstance.toggleMobileMenu();
       expect(fixture.componentInstance.isMobileMenuOpen()).toBe(true);
 
@@ -207,19 +158,14 @@ describe('MainLayoutComponent', () => {
       expect(fixture.componentInstance.isMobileMenuOpen()).toBe(false);
     });
 
-    it('closes mobile menu when closeMobileMenu is called', async () => {
-      // Arrange & Act
-      const { fixture } = await render(MainLayoutComponent, {
-        imports: [
-          MainLayoutComponent,
-          NavbarComponent,
-          SidenavComponent,
-          BottomNavigationComponent,
-          ToastContainerComponent,
-        ],
+    it('closes mobile menu when closeMobileMenu is called', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(MainLayoutComponent);
+      TestBed.tick();
 
+      // Act
       fixture.componentInstance.toggleMobileMenu();
       expect(fixture.componentInstance.isMobileMenuOpen()).toBe(true);
 
@@ -229,19 +175,14 @@ describe('MainLayoutComponent', () => {
       expect(fixture.componentInstance.isMobileMenuOpen()).toBe(false);
     });
 
-    it('sets mobile menu to closed state explicitly', async () => {
-      // Arrange & Act
-      const { fixture } = await render(MainLayoutComponent, {
-        imports: [
-          MainLayoutComponent,
-          NavbarComponent,
-          SidenavComponent,
-          BottomNavigationComponent,
-          ToastContainerComponent,
-        ],
+    it('sets mobile menu to closed state explicitly', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(MainLayoutComponent);
+      TestBed.tick();
 
+      // Act
       fixture.componentInstance.isMobileMenuOpen.set(true);
       expect(fixture.componentInstance.isMobileMenuOpen()).toBe(true);
 
@@ -253,18 +194,12 @@ describe('MainLayoutComponent', () => {
   });
 
   describe('sidenav interactions', () => {
-    it('logs sidenav item click and closes mobile menu', async () => {
+    it('logs sidenav item click and closes mobile menu', () => {
       // Arrange
-      const { fixture } = await render(MainLayoutComponent, {
-        imports: [
-          MainLayoutComponent,
-          NavbarComponent,
-          SidenavComponent,
-          BottomNavigationComponent,
-          ToastContainerComponent,
-        ],
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(MainLayoutComponent);
+      TestBed.tick();
 
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
       fixture.componentInstance.isMobileMenuOpen.set(true);
@@ -281,18 +216,12 @@ describe('MainLayoutComponent', () => {
       consoleSpy.mockRestore();
     });
 
-    it('closes mobile menu when navigating via sidenav', async () => {
+    it('closes mobile menu when navigating via sidenav', () => {
       // Arrange
-      const { fixture } = await render(MainLayoutComponent, {
-        imports: [
-          MainLayoutComponent,
-          NavbarComponent,
-          SidenavComponent,
-          BottomNavigationComponent,
-          ToastContainerComponent,
-        ],
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(MainLayoutComponent);
+      TestBed.tick();
 
       fixture.componentInstance.isMobileMenuOpen.set(true);
       const testItem = fixture.componentInstance.sidenavItems[0];
@@ -306,18 +235,12 @@ describe('MainLayoutComponent', () => {
   });
 
   describe('search functionality', () => {
-    it('logs search query changes', async () => {
+    it('logs search query changes', () => {
       // Arrange
-      const { fixture } = await render(MainLayoutComponent, {
-        imports: [
-          MainLayoutComponent,
-          NavbarComponent,
-          SidenavComponent,
-          BottomNavigationComponent,
-          ToastContainerComponent,
-        ],
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(MainLayoutComponent);
+      TestBed.tick();
 
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
       const query = 'test query';
@@ -330,18 +253,12 @@ describe('MainLayoutComponent', () => {
       consoleSpy.mockRestore();
     });
 
-    it('logs search submission', async () => {
+    it('logs search submission', () => {
       // Arrange
-      const { fixture } = await render(MainLayoutComponent, {
-        imports: [
-          MainLayoutComponent,
-          NavbarComponent,
-          SidenavComponent,
-          BottomNavigationComponent,
-          ToastContainerComponent,
-        ],
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(MainLayoutComponent);
+      TestBed.tick();
 
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
       const query = 'submitted query';
@@ -354,18 +271,12 @@ describe('MainLayoutComponent', () => {
       consoleSpy.mockRestore();
     });
 
-    it('handles empty search query', async () => {
+    it('handles empty search query', () => {
       // Arrange
-      const { fixture } = await render(MainLayoutComponent, {
-        imports: [
-          MainLayoutComponent,
-          NavbarComponent,
-          SidenavComponent,
-          BottomNavigationComponent,
-          ToastContainerComponent,
-        ],
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(MainLayoutComponent);
+      TestBed.tick();
 
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
@@ -380,18 +291,12 @@ describe('MainLayoutComponent', () => {
   });
 
   describe('notification handling', () => {
-    it('marks notification as read when clicked', async () => {
+    it('marks notification as read when clicked', () => {
       // Arrange
-      const { fixture } = await render(MainLayoutComponent, {
-        imports: [
-          MainLayoutComponent,
-          NavbarComponent,
-          SidenavComponent,
-          BottomNavigationComponent,
-          ToastContainerComponent,
-        ],
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(MainLayoutComponent);
+      TestBed.tick();
 
       const unreadNotification = fixture.componentInstance.notifications().find((n) => !n.read);
       expect(unreadNotification).toBeDefined();
@@ -401,24 +306,20 @@ describe('MainLayoutComponent', () => {
       // Act
       fixture.componentInstance.onNotificationClick(unreadNotification!);
 
-      const updatedNotification = fixture.componentInstance.notifications().find((n) => n.id === notificationId);
+      const updatedNotification = fixture.componentInstance
+        .notifications()
+        .find((n) => n.id === notificationId);
 
       // Assert
       expect(updatedNotification?.read).toBe(true);
     });
 
-    it('logs notification click', async () => {
+    it('logs notification click', () => {
       // Arrange
-      const { fixture } = await render(MainLayoutComponent, {
-        imports: [
-          MainLayoutComponent,
-          NavbarComponent,
-          SidenavComponent,
-          BottomNavigationComponent,
-          ToastContainerComponent,
-        ],
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(MainLayoutComponent);
+      TestBed.tick();
 
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
       const notification = fixture.componentInstance.notifications()[0];
@@ -431,18 +332,12 @@ describe('MainLayoutComponent', () => {
       consoleSpy.mockRestore();
     });
 
-    it('does not affect other notifications when marking one as read', async () => {
+    it('does not affect other notifications when marking one as read', () => {
       // Arrange
-      const { fixture } = await render(MainLayoutComponent, {
-        imports: [
-          MainLayoutComponent,
-          NavbarComponent,
-          SidenavComponent,
-          BottomNavigationComponent,
-          ToastContainerComponent,
-        ],
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(MainLayoutComponent);
+      TestBed.tick();
 
       const notifications = fixture.componentInstance.notifications();
       const firstNotification = notifications[0];
@@ -457,18 +352,12 @@ describe('MainLayoutComponent', () => {
       expect(updatedNotifications.length).toBe(totalCount);
     });
 
-    it('marks all notifications as read', async () => {
+    it('marks all notifications as read', () => {
       // Arrange
-      const { fixture } = await render(MainLayoutComponent, {
-        imports: [
-          MainLayoutComponent,
-          NavbarComponent,
-          SidenavComponent,
-          BottomNavigationComponent,
-          ToastContainerComponent,
-        ],
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(MainLayoutComponent);
+      TestBed.tick();
 
       // Act
       fixture.componentInstance.onMarkAllAsRead();
@@ -480,18 +369,12 @@ describe('MainLayoutComponent', () => {
       expect(allRead).toBe(true);
     });
 
-    it('handles marking already read notifications', async () => {
+    it('handles marking already read notifications', () => {
       // Arrange
-      const { fixture } = await render(MainLayoutComponent, {
-        imports: [
-          MainLayoutComponent,
-          NavbarComponent,
-          SidenavComponent,
-          BottomNavigationComponent,
-          ToastContainerComponent,
-        ],
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(MainLayoutComponent);
+      TestBed.tick();
 
       fixture.componentInstance.onMarkAllAsRead();
       const countBefore = fixture.componentInstance.notifications().length;
@@ -506,18 +389,12 @@ describe('MainLayoutComponent', () => {
   });
 
   describe('apps menu interactions', () => {
-    it('logs app click', async () => {
+    it('logs app click', () => {
       // Arrange
-      const { fixture } = await render(MainLayoutComponent, {
-        imports: [
-          MainLayoutComponent,
-          NavbarComponent,
-          SidenavComponent,
-          BottomNavigationComponent,
-          ToastContainerComponent,
-        ],
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(MainLayoutComponent);
+      TestBed.tick();
 
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
       const app = fixture.componentInstance.appsMenuItems[0];
@@ -530,18 +407,12 @@ describe('MainLayoutComponent', () => {
       consoleSpy.mockRestore();
     });
 
-    it('handles clicking each app in menu', async () => {
+    it('handles clicking each app in menu', () => {
       // Arrange
-      const { fixture } = await render(MainLayoutComponent, {
-        imports: [
-          MainLayoutComponent,
-          NavbarComponent,
-          SidenavComponent,
-          BottomNavigationComponent,
-          ToastContainerComponent,
-        ],
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(MainLayoutComponent);
+      TestBed.tick();
 
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
@@ -557,21 +428,17 @@ describe('MainLayoutComponent', () => {
   });
 
   describe('user menu interactions', () => {
-    it('logs user menu item click', async () => {
+    it('logs user menu item click', () => {
       // Arrange
-      const { fixture } = await render(MainLayoutComponent, {
-        imports: [
-          MainLayoutComponent,
-          NavbarComponent,
-          SidenavComponent,
-          BottomNavigationComponent,
-          ToastContainerComponent,
-        ],
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(MainLayoutComponent);
+      TestBed.tick();
 
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-      const menuItem = fixture.componentInstance.userMenuItems.find((item) => item.action !== 'logout')!;
+      const menuItem = fixture.componentInstance.userMenuItems.find(
+        (item) => item.action !== 'logout',
+      )!;
 
       // Act
       fixture.componentInstance.onUserMenuClick(menuItem);
@@ -581,21 +448,17 @@ describe('MainLayoutComponent', () => {
       consoleSpy.mockRestore();
     });
 
-    it('handles logout action specifically', async () => {
+    it('handles logout action specifically', () => {
       // Arrange
-      const { fixture } = await render(MainLayoutComponent, {
-        imports: [
-          MainLayoutComponent,
-          NavbarComponent,
-          SidenavComponent,
-          BottomNavigationComponent,
-          ToastContainerComponent,
-        ],
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(MainLayoutComponent);
+      TestBed.tick();
 
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-      const logoutItem = fixture.componentInstance.userMenuItems.find((item) => item.action === 'logout')!;
+      const logoutItem = fixture.componentInstance.userMenuItems.find(
+        (item) => item.action === 'logout',
+      )!;
 
       // Act
       fixture.componentInstance.onUserMenuClick(logoutItem);
@@ -606,18 +469,12 @@ describe('MainLayoutComponent', () => {
       consoleSpy.mockRestore();
     });
 
-    it('identifies logout action correctly', async () => {
+    it('identifies logout action correctly', () => {
       // Arrange
-      const { fixture } = await render(MainLayoutComponent, {
-        imports: [
-          MainLayoutComponent,
-          NavbarComponent,
-          SidenavComponent,
-          BottomNavigationComponent,
-          ToastContainerComponent,
-        ],
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(MainLayoutComponent);
+      TestBed.tick();
 
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
       const logoutItem = { id: 'logout', label: 'Logout', action: 'logout' };
@@ -632,18 +489,12 @@ describe('MainLayoutComponent', () => {
   });
 
   describe('bottom navigation interactions', () => {
-    it('logs bottom nav item click', async () => {
+    it('logs bottom nav item click', () => {
       // Arrange
-      const { fixture } = await render(MainLayoutComponent, {
-        imports: [
-          MainLayoutComponent,
-          NavbarComponent,
-          SidenavComponent,
-          BottomNavigationComponent,
-          ToastContainerComponent,
-        ],
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(MainLayoutComponent);
+      TestBed.tick();
 
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
       const navItem = fixture.componentInstance.bottomNavItems[0];
@@ -656,18 +507,12 @@ describe('MainLayoutComponent', () => {
       consoleSpy.mockRestore();
     });
 
-    it('handles clicking each bottom nav item', async () => {
+    it('handles clicking each bottom nav item', () => {
       // Arrange
-      const { fixture } = await render(MainLayoutComponent, {
-        imports: [
-          MainLayoutComponent,
-          NavbarComponent,
-          SidenavComponent,
-          BottomNavigationComponent,
-          ToastContainerComponent,
-        ],
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(MainLayoutComponent);
+      TestBed.tick();
 
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
@@ -683,18 +528,12 @@ describe('MainLayoutComponent', () => {
   });
 
   describe('notifications signal updates', () => {
-    it('updates notifications signal correctly', async () => {
+    it('updates notifications signal correctly', () => {
       // Arrange
-      const { fixture } = await render(MainLayoutComponent, {
-        imports: [
-          MainLayoutComponent,
-          NavbarComponent,
-          SidenavComponent,
-          BottomNavigationComponent,
-          ToastContainerComponent,
-        ],
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(MainLayoutComponent);
+      TestBed.tick();
 
       const initialCount = fixture.componentInstance.notifications().length;
 
@@ -714,18 +553,12 @@ describe('MainLayoutComponent', () => {
       expect(fixture.componentInstance.notifications().length).toBe(initialCount + 1);
     });
 
-    it('preserves notification immutability when updating', async () => {
+    it('preserves notification immutability when updating', () => {
       // Arrange
-      const { fixture } = await render(MainLayoutComponent, {
-        imports: [
-          MainLayoutComponent,
-          NavbarComponent,
-          SidenavComponent,
-          BottomNavigationComponent,
-          ToastContainerComponent,
-        ],
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(MainLayoutComponent);
+      TestBed.tick();
 
       const originalNotifications = [...fixture.componentInstance.notifications()];
       const firstNotification = originalNotifications[0];
@@ -741,18 +574,12 @@ describe('MainLayoutComponent', () => {
   });
 
   describe('edge cases', () => {
-    it('handles undefined notification in onClick', async () => {
+    it('handles undefined notification in onClick', () => {
       // Arrange
-      const { fixture } = await render(MainLayoutComponent, {
-        imports: [
-          MainLayoutComponent,
-          NavbarComponent,
-          SidenavComponent,
-          BottomNavigationComponent,
-          ToastContainerComponent,
-        ],
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(MainLayoutComponent);
+      TestBed.tick();
 
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
@@ -769,18 +596,12 @@ describe('MainLayoutComponent', () => {
       consoleSpy.mockRestore();
     });
 
-    it('handles special characters in search query', async () => {
+    it('handles special characters in search query', () => {
       // Arrange
-      const { fixture } = await render(MainLayoutComponent, {
-        imports: [
-          MainLayoutComponent,
-          NavbarComponent,
-          SidenavComponent,
-          BottomNavigationComponent,
-          ToastContainerComponent,
-        ],
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(MainLayoutComponent);
+      TestBed.tick();
 
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
       const specialQuery = '<script>alert("test")</script>';
@@ -794,18 +615,12 @@ describe('MainLayoutComponent', () => {
       consoleSpy.mockRestore();
     });
 
-    it('maintains state after multiple toggle operations', async () => {
+    it('maintains state after multiple toggle operations', () => {
       // Arrange
-      const { fixture } = await render(MainLayoutComponent, {
-        imports: [
-          MainLayoutComponent,
-          NavbarComponent,
-          SidenavComponent,
-          BottomNavigationComponent,
-          ToastContainerComponent,
-        ],
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(MainLayoutComponent);
+      TestBed.tick();
 
       // Act
       for (let i = 0; i < 10; i++) {
@@ -818,18 +633,12 @@ describe('MainLayoutComponent', () => {
   });
 
   describe('template rendering', () => {
-    it('renders router outlet', async () => {
-      // Arrange & Act
-      const { fixture } = await render(MainLayoutComponent, {
-        imports: [
-          MainLayoutComponent,
-          NavbarComponent,
-          SidenavComponent,
-          BottomNavigationComponent,
-          ToastContainerComponent,
-        ],
+    it('renders router outlet', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(MainLayoutComponent);
+      TestBed.tick();
 
       const routerOutlet = fixture.nativeElement.querySelector('router-outlet');
 
@@ -837,18 +646,12 @@ describe('MainLayoutComponent', () => {
       expect(routerOutlet).toBeTruthy();
     });
 
-    it('renders navbar component', async () => {
-      // Arrange & Act
-      const { fixture } = await render(MainLayoutComponent, {
-        imports: [
-          MainLayoutComponent,
-          NavbarComponent,
-          SidenavComponent,
-          BottomNavigationComponent,
-          ToastContainerComponent,
-        ],
+    it('renders navbar component', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(MainLayoutComponent);
+      TestBed.tick();
 
       const navbar = fixture.nativeElement.querySelector('app-navbar');
 
@@ -856,18 +659,12 @@ describe('MainLayoutComponent', () => {
       expect(navbar).toBeTruthy();
     });
 
-    it('renders sidenav component', async () => {
-      // Arrange & Act
-      const { fixture } = await render(MainLayoutComponent, {
-        imports: [
-          MainLayoutComponent,
-          NavbarComponent,
-          SidenavComponent,
-          BottomNavigationComponent,
-          ToastContainerComponent,
-        ],
+    it('renders sidenav component', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(MainLayoutComponent);
+      TestBed.tick();
 
       const sidenav = fixture.nativeElement.querySelector('app-sidenav');
 
@@ -875,18 +672,12 @@ describe('MainLayoutComponent', () => {
       expect(sidenav).toBeTruthy();
     });
 
-    it('renders bottom navigation component', async () => {
-      // Arrange & Act
-      const { fixture } = await render(MainLayoutComponent, {
-        imports: [
-          MainLayoutComponent,
-          NavbarComponent,
-          SidenavComponent,
-          BottomNavigationComponent,
-          ToastContainerComponent,
-        ],
+    it('renders bottom navigation component', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(MainLayoutComponent);
+      TestBed.tick();
 
       const bottomNav = fixture.nativeElement.querySelector('app-bottom-navigation');
 
@@ -894,18 +685,12 @@ describe('MainLayoutComponent', () => {
       expect(bottomNav).toBeTruthy();
     });
 
-    it('renders toast container component', async () => {
-      // Arrange & Act
-      const { fixture } = await render(MainLayoutComponent, {
-        imports: [
-          MainLayoutComponent,
-          NavbarComponent,
-          SidenavComponent,
-          BottomNavigationComponent,
-          ToastContainerComponent,
-        ],
+    it('renders toast container component', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(MainLayoutComponent);
+      TestBed.tick();
 
       const toastContainer = fixture.nativeElement.querySelector('app-toast-container');
 
