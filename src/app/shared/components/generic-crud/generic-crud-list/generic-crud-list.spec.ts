@@ -104,7 +104,7 @@ describe('GenericCrudListComponent', () => {
     fixture = TestBed.createComponent(GenericCrudListComponent);
     component = fixture.componentInstance;
     fixture.componentRef.setInput('service', mockService as any);
-    fixture.componentRef.setInput('testIdPrefix', 'test-crud');
+    fixture.componentRef.setInput('dataTestId', 'test-crud');
     fixture.detectChanges();
   });
 

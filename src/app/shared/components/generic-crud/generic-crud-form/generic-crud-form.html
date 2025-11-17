@@ -39,7 +39,7 @@
             [errorMessage]="getFieldError(field.key) || ''"
             [disabled]="field.disabled || false"
             [readonly]="field.readonly || false"
-            [dataTestId]="testIdPrefix() + '-input-' + field.key"
+            [dataTestId]="dataTestId() ? dataTestId() + '-input-' + field.key : null"
           />
         }
 
@@ -54,7 +54,7 @@
             [errorMessage]="getFieldError(field.key) || ''"
             [disabled]="field.disabled || false"
             [readonly]="field.readonly || false"
-            [dataTestId]="testIdPrefix() + '-password-' + field.key"
+            [dataTestId]="dataTestId() ? dataTestId() + '-password-' + field.key : null"
           />
         }
 
@@ -72,7 +72,7 @@
             [min]="$any(field.min)"
             [max]="$any(field.max)"
             [step]="field.step || 1"
-            [dataTestId]="testIdPrefix() + '-number-' + field.key"
+            [dataTestId]="dataTestId() ? dataTestId() + '-number-' + field.key : null"
           />
         }
 
@@ -89,7 +89,7 @@
             [readonly]="field.readonly || false"
             [min]="$any(field.min)"
             [max]="$any(field.max)"
-            [dataTestId]="testIdPrefix() + '-date-' + field.key"
+            [dataTestId]="dataTestId() ? dataTestId() + '-date-' + field.key : null"
           />
         }
 
@@ -102,7 +102,7 @@
             [validationState]="getValidationState(field.key)"
             [errorMessage]="getFieldError(field.key) || ''"
             [disabled]="field.disabled || false"
-            [dataTestId]="testIdPrefix() + '-checkbox-' + field.key"
+            [dataTestId]="dataTestId() ? dataTestId() + '-checkbox-' + field.key : null"
           />
         }
 
@@ -116,7 +116,7 @@
             [errorMessage]="getFieldError(field.key) || ''"
             [disabled]="field.disabled || false || loadingOptions()"
             [options]="getOptions(field.key)"
-            [dataTestId]="testIdPrefix() + '-radio-' + field.key"
+            [dataTestId]="dataTestId() ? dataTestId() + '-radio-' + field.key : null"
           />
           @if (loadingOptions()) {
             <p class="mt-1 text-sm text-accent flex items-center">
@@ -156,7 +156,7 @@
             [errorMessage]="getFieldError(field.key) || ''"
             [disabled]="field.disabled || false || loadingOptions()"
             [options]="getOptions(field.key)"
-            [dataTestId]="testIdPrefix() + '-select-' + field.key"
+            [dataTestId]="dataTestId() ? dataTestId() + '-select-' + field.key : null"
           />
           @if (loadingOptions()) {
             <p class="mt-1 text-sm text-accent flex items-center">
@@ -197,7 +197,7 @@
             [disabled]="field.disabled || false || loadingOptions()"
             [options]="getOptions(field.key)"
             [searchable]="true"
-            [dataTestId]="testIdPrefix() + '-multiselect-' + field.key"
+            [dataTestId]="dataTestId() ? dataTestId() + '-multiselect-' + field.key : null"
           />
           @if (loadingOptions()) {
             <p class="mt-1 text-sm text-accent flex items-center">
@@ -235,7 +235,7 @@
       type="button"
       [variant]="'outline'"
       [tone]="'neutral'"
-      [dataTestId]="testIdPrefix() + '-btn-cancel'"
+      [dataTestId]="dataTestId() ? dataTestId() + '-btn-cancel' : null"
       (buttonClick)="onCancel()"
     >
       Cancel
@@ -247,7 +247,7 @@
       [disabled]="loading() || form.invalid"
       [loading]="loading()"
       [loadingText]="'Saving...'"
-      [dataTestId]="testIdPrefix() + '-btn-submit'"
+      [dataTestId]="dataTestId() ? dataTestId() + '-btn-submit' : null"
     >
       {{ isEditMode ? 'Update' : 'Create' }}
     </app-button>

@@ -73,7 +73,7 @@ describe('GenericCrudFormComponent', () => {
     fixture = TestBed.createComponent(GenericCrudFormComponent);
     component = fixture.componentInstance;
     fixture.componentRef.setInput('fields', mockFields);
-    fixture.componentRef.setInput('testIdPrefix', 'test-form');
+    fixture.componentRef.setInput('dataTestId', 'test-form');
     fixture.detectChanges();
   });
 
