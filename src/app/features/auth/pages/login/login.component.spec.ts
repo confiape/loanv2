@@ -65,8 +65,8 @@ describe('LoginComponent', () => {
 
     it('should initialize with empty credentials', () => {
       const { fixture } = createComponent();
-      const emailInput = fixture.nativeElement.querySelector<HTMLInputElement>('input[type="email"]');
-      const passwordInput = fixture.nativeElement.querySelector<HTMLInputElement>('input[type="password"]');
+      const emailInput = fixture.nativeElement.querySelector('input[type="email"]');
+      const passwordInput = fixture.nativeElement.querySelector('input[type="password"]');
 
       expect(emailInput?.value).toBe('');
       expect(passwordInput?.value).toBe('');
@@ -75,8 +75,8 @@ describe('LoginComponent', () => {
     it('should render form with email and password fields', () => {
       const { fixture } = createComponent();
       const form = fixture.nativeElement.querySelector('form');
-      const emailInput = fixture.nativeElement.querySelector<HTMLInputElement>('input[type="email"]');
-      const passwordInput = fixture.nativeElement.querySelector<HTMLInputElement>('input[type="password"]');
+      const emailInput = fixture.nativeElement.querySelector('input[type="email"]');
+      const passwordInput = fixture.nativeElement.querySelector('input[type="password"]');
 
       expect(form).toBeTruthy();
       expect(emailInput).toBeTruthy();
@@ -87,7 +87,7 @@ describe('LoginComponent', () => {
 
     it('should render submit button', () => {
       const { fixture } = createComponent();
-      const submitButton = fixture.nativeElement.querySelector<HTMLButtonElement>('button[type="submit"]');
+      const submitButton = fixture.nativeElement.querySelector('button[type="submit"]');
       expect(submitButton).toBeTruthy();
     });
   });
@@ -95,14 +95,14 @@ describe('LoginComponent', () => {
   describe('Form Validation', () => {
     it('should disable submit button when form is invalid', () => {
       const { fixture } = createComponent();
-      const submitButton = fixture.nativeElement.querySelector<HTMLButtonElement>('button[type="submit"]');
+      const submitButton = fixture.nativeElement.querySelector('button[type="submit"]');
       expect(submitButton?.disabled).toBe(true);
     });
 
     it('should enable submit button when form is valid', () => {
       const { fixture } = createComponent();
-      const emailInput = fixture.nativeElement.querySelector<HTMLInputElement>('input[type="email"]');
-      const passwordInput = fixture.nativeElement.querySelector<HTMLInputElement>('input[type="password"]');
+      const emailInput = fixture.nativeElement.querySelector('input[type="email"]');
+      const passwordInput = fixture.nativeElement.querySelector('input[type="password"]');
 
       if (emailInput && passwordInput) {
         emailInput.value = 'test@test.com';
@@ -112,7 +112,7 @@ describe('LoginComponent', () => {
         TestBed.tick();
       }
 
-      const submitButton = fixture.nativeElement.querySelector<HTMLButtonElement>('button[type="submit"]');
+      const submitButton = fixture.nativeElement.querySelector('button[type="submit"]');
       expect(submitButton?.disabled).toBeFalsy();
     });
   });
@@ -120,8 +120,8 @@ describe('LoginComponent', () => {
   describe('Form Submission Success', () => {
     it('should call authApi.logIn on submit with valid credentials', async () => {
       const { fixture, authApiMock, authServiceMock } = createComponent();
-      const emailInput = fixture.nativeElement.querySelector<HTMLInputElement>('input[type="email"]');
-      const passwordInput = fixture.nativeElement.querySelector<HTMLInputElement>('input[type="password"]');
+      const emailInput = fixture.nativeElement.querySelector('input[type="email"]');
+      const passwordInput = fixture.nativeElement.querySelector('input[type="password"]');
 
       authApiMock.logIn.mockReturnValue(of(undefined));
       authServiceMock.getAuthorizationToken.mockReturnValue(of(mockLoginResponse));
@@ -132,7 +132,7 @@ describe('LoginComponent', () => {
         passwordInput.value = 'password123';
         passwordInput.dispatchEvent(new Event('input'));
 
-        const submitButton = fixture.nativeElement.querySelector<HTMLButtonElement>('button[type="submit"]');
+        const submitButton = fixture.nativeElement.querySelector('button[type="submit"]');
         submitButton?.click();
 
         await new Promise((resolve) => setTimeout(resolve, 100));
@@ -146,8 +146,8 @@ describe('LoginComponent', () => {
 
     it('should show success toast after successful login', async () => {
       const { fixture, authApiMock, authServiceMock, toastServiceMock } = createComponent();
-      const emailInput = fixture.nativeElement.querySelector<HTMLInputElement>('input[type="email"]');
-      const passwordInput = fixture.nativeElement.querySelector<HTMLInputElement>('input[type="password"]');
+      const emailInput = fixture.nativeElement.querySelector('input[type="email"]');
+      const passwordInput = fixture.nativeElement.querySelector('input[type="password"]');
 
       authApiMock.logIn.mockReturnValue(of(undefined));
       authServiceMock.getAuthorizationToken.mockReturnValue(of(mockLoginResponse));
@@ -158,7 +158,7 @@ describe('LoginComponent', () => {
         passwordInput.value = 'password123';
         passwordInput.dispatchEvent(new Event('input'));
 
-        const submitButton = fixture.nativeElement.querySelector<HTMLButtonElement>('button[type="submit"]');
+        const submitButton = fixture.nativeElement.querySelector('button[type="submit"]');
         submitButton?.click();
 
         await new Promise((resolve) => setTimeout(resolve, 100));
@@ -169,8 +169,8 @@ describe('LoginComponent', () => {
 
     it('should navigate to home after successful login', async () => {
       const { fixture, authApiMock, authServiceMock, routerMock } = createComponent();
-      const emailInput = fixture.nativeElement.querySelector<HTMLInputElement>('input[type="email"]');
-      const passwordInput = fixture.nativeElement.querySelector<HTMLInputElement>('input[type="password"]');
+      const emailInput = fixture.nativeElement.querySelector('input[type="email"]');
+      const passwordInput = fixture.nativeElement.querySelector('input[type="password"]');
 
       authApiMock.logIn.mockReturnValue(of(undefined));
       authServiceMock.getAuthorizationToken.mockReturnValue(of(mockLoginResponse));
@@ -181,7 +181,7 @@ describe('LoginComponent', () => {
         passwordInput.value = 'password123';
         passwordInput.dispatchEvent(new Event('input'));
 
-        const submitButton = fixture.nativeElement.querySelector<HTMLButtonElement>('button[type="submit"]');
+        const submitButton = fixture.nativeElement.querySelector('button[type="submit"]');
         submitButton?.click();
 
         await new Promise((resolve) => setTimeout(resolve, 100));
@@ -194,8 +194,8 @@ describe('LoginComponent', () => {
   describe('Form Submission Failure', () => {
     it('should show error toast on login failure', async () => {
       const { fixture, authApiMock, toastServiceMock } = createComponent();
-      const emailInput = fixture.nativeElement.querySelector<HTMLInputElement>('input[type="email"]');
-      const passwordInput = fixture.nativeElement.querySelector<HTMLInputElement>('input[type="password"]');
+      const emailInput = fixture.nativeElement.querySelector('input[type="email"]');
+      const passwordInput = fixture.nativeElement.querySelector('input[type="password"]');
 
       const error = {
         error: { message: 'Email o contraseña incorrectos' },
@@ -208,7 +208,7 @@ describe('LoginComponent', () => {
         passwordInput.value = 'wrong-password';
         passwordInput.dispatchEvent(new Event('input'));
 
-        const submitButton = fixture.nativeElement.querySelector<HTMLButtonElement>('button[type="submit"]');
+        const submitButton = fixture.nativeElement.querySelector('button[type="submit"]');
         submitButton?.click();
 
         await new Promise((resolve) => setTimeout(resolve, 100));
@@ -222,8 +222,8 @@ describe('LoginComponent', () => {
 
     it('should show generic error message when no message provided', async () => {
       const { fixture, authApiMock, toastServiceMock } = createComponent();
-      const emailInput = fixture.nativeElement.querySelector<HTMLInputElement>('input[type="email"]');
-      const passwordInput = fixture.nativeElement.querySelector<HTMLInputElement>('input[type="password"]');
+      const emailInput = fixture.nativeElement.querySelector('input[type="email"]');
+      const passwordInput = fixture.nativeElement.querySelector('input[type="password"]');
 
       authApiMock.logIn.mockReturnValue(throwError(() => ({ error: {} })));
 
@@ -233,7 +233,7 @@ describe('LoginComponent', () => {
         passwordInput.value = 'password123';
         passwordInput.dispatchEvent(new Event('input'));
 
-        const submitButton = fixture.nativeElement.querySelector<HTMLButtonElement>('button[type="submit"]');
+        const submitButton = fixture.nativeElement.querySelector('button[type="submit"]');
         submitButton?.click();
 
         await new Promise((resolve) => setTimeout(resolve, 100));
