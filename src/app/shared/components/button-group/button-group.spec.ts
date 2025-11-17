@@ -1,5 +1,6 @@
-import { render } from '@testing-library/angular';
-import { provideZonelessChangeDetection, Component } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
+import { provideZonelessChangeDetection, Component, inputBinding } from '@angular/core';
+import { within } from '@testing-library/dom';
 import { ButtonGroup } from './button-group';
 import { ButtonGroupButton } from './button-group-button';
 
@@ -24,52 +25,70 @@ class TestHostComponent {
 }
 
 describe('ButtonGroup', () => {
-  it('should render with role group', async () => {
+  const defaultProviders = [provideZonelessChangeDetection()];
+
+  it('should render with role group', () => {
     // Arrange
-    const { getByRole } = await render(ButtonGroup, {
-      providers: [provideZonelessChangeDetection()],
-      componentProperties: { ariaLabel: 'Button group' },
+    const fixture = TestBed.configureTestingModule({
+      providers: defaultProviders,
+    }).createComponent(ButtonGroup, {
+      bindings: [inputBinding('ariaLabel', () => 'Button group')],
     });
+    TestBed.tick();
+
+    const queries = within(fixture.nativeElement);
 
     // Act & Assert
-    const group = getByRole('group');
+    const group = queries.getByRole('group');
     expect(group).toBeTruthy();
   });
 
-  it('should apply aria-label', async () => {
+  it('should apply aria-label', () => {
     // Arrange
-    const { getByRole } = await render(ButtonGroup, {
-      providers: [provideZonelessChangeDetection()],
-      componentProperties: { ariaLabel: 'Button group' },
+    const fixture = TestBed.configureTestingModule({
+      providers: defaultProviders,
+    }).createComponent(ButtonGroup, {
+      bindings: [inputBinding('ariaLabel', () => 'Button group')],
     });
+    TestBed.tick();
+
+    const queries = within(fixture.nativeElement);
 
     // Act & Assert
-    const group = getByRole('group');
-    expect(group).toHaveAttribute('aria-label', 'Button group');
+    const group = queries.getByRole('group');
+    expect(group.getAttribute('aria-label')).toBe('Button group');
   });
 
-  it('should apply custom aria-label', async () => {
+  it('should apply custom aria-label', () => {
     // Arrange
     const customLabel = 'Action buttons';
-    const { getByRole } = await render(ButtonGroup, {
-      providers: [provideZonelessChangeDetection()],
-      componentProperties: { ariaLabel: customLabel },
+    const fixture = TestBed.configureTestingModule({
+      providers: defaultProviders,
+    }).createComponent(ButtonGroup, {
+      bindings: [inputBinding('ariaLabel', () => customLabel)],
     });
+    TestBed.tick();
+
+    const queries = within(fixture.nativeElement);
 
     // Act & Assert
-    const group = getByRole('group');
-    expect(group).toHaveAttribute('aria-label', customLabel);
+    const group = queries.getByRole('group');
+    expect(group.getAttribute('aria-label')).toBe(customLabel);
   });
 
-  it('should apply inline-flex class', async () => {
+  it('should apply inline-flex class', () => {
     // Arrange
-    const { getByRole } = await render(ButtonGroup, {
-      providers: [provideZonelessChangeDetection()],
-      componentProperties: { ariaLabel: 'Button group' },
+    const fixture = TestBed.configureTestingModule({
+      providers: defaultProviders,
+    }).createComponent(ButtonGroup, {
+      bindings: [inputBinding('ariaLabel', () => 'Button group')],
     });
+    TestBed.tick();
+
+    const queries = within(fixture.nativeElement);
 
     // Act & Assert
-    const group = getByRole('group');
+    const group = queries.getByRole('group');
     expect(group.className).toContain('inline-flex');
   });
 });
