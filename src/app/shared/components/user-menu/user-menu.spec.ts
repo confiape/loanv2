@@ -1,5 +1,5 @@
-import { render } from '@testing-library/angular';
-import { provideZonelessChangeDetection } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
+import { provideZonelessChangeDetection, inputBinding, outputBinding, signal } from '@angular/core';
 import { describe, expect, it, vi } from 'vitest';
 import { UserMenuComponent, UserMenuItem } from './user-menu';
 
@@ -10,188 +10,308 @@ describe('UserMenuComponent', () => {
     { id: '3', label: 'Logout', icon: 'logout', action: 'logout' },
   ];
 
-  async function renderComponent(props?: Record<string, unknown>) {
-    return render(UserMenuComponent, {
-      providers: [provideZonelessChangeDetection()],
-      componentProperties: props,
-    });
-  }
+  const defaultProviders = [provideZonelessChangeDetection()];
 
-  it('renders with default user name', async () => {
-    const { container } = await renderComponent();
+  it('renders with default user name', () => {
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: defaultProviders,
+    }).createComponent(UserMenuComponent);
+    TestBed.tick();
 
-    const initials = container.querySelector('[aria-label*="Iniciales"]');
+    // Assert
+    const initials = fixture.nativeElement.querySelector('[aria-label*="Iniciales"]');
     expect(initials?.textContent?.trim()).toBe('US');
   });
 
-  it('computes user initials from full name', async () => {
-    const { fixture } = await renderComponent({ userName: 'John Doe' });
+  it('computes user initials from full name', () => {
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: defaultProviders,
+    }).createComponent(UserMenuComponent, {
+      bindings: [inputBinding('userName', () => 'John Doe')],
+    });
+    TestBed.tick();
 
+    // Assert
     expect(fixture.componentInstance.userInitials()).toBe('JD');
   });
 
-  it('computes user initials from single name', async () => {
-    const { fixture } = await renderComponent({ userName: 'Alice' });
+  it('computes user initials from single name', () => {
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: defaultProviders,
+    }).createComponent(UserMenuComponent, {
+      bindings: [inputBinding('userName', () => 'Alice')],
+    });
+    TestBed.tick();
 
+    // Assert
     expect(fixture.componentInstance.userInitials()).toBe('AL');
   });
 
-  it('opens menu on toggle', async () => {
-    const { container, fixture } = await renderComponent({ menuItems: mockMenuItems });
+  it('opens menu on toggle', () => {
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: defaultProviders,
+    }).createComponent(UserMenuComponent, {
+      bindings: [inputBinding('menuItems', () => mockMenuItems)],
+    });
+    TestBed.tick();
 
-    const button = container.querySelector('button');
+    const button = fixture.nativeElement.querySelector('button');
+
+    // Act
     button?.click();
-    fixture.detectChanges();
+    TestBed.tick();
 
+    // Assert
     expect(fixture.componentInstance.isOpen()).toBe(true);
   });
 
-  it('displays menu items when open', async () => {
-    const { container, fixture } = await renderComponent({ menuItems: mockMenuItems });
+  it('displays menu items when open', () => {
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: defaultProviders,
+    }).createComponent(UserMenuComponent, {
+      bindings: [inputBinding('menuItems', () => mockMenuItems)],
+    });
+    TestBed.tick();
 
+    // Act
     fixture.componentInstance.toggle();
-    fixture.detectChanges();
+    TestBed.tick();
 
-    expect(container.textContent).toContain('Profile');
-    expect(container.textContent).toContain('Settings');
-    expect(container.textContent).toContain('Logout');
+    // Assert
+    expect(fixture.nativeElement.textContent).toContain('Profile');
+    expect(fixture.nativeElement.textContent).toContain('Settings');
+    expect(fixture.nativeElement.textContent).toContain('Logout');
   });
 
-  it('emits menuOpened event when opened', async () => {
-    const { fixture } = await renderComponent();
-    const menuOpenedSpy = vi.fn();
-    fixture.componentInstance.menuOpened.subscribe(menuOpenedSpy);
+  it('emits menuOpened event when opened', () => {
+    // Arrange
+    const menuOpenedSignal = signal(0);
+    const fixture = TestBed.configureTestingModule({
+      providers: defaultProviders,
+    }).createComponent(UserMenuComponent, {
+      bindings: [outputBinding('menuOpened', () => menuOpenedSignal.update((v) => v + 1))],
+    });
+    TestBed.tick();
 
+    // Act
     fixture.componentInstance.toggle();
-    fixture.detectChanges();
+    TestBed.tick();
 
-    expect(menuOpenedSpy).toHaveBeenCalledTimes(1);
+    // Assert
+    expect(menuOpenedSignal()).toBe(1);
   });
 
-  it('emits menuClosed event when closed', async () => {
-    const { fixture } = await renderComponent();
-    const menuClosedSpy = vi.fn();
-    fixture.componentInstance.menuClosed.subscribe(menuClosedSpy);
+  it('emits menuClosed event when closed', () => {
+    // Arrange
+    const menuClosedSignal = signal(0);
+    const fixture = TestBed.configureTestingModule({
+      providers: defaultProviders,
+    }).createComponent(UserMenuComponent, {
+      bindings: [outputBinding('menuClosed', () => menuClosedSignal.update((v) => v + 1))],
+    });
+    TestBed.tick();
 
+    // Act
     fixture.componentInstance.toggle();
-    fixture.detectChanges();
+    TestBed.tick();
     fixture.componentInstance.toggle();
-    fixture.detectChanges();
+    TestBed.tick();
 
-    expect(menuClosedSpy).toHaveBeenCalledTimes(1);
+    // Assert
+    expect(menuClosedSignal()).toBe(1);
   });
 
-  it('emits menuItemClick when item is clicked', async () => {
-    const { container, fixture } = await renderComponent({ menuItems: mockMenuItems });
-    const menuItemClickSpy = vi.fn();
-    fixture.componentInstance.menuItemClick.subscribe(menuItemClickSpy);
+  it('emits menuItemClick when item is clicked', () => {
+    // Arrange
+    const menuItemClickSignal = signal<UserMenuItem | null>(null);
+    const fixture = TestBed.configureTestingModule({
+      providers: defaultProviders,
+    }).createComponent(UserMenuComponent, {
+      bindings: [
+        inputBinding('menuItems', () => mockMenuItems),
+        outputBinding('menuItemClick', (item: UserMenuItem) => menuItemClickSignal.set(item)),
+      ],
+    });
+    TestBed.tick();
 
     fixture.componentInstance.toggle();
-    fixture.detectChanges();
+    TestBed.tick();
 
-    const menuItem = container.querySelector('[role="menuitem"]') as HTMLElement;
+    const menuItem = fixture.nativeElement.querySelector('[role="menuitem"]') as HTMLElement;
+
+    // Act
     menuItem?.click();
 
-    expect(menuItemClickSpy).toHaveBeenCalledWith(mockMenuItems[0]);
+    // Assert
+    expect(menuItemClickSignal()).toEqual(mockMenuItems[0]);
   });
 
-  it('closes menu after item click', async () => {
-    const { container, fixture } = await renderComponent({ menuItems: mockMenuItems });
+  it('closes menu after item click', () => {
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: defaultProviders,
+    }).createComponent(UserMenuComponent, {
+      bindings: [inputBinding('menuItems', () => mockMenuItems)],
+    });
+    TestBed.tick();
 
     fixture.componentInstance.toggle();
-    fixture.detectChanges();
+    TestBed.tick();
 
     expect(fixture.componentInstance.isOpen()).toBe(true);
 
-    const menuItem = container.querySelector('[role="menuitem"]') as HTMLElement;
-    menuItem?.click();
-    fixture.detectChanges();
+    const menuItem = fixture.nativeElement.querySelector('[role="menuitem"]') as HTMLElement;
 
+    // Act
+    menuItem?.click();
+    TestBed.tick();
+
+    // Assert
     expect(fixture.componentInstance.isOpen()).toBe(false);
   });
 
-  it('closes menu on Escape key', async () => {
-    const { fixture } = await renderComponent();
+  it('closes menu on Escape key', () => {
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: defaultProviders,
+    }).createComponent(UserMenuComponent);
+    TestBed.tick();
 
     fixture.componentInstance.open();
-    fixture.detectChanges();
+    TestBed.tick();
 
     expect(fixture.componentInstance.isOpen()).toBe(true);
 
+    // Act
     const event = new KeyboardEvent('keydown', { key: 'Escape' });
     document.dispatchEvent(event);
-    fixture.detectChanges();
+    TestBed.tick();
 
+    // Assert
     expect(fixture.componentInstance.isOpen()).toBe(false);
   });
 
   it('closes menu on click outside', async () => {
-    const { fixture } = await renderComponent();
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: defaultProviders,
+    }).createComponent(UserMenuComponent);
+    TestBed.tick();
 
     fixture.componentInstance.open();
-    fixture.detectChanges();
+    TestBed.tick();
 
     expect(fixture.componentInstance.isOpen()).toBe(true);
 
     await new Promise((resolve) => setTimeout(resolve, 0));
 
+    // Act
     const event = new MouseEvent('click', { bubbles: true });
     document.body.dispatchEvent(event);
 
     await new Promise((resolve) => setTimeout(resolve, 0));
-    fixture.detectChanges();
+    TestBed.tick();
 
+    // Assert
     expect(fixture.componentInstance.isOpen()).toBe(false);
   });
 
-  it('filters out divider items from visibleMenuItems', async () => {
+  it('filters out divider items from visibleMenuItems', () => {
+    // Arrange
     const itemsWithDivider: UserMenuItem[] = [
       ...mockMenuItems,
       { id: '4', label: '', divider: true },
     ];
 
-    const { fixture } = await renderComponent({ menuItems: itemsWithDivider });
+    const fixture = TestBed.configureTestingModule({
+      providers: defaultProviders,
+    }).createComponent(UserMenuComponent, {
+      bindings: [inputBinding('menuItems', () => itemsWithDivider)],
+    });
+    TestBed.tick();
 
+    // Assert
     expect(fixture.componentInstance.visibleMenuItems().length).toBe(3);
   });
 
-  it('does not emit menuItemClick for divider items', async () => {
+  it('does not emit menuItemClick for divider items', () => {
+    // Arrange
     const itemsWithDivider: UserMenuItem[] = [
       { id: '1', label: 'Profile', action: 'profile' },
       { id: '2', label: '', divider: true },
     ];
 
-    const { fixture } = await renderComponent({ menuItems: itemsWithDivider });
-    const menuItemClickSpy = vi.fn();
-    fixture.componentInstance.menuItemClick.subscribe(menuItemClickSpy);
+    const menuItemClickSignal = signal<UserMenuItem | null>(null);
+    const fixture = TestBed.configureTestingModule({
+      providers: defaultProviders,
+    }).createComponent(UserMenuComponent, {
+      bindings: [
+        inputBinding('menuItems', () => itemsWithDivider),
+        outputBinding('menuItemClick', (item: UserMenuItem) => menuItemClickSignal.set(item)),
+      ],
+    });
+    TestBed.tick();
 
     const dividerItem = itemsWithDivider[1];
+
+    // Act
     fixture.componentInstance.onMenuItemClick(dividerItem, new Event('click'));
 
-    expect(menuItemClickSpy).not.toHaveBeenCalled();
+    // Assert
+    expect(menuItemClickSignal()).toBeNull();
   });
 
-  it('displays user email when provided', async () => {
-    const { container, fixture } = await renderComponent({
-      userName: 'John Doe',
-      userEmail: 'john@example.com',
+  it('displays user email when provided', () => {
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: defaultProviders,
+    }).createComponent(UserMenuComponent, {
+      bindings: [
+        inputBinding('userName', () => 'John Doe'),
+        inputBinding('userEmail', () => 'john@example.com'),
+      ],
     });
+    TestBed.tick();
 
+    // Act
     fixture.componentInstance.toggle();
-    fixture.detectChanges();
+    TestBed.tick();
 
-    expect(container.textContent).toContain('john@example.com');
+    // Assert
+    expect(fixture.nativeElement.textContent).toContain('john@example.com');
   });
 
-  it('hasUserInfo returns true when userName or userEmail provided', async () => {
-    const { fixture } = await renderComponent({ userName: 'John Doe' });
+  it('hasUserInfo returns true when userName or userEmail provided', () => {
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: defaultProviders,
+    }).createComponent(UserMenuComponent, {
+      bindings: [inputBinding('userName', () => 'John Doe')],
+    });
+    TestBed.tick();
 
+    // Assert
     expect(fixture.componentInstance.hasUserInfo()).toBe(true);
   });
 
-  it('hasUserInfo returns false when no user info provided', async () => {
-    const { fixture } = await renderComponent({ userName: '', userEmail: '' });
+  it('hasUserInfo returns false when no user info provided', () => {
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: defaultProviders,
+    }).createComponent(UserMenuComponent, {
+      bindings: [
+        inputBinding('userName', () => ''),
+        inputBinding('userEmail', () => ''),
+      ],
+    });
+    TestBed.tick();
 
+    // Assert
     expect(fixture.componentInstance.hasUserInfo()).toBe(false);
   });
 });
