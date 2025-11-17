@@ -149,13 +149,79 @@ await page.getByTestId('tags-option-typescript').check();
 | `{dataTestId}-header` | Table header |
 | `{dataTestId}-body` | Table body |
 | `{dataTestId}-row-{id\|index}` | Table row (uses model ID if available, else index) |
+| `{dataTestId}-action-{label}-row-{id\|index}` | Action button (label sanitized, e.g., "edit", "delete") |
 | `{dataTestId}-select-all` | Select all checkbox |
 | `{dataTestId}-pagination` | Pagination controls |
 
 **Example:**
 ```typescript
 await page.getByTestId('users-row-42').click();
+await page.getByTestId('users-action-edit-row-42').click();
+await page.getByTestId('users-action-delete-row-0').click(); // index-based
 await page.getByTestId('users-select-all').check();
+```
+
+---
+
+### GenericCrudForm
+
+| Test ID | Element |
+|---------|---------|
+| `{dataTestId}-input-{fieldKey}` | Text/Email input field |
+| `{dataTestId}-password-{fieldKey}` | Password input field |
+| `{dataTestId}-number-{fieldKey}` | Number input field |
+| `{dataTestId}-date-{fieldKey}` | Date input field |
+| `{dataTestId}-checkbox-{fieldKey}` | Checkbox field |
+| `{dataTestId}-select-{fieldKey}` | Select dropdown field |
+| `{dataTestId}-multiselect-{fieldKey}` | MultiSelect field |
+| `{dataTestId}-radio-{fieldKey}` | Radio group field |
+| `{dataTestId}-btn-submit` | Submit button |
+| `{dataTestId}-btn-cancel` | Cancel button |
+
+**Example:**
+```typescript
+await page.getByTestId('user-form-input-name').fill('John Doe');
+await page.getByTestId('user-form-select-role').selectOption('admin');
+await page.getByTestId('user-form-checkbox-active').check();
+await page.getByTestId('user-form-btn-submit').click();
+```
+
+---
+
+### GenericCrudList
+
+| Test ID | Element |
+|---------|---------|
+| `{dataTestId}-search-input` | Search input field |
+| `{dataTestId}-btn-new` | New item button |
+| `{dataTestId}-table` | Data table (propagates to Table component) |
+| `{dataTestId}-selected-items` | Selected items section |
+| `{dataTestId}-btn-bulk-delete` | Bulk delete button |
+| `{dataTestId}-modal` | Form modal (propagates to Modal) |
+| `{dataTestId}-delete-modal` | Delete confirmation modal |
+| `{dataTestId}-btn-cancel-delete` | Cancel delete button |
+| `{dataTestId}-btn-confirm-delete` | Confirm delete button |
+
+**Note:** The `{dataTestId}-table` prefix propagates to the Table component, so all table test IDs are accessible:
+- `{dataTestId}-table-row-{id|index}`
+- `{dataTestId}-table-action-edit-row-{id|index}`
+- etc.
+
+**Example:**
+```typescript
+// Search and create
+await page.getByTestId('users-search-input').fill('john');
+await page.getByTestId('users-btn-new').click();
+
+// Table interactions
+await page.getByTestId('users-table-action-edit-row-42').click();
+await page.getByTestId('users-table-action-delete-row-42').click();
+
+// Bulk operations
+await page.getByTestId('users-table-row-1').locator('input[type="checkbox"]').check();
+await page.getByTestId('users-table-row-2').locator('input[type="checkbox"]').check();
+await page.getByTestId('users-btn-bulk-delete').click();
+await page.getByTestId('users-btn-confirm-delete').click();
 ```
 
 ---
