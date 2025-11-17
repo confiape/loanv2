@@ -120,129 +120,119 @@ describe('LoginComponent', () => {
   describe('Form Submission Success', () => {
     it('should call authApi.logIn on submit with valid credentials', async () => {
       const { fixture, authApiMock, authServiceMock } = createComponent();
-      const emailInput = fixture.nativeElement.querySelector('input[type="email"]');
-      const passwordInput = fixture.nativeElement.querySelector('input[type="password"]');
+      const component = fixture.componentInstance;
 
       authApiMock.logIn.mockReturnValue(of(undefined));
       authServiceMock.getAuthorizationToken.mockReturnValue(of(mockLoginResponse));
 
-      if (emailInput && passwordInput) {
-        emailInput.value = 'test@test.com';
-        emailInput.dispatchEvent(new Event('input'));
-        passwordInput.value = 'password123';
-        passwordInput.dispatchEvent(new Event('input'));
+      // Set form values directly
+      component.loginForm.patchValue({
+        email: 'test@test.com',
+        password: 'password123',
+      });
+      TestBed.tick();
 
-        const submitButton = fixture.nativeElement.querySelector('button[type="submit"]');
-        submitButton?.click();
+      // Call onSubmit directly
+      component.onSubmit();
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
-        await new Promise((resolve) => setTimeout(resolve, 100));
-
-        expect(authApiMock.logIn).toHaveBeenCalledWith({
-          email: 'test@test.com',
-          password: 'password123',
-        });
-      }
+      expect(authApiMock.logIn).toHaveBeenCalledWith({
+        email: 'test@test.com',
+        password: 'password123',
+      });
     });
 
     it('should show success toast after successful login', async () => {
       const { fixture, authApiMock, authServiceMock, toastServiceMock } = createComponent();
-      const emailInput = fixture.nativeElement.querySelector('input[type="email"]');
-      const passwordInput = fixture.nativeElement.querySelector('input[type="password"]');
+      const component = fixture.componentInstance;
 
       authApiMock.logIn.mockReturnValue(of(undefined));
       authServiceMock.getAuthorizationToken.mockReturnValue(of(mockLoginResponse));
 
-      if (emailInput && passwordInput) {
-        emailInput.value = 'test@test.com';
-        emailInput.dispatchEvent(new Event('input'));
-        passwordInput.value = 'password123';
-        passwordInput.dispatchEvent(new Event('input'));
+      // Set form values directly
+      component.loginForm.patchValue({
+        email: 'test@test.com',
+        password: 'password123',
+      });
+      TestBed.tick();
 
-        const submitButton = fixture.nativeElement.querySelector('button[type="submit"]');
-        submitButton?.click();
+      // Call onSubmit directly
+      component.onSubmit();
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
-        await new Promise((resolve) => setTimeout(resolve, 100));
-
-        expect(toastServiceMock.success).toHaveBeenCalledWith('Inicio de sesión exitoso');
-      }
+      expect(toastServiceMock.success).toHaveBeenCalledWith('Inicio de sesión exitoso');
     });
 
     it('should navigate to home after successful login', async () => {
       const { fixture, authApiMock, authServiceMock, routerMock } = createComponent();
-      const emailInput = fixture.nativeElement.querySelector('input[type="email"]');
-      const passwordInput = fixture.nativeElement.querySelector('input[type="password"]');
+      const component = fixture.componentInstance;
 
       authApiMock.logIn.mockReturnValue(of(undefined));
       authServiceMock.getAuthorizationToken.mockReturnValue(of(mockLoginResponse));
 
-      if (emailInput && passwordInput) {
-        emailInput.value = 'test@test.com';
-        emailInput.dispatchEvent(new Event('input'));
-        passwordInput.value = 'password123';
-        passwordInput.dispatchEvent(new Event('input'));
+      // Set form values directly
+      component.loginForm.patchValue({
+        email: 'test@test.com',
+        password: 'password123',
+      });
+      TestBed.tick();
 
-        const submitButton = fixture.nativeElement.querySelector('button[type="submit"]');
-        submitButton?.click();
+      // Call onSubmit directly
+      component.onSubmit();
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
-        await new Promise((resolve) => setTimeout(resolve, 100));
-
-        expect(routerMock.navigate).toHaveBeenCalledWith(['/home']);
-      }
+      expect(routerMock.navigate).toHaveBeenCalledWith(['/home']);
     });
   });
 
   describe('Form Submission Failure', () => {
     it('should show error toast on login failure', async () => {
       const { fixture, authApiMock, toastServiceMock } = createComponent();
-      const emailInput = fixture.nativeElement.querySelector('input[type="email"]');
-      const passwordInput = fixture.nativeElement.querySelector('input[type="password"]');
+      const component = fixture.componentInstance;
 
       const error = {
         error: { message: 'Email o contraseña incorrectos' },
       };
       authApiMock.logIn.mockReturnValue(throwError(() => error));
 
-      if (emailInput && passwordInput) {
-        emailInput.value = 'test@test.com';
-        emailInput.dispatchEvent(new Event('input'));
-        passwordInput.value = 'wrong-password';
-        passwordInput.dispatchEvent(new Event('input'));
+      // Set form values directly
+      component.loginForm.patchValue({
+        email: 'test@test.com',
+        password: 'wrong-password',
+      });
+      TestBed.tick();
 
-        const submitButton = fixture.nativeElement.querySelector('button[type="submit"]');
-        submitButton?.click();
+      // Call onSubmit directly
+      component.onSubmit();
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
-        await new Promise((resolve) => setTimeout(resolve, 100));
-
-        expect(toastServiceMock.error).toHaveBeenCalledWith(
-          'Email o contraseña incorrectos',
-          'Error de Autenticación',
-        );
-      }
+      expect(toastServiceMock.error).toHaveBeenCalledWith(
+        'Email o contraseña incorrectos',
+        'Error de Autenticación',
+      );
     });
 
     it('should show generic error message when no message provided', async () => {
       const { fixture, authApiMock, toastServiceMock } = createComponent();
-      const emailInput = fixture.nativeElement.querySelector('input[type="email"]');
-      const passwordInput = fixture.nativeElement.querySelector('input[type="password"]');
+      const component = fixture.componentInstance;
 
       authApiMock.logIn.mockReturnValue(throwError(() => ({ error: {} })));
 
-      if (emailInput && passwordInput) {
-        emailInput.value = 'test@test.com';
-        emailInput.dispatchEvent(new Event('input'));
-        passwordInput.value = 'password123';
-        passwordInput.dispatchEvent(new Event('input'));
+      // Set form values directly
+      component.loginForm.patchValue({
+        email: 'test@test.com',
+        password: 'password123',
+      });
+      TestBed.tick();
 
-        const submitButton = fixture.nativeElement.querySelector('button[type="submit"]');
-        submitButton?.click();
+      // Call onSubmit directly
+      component.onSubmit();
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
-        await new Promise((resolve) => setTimeout(resolve, 100));
-
-        expect(toastServiceMock.error).toHaveBeenCalledWith(
-          'Error al iniciar sesión',
-          'Error de Autenticación',
-        );
-      }
+      expect(toastServiceMock.error).toHaveBeenCalledWith(
+        'Error al iniciar sesión',
+        'Error de Autenticación',
+      );
     });
   });
 });
