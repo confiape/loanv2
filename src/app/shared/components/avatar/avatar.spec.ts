@@ -80,7 +80,8 @@ describe('Avatar', () => {
       TestBed.tick();
       expect(fixtureXs.componentInstance.placeholderIconClasses()).toContain('w-8 h-8');
 
-      // Act - Create new component with xl size
+      // Act - Reset and create new component with xl size
+      TestBed.resetTestingModule();
       const fixtureXl = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
       }).createComponent(Avatar, {
@@ -287,6 +288,7 @@ describe('Avatar', () => {
       expect(fixtureTopLeft.componentInstance.indicatorClasses()).toContain('top-0 left-0');
 
       // Test top-right
+      TestBed.resetTestingModule();
       const fixtureTopRight = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
       }).createComponent(Avatar, {
@@ -299,6 +301,7 @@ describe('Avatar', () => {
       expect(fixtureTopRight.componentInstance.indicatorClasses()).toContain('top-0 right-0');
 
       // Test bottom-left
+      TestBed.resetTestingModule();
       const fixtureBottomLeft = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
       }).createComponent(Avatar, {
@@ -311,6 +314,7 @@ describe('Avatar', () => {
       expect(fixtureBottomLeft.componentInstance.indicatorClasses()).toContain('bottom-0 left-0');
 
       // Test bottom-right
+      TestBed.resetTestingModule();
       const fixtureBottomRight = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
       }).createComponent(Avatar, {
@@ -416,7 +420,8 @@ describe('Avatar', () => {
       TestBed.tick();
       expect(fixturePlaceholder.nativeElement.querySelector('svg')).toBeTruthy();
 
-      // Act - Create new component with initials variant
+      // Act - Reset and create new component with initials variant
+      TestBed.resetTestingModule();
       const fixtureInitials = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
       }).createComponent(Avatar, {

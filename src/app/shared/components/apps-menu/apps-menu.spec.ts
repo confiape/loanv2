@@ -127,7 +127,8 @@ describe('AppsMenuComponent', () => {
       TestBed.tick();
       expect(container1.querySelectorAll('a[role="menuitem"]').length).toBe(3);
 
-      // Act - Create new component with fewer apps
+      // Act - Reset and create new component with fewer apps
+      TestBed.resetTestingModule();
       const newApps = mockApps.slice(0, 1);
       const { container: container2, fixture: fixture2 } = renderComponent({ apps: newApps });
       fixture2.componentInstance.toggle();
