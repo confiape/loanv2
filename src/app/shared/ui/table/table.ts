@@ -278,6 +278,29 @@ export class Table<T extends Record<string, any> = Record<string, any>> {
   }
 
   /**
+   * Generate test ID for an action button
+   * Uses row ID if available, otherwise uses index
+   */
+  protected getActionTestId(action: TableAction<T>, row: T, index: number): string | null {
+    const base = this.dataTestId();
+    if (!base) {
+      return null;
+    }
+
+    // Sanitize action label to create a valid test ID
+    const actionLabel = action.label.toLowerCase().replace(/\s+/g, '-');
+
+    // Try to use 'id' property from row if available
+    const rowId = (row as any).id;
+    if (rowId !== undefined && rowId !== null) {
+      return `${base}-action-${actionLabel}-row-${rowId}`;
+    }
+
+    // Fall back to index
+    return `${base}-action-${actionLabel}-row-${index}`;
+  }
+
+  /**
    * Clases de densidad
    */
   protected readonly densityClasses = computed(() => {
