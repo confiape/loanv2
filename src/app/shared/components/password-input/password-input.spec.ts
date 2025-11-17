@@ -39,10 +39,10 @@ describe('PasswordInput', () => {
       bindings: [],
     });
     TestBed.tick();
-    const queries = within(fixture.nativeElement);
 
     // Assert
-    const input = queries.getByRole('textbox') as HTMLInputElement;
+    const input = fixture.nativeElement.querySelector('input') as HTMLInputElement;
+    expect(input).toBeTruthy();
     expect(input.type).toBe('password');
   });
 
@@ -63,7 +63,7 @@ describe('PasswordInput', () => {
     TestBed.tick();
 
     // Assert
-    const input = queries.getByRole('textbox') as HTMLInputElement;
+    const input = fixture.nativeElement.querySelector('input') as HTMLInputElement;
     expect(input.type).toBe('text');
   });
 
@@ -113,11 +113,10 @@ describe('PasswordInput', () => {
       bindings: [outputBinding('valueChange', (value: string) => valueSignal.set(value))],
     });
     TestBed.tick();
-    const queries = within(fixture.nativeElement);
     const user = userEvent.setup();
 
     // Act
-    const input = queries.getByRole('textbox') as HTMLInputElement;
+    const input = fixture.nativeElement.querySelector('input') as HTMLInputElement;
     await user.type(input, 'secret');
     TestBed.tick();
 
@@ -134,14 +133,13 @@ describe('PasswordInput', () => {
     });
     TestBed.tick();
     const component = fixture.componentInstance;
-    const queries = within(fixture.nativeElement);
 
     // Act
     component.writeValue('updated');
     TestBed.tick();
 
     // Assert
-    const input = queries.getByRole('textbox') as HTMLInputElement;
+    const input = fixture.nativeElement.querySelector('input') as HTMLInputElement;
     expect(input.value).toBe('updated');
   });
 
@@ -154,14 +152,13 @@ describe('PasswordInput', () => {
     });
     TestBed.tick();
     const component = fixture.componentInstance;
-    const queries = within(fixture.nativeElement);
 
     // Act
     component.setDisabledState(true);
     TestBed.tick();
 
     // Assert
-    const input = queries.getByRole('textbox') as HTMLInputElement;
+    const input = fixture.nativeElement.querySelector('input') as HTMLInputElement;
     expect(input.disabled).toBe(true);
   });
 
@@ -173,10 +170,9 @@ describe('PasswordInput', () => {
       bindings: [inputBinding('dataTestId', () => 'pwd-field')],
     });
     TestBed.tick();
-    const queries = within(fixture.nativeElement);
 
     // Assert
-    const inner = queries.getByRole('textbox').closest('app-input');
+    const inner = fixture.nativeElement.querySelector('app-input');
     expect(inner?.getAttribute('data-testid')).toBe('pwd-field');
   });
 });
