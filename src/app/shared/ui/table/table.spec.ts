@@ -1,7 +1,21 @@
-import { render } from '@testing-library/angular';
+// Angular testing
+import { TestBed } from '@angular/core/testing';
+import {
+  provideZonelessChangeDetection,
+  inputBinding,
+  outputBinding,
+  signal,
+} from '@angular/core';
+
+// Testing library
+import { within } from '@testing-library/dom';
+
+// Vitest
+import { describe, it, expect, vi } from 'vitest';
+
+// Component under test
 import { Table } from './table';
 import type { TableColumn, TableAction } from './table.models';
-import { vi } from 'vitest';
 
 interface TestData {
   id: number;
@@ -25,76 +39,110 @@ const mockColumns: TableColumn<TestData>[] = [
 ];
 
 describe('Table Component', () => {
-  describe('Basic Rendering', () => {
-    it('should create', async () => {
-      // Arrange
-      const props = { columns: mockColumns, data: mockData };
+  const defaultProviders = [provideZonelessChangeDetection()];
 
-      // Act
-      const { container } = await render(Table<TestData>, { componentProperties: props });
+  describe('Basic Rendering', () => {
+    it('should create', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData),
+        ],
+      });
+      TestBed.tick();
 
       // Assert
-      expect(container).toBeTruthy();
+      expect(fixture.componentInstance).toBeTruthy();
     });
 
-    it('should render table with columns', async () => {
+    it('should render table with columns', () => {
       // Arrange
-      const props = { columns: mockColumns, data: mockData };
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData),
+        ],
+      });
+      TestBed.tick();
 
-      // Act
-      const { container } = await render(Table<TestData>, { componentProperties: props });
-      const headers = container.querySelectorAll('thead th');
+      const headers = fixture.nativeElement.querySelectorAll('thead th');
 
       // Assert
       expect(headers.length).toBeGreaterThan(0);
-      expect(container.textContent).toContain('Name');
-      expect(container.textContent).toContain('Category');
-      expect(container.textContent).toContain('Price');
+      expect(fixture.nativeElement.textContent).toContain('Name');
+      expect(fixture.nativeElement.textContent).toContain('Category');
+      expect(fixture.nativeElement.textContent).toContain('Price');
     });
 
-    it('should render data rows', async () => {
+    it('should render data rows', () => {
       // Arrange
-      const props = { columns: mockColumns, data: mockData };
-
-      // Act
-      const { container } = await render(Table<TestData>, { componentProperties: props });
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData),
+        ],
+      });
+      TestBed.tick();
 
       // Assert
-      expect(container.textContent).toContain('Product A');
-      expect(container.textContent).toContain('Product B');
+      expect(fixture.nativeElement.textContent).toContain('Product A');
+      expect(fixture.nativeElement.textContent).toContain('Product B');
     });
 
-    it('should render empty state when no data', async () => {
+    it('should render empty state when no data', () => {
       // Arrange
-      const props = { columns: mockColumns, data: [] };
-
-      // Act
-      const { container } = await render(Table<TestData>, { componentProperties: props });
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [inputBinding('columns', () => mockColumns), inputBinding('data', () => [])],
+      });
+      TestBed.tick();
 
       // Assert
-      expect(container.textContent).toContain('No data available');
+      expect(fixture.nativeElement.textContent).toContain('No data available');
     });
 
-    it('should apply compact density classes', async () => {
+    it('should apply compact density classes', () => {
       // Arrange
-      const props = { columns: mockColumns, data: mockData.slice(0, 1), density: 'compact' };
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData.slice(0, 1)),
+          inputBinding('density', () => 'compact'),
+        ],
+      });
+      TestBed.tick();
 
-      // Act
-      const { container } = await render(Table<TestData>, { componentProperties: props });
-      const cell = container.querySelector('td');
+      const cell = fixture.nativeElement.querySelector('td');
 
       // Assert
       expect(cell?.className).toContain('px-4');
       expect(cell?.className).toContain('py-2');
     });
 
-    it('should apply spacious density classes', async () => {
+    it('should apply spacious density classes', () => {
       // Arrange
-      const props = { columns: mockColumns, data: mockData.slice(0, 1), density: 'spacious' };
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData.slice(0, 1)),
+          inputBinding('density', () => 'spacious'),
+        ],
+      });
+      TestBed.tick();
 
-      // Act
-      const { container } = await render(Table<TestData>, { componentProperties: props });
-      const cell = container.querySelector('td');
+      const cell = fixture.nativeElement.querySelector('td');
 
       // Assert
       expect(cell?.className).toContain('px-8');
@@ -103,317 +151,463 @@ describe('Table Component', () => {
   });
 
   describe('Search Functionality', () => {
-    it('should render search input when searchable is true', async () => {
+    it('should render search input when searchable is true', () => {
       // Arrange
-      const props = { columns: mockColumns, data: mockData, searchable: true };
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData),
+          inputBinding('searchable', () => true),
+        ],
+      });
+      TestBed.tick();
 
-      // Act
-      const { container } = await render(Table<TestData>, { componentProperties: props });
-      const searchInput = container.querySelector('input[type="text"]') as HTMLInputElement;
+      const searchInput = fixture.nativeElement.querySelector(
+        'input[type="text"]',
+      ) as HTMLInputElement;
 
       // Assert
       expect(searchInput).toBeTruthy();
     });
 
-    it('should not render search input when searchable is false', async () => {
+    it('should not render search input when searchable is false', () => {
       // Arrange
-      const props = { columns: mockColumns, data: mockData, searchable: false };
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData),
+          inputBinding('searchable', () => false),
+        ],
+      });
+      TestBed.tick();
 
-      // Act
-      const { container } = await render(Table<TestData>, { componentProperties: props });
-      const searchInput = container.querySelector('input[type="text"]') as HTMLInputElement;
+      const searchInput = fixture.nativeElement.querySelector(
+        'input[type="text"]',
+      ) as HTMLInputElement;
 
       // Assert
       expect(searchInput).toBeFalsy();
     });
 
-    it('should filter data based on search term', async () => {
+    it('should filter data based on search term', () => {
       // Arrange
-      const props = { columns: mockColumns, data: mockData, searchable: true };
-      const { container } = await render(Table<TestData>, { componentProperties: props });
-      const searchInput = container.querySelector('input[type="text"]') as HTMLInputElement;
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData),
+          inputBinding('searchable', () => true),
+        ],
+      });
+      TestBed.tick();
+
+      const searchInput = fixture.nativeElement.querySelector(
+        'input[type="text"]',
+      ) as HTMLInputElement;
 
       // Act
       searchInput.value = 'Electronics';
       searchInput.dispatchEvent(new Event('input'));
-      await new Promise((r) => setTimeout(r, 0));
+      TestBed.tick();
 
       // Assert
-      expect(container.textContent).toContain('Product A');
-      expect(container.textContent).toContain('Product C');
-      expect(container.textContent).not.toContain('Product B');
+      expect(fixture.nativeElement.textContent).toContain('Product A');
+      expect(fixture.nativeElement.textContent).toContain('Product C');
+      expect(fixture.nativeElement.textContent).not.toContain('Product B');
     });
 
-    it('should show all data when search is cleared', async () => {
+    it('should show all data when search is cleared', () => {
       // Arrange
-      const props = { columns: mockColumns, data: mockData, searchable: true };
-      const { container } = await render(Table<TestData>, { componentProperties: props });
-      const searchInput = container.querySelector('input[type="text"]') as HTMLInputElement;
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData),
+          inputBinding('searchable', () => true),
+        ],
+      });
+      TestBed.tick();
+
+      const searchInput = fixture.nativeElement.querySelector(
+        'input[type="text"]',
+      ) as HTMLInputElement;
 
       // Act
       searchInput.value = 'Electronics';
       searchInput.dispatchEvent(new Event('input'));
-      await new Promise((r) => setTimeout(r, 0));
+      TestBed.tick();
 
       searchInput.value = '';
       searchInput.dispatchEvent(new Event('input'));
-      await new Promise((r) => setTimeout(r, 0));
+      TestBed.tick();
 
       // Assert
-      expect(container.textContent).toContain('Product A');
-      expect(container.textContent).toContain('Product B');
+      expect(fixture.nativeElement.textContent).toContain('Product A');
+      expect(fixture.nativeElement.textContent).toContain('Product B');
     });
   });
 
   describe('Selection Functionality', () => {
-    it('should render checkboxes when selectable is true', async () => {
+    it('should render checkboxes when selectable is true', () => {
       // Arrange
-      const props = { columns: mockColumns, data: mockData.slice(0, 2), selectable: true };
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData.slice(0, 2)),
+          inputBinding('selectable', () => true),
+        ],
+      });
+      TestBed.tick();
 
-      // Act
-      const { container } = await render(Table<TestData>, { componentProperties: props });
-      const checkboxes = container.querySelectorAll('input[type="checkbox"]');
+      const checkboxes = fixture.nativeElement.querySelectorAll('input[type="checkbox"]');
 
       // Assert
       expect(checkboxes.length).toBeGreaterThan(0);
     });
 
-    it('should not render checkboxes when selectable is false', async () => {
+    it('should not render checkboxes when selectable is false', () => {
       // Arrange
-      const props = { columns: mockColumns, data: mockData.slice(0, 2), selectable: false };
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData.slice(0, 2)),
+          inputBinding('selectable', () => false),
+        ],
+      });
+      TestBed.tick();
 
-      // Act
-      const { container } = await render(Table<TestData>, { componentProperties: props });
-      const checkboxes = container.querySelectorAll('input[type="checkbox"]');
+      const checkboxes = fixture.nativeElement.querySelectorAll('input[type="checkbox"]');
 
       // Assert
       expect(checkboxes.length).toBe(0);
     });
 
-    it('should select and deselect rows', async () => {
+    it('should select and deselect rows', () => {
       // Arrange
-      const props = { columns: mockColumns, data: mockData.slice(0, 2), selectable: true };
-      const { container } = await render(Table<TestData>, { componentProperties: props });
-      const checkboxes = container.querySelectorAll('input[type="checkbox"]');
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData.slice(0, 2)),
+          inputBinding('selectable', () => true),
+        ],
+      });
+      TestBed.tick();
+
+      const checkboxes = fixture.nativeElement.querySelectorAll('input[type="checkbox"]');
       const rowCheckbox = checkboxes[1] as HTMLInputElement;
 
-      // Act & Assert - Initial state
+      // Assert - Initial state
       expect(rowCheckbox.checked).toBe(false);
 
       // Act - Click to select
       rowCheckbox.click();
-      await new Promise((r) => setTimeout(r, 0));
+      TestBed.tick();
       expect(rowCheckbox.checked).toBe(true);
 
       // Act - Click to deselect
       rowCheckbox.click();
-      await new Promise((r) => setTimeout(r, 0));
+      TestBed.tick();
+
+      // Assert
       expect(rowCheckbox.checked).toBe(false);
     });
 
-    it('should emit selectionChange event', async () => {
+    it('should emit selectionChange event', () => {
       // Arrange
-      const props = { columns: mockColumns, data: mockData.slice(0, 2), selectable: true };
-      const { container, component } = await render(Table<TestData>, { componentProperties: props });
-
-      let emittedValue: readonly TestData[] | undefined;
-      component.selectionChange.subscribe((value) => {
-        emittedValue = value;
+      const selectionSignal = signal<readonly TestData[]>([]);
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData.slice(0, 2)),
+          inputBinding('selectable', () => true),
+          outputBinding('selectionChange', (value: readonly TestData[]) =>
+            selectionSignal.set(value),
+          ),
+        ],
       });
+      TestBed.tick();
 
-      const checkboxes = container.querySelectorAll('input[type="checkbox"]');
+      const checkboxes = fixture.nativeElement.querySelectorAll('input[type="checkbox"]');
       const rowCheckbox = checkboxes[1] as HTMLInputElement;
 
       // Act
       rowCheckbox.click();
-      await new Promise((r) => setTimeout(r, 0));
+      TestBed.tick();
 
       // Assert
-      expect(emittedValue).toBeDefined();
-      expect(emittedValue?.length).toBeGreaterThan(0);
+      expect(selectionSignal().length).toBeGreaterThan(0);
     });
   });
 
   describe('Pagination Functionality', () => {
-    it('should render pagination controls when paginated is true', async () => {
+    it('should render pagination controls when paginated is true', () => {
       // Arrange
-      const props = { columns: mockColumns, data: mockData, paginated: true, pageSize: 2 };
-
-      // Act
-      const { container } = await render(Table<TestData>, { componentProperties: props });
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData),
+          inputBinding('paginated', () => true),
+          inputBinding('pageSize', () => 2),
+        ],
+      });
+      TestBed.tick();
 
       // Assert
-      expect(container.textContent).toContain('Previous');
-      expect(container.textContent).toContain('Next');
+      expect(fixture.nativeElement.textContent).toContain('Previous');
+      expect(fixture.nativeElement.textContent).toContain('Next');
     });
 
-    it('should not render pagination when paginated is false', async () => {
+    it('should not render pagination when paginated is false', () => {
       // Arrange
-      const props = { columns: mockColumns, data: mockData, paginated: false };
-
-      // Act
-      const { container } = await render(Table<TestData>, { componentProperties: props });
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData),
+          inputBinding('paginated', () => false),
+        ],
+      });
+      TestBed.tick();
 
       // Assert
-      expect(container.textContent).not.toContain('Previous');
-      expect(container.textContent).not.toContain('Next');
+      expect(fixture.nativeElement.textContent).not.toContain('Previous');
+      expect(fixture.nativeElement.textContent).not.toContain('Next');
     });
 
-    it('should show correct page size of data', async () => {
+    it('should show correct page size of data', () => {
       // Arrange
-      const props = { columns: mockColumns, data: mockData, paginated: true, pageSize: 2 };
-
-      // Act
-      const { container } = await render(Table<TestData>, { componentProperties: props });
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData),
+          inputBinding('paginated', () => true),
+          inputBinding('pageSize', () => 2),
+        ],
+      });
+      TestBed.tick();
 
       // Assert
-      expect(container.textContent).toContain('Product A');
-      expect(container.textContent).toContain('Product B');
-      expect(container.textContent).not.toContain('Product C');
+      expect(fixture.nativeElement.textContent).toContain('Product A');
+      expect(fixture.nativeElement.textContent).toContain('Product B');
+      expect(fixture.nativeElement.textContent).not.toContain('Product C');
     });
 
-    it('should navigate to next page', async () => {
+    it('should navigate to next page', () => {
       // Arrange
-      const props = { columns: mockColumns, data: mockData, paginated: true, pageSize: 2 };
-      const { container } = await render(Table<TestData>, { componentProperties: props });
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData),
+          inputBinding('paginated', () => true),
+          inputBinding('pageSize', () => 2),
+        ],
+      });
+      TestBed.tick();
 
       const nextButton = Array.from<HTMLButtonElement>(
-        container.querySelectorAll('button')
+        fixture.nativeElement.querySelectorAll('button'),
       ).find((btn) => btn.textContent?.includes('Next'));
 
       // Act
       expect(nextButton).toBeTruthy();
       nextButton?.click();
-      await new Promise((r) => setTimeout(r, 0));
+      TestBed.tick();
 
       // Assert
-      expect(container.textContent).not.toContain('Product A');
-      expect(container.textContent).toContain('Product C');
+      expect(fixture.nativeElement.textContent).not.toContain('Product A');
+      expect(fixture.nativeElement.textContent).toContain('Product C');
     });
 
-    it('should disable Previous on first page', async () => {
+    it('should disable Previous on first page', () => {
       // Arrange
-      const props = { columns: mockColumns, data: mockData, paginated: true, pageSize: 2 };
-      const { container } = await render(Table<TestData>, { componentProperties: props });
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData),
+          inputBinding('paginated', () => true),
+          inputBinding('pageSize', () => 2),
+        ],
+      });
+      TestBed.tick();
 
       const prevButton = Array.from<HTMLButtonElement>(
-        container.querySelectorAll('button')
+        fixture.nativeElement.querySelectorAll('button'),
       ).find((btn) => btn.textContent?.includes('Previous'));
 
       // Assert
       expect(prevButton?.disabled).toBe(true);
     });
 
-    it('should emit pageChange event', async () => {
+    it('should emit pageChange event', () => {
       // Arrange
-      const props = { columns: mockColumns, data: mockData, paginated: true, pageSize: 2 };
-      const { container, component } = await render(Table<TestData>, { componentProperties: props });
-
-      let emittedPage: number | undefined;
-      component.pageChange.subscribe((page) => {
-        emittedPage = page;
+      const pageSignal = signal(1);
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData),
+          inputBinding('paginated', () => true),
+          inputBinding('pageSize', () => 2),
+          outputBinding('pageChange', (page: number) => pageSignal.set(page)),
+        ],
       });
+      TestBed.tick();
 
       const nextButton = Array.from<HTMLButtonElement>(
-        container.querySelectorAll('button')
+        fixture.nativeElement.querySelectorAll('button'),
       ).find((btn) => btn.textContent?.includes('Next'));
 
       // Act
       nextButton?.click();
-      await new Promise((r) => setTimeout(r, 0));
+      TestBed.tick();
 
       // Assert
-      expect(emittedPage).toBe(2);
+      expect(pageSignal()).toBe(2);
     });
   });
 
   describe('Sorting Functionality', () => {
-    it('should sort data in ascending order', async () => {
+    it('should sort data in ascending order', () => {
       // Arrange
-      const props = { columns: mockColumns, data: mockData, sortable: true };
-      const { container } = await render(Table<TestData>, { componentProperties: props });
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData),
+          inputBinding('sortable', () => true),
+        ],
+      });
+      TestBed.tick();
 
       const priceButton = Array.from<HTMLButtonElement>(
-        container.querySelectorAll('th button')
+        fixture.nativeElement.querySelectorAll('th button'),
       ).find((btn) => btn.textContent?.includes('Price'));
 
       // Act
       expect(priceButton).toBeTruthy();
       priceButton?.click();
-      await new Promise((r) => setTimeout(r, 0));
+      TestBed.tick();
 
-      const rows = container.querySelectorAll('tbody tr');
+      const rows = fixture.nativeElement.querySelectorAll('tbody tr');
       const firstRowText = rows[0]?.textContent || '';
 
       // Assert
       expect(firstRowText).toContain('Product B');
     });
 
-    it('should sort data in descending order on second click', async () => {
+    it('should sort data in descending order on second click', () => {
       // Arrange
-      const props = { columns: mockColumns, data: mockData, sortable: true };
-      const { container } = await render(Table<TestData>, { componentProperties: props });
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData),
+          inputBinding('sortable', () => true),
+        ],
+      });
+      TestBed.tick();
 
       const priceButton = Array.from<HTMLButtonElement>(
-        container.querySelectorAll('th button')
+        fixture.nativeElement.querySelectorAll('th button'),
       ).find((btn) => btn.textContent?.includes('Price'));
 
       // Act
       priceButton?.click();
-      await new Promise((r) => setTimeout(r, 0));
+      TestBed.tick();
       priceButton?.click();
-      await new Promise((r) => setTimeout(r, 0));
+      TestBed.tick();
 
-      const rows = container.querySelectorAll('tbody tr');
+      const rows = fixture.nativeElement.querySelectorAll('tbody tr');
       const firstRowText = rows[0]?.textContent || '';
 
       // Assert
       expect(firstRowText).toContain('Product C');
     });
 
-    it('should emit sortChange event', async () => {
+    it('should emit sortChange event', () => {
       // Arrange
-      const props = { columns: mockColumns, data: mockData, sortable: true };
-      const { container, component } = await render(Table<TestData>, { componentProperties: props });
-
-      let emittedSort: { key: string; direction: 'asc' | 'desc' | null } | undefined;
-      component.sortChange.subscribe((sort) => {
-        emittedSort = sort;
+      const sortSignal = signal<{ key: string; direction: 'asc' | 'desc' | null } | null>(null);
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData),
+          inputBinding('sortable', () => true),
+          outputBinding(
+            'sortChange',
+            (sort: { key: string; direction: 'asc' | 'desc' | null }) => sortSignal.set(sort),
+          ),
+        ],
       });
+      TestBed.tick();
 
       const priceButton = Array.from<HTMLButtonElement>(
-        container.querySelectorAll('th button')
+        fixture.nativeElement.querySelectorAll('th button'),
       ).find((btn) => btn.textContent?.includes('Price'));
 
       // Act
       priceButton?.click();
-      await new Promise((r) => setTimeout(r, 0));
+      TestBed.tick();
 
       // Assert
-      expect(emittedSort).toBeDefined();
-      expect(emittedSort?.key).toBe('price');
-      expect(emittedSort?.direction).toBe('asc');
+      expect(sortSignal()).toBeDefined();
+      expect(sortSignal()?.key).toBe('price');
+      expect(sortSignal()?.direction).toBe('asc');
     });
   });
 
   describe('Actions Functionality', () => {
-    it('should render action buttons', async () => {
+    it('should render action buttons', () => {
       // Arrange
       const mockActions: TableAction<TestData>[] = [
         { label: 'Edit', variant: 'primary', handler: () => {} },
         { label: 'Delete', variant: 'danger', handler: () => {} },
       ];
-      const props = { columns: mockColumns, data: mockData.slice(0, 2), actions: mockActions };
 
-      // Act
-      const { container } = await render(Table<TestData>, { componentProperties: props });
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData.slice(0, 2)),
+          inputBinding('actions', () => mockActions),
+        ],
+      });
+      TestBed.tick();
 
       // Assert
-      expect(container.textContent).toContain('Edit');
-      expect(container.textContent).toContain('Delete');
+      expect(fixture.nativeElement.textContent).toContain('Edit');
+      expect(fixture.nativeElement.textContent).toContain('Delete');
     });
 
-    it('should call action handler when clicked', async () => {
+    it('should call action handler when clicked', () => {
       // Arrange
       let handlerCalled = false;
       let receivedRow: TestData | undefined;
@@ -428,23 +622,32 @@ describe('Table Component', () => {
           },
         },
       ];
-      const props = { columns: mockColumns, data: mockData.slice(0, 1), actions: mockActions };
-      const { container } = await render(Table<TestData>, { componentProperties: props });
+
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData.slice(0, 1)),
+          inputBinding('actions', () => mockActions),
+        ],
+      });
+      TestBed.tick();
 
       const editButton = Array.from<HTMLButtonElement>(
-        container.querySelectorAll('button')
+        fixture.nativeElement.querySelectorAll('button'),
       ).find((btn) => btn.textContent?.includes('Edit'));
 
       // Act
       editButton?.click();
-      await new Promise((r) => setTimeout(r, 0));
+      TestBed.tick();
 
       // Assert
       expect(handlerCalled).toBe(true);
       expect(receivedRow).toEqual(mockData[0]);
     });
 
-    it('should respect action conditions', async () => {
+    it('should respect action conditions', () => {
       // Arrange
       const mockActions: TableAction<TestData>[] = [
         {
@@ -454,13 +657,20 @@ describe('Table Component', () => {
           condition: (row) => row.price > 100,
         },
       ];
-      const props = { columns: mockColumns, data: mockData.slice(0, 3), actions: mockActions };
 
-      // Act
-      const { container } = await render(Table<TestData>, { componentProperties: props });
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData.slice(0, 3)),
+          inputBinding('actions', () => mockActions),
+        ],
+      });
+      TestBed.tick();
 
       const premiumButtons = Array.from<HTMLButtonElement>(
-        container.querySelectorAll('button')
+        fixture.nativeElement.querySelectorAll('button'),
       ).filter((btn) => btn.textContent?.includes('Premium'));
 
       // Assert
@@ -469,25 +679,39 @@ describe('Table Component', () => {
   });
 
   describe('Hoverable Functionality', () => {
-    it('should apply hover classes when hoverable is true', async () => {
+    it('should apply hover classes when hoverable is true', () => {
       // Arrange
-      const props = { columns: mockColumns, data: mockData.slice(0, 1), hoverable: true };
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData.slice(0, 1)),
+          inputBinding('hoverable', () => true),
+        ],
+      });
+      TestBed.tick();
 
-      // Act
-      const { container } = await render(Table<TestData>, { componentProperties: props });
-      const row = container.querySelector('tbody tr');
+      const row = fixture.nativeElement.querySelector('tbody tr');
 
       // Assert
       expect(row?.className).toContain('hover:bg-bg-secondary');
     });
 
-    it('should not apply hover classes when hoverable is false', async () => {
+    it('should not apply hover classes when hoverable is false', () => {
       // Arrange
-      const props = { columns: mockColumns, data: mockData.slice(0, 1), hoverable: false };
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData.slice(0, 1)),
+          inputBinding('hoverable', () => false),
+        ],
+      });
+      TestBed.tick();
 
-      // Act
-      const { container } = await render(Table<TestData>, { componentProperties: props });
-      const row = container.querySelector('tbody tr');
+      const row = fixture.nativeElement.querySelector('tbody tr');
 
       // Assert
       expect(row?.className).not.toContain('hover:bg-bg-secondary');
@@ -495,7 +719,7 @@ describe('Table Component', () => {
   });
 
   describe('Custom Rendering', () => {
-    it('should use custom render function for columns', async () => {
+    it('should use custom render function for columns', () => {
       // Arrange
       const customColumns: TableColumn<TestData>[] = [
         {
@@ -504,89 +728,122 @@ describe('Table Component', () => {
           render: (value: number) => `$${value.toFixed(2)}`,
         },
       ];
-      const props = {
-        columns: customColumns,
-        data: [{ id: 1, name: 'Test', category: 'Cat', price: 99.5 }],
-      };
 
-      // Act
-      const { container } = await render(Table<TestData>, { componentProperties: props });
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => customColumns),
+          inputBinding('data', () => [{ id: 1, name: 'Test', category: 'Cat', price: 99.5 }]),
+        ],
+      });
+      TestBed.tick();
 
       // Assert
-      expect(container.textContent).toContain('$99.50');
+      expect(fixture.nativeElement.textContent).toContain('$99.50');
     });
   });
 
   describe('data-testid Attributes', () => {
-    it('should render data-testid on table wrapper', async () => {
+    it('should render data-testid on table wrapper', () => {
       // Arrange
-      const props = { columns: mockColumns, data: mockData.slice(0, 2), dataTestId: 'test-table' };
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData.slice(0, 2)),
+          inputBinding('dataTestId', () => 'test-table'),
+        ],
+      });
+      TestBed.tick();
 
-      // Act
-      const { container } = await render(Table<TestData>, { componentProperties: props });
-      const wrapper = container.querySelector('[data-testid="test-table-wrapper"]');
+      const wrapper = fixture.nativeElement.querySelector('[data-testid="test-table-wrapper"]');
 
       // Assert
       expect(wrapper).toBeTruthy();
     });
 
-    it('should render data-testid on table element', async () => {
+    it('should render data-testid on table element', () => {
       // Arrange
-      const props = { columns: mockColumns, data: mockData.slice(0, 2), dataTestId: 'test-table' };
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData.slice(0, 2)),
+          inputBinding('dataTestId', () => 'test-table'),
+        ],
+      });
+      TestBed.tick();
 
-      // Act
-      const { container } = await render(Table<TestData>, { componentProperties: props });
-      const table = container.querySelector('table[data-testid="test-table"]');
+      const table = fixture.nativeElement.querySelector('table[data-testid="test-table"]');
 
       // Assert
       expect(table).toBeTruthy();
     });
 
-    it('should render data-testid on search input when searchable', async () => {
+    it('should render data-testid on search input when searchable', () => {
       // Arrange
-      const props = {
-        columns: mockColumns,
-        data: mockData.slice(0, 2),
-        dataTestId: 'test-table',
-        searchable: true,
-      };
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData.slice(0, 2)),
+          inputBinding('dataTestId', () => 'test-table'),
+          inputBinding('searchable', () => true),
+        ],
+      });
+      TestBed.tick();
 
-      // Act
-      const { container } = await render(Table<TestData>, { componentProperties: props });
-      const searchInput = container.querySelector('input[data-testid="test-table-search"]');
+      const searchInput = fixture.nativeElement.querySelector(
+        'input[data-testid="test-table-search"]',
+      );
 
       // Assert
       expect(searchInput).toBeTruthy();
     });
 
-    it('should render data-testid on pagination when paginated', async () => {
+    it('should render data-testid on pagination when paginated', () => {
       // Arrange
-      const props = {
-        columns: mockColumns,
-        data: mockData,
-        dataTestId: 'test-table',
-        paginated: true,
-        pageSize: 2,
-      };
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData),
+          inputBinding('dataTestId', () => 'test-table'),
+          inputBinding('paginated', () => true),
+          inputBinding('pageSize', () => 2),
+        ],
+      });
+      TestBed.tick();
 
-      // Act
-      const { container } = await render(Table<TestData>, { componentProperties: props });
-      const pagination = container.querySelector('nav[data-testid="test-table-pagination"]');
+      const pagination = fixture.nativeElement.querySelector(
+        'nav[data-testid="test-table-pagination"]',
+      );
 
       // Assert
       expect(pagination).toBeTruthy();
     });
 
-    it('should render data-testid on table rows using row ID', async () => {
+    it('should render data-testid on table rows using row ID', () => {
       // Arrange
-      const props = { columns: mockColumns, data: mockData.slice(0, 3), dataTestId: 'test-table' };
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData.slice(0, 3)),
+          inputBinding('dataTestId', () => 'test-table'),
+        ],
+      });
+      TestBed.tick();
 
-      // Act
-      const { container } = await render(Table<TestData>, { componentProperties: props });
-
-      const row1 = container.querySelector('tr[data-testid="test-table-row-1"]');
-      const row2 = container.querySelector('tr[data-testid="test-table-row-2"]');
-      const row3 = container.querySelector('tr[data-testid="test-table-row-3"]');
+      const row1 = fixture.nativeElement.querySelector('tr[data-testid="test-table-row-1"]');
+      const row2 = fixture.nativeElement.querySelector('tr[data-testid="test-table-row-2"]');
+      const row3 = fixture.nativeElement.querySelector('tr[data-testid="test-table-row-3"]');
 
       // Assert
       expect(row1).toBeTruthy();
@@ -594,7 +851,7 @@ describe('Table Component', () => {
       expect(row3).toBeTruthy();
     });
 
-    it('should render data-testid on table rows using index when no ID property', async () => {
+    it('should render data-testid on table rows using index when no ID property', () => {
       // Arrange
       interface DataWithoutId {
         name: string;
@@ -611,39 +868,53 @@ describe('Table Component', () => {
         { key: 'category', label: 'Category' },
       ];
 
-      const props = { columns: columnsForDataWithoutId, data: dataWithoutId, dataTestId: 'test-table' };
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<DataWithoutId>, {
+        bindings: [
+          inputBinding('columns', () => columnsForDataWithoutId),
+          inputBinding('data', () => dataWithoutId),
+          inputBinding('dataTestId', () => 'test-table'),
+        ],
+      });
+      TestBed.tick();
 
-      // Act
-      const { container } = await render(Table<DataWithoutId>, { componentProperties: props });
-
-      const row0 = container.querySelector('tr[data-testid="test-table-row-0"]');
-      const row1 = container.querySelector('tr[data-testid="test-table-row-1"]');
+      const row0 = fixture.nativeElement.querySelector('tr[data-testid="test-table-row-0"]');
+      const row1 = fixture.nativeElement.querySelector('tr[data-testid="test-table-row-1"]');
 
       // Assert
       expect(row0).toBeTruthy();
       expect(row1).toBeTruthy();
     });
 
-    it('should render data-testid on action buttons with row ID', async () => {
+    it('should render data-testid on action buttons with row ID', () => {
       // Arrange
       const mockActions: TableAction<TestData>[] = [
         { label: 'Edit', variant: 'primary', handler: () => {} },
         { label: 'Delete', variant: 'danger', handler: () => {} },
       ];
 
-      const props = {
-        columns: mockColumns,
-        data: mockData.slice(0, 2),
-        actions: mockActions,
-        dataTestId: 'test-table',
-      };
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData.slice(0, 2)),
+          inputBinding('actions', () => mockActions),
+          inputBinding('dataTestId', () => 'test-table'),
+        ],
+      });
+      TestBed.tick();
 
-      // Act
-      const { container } = await render(Table<TestData>, { componentProperties: props });
-
-      const editBtn1 = container.querySelector('button[data-testid="test-table-action-edit-row-1"]');
-      const deleteBtn1 = container.querySelector('button[data-testid="test-table-action-delete-row-1"]');
-      const editBtn2 = container.querySelector('button[data-testid="test-table-action-edit-row-2"]');
+      const editBtn1 = fixture.nativeElement.querySelector(
+        'button[data-testid="test-table-action-edit-row-1"]',
+      );
+      const deleteBtn1 = fixture.nativeElement.querySelector(
+        'button[data-testid="test-table-action-delete-row-1"]',
+      );
+      const editBtn2 = fixture.nativeElement.querySelector(
+        'button[data-testid="test-table-action-edit-row-2"]',
+      );
 
       // Assert
       expect(editBtn1).toBeTruthy();
@@ -651,7 +922,7 @@ describe('Table Component', () => {
       expect(editBtn2).toBeTruthy();
     });
 
-    it('should render data-testid on action buttons with index when no ID property', async () => {
+    it('should render data-testid on action buttons with index when no ID property', () => {
       // Arrange
       interface DataWithoutId {
         name: string;
@@ -668,55 +939,74 @@ describe('Table Component', () => {
         { key: 'category', label: 'Category' },
       ];
 
-      const mockActions: TableAction<DataWithoutId>[] = [{ label: 'Edit', variant: 'primary', handler: () => {} }];
+      const mockActions: TableAction<DataWithoutId>[] = [
+        { label: 'Edit', variant: 'primary', handler: () => {} },
+      ];
 
-      const props = {
-        columns: columnsForDataWithoutId,
-        data: dataWithoutId,
-        actions: mockActions,
-        dataTestId: 'test-table',
-      };
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<DataWithoutId>, {
+        bindings: [
+          inputBinding('columns', () => columnsForDataWithoutId),
+          inputBinding('data', () => dataWithoutId),
+          inputBinding('actions', () => mockActions),
+          inputBinding('dataTestId', () => 'test-table'),
+        ],
+      });
+      TestBed.tick();
 
-      // Act
-      const { container } = await render(Table<DataWithoutId>, { componentProperties: props });
-
-      const editBtn0 = container.querySelector('button[data-testid="test-table-action-edit-row-0"]');
-      const editBtn1 = container.querySelector('button[data-testid="test-table-action-edit-row-1"]');
+      const editBtn0 = fixture.nativeElement.querySelector(
+        'button[data-testid="test-table-action-edit-row-0"]',
+      );
+      const editBtn1 = fixture.nativeElement.querySelector(
+        'button[data-testid="test-table-action-edit-row-1"]',
+      );
 
       // Assert
       expect(editBtn0).toBeTruthy();
       expect(editBtn1).toBeTruthy();
     });
 
-    it('should sanitize action labels with spaces in data-testid', async () => {
+    it('should sanitize action labels with spaces in data-testid', () => {
       // Arrange
       const mockActions: TableAction<TestData>[] = [
         { label: 'View Details', variant: 'primary', handler: () => {} },
       ];
 
-      const props = {
-        columns: mockColumns,
-        data: mockData.slice(0, 1),
-        actions: mockActions,
-        dataTestId: 'test-table',
-      };
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData.slice(0, 1)),
+          inputBinding('actions', () => mockActions),
+          inputBinding('dataTestId', () => 'test-table'),
+        ],
+      });
+      TestBed.tick();
 
-      // Act
-      const { container } = await render(Table<TestData>, { componentProperties: props });
-
-      const viewBtn = container.querySelector('button[data-testid="test-table-action-view-details-row-1"]');
+      const viewBtn = fixture.nativeElement.querySelector(
+        'button[data-testid="test-table-action-view-details-row-1"]',
+      );
 
       // Assert
       expect(viewBtn).toBeTruthy();
     });
 
-    it('should not render data-testid attributes when dataTestId is null', async () => {
+    it('should not render data-testid attributes when dataTestId is null', () => {
       // Arrange
-      const props = { columns: mockColumns, data: mockData.slice(0, 2), dataTestId: null };
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData.slice(0, 2)),
+          inputBinding('dataTestId', () => null),
+        ],
+      });
+      TestBed.tick();
 
-      // Act
-      const { container } = await render(Table<TestData>, { componentProperties: props });
-      const rows = container.querySelectorAll('tbody tr[data-testid]');
+      const rows = fixture.nativeElement.querySelectorAll('tbody tr[data-testid]');
 
       // Assert
       expect(rows.length).toBe(0);
