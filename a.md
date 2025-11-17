@@ -11,7 +11,8 @@ Your task: generate or update a concise, production-ready Storybook file for an 
 
 When generating stories, **create the Storybook file under the mirrored `src/stories` directory**.
 
-Example:
+
+
 
 - Component path: `src/app/shared/components/input/input.ts`
 - Storybook path: `src/stories/app/shared/components/input/input.ts`
