@@ -63,6 +63,7 @@ describe('Dropdown', () => {
 
     // Act - Open panel
     trigger?.dispatchEvent(new MouseEvent('click'));
+    TestBed.tick();
 
     // Assert - Panel is open
     const panel = overlayElement.querySelector('.shadow-lg');
@@ -70,6 +71,7 @@ describe('Dropdown', () => {
 
     // Act - Close panel
     trigger?.dispatchEvent(new MouseEvent('click'));
+    TestBed.tick();
 
     // Assert - Panel is closed
     const closedPanel = overlayElement.querySelector('.shadow-lg');
@@ -96,9 +98,11 @@ describe('Dropdown', () => {
 
     // Act
     trigger?.dispatchEvent(new MouseEvent('click'));
+    TestBed.tick();
 
     const itemButton = overlayElement.querySelector('ul li button') as HTMLButtonElement;
     itemButton?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    TestBed.tick();
 
     // Assert
     expect(selectedItemSignal()?.label).toBe('Dashboard');
@@ -142,13 +146,16 @@ describe('Dropdown', () => {
 
     // Act
     trigger?.dispatchEvent(new MouseEvent('click'));
+    TestBed.tick();
 
     const searchInput = overlayElement.querySelector('input') as HTMLInputElement;
     searchInput.value = 'ear';
     searchInput.dispatchEvent(new Event('input'));
+    TestBed.tick();
 
     // Wait for debounce (even with 0ms, need to wait for next tick)
     await new Promise((resolve) => setTimeout(resolve, 0));
+    TestBed.tick();
 
     // Assert
     const items = overlayElement.querySelectorAll('ul li button');
