@@ -1,7 +1,20 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render } from '@testing-library/angular';
-import { provideZonelessChangeDetection } from '@angular/core';
+// Angular testing
+import { TestBed } from '@angular/core/testing';
+import {
+  provideZonelessChangeDetection,
+  inputBinding,
+  outputBinding,
+  signal,
+} from '@angular/core';
 import { provideRouter } from '@angular/router';
+
+// Testing library
+import { within } from '@testing-library/dom';
+
+// Vitest
+import { describe, it, expect, vi } from 'vitest';
+
+// Component and dependencies
 import { SidenavComponent, SidenavItem } from '@loan/app/layout/sidenav/sidenav';
 
 describe('SidenavComponent', () => {
@@ -48,27 +61,26 @@ describe('SidenavComponent', () => {
     },
   ];
 
-  const defaultProviders = [
-    provideZonelessChangeDetection(),
-    provideRouter([]),
-  ];
+  const defaultProviders = [provideZonelessChangeDetection(), provideRouter([])];
 
   describe('initialization', () => {
-    it('creates the component', async () => {
-      // Arrange & Act
-      const { container } = await render(SidenavComponent, {
+    it('creates the component', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(SidenavComponent);
+      TestBed.tick();
 
       // Assert
-      expect(container).toBeTruthy();
+      expect(fixture.componentInstance).toBeTruthy();
     });
 
-    it('has default input values', async () => {
-      // Arrange & Act
-      const { fixture } = await render(SidenavComponent, {
+    it('has default input values', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(SidenavComponent);
+      TestBed.tick();
 
       // Assert
       expect(fixture.componentInstance.items()).toEqual([]);
@@ -81,11 +93,12 @@ describe('SidenavComponent', () => {
       expect(fixture.componentInstance.collapsedWidth()).toBe('4rem');
     });
 
-    it('initializes state signals correctly', async () => {
-      // Arrange & Act
-      const { fixture } = await render(SidenavComponent, {
+    it('initializes state signals correctly', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(SidenavComponent);
+      TestBed.tick();
 
       // Assert
       expect(fixture.componentInstance.isCollapsed()).toBe(false);
@@ -94,14 +107,15 @@ describe('SidenavComponent', () => {
       expect(fixture.componentInstance.selectedItem()).toBe('');
     });
 
-    it('renders aside element with navigation role', async () => {
-      // Arrange & Act
-      const { container } = await render(SidenavComponent, {
+    it('renders aside element with navigation role', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(SidenavComponent);
+      TestBed.tick();
 
       // Assert
-      const aside = container.querySelector('aside');
+      const aside = fixture.nativeElement.querySelector('aside');
       expect(aside).toBeTruthy();
       expect(aside?.getAttribute('role')).toBe('navigation');
       expect(aside?.getAttribute('aria-label')).toBe('Sidebar navigation');
@@ -109,24 +123,28 @@ describe('SidenavComponent', () => {
   });
 
   describe('items input', () => {
-    it('renders navigation items', async () => {
-      // Arrange & Act
-      const { fixture } = await render(SidenavComponent, {
-        componentProperties: { items: mockItems },
+    it('renders navigation items', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
+      }).createComponent(SidenavComponent, {
+        bindings: [inputBinding('items', () => mockItems)],
       });
+      TestBed.tick();
 
       // Assert
       const menuItems = fixture.nativeElement.querySelectorAll('li[role="none"]');
       expect(menuItems.length).toBeGreaterThan(0);
     });
 
-    it('displays labels correctly', async () => {
-      // Arrange & Act
-      const { fixture } = await render(SidenavComponent, {
-        componentProperties: { items: mockItems },
+    it('displays labels correctly', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
+      }).createComponent(SidenavComponent, {
+        bindings: [inputBinding('items', () => mockItems)],
       });
+      TestBed.tick();
 
       // Assert
       expect(fixture.nativeElement.textContent).toContain('Dashboard');
@@ -134,24 +152,28 @@ describe('SidenavComponent', () => {
       expect(fixture.nativeElement.textContent).toContain('Settings');
     });
 
-    it('renders divider items', async () => {
-      // Arrange & Act
-      const { fixture } = await render(SidenavComponent, {
-        componentProperties: { items: mockItems },
+    it('renders divider items', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
+      }).createComponent(SidenavComponent, {
+        bindings: [inputBinding('items', () => mockItems)],
       });
+      TestBed.tick();
 
       // Assert
       const divider = fixture.nativeElement.querySelector('li[role="separator"]');
       expect(divider).toBeTruthy();
     });
 
-    it('displays badges when present', async () => {
-      // Arrange & Act
-      const { fixture } = await render(SidenavComponent, {
-        componentProperties: { items: mockItems },
+    it('displays badges when present', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
+      }).createComponent(SidenavComponent, {
+        bindings: [inputBinding('items', () => mockItems)],
       });
+      TestBed.tick();
 
       // Assert
       expect(fixture.nativeElement.textContent).toContain('12');
@@ -159,43 +181,49 @@ describe('SidenavComponent', () => {
   });
 
   describe('collapsed state', () => {
-    it('syncs isCollapsed with collapsed input', async () => {
-      // Arrange & Act
-      const { fixture } = await render(SidenavComponent, {
-        componentProperties: { collapsed: true },
+    it('syncs isCollapsed with collapsed input', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
+      }).createComponent(SidenavComponent, {
+        bindings: [inputBinding('collapsed', () => true)],
       });
+      TestBed.tick();
 
       // Assert
       expect(fixture.componentInstance.isCollapsed()).toBe(true);
     });
 
-    it('updates currentWidth based on collapsed state', async () => {
-      // Arrange & Act
-      const { fixture } = await render(SidenavComponent, {
+    it('updates currentWidth based on collapsed state', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(SidenavComponent);
+      TestBed.tick();
 
       expect(fixture.componentInstance.currentWidth()).toBe('16rem');
 
+      // Act
       fixture.componentInstance.collapsed.set(true);
-      fixture.detectChanges();
+      TestBed.tick();
 
       // Assert
       expect(fixture.componentInstance.currentWidth()).toBe('4rem');
     });
 
-    it('applies correct width styles', async () => {
-      // Arrange & Act
-      const { fixture } = await render(SidenavComponent, {
+    it('applies correct width styles', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(SidenavComponent);
+      TestBed.tick();
 
       const aside = fixture.nativeElement.querySelector('aside') as HTMLElement;
       expect(aside.style.width).toBe('16rem');
 
+      // Act
       fixture.componentInstance.collapsed.set(true);
-      fixture.detectChanges();
+      TestBed.tick();
 
       // Assert
       expect(aside.style.width).toBe('4rem');
@@ -203,17 +231,19 @@ describe('SidenavComponent', () => {
   });
 
   describe('collapsible behavior', () => {
-    it('toggles collapse when collapsible', async () => {
-      // Arrange & Act
-      const { fixture } = await render(SidenavComponent, {
-        componentProperties: { collapsible: true },
+    it('toggles collapse when collapsible', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
+      }).createComponent(SidenavComponent, {
+        bindings: [inputBinding('collapsible', () => true)],
       });
+      TestBed.tick();
 
       expect(fixture.componentInstance.isCollapsed()).toBe(false);
 
+      // Act
       fixture.componentInstance.toggleCollapse();
-
       expect(fixture.componentInstance.isCollapsed()).toBe(true);
 
       fixture.componentInstance.toggleCollapse();
@@ -222,42 +252,56 @@ describe('SidenavComponent', () => {
       expect(fixture.componentInstance.isCollapsed()).toBe(false);
     });
 
-    it('does not toggle when not collapsible', async () => {
-      // Arrange & Act
-      const { fixture } = await render(SidenavComponent, {
-        componentProperties: { collapsible: false },
+    it('does not toggle when not collapsible', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
+      }).createComponent(SidenavComponent, {
+        bindings: [inputBinding('collapsible', () => false)],
       });
+      TestBed.tick();
 
+      // Act
       fixture.componentInstance.toggleCollapse();
 
       // Assert
       expect(fixture.componentInstance.isCollapsed()).toBe(false);
     });
 
-    it('emits toggleChange when collapsed', async () => {
+    it('emits toggleChange when collapsed', () => {
       // Arrange
-      const { fixture } = await render(SidenavComponent, {
-        componentProperties: { collapsible: true },
+      const toggleSignal = signal(false);
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
+      }).createComponent(SidenavComponent, {
+        bindings: [
+          inputBinding('collapsible', () => true),
+          outputBinding('toggleChange', (value: boolean) => toggleSignal.set(value)),
+        ],
       });
-
-      const emitSpy = vi.spyOn(fixture.componentInstance.toggleChange, 'emit');
+      TestBed.tick();
 
       // Act
       fixture.componentInstance.toggleCollapse();
+      TestBed.tick();
 
       // Assert
-      expect(emitSpy).toHaveBeenCalledWith(true);
+      expect(toggleSignal()).toBe(true);
     });
 
-    it('collapses expanded items when collapsing sidenav', async () => {
-      // Arrange & Act
-      const { fixture } = await render(SidenavComponent, {
-        componentProperties: { items: mockItems, collapsible: true },
+    it('collapses expanded items when collapsing sidenav', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
+      }).createComponent(SidenavComponent, {
+        bindings: [
+          inputBinding('items', () => mockItems),
+          inputBinding('collapsible', () => true),
+        ],
       });
+      TestBed.tick();
 
+      // Act
       fixture.componentInstance.toggleItemExpansion('loans');
       expect(fixture.componentInstance.expandedItems().has('loans')).toBe(true);
 
@@ -269,37 +313,45 @@ describe('SidenavComponent', () => {
   });
 
   describe('item selection', () => {
-    it('syncs selectedItem with selectedValue input', async () => {
-      // Arrange & Act
-      const { fixture } = await render(SidenavComponent, {
-        componentProperties: { selectedValue: 'dashboard' },
+    it('syncs selectedItem with selectedValue input', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
+      }).createComponent(SidenavComponent, {
+        bindings: [inputBinding('selectedValue', () => 'dashboard')],
       });
+      TestBed.tick();
 
       // Assert
       expect(fixture.componentInstance.selectedItem()).toBe('dashboard');
     });
 
-    it('updates selectedItem on item click', async () => {
-      // Arrange & Act
-      const { fixture } = await render(SidenavComponent, {
-        componentProperties: { items: mockItems },
+    it('updates selectedItem on item click', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
+      }).createComponent(SidenavComponent, {
+        bindings: [inputBinding('items', () => mockItems)],
       });
+      TestBed.tick();
 
       const item = mockItems[0];
+
+      // Act
       fixture.componentInstance.onItemClick(item, new Event('click'));
 
       // Assert
       expect(fixture.componentInstance.selectedItem()).toBe('dashboard');
     });
 
-    it('identifies selected item correctly', async () => {
-      // Arrange & Act
-      const { fixture } = await render(SidenavComponent, {
+    it('identifies selected item correctly', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(SidenavComponent);
+      TestBed.tick();
 
+      // Act
       fixture.componentInstance.selectedItem.set('dashboard');
 
       // Assert
@@ -309,14 +361,16 @@ describe('SidenavComponent', () => {
   });
 
   describe('item expansion (children)', () => {
-    it('toggles item expansion', async () => {
-      // Arrange & Act
-      const { fixture } = await render(SidenavComponent, {
+    it('toggles item expansion', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(SidenavComponent);
+      TestBed.tick();
 
       expect(fixture.componentInstance.isItemExpanded('loans')).toBe(false);
 
+      // Act
       fixture.componentInstance.toggleItemExpansion('loans');
       expect(fixture.componentInstance.isItemExpanded('loans')).toBe(true);
 
@@ -326,17 +380,20 @@ describe('SidenavComponent', () => {
       expect(fixture.componentInstance.isItemExpanded('loans')).toBe(false);
     });
 
-    it('expands item with children on click', async () => {
-      // Arrange & Act
-      const { fixture } = await render(SidenavComponent, {
-        componentProperties: { items: mockItems },
+    it('expands item with children on click', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
+      }).createComponent(SidenavComponent, {
+        bindings: [inputBinding('items', () => mockItems)],
       });
+      TestBed.tick();
 
       const loansItem = mockItems[1];
       const event = new Event('click');
       const preventDefaultSpy = vi.spyOn(event, 'preventDefault');
 
+      // Act
       fixture.componentInstance.onItemClick(loansItem, event);
 
       // Assert
@@ -344,41 +401,50 @@ describe('SidenavComponent', () => {
       expect(fixture.componentInstance.isItemExpanded('loans')).toBe(true);
     });
 
-    it('does not select item when expanding children', async () => {
-      // Arrange & Act
-      const { fixture } = await render(SidenavComponent, {
-        componentProperties: { items: mockItems },
+    it('does not select item when expanding children', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
+      }).createComponent(SidenavComponent, {
+        bindings: [inputBinding('items', () => mockItems)],
       });
+      TestBed.tick();
 
       const loansItem = mockItems[1];
+
+      // Act
       fixture.componentInstance.onItemClick(loansItem, new Event('click'));
 
       // Assert
       expect(fixture.componentInstance.selectedItem()).not.toBe('loans');
     });
 
-    it('renders children when item is expanded', async () => {
-      // Arrange & Act
-      const { fixture } = await render(SidenavComponent, {
-        componentProperties: { items: mockItems },
+    it('renders children when item is expanded', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
+      }).createComponent(SidenavComponent, {
+        bindings: [inputBinding('items', () => mockItems)],
       });
+      TestBed.tick();
 
+      // Act
       fixture.componentInstance.toggleItemExpansion('loans');
-      fixture.detectChanges();
+      TestBed.tick();
 
       // Assert
       expect(fixture.nativeElement.textContent).toContain('Active Loans');
       expect(fixture.nativeElement.textContent).toContain('Pending');
     });
 
-    it('multiple items can be expanded simultaneously', async () => {
-      // Arrange & Act
-      const { fixture } = await render(SidenavComponent, {
+    it('multiple items can be expanded simultaneously', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(SidenavComponent);
+      TestBed.tick();
 
+      // Act
       fixture.componentInstance.toggleItemExpansion('loans');
       fixture.componentInstance.toggleItemExpansion('reports');
 
@@ -389,69 +455,90 @@ describe('SidenavComponent', () => {
   });
 
   describe('item click handling', () => {
-    it('emits itemClick event', async () => {
+    it('emits itemClick event', () => {
       // Arrange
-      const { fixture } = await render(SidenavComponent, {
-        componentProperties: { items: mockItems },
+      const itemClickSignal = signal<SidenavItem | null>(null);
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
+      }).createComponent(SidenavComponent, {
+        bindings: [
+          inputBinding('items', () => mockItems),
+          outputBinding('itemClick', (item: SidenavItem) => itemClickSignal.set(item)),
+        ],
       });
+      TestBed.tick();
 
-      const emitSpy = vi.spyOn(fixture.componentInstance.itemClick, 'emit');
       const item = mockItems[0];
 
       // Act
       fixture.componentInstance.onItemClick(item, new Event('click'));
+      TestBed.tick();
 
       // Assert
-      expect(emitSpy).toHaveBeenCalledWith(item);
+      expect(itemClickSignal()).toEqual(item);
     });
 
-    it('emits selectionChange event', async () => {
+    it('emits selectionChange event', () => {
       // Arrange
-      const { fixture } = await render(SidenavComponent, {
-        componentProperties: { items: mockItems },
+      const selectionChangeSignal = signal<SidenavItem | null>(null);
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
+      }).createComponent(SidenavComponent, {
+        bindings: [
+          inputBinding('items', () => mockItems),
+          outputBinding('selectionChange', (item: SidenavItem) =>
+            selectionChangeSignal.set(item),
+          ),
+        ],
       });
+      TestBed.tick();
 
-      const emitSpy = vi.spyOn(fixture.componentInstance.selectionChange, 'emit');
       const item = mockItems[0];
 
       // Act
       fixture.componentInstance.onItemClick(item, new Event('click'));
+      TestBed.tick();
 
       // Assert
-      expect(emitSpy).toHaveBeenCalledWith(item);
+      expect(selectionChangeSignal()).toEqual(item);
     });
 
-    it('does not emit or navigate when item is disabled', async () => {
+    it('does not emit or navigate when item is disabled', () => {
       // Arrange
-      const { fixture } = await render(SidenavComponent, {
-        componentProperties: { items: mockItems },
+      const itemClickSignal = signal<SidenavItem | null>(null);
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
+      }).createComponent(SidenavComponent, {
+        bindings: [
+          inputBinding('items', () => mockItems),
+          outputBinding('itemClick', (item: SidenavItem) => itemClickSignal.set(item)),
+        ],
       });
+      TestBed.tick();
 
-      const emitSpy = vi.spyOn(fixture.componentInstance.itemClick, 'emit');
       const disabledItem = mockItems[3];
       const event = new Event('click');
       const preventDefaultSpy = vi.spyOn(event, 'preventDefault');
 
       // Act
       fixture.componentInstance.onItemClick(disabledItem, event);
+      TestBed.tick();
 
       // Assert
       expect(preventDefaultSpy).toHaveBeenCalled();
-      expect(emitSpy).not.toHaveBeenCalled();
+      expect(itemClickSignal()).toBeNull();
     });
 
-    it('does not prevent default for items with routerLink', async () => {
+    it('does not prevent default for items with routerLink', () => {
       // Arrange
       const item = mockItems[0];
       const event = new Event('click');
       const preventDefaultSpy = vi.spyOn(event, 'preventDefault');
 
-      const { fixture } = await render(SidenavComponent, {
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(SidenavComponent);
+      TestBed.tick();
 
       // Act
       fixture.componentInstance.onItemClick(item, event);
@@ -460,15 +547,16 @@ describe('SidenavComponent', () => {
       expect(preventDefaultSpy).not.toHaveBeenCalled();
     });
 
-    it('prevents default for items without routerLink', async () => {
+    it('prevents default for items without routerLink', () => {
       // Arrange
       const item = { ...mockItems[0], routerLink: undefined };
       const event = new Event('click');
       const preventDefaultSpy = vi.spyOn(event, 'preventDefault');
 
-      const { fixture } = await render(SidenavComponent, {
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(SidenavComponent);
+      TestBed.tick();
 
       // Act
       fixture.componentInstance.onItemClick(item, event);
@@ -479,12 +567,14 @@ describe('SidenavComponent', () => {
   });
 
   describe('hover state', () => {
-    it('tracks hovered item', async () => {
-      // Arrange & Act
-      const { fixture } = await render(SidenavComponent, {
+    it('tracks hovered item', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(SidenavComponent);
+      TestBed.tick();
 
+      // Act
       fixture.componentInstance.onItemMouseEnter('dashboard');
       expect(fixture.componentInstance.hoveredItem()).toBe('dashboard');
 
@@ -493,12 +583,14 @@ describe('SidenavComponent', () => {
       expect(fixture.componentInstance.isItemHovered('loans')).toBe(false);
     });
 
-    it('clears hovered item on mouse leave', async () => {
-      // Arrange & Act
-      const { fixture } = await render(SidenavComponent, {
+    it('clears hovered item on mouse leave', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(SidenavComponent);
+      TestBed.tick();
 
+      // Act
       fixture.componentInstance.onItemMouseEnter('dashboard');
       expect(fixture.componentInstance.hoveredItem()).toBe('dashboard');
 
@@ -510,45 +602,54 @@ describe('SidenavComponent', () => {
   });
 
   describe('keyboard navigation', () => {
-    it('handles Enter key to select item', async () => {
+    it('handles Enter key to select item', () => {
       // Arrange
-      const { fixture } = await render(SidenavComponent, {
+      const itemClickSignal = signal<SidenavItem | null>(null);
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
+      }).createComponent(SidenavComponent, {
+        bindings: [outputBinding('itemClick', (item: SidenavItem) => itemClickSignal.set(item))],
       });
+      TestBed.tick();
 
       const item = mockItems[0];
       const event = new KeyboardEvent('keydown', { key: 'Enter' });
-      const emitSpy = vi.spyOn(fixture.componentInstance.itemClick, 'emit');
 
       // Act
       fixture.componentInstance.onKeyDown(event, item);
+      TestBed.tick();
 
       // Assert
-      expect(emitSpy).toHaveBeenCalledWith(item);
+      expect(itemClickSignal()).toEqual(item);
     });
 
-    it('handles Space key to select item', async () => {
+    it('handles Space key to select item', () => {
       // Arrange
-      const { fixture } = await render(SidenavComponent, {
+      const itemClickSignal = signal<SidenavItem | null>(null);
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
+      }).createComponent(SidenavComponent, {
+        bindings: [outputBinding('itemClick', (item: SidenavItem) => itemClickSignal.set(item))],
       });
+      TestBed.tick();
 
       const item = mockItems[0];
       const event = new KeyboardEvent('keydown', { key: ' ' });
-      const emitSpy = vi.spyOn(fixture.componentInstance.itemClick, 'emit');
 
       // Act
       fixture.componentInstance.onKeyDown(event, item);
+      TestBed.tick();
 
       // Assert
-      expect(emitSpy).toHaveBeenCalledWith(item);
+      expect(itemClickSignal()).toEqual(item);
     });
 
-    it('handles ArrowRight to expand item with children', async () => {
+    it('handles ArrowRight to expand item with children', () => {
       // Arrange
-      const { fixture } = await render(SidenavComponent, {
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(SidenavComponent);
+      TestBed.tick();
 
       const loansItem = mockItems[1];
       const event = new KeyboardEvent('keydown', { key: 'ArrowRight' });
@@ -562,11 +663,12 @@ describe('SidenavComponent', () => {
       expect(fixture.componentInstance.isItemExpanded('loans')).toBe(true);
     });
 
-    it('handles ArrowLeft to collapse expanded item', async () => {
+    it('handles ArrowLeft to collapse expanded item', () => {
       // Arrange
-      const { fixture } = await render(SidenavComponent, {
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(SidenavComponent);
+      TestBed.tick();
 
       fixture.componentInstance.toggleItemExpansion('loans');
       expect(fixture.componentInstance.isItemExpanded('loans')).toBe(true);
@@ -583,28 +685,33 @@ describe('SidenavComponent', () => {
       expect(fixture.componentInstance.isItemExpanded('loans')).toBe(false);
     });
 
-    it('does not handle keyboard events for disabled items', async () => {
+    it('does not handle keyboard events for disabled items', () => {
       // Arrange
-      const { fixture } = await render(SidenavComponent, {
+      const itemClickSignal = signal<SidenavItem | null>(null);
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
+      }).createComponent(SidenavComponent, {
+        bindings: [outputBinding('itemClick', (item: SidenavItem) => itemClickSignal.set(item))],
       });
+      TestBed.tick();
 
       const disabledItem = mockItems[3];
       const event = new KeyboardEvent('keydown', { key: 'Enter' });
-      const emitSpy = vi.spyOn(fixture.componentInstance.itemClick, 'emit');
 
       // Act
       fixture.componentInstance.onKeyDown(event, disabledItem);
+      TestBed.tick();
 
       // Assert
-      expect(emitSpy).not.toHaveBeenCalled();
+      expect(itemClickSignal()).toBeNull();
     });
 
-    it('does not expand item without children on ArrowRight', async () => {
+    it('does not expand item without children on ArrowRight', () => {
       // Arrange
-      const { fixture } = await render(SidenavComponent, {
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(SidenavComponent);
+      TestBed.tick();
 
       const dashboardItem = mockItems[0];
       const event = new KeyboardEvent('keydown', { key: 'ArrowRight' });
@@ -619,204 +726,239 @@ describe('SidenavComponent', () => {
   });
 
   describe('position input', () => {
-    it('applies left border when position is left', async () => {
-      // Arrange & Act
-      const { fixture } = await render(SidenavComponent, {
-        componentProperties: { position: 'left' },
+    it('applies left border when position is left', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
+      }).createComponent(SidenavComponent, {
+        bindings: [inputBinding('position', () => 'left')],
       });
-
-      const aside = fixture.nativeElement.querySelector('aside');
+      TestBed.tick();
 
       // Assert
+      const aside = fixture.nativeElement.querySelector('aside');
       expect(aside?.className).toContain('border-r');
     });
 
-    it('applies right border when position is right', async () => {
-      // Arrange & Act
-      const { fixture } = await render(SidenavComponent, {
-        componentProperties: { position: 'right' },
+    it('applies right border when position is right', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
+      }).createComponent(SidenavComponent, {
+        bindings: [inputBinding('position', () => 'right')],
       });
-
-      const aside = fixture.nativeElement.querySelector('aside');
+      TestBed.tick();
 
       // Assert
+      const aside = fixture.nativeElement.querySelector('aside');
       expect(aside?.className).toContain('border-l');
     });
   });
 
   describe('header and footer', () => {
-    it('renders header when provided', async () => {
-      // Arrange & Act
-      const { fixture } = await render(SidenavComponent, {
-        componentProperties: { header: 'Navigation Menu' },
+    it('renders header when provided', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
+      }).createComponent(SidenavComponent, {
+        bindings: [inputBinding('header', () => 'Navigation Menu')],
       });
+      TestBed.tick();
 
       // Assert
       expect(fixture.nativeElement.textContent).toContain('Navigation Menu');
     });
 
-    it('renders footer when provided and not collapsed', async () => {
-      // Arrange & Act
-      const { fixture } = await render(SidenavComponent, {
-        componentProperties: { footer: 'Version 1.0' },
+    it('renders footer when provided and not collapsed', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
+      }).createComponent(SidenavComponent, {
+        bindings: [inputBinding('footer', () => 'Version 1.0')],
       });
+      TestBed.tick();
 
       // Assert
       expect(fixture.nativeElement.textContent).toContain('Version 1.0');
     });
 
-    it('hides footer when collapsed', async () => {
-      // Arrange & Act
-      const { fixture } = await render(SidenavComponent, {
-        componentProperties: { footer: 'Version 1.0', collapsed: true },
+    it('hides footer when collapsed', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
+      }).createComponent(SidenavComponent, {
+        bindings: [
+          inputBinding('footer', () => 'Version 1.0'),
+          inputBinding('collapsed', () => true),
+        ],
       });
-
-      const footer = fixture.nativeElement.querySelector('.border-t');
+      TestBed.tick();
 
       // Assert
+      const footer = fixture.nativeElement.querySelector('.border-t');
       expect(footer).toBeFalsy();
     });
   });
 
   describe('logo rendering', () => {
-    it('renders logo when provided and not collapsed', async () => {
-      // Arrange & Act
-      const { fixture } = await render(SidenavComponent, {
-        componentProperties: { logo: 'heroHome' },
+    it('renders logo when provided and not collapsed', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
+      }).createComponent(SidenavComponent, {
+        bindings: [inputBinding('logo', () => 'heroHome')],
       });
-
-      const logo = fixture.nativeElement.querySelector('ng-icon');
+      TestBed.tick();
 
       // Assert
+      const logo = fixture.nativeElement.querySelector('ng-icon');
       expect(logo).toBeTruthy();
     });
 
-    it('renders collapsed logo when provided and collapsed', async () => {
-      // Arrange & Act
-      const { fixture } = await render(SidenavComponent, {
-        componentProperties: { logo: 'heroHome', logoCollapsed: 'heroMenu', collapsed: true },
+    it('renders collapsed logo when provided and collapsed', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
+      }).createComponent(SidenavComponent, {
+        bindings: [
+          inputBinding('logo', () => 'heroHome'),
+          inputBinding('logoCollapsed', () => 'heroMenu'),
+          inputBinding('collapsed', () => true),
+        ],
       });
-
-      const logo = fixture.nativeElement.querySelector('ng-icon');
+      TestBed.tick();
 
       // Assert
+      const logo = fixture.nativeElement.querySelector('ng-icon');
       expect(logo).toBeTruthy();
     });
   });
 
   describe('accessibility', () => {
-    it('sets correct ARIA attributes on aside', async () => {
-      // Arrange & Act
-      const { fixture } = await render(SidenavComponent, {
+    it('sets correct ARIA attributes on aside', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
-
-      const aside = fixture.nativeElement.querySelector('aside');
+      }).createComponent(SidenavComponent);
+      TestBed.tick();
 
       // Assert
+      const aside = fixture.nativeElement.querySelector('aside');
       expect(aside?.getAttribute('role')).toBe('navigation');
       expect(aside?.getAttribute('aria-label')).toBe('Sidebar navigation');
     });
 
-    it('sets aria-expanded on collapsible toggle', async () => {
-      // Arrange & Act
-      const { fixture } = await render(SidenavComponent, {
-        componentProperties: { collapsible: true, showToggle: true },
+    it('sets aria-expanded on collapsible toggle', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
+      }).createComponent(SidenavComponent, {
+        bindings: [
+          inputBinding('collapsible', () => true),
+          inputBinding('showToggle', () => true),
+        ],
       });
-
-      const toggleButton = fixture.nativeElement.querySelector('button[aria-label="Toggle sidebar"]');
+      TestBed.tick();
 
       // Assert
+      const toggleButton = fixture.nativeElement.querySelector(
+        'button[aria-label="Toggle sidebar"]',
+      );
       expect(toggleButton?.getAttribute('aria-expanded')).toBe('true');
     });
 
-    it('sets aria-disabled on disabled items', async () => {
-      // Arrange & Act
-      const { fixture } = await render(SidenavComponent, {
-        componentProperties: { items: mockItems },
+    it('sets aria-disabled on disabled items', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
+      }).createComponent(SidenavComponent, {
+        bindings: [inputBinding('items', () => mockItems)],
       });
-
-      const disabledItem = Array.from(fixture.nativeElement.querySelectorAll('a')).find((link: any) =>
-        link.textContent?.includes('Settings'),
-      );
+      TestBed.tick();
 
       // Assert
+      const disabledItem = Array.from(fixture.nativeElement.querySelectorAll('a')).find(
+        (link: any) => link.textContent?.includes('Settings'),
+      );
       expect(disabledItem?.getAttribute('aria-disabled')).toBe('true');
     });
 
-    it('sets tabindex -1 on disabled items', async () => {
-      // Arrange & Act
-      const { fixture } = await render(SidenavComponent, {
-        componentProperties: { items: mockItems },
+    it('sets tabindex -1 on disabled items', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
+      }).createComponent(SidenavComponent, {
+        bindings: [inputBinding('items', () => mockItems)],
       });
-
-      const disabledItem = Array.from(fixture.nativeElement.querySelectorAll('a')).find((link: any) =>
-        link.textContent?.includes('Settings'),
-      );
+      TestBed.tick();
 
       // Assert
+      const disabledItem = Array.from(fixture.nativeElement.querySelectorAll('a')).find(
+        (link: any) => link.textContent?.includes('Settings'),
+      );
       expect(disabledItem?.getAttribute('tabindex')).toBe('-1');
     });
 
-    it('sets aria-current on selected item', async () => {
-      // Arrange & Act
-      const { fixture } = await render(SidenavComponent, {
-        componentProperties: { items: mockItems, selectedValue: 'dashboard' },
+    it('sets aria-current on selected item', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
+      }).createComponent(SidenavComponent, {
+        bindings: [
+          inputBinding('items', () => mockItems),
+          inputBinding('selectedValue', () => 'dashboard'),
+        ],
       });
-
-      const selectedItem = Array.from(fixture.nativeElement.querySelectorAll('a')).find((link: any) =>
-        link.textContent?.includes('Dashboard'),
-      );
+      TestBed.tick();
 
       // Assert
+      const selectedItem = Array.from(fixture.nativeElement.querySelectorAll('a')).find(
+        (link: any) => link.textContent?.includes('Dashboard'),
+      );
       expect(selectedItem?.getAttribute('aria-current')).toBe('page');
     });
   });
 
   describe('edge cases', () => {
-    it('handles empty items array', async () => {
-      // Arrange & Act
-      const { fixture } = await render(SidenavComponent, {
-        componentProperties: { items: [] },
+    it('handles empty items array', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
+      }).createComponent(SidenavComponent, {
+        bindings: [inputBinding('items', () => [])],
       });
-
-      const menuItems = fixture.nativeElement.querySelectorAll('li[role="none"]');
+      TestBed.tick();
 
       // Assert
+      const menuItems = fixture.nativeElement.querySelectorAll('li[role="none"]');
       expect(menuItems.length).toBe(0);
     });
 
-    it('handles item with empty children array', async () => {
-      // Arrange & Act
-      const { fixture } = await render(SidenavComponent, {
+    it('handles item with empty children array', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
-      });
+      }).createComponent(SidenavComponent);
+      TestBed.tick();
 
       const itemWithEmptyChildren = [{ ...mockItems[0], children: [] }];
 
       // Act & Assert
-      expect(() => fixture.componentInstance.onItemClick(itemWithEmptyChildren[0], new Event('click'))).not.toThrow();
+      expect(() =>
+        fixture.componentInstance.onItemClick(itemWithEmptyChildren[0], new Event('click')),
+      ).not.toThrow();
     });
 
-    it('handles multiple rapid toggle calls', async () => {
-      // Arrange & Act
-      const { fixture } = await render(SidenavComponent, {
-        componentProperties: { collapsible: true },
+    it('handles multiple rapid toggle calls', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
+      }).createComponent(SidenavComponent, {
+        bindings: [inputBinding('collapsible', () => true)],
       });
+      TestBed.tick();
 
+      // Act
       for (let i = 0; i < 10; i++) {
         fixture.componentInstance.toggleCollapse();
       }
@@ -825,8 +967,8 @@ describe('SidenavComponent', () => {
       expect(fixture.componentInstance.isCollapsed()).toBe(false);
     });
 
-    it('handles special characters in labels', async () => {
-      // Arrange & Act
+    it('handles special characters in labels', () => {
+      // Arrange
       const specialItem = [
         {
           label: 'Reports & <Analytics>',
@@ -835,10 +977,12 @@ describe('SidenavComponent', () => {
         },
       ];
 
-      const { fixture } = await render(SidenavComponent, {
-        componentProperties: { items: specialItem },
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
+      }).createComponent(SidenavComponent, {
+        bindings: [inputBinding('items', () => specialItem)],
       });
+      TestBed.tick();
 
       // Assert
       expect(fixture.nativeElement.textContent).toContain('Reports & <Analytics>');

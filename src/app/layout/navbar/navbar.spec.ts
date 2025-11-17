@@ -1,14 +1,28 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render } from '@testing-library/angular';
-import { provideZonelessChangeDetection } from '@angular/core';
+// Angular testing
+import { TestBed } from '@angular/core/testing';
+import {
+  provideZonelessChangeDetection,
+  inputBinding,
+  outputBinding,
+  signal,
+} from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { of, throwError } from 'rxjs';
+
+// Testing library
+import { within } from '@testing-library/dom';
+import userEvent from '@testing-library/user-event';
+
+// Vitest
+import { describe, it, expect, vi } from 'vitest';
+
+// Component and dependencies
 import { NavbarComponent } from '@loan/app/layout/navbar/navbar';
 import { AuthService } from '@loan/app/core/services/auth.service';
 import { UserStateService } from '@loan/app/core/services/user.service';
 import { Notification } from '@loan/app/shared/components/notification-button/notification-button';
 import { AppMenuItem } from '@loan/app/shared/components/apps-menu/apps-menu';
 import { UserMenuItem } from '@loan/app/shared/components/user-menu/user-menu';
+import { of, throwError } from 'rxjs';
 
 describe('NavbarComponent', () => {
   const mockNotifications: Notification[] = [
@@ -71,79 +85,73 @@ describe('NavbarComponent', () => {
   ];
 
   describe('initialization', () => {
-    it('creates the component', async () => {
+    it('creates the component', () => {
       // Arrange
       const mocks = createMockServices();
-
-      // Act
-      const { container } = await render(NavbarComponent, {
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders(mocks),
-      });
+      }).createComponent(NavbarComponent);
+      TestBed.tick();
 
       // Assert
-      expect(container).toBeTruthy();
+      expect(fixture.componentInstance).toBeTruthy();
     });
 
-    it('has default appTitle input value', async () => {
+    it('has default appTitle input value', () => {
       // Arrange
       const mocks = createMockServices();
-
-      // Act
-      const { fixture } = await render(NavbarComponent, {
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders(mocks),
-      });
+      }).createComponent(NavbarComponent);
+      TestBed.tick();
 
       // Assert
       expect(fixture.componentInstance.appTitle()).toBe('Loan UI');
     });
 
-    it('has empty notifications by default', async () => {
+    it('has empty notifications by default', () => {
       // Arrange
       const mocks = createMockServices();
-
-      // Act
-      const { fixture } = await render(NavbarComponent, {
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders(mocks),
-      });
+      }).createComponent(NavbarComponent);
+      TestBed.tick();
 
       // Assert
       expect(fixture.componentInstance.notifications()).toEqual([]);
     });
 
-    it('has empty apps by default', async () => {
+    it('has empty apps by default', () => {
       // Arrange
       const mocks = createMockServices();
-
-      // Act
-      const { fixture } = await render(NavbarComponent, {
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders(mocks),
-      });
+      }).createComponent(NavbarComponent);
+      TestBed.tick();
 
       // Assert
       expect(fixture.componentInstance.apps()).toEqual([]);
     });
 
-    it('has empty userMenuItems by default', async () => {
+    it('has empty userMenuItems by default', () => {
       // Arrange
       const mocks = createMockServices();
-
-      // Act
-      const { fixture } = await render(NavbarComponent, {
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders(mocks),
-      });
+      }).createComponent(NavbarComponent);
+      TestBed.tick();
 
       // Assert
       expect(fixture.componentInstance.userMenuItems()).toEqual([]);
     });
 
-    it('shows search by default', async () => {
+    it('shows search by default', () => {
       // Arrange
       const mocks = createMockServices();
-
-      // Act
-      const { fixture } = await render(NavbarComponent, {
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders(mocks),
-      });
+      }).createComponent(NavbarComponent);
+      TestBed.tick();
 
       // Assert
       expect(fixture.componentInstance.showSearch()).toBe(true);
@@ -151,33 +159,34 @@ describe('NavbarComponent', () => {
   });
 
   describe('appTitle input', () => {
-    it('displays custom app title', async () => {
+    it('displays custom app title', () => {
       // Arrange
       const mocks = createMockServices();
-
-      // Act
-      const { fixture } = await render(NavbarComponent, {
-        componentProperties: { appTitle: 'Custom App' },
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders(mocks),
+      }).createComponent(NavbarComponent, {
+        bindings: [inputBinding('appTitle', () => 'Custom App')],
       });
+      TestBed.tick();
 
       // Assert
       expect(fixture.componentInstance.appTitle()).toBe('Custom App');
     });
 
-    it('updates when appTitle changes', async () => {
+    it('updates when appTitle changes', () => {
       // Arrange
       const mocks = createMockServices();
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders(mocks),
+      }).createComponent(NavbarComponent, {
+        bindings: [inputBinding('appTitle', () => 'First Title')],
+      });
+      TestBed.tick();
 
       // Act
-      const { fixture } = await render(NavbarComponent, {
-        componentProperties: { appTitle: 'First Title' },
-        providers: defaultProviders(mocks),
-      });
-
       expect(fixture.componentInstance.appTitle()).toBe('First Title');
-
       fixture.componentInstance.appTitle.set('Second Title');
+      TestBed.tick();
 
       // Assert
       expect(fixture.componentInstance.appTitle()).toBe('Second Title');
@@ -185,30 +194,31 @@ describe('NavbarComponent', () => {
   });
 
   describe('notifications input', () => {
-    it('accepts notifications array', async () => {
+    it('accepts notifications array', () => {
       // Arrange
       const mocks = createMockServices();
-
-      // Act
-      const { fixture } = await render(NavbarComponent, {
-        componentProperties: { notifications: mockNotifications },
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders(mocks),
+      }).createComponent(NavbarComponent, {
+        bindings: [inputBinding('notifications', () => mockNotifications)],
       });
+      TestBed.tick();
 
       // Assert
       expect(fixture.componentInstance.notifications()).toEqual(mockNotifications);
     });
 
-    it('updates when notifications change', async () => {
+    it('updates when notifications change', () => {
       // Arrange
       const mocks = createMockServices();
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders(mocks),
+      }).createComponent(NavbarComponent, {
+        bindings: [inputBinding('notifications', () => mockNotifications)],
+      });
+      TestBed.tick();
 
       // Act
-      const { fixture } = await render(NavbarComponent, {
-        componentProperties: { notifications: mockNotifications },
-        providers: defaultProviders(mocks),
-      });
-
       expect(fixture.componentInstance.notifications().length).toBe(1);
 
       const newNotifications = [
@@ -223,6 +233,7 @@ describe('NavbarComponent', () => {
       ];
 
       fixture.componentInstance.notifications.set(newNotifications);
+      TestBed.tick();
 
       // Assert
       expect(fixture.componentInstance.notifications().length).toBe(2);
@@ -230,34 +241,36 @@ describe('NavbarComponent', () => {
   });
 
   describe('apps input', () => {
-    it('accepts apps array', async () => {
+    it('accepts apps array', () => {
       // Arrange
       const mocks = createMockServices();
-
-      // Act
-      const { fixture } = await render(NavbarComponent, {
-        componentProperties: { apps: mockApps },
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders(mocks),
+      }).createComponent(NavbarComponent, {
+        bindings: [inputBinding('apps', () => mockApps)],
       });
+      TestBed.tick();
 
       // Assert
       expect(fixture.componentInstance.apps()).toEqual(mockApps);
     });
 
-    it('updates when apps change', async () => {
+    it('updates when apps change', () => {
       // Arrange
       const mocks = createMockServices();
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders(mocks),
+      }).createComponent(NavbarComponent, {
+        bindings: [inputBinding('apps', () => mockApps)],
+      });
+      TestBed.tick();
 
       // Act
-      const { fixture } = await render(NavbarComponent, {
-        componentProperties: { apps: mockApps },
-        providers: defaultProviders(mocks),
-      });
-
       expect(fixture.componentInstance.apps().length).toBe(1);
 
       const newApps = [...mockApps, { ...mockApps[0], id: 'marketing' }];
       fixture.componentInstance.apps.set(newApps);
+      TestBed.tick();
 
       // Assert
       expect(fixture.componentInstance.apps().length).toBe(2);
@@ -265,15 +278,15 @@ describe('NavbarComponent', () => {
   });
 
   describe('userMenuItems input', () => {
-    it('accepts userMenuItems array', async () => {
+    it('accepts userMenuItems array', () => {
       // Arrange
       const mocks = createMockServices();
-
-      // Act
-      const { fixture } = await render(NavbarComponent, {
-        componentProperties: { userMenuItems: mockUserMenuItems },
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders(mocks),
+      }).createComponent(NavbarComponent, {
+        bindings: [inputBinding('userMenuItems', () => mockUserMenuItems)],
       });
+      TestBed.tick();
 
       // Assert
       expect(fixture.componentInstance.userMenuItems()).toEqual(mockUserMenuItems);
@@ -281,33 +294,35 @@ describe('NavbarComponent', () => {
   });
 
   describe('showSearch input', () => {
-    it('controls search visibility', async () => {
+    it('controls search visibility', () => {
       // Arrange
       const mocks = createMockServices();
-
-      // Act
-      const { fixture } = await render(NavbarComponent, {
-        componentProperties: { showSearch: false },
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders(mocks),
+      }).createComponent(NavbarComponent, {
+        bindings: [inputBinding('showSearch', () => false)],
       });
+      TestBed.tick();
 
       // Assert
       expect(fixture.componentInstance.showSearch()).toBe(false);
     });
 
-    it('toggles search visibility', async () => {
+    it('toggles search visibility', () => {
       // Arrange
       const mocks = createMockServices();
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders(mocks),
+      }).createComponent(NavbarComponent, {
+        bindings: [inputBinding('showSearch', () => true)],
+      });
+      TestBed.tick();
 
       // Act
-      const { fixture } = await render(NavbarComponent, {
-        componentProperties: { showSearch: true },
-        providers: defaultProviders(mocks),
-      });
-
       expect(fixture.componentInstance.showSearch()).toBe(true);
 
       fixture.componentInstance.showSearch.set(false);
+      TestBed.tick();
 
       // Assert
       expect(fixture.componentInstance.showSearch()).toBe(false);
@@ -315,184 +330,212 @@ describe('NavbarComponent', () => {
   });
 
   describe('menuToggle output', () => {
-    it('emits when onMenuToggle is called', async () => {
+    it('emits when onMenuToggle is called', () => {
       // Arrange
       const mocks = createMockServices();
-
-      const { fixture } = await render(NavbarComponent, {
+      const emittedSignal = signal(false);
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders(mocks),
+      }).createComponent(NavbarComponent, {
+        bindings: [outputBinding('menuToggle', () => emittedSignal.set(true))],
       });
-
-      const emitSpy = vi.spyOn(fixture.componentInstance.menuToggle, 'emit');
+      TestBed.tick();
 
       // Act
       fixture.componentInstance.onMenuToggle();
+      TestBed.tick();
 
       // Assert
-      expect(emitSpy).toHaveBeenCalledOnce();
+      expect(emittedSignal()).toBe(true);
     });
 
-    it('emits without parameters', async () => {
+    it('emits without parameters', () => {
       // Arrange
       const mocks = createMockServices();
-
-      const { fixture } = await render(NavbarComponent, {
+      let emitCount = 0;
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders(mocks),
+      }).createComponent(NavbarComponent, {
+        bindings: [outputBinding('menuToggle', () => emitCount++)],
       });
-
-      const emitSpy = vi.spyOn(fixture.componentInstance.menuToggle, 'emit');
+      TestBed.tick();
 
       // Act
       fixture.componentInstance.onMenuToggle();
+      TestBed.tick();
 
       // Assert
-      expect(emitSpy).toHaveBeenCalledWith();
+      expect(emitCount).toBe(1);
     });
   });
 
   describe('searchChange output', () => {
-    it('emits search query when onSearchChange is called', async () => {
+    it('emits search query when onSearchChange is called', () => {
       // Arrange
       const mocks = createMockServices();
-
-      const { fixture } = await render(NavbarComponent, {
+      const searchSignal = signal('');
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders(mocks),
+      }).createComponent(NavbarComponent, {
+        bindings: [outputBinding('searchChange', (query: string) => searchSignal.set(query))],
       });
-
-      const emitSpy = vi.spyOn(fixture.componentInstance.searchChange, 'emit');
+      TestBed.tick();
       const query = 'test search';
 
       // Act
       fixture.componentInstance.onSearchChange(query);
+      TestBed.tick();
 
       // Assert
-      expect(emitSpy).toHaveBeenCalledWith(query);
+      expect(searchSignal()).toBe(query);
     });
 
-    it('emits empty string', async () => {
+    it('emits empty string', () => {
       // Arrange
       const mocks = createMockServices();
-
-      const { fixture } = await render(NavbarComponent, {
+      const searchSignal = signal('initial');
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders(mocks),
+      }).createComponent(NavbarComponent, {
+        bindings: [outputBinding('searchChange', (query: string) => searchSignal.set(query))],
       });
-
-      const emitSpy = vi.spyOn(fixture.componentInstance.searchChange, 'emit');
+      TestBed.tick();
 
       // Act
       fixture.componentInstance.onSearchChange('');
+      TestBed.tick();
 
       // Assert
-      expect(emitSpy).toHaveBeenCalledWith('');
+      expect(searchSignal()).toBe('');
     });
   });
 
   describe('searchSubmit output', () => {
-    it('emits search query when onSearchSubmit is called', async () => {
+    it('emits search query when onSearchSubmit is called', () => {
       // Arrange
       const mocks = createMockServices();
-
-      const { fixture } = await render(NavbarComponent, {
+      const searchSubmitSignal = signal('');
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders(mocks),
+      }).createComponent(NavbarComponent, {
+        bindings: [
+          outputBinding('searchSubmit', (query: string) => searchSubmitSignal.set(query)),
+        ],
       });
-
-      const emitSpy = vi.spyOn(fixture.componentInstance.searchSubmit, 'emit');
+      TestBed.tick();
       const query = 'submitted query';
 
       // Act
       fixture.componentInstance.onSearchSubmit(query);
+      TestBed.tick();
 
       // Assert
-      expect(emitSpy).toHaveBeenCalledWith(query);
+      expect(searchSubmitSignal()).toBe(query);
     });
   });
 
   describe('notificationClick output', () => {
-    it('emits notification when onNotificationClick is called', async () => {
+    it('emits notification when onNotificationClick is called', () => {
       // Arrange
       const mocks = createMockServices();
-
-      const { fixture } = await render(NavbarComponent, {
+      const notificationSignal = signal<Notification | null>(null);
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders(mocks),
+      }).createComponent(NavbarComponent, {
+        bindings: [
+          outputBinding('notificationClick', (notification: Notification) =>
+            notificationSignal.set(notification),
+          ),
+        ],
       });
-
-      const emitSpy = vi.spyOn(fixture.componentInstance.notificationClick, 'emit');
+      TestBed.tick();
       const notification = mockNotifications[0];
 
       // Act
       fixture.componentInstance.onNotificationClick(notification);
+      TestBed.tick();
 
       // Assert
-      expect(emitSpy).toHaveBeenCalledWith(notification);
+      expect(notificationSignal()).toEqual(notification);
     });
   });
 
   describe('appClick output', () => {
-    it('emits app when onAppClick is called', async () => {
+    it('emits app when onAppClick is called', () => {
       // Arrange
       const mocks = createMockServices();
-
-      const { fixture } = await render(NavbarComponent, {
+      const appSignal = signal<AppMenuItem | null>(null);
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders(mocks),
+      }).createComponent(NavbarComponent, {
+        bindings: [outputBinding('appClick', (app: AppMenuItem) => appSignal.set(app))],
       });
-
-      const emitSpy = vi.spyOn(fixture.componentInstance.appClick, 'emit');
+      TestBed.tick();
       const app = mockApps[0];
 
       // Act
       fixture.componentInstance.onAppClick(app);
+      TestBed.tick();
 
       // Assert
-      expect(emitSpy).toHaveBeenCalledWith(app);
+      expect(appSignal()).toEqual(app);
     });
   });
 
   describe('userMenuClick output', () => {
-    it('emits user menu item when onUserMenuClick is called', async () => {
+    it('emits user menu item when onUserMenuClick is called', () => {
       // Arrange
       const mocks = createMockServices();
-
-      const { fixture } = await render(NavbarComponent, {
+      const userMenuSignal = signal<UserMenuItem | null>(null);
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders(mocks),
+      }).createComponent(NavbarComponent, {
+        bindings: [
+          outputBinding('userMenuClick', (item: UserMenuItem) => userMenuSignal.set(item)),
+        ],
       });
-
-      const emitSpy = vi.spyOn(fixture.componentInstance.userMenuClick, 'emit');
+      TestBed.tick();
       const menuItem = mockUserMenuItems[0];
 
       // Act
       fixture.componentInstance.onUserMenuClick(menuItem);
+      TestBed.tick();
 
       // Assert
-      expect(emitSpy).toHaveBeenCalledWith(menuItem);
+      expect(userMenuSignal()).toEqual(menuItem);
     });
 
-    it('does not emit when logout action is triggered', async () => {
+    it('does not emit when logout action is triggered', () => {
       // Arrange
       const mocks = createMockServices();
-
-      const { fixture } = await render(NavbarComponent, {
+      const userMenuSignal = signal<UserMenuItem | null>(null);
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders(mocks),
+      }).createComponent(NavbarComponent, {
+        bindings: [
+          outputBinding('userMenuClick', (item: UserMenuItem) => userMenuSignal.set(item)),
+        ],
       });
-
-      const emitSpy = vi.spyOn(fixture.componentInstance.userMenuClick, 'emit');
+      TestBed.tick();
       const logoutItem = mockUserMenuItems[1];
 
       // Act
       fixture.componentInstance.onUserMenuClick(logoutItem);
+      TestBed.tick();
 
       // Assert
-      expect(emitSpy).not.toHaveBeenCalled();
+      expect(userMenuSignal()).toBeNull();
     });
   });
 
   describe('logout functionality', () => {
-    it('calls authService.logout when logout action is clicked', async () => {
+    it('calls authService.logout when logout action is clicked', () => {
       // Arrange
       const mocks = createMockServices();
-
-      const { fixture } = await render(NavbarComponent, {
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders(mocks),
-      });
+      }).createComponent(NavbarComponent);
+      TestBed.tick();
 
       const logoutItem = mockUserMenuItems.find((item) => item.action === 'logout')!;
 
@@ -506,13 +549,13 @@ describe('NavbarComponent', () => {
     it('clears user state after successful logout', async () => {
       // Arrange
       const mocks = createMockServices();
-
-      const { fixture } = await render(NavbarComponent, {
+      const fixture = TestBed.configureTestingModule({
         providers: [
           ...defaultProviders(mocks),
           { provide: 'Router', useValue: mocks.router },
         ],
-      });
+      }).createComponent(NavbarComponent);
+      TestBed.tick();
 
       const logoutItem = mockUserMenuItems.find((item) => item.action === 'logout')!;
 
@@ -527,13 +570,13 @@ describe('NavbarComponent', () => {
     it('navigates to login page after logout', async () => {
       // Arrange
       const mocks = createMockServices();
-
-      const { fixture } = await render(NavbarComponent, {
+      const fixture = TestBed.configureTestingModule({
         providers: [
           ...defaultProviders(mocks),
           { provide: 'Router', useValue: mocks.router },
         ],
-      });
+      }).createComponent(NavbarComponent);
+      TestBed.tick();
 
       const logoutItem = mockUserMenuItems.find((item) => item.action === 'logout')!;
 
@@ -550,12 +593,13 @@ describe('NavbarComponent', () => {
       const mocks = createMockServices();
       mocks.authService.logout.mockReturnValue(throwError(() => new Error('Logout failed')));
 
-      const { fixture } = await render(NavbarComponent, {
+      const fixture = TestBed.configureTestingModule({
         providers: [
           ...defaultProviders(mocks),
           { provide: 'Router', useValue: mocks.router },
         ],
-      });
+      }).createComponent(NavbarComponent);
+      TestBed.tick();
 
       const logoutItem = mockUserMenuItems.find((item) => item.action === 'logout')!;
 
@@ -572,12 +616,13 @@ describe('NavbarComponent', () => {
       const mocks = createMockServices();
       mocks.authService.logout.mockReturnValue(throwError(() => new Error('API Error')));
 
-      const { fixture } = await render(NavbarComponent, {
+      const fixture = TestBed.configureTestingModule({
         providers: [
           ...defaultProviders(mocks),
           { provide: 'Router', useValue: mocks.router },
         ],
-      });
+      }).createComponent(NavbarComponent);
+      TestBed.tick();
 
       const logoutItem = mockUserMenuItems.find((item) => item.action === 'logout')!;
 
@@ -591,13 +636,13 @@ describe('NavbarComponent', () => {
   });
 
   describe('navigation for user menu items', () => {
-    it('navigates to href when menu item is clicked', async () => {
+    it('navigates to href when menu item is clicked', () => {
       // Arrange
       const mocks = createMockServices();
-
-      const { fixture } = await render(NavbarComponent, {
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders(mocks),
-      });
+      }).createComponent(NavbarComponent);
+      TestBed.tick();
 
       const profileItem = mockUserMenuItems[0];
 
@@ -608,13 +653,13 @@ describe('NavbarComponent', () => {
       expect(fixture.componentInstance).toBeTruthy();
     });
 
-    it('does not navigate when logout is clicked', async () => {
+    it('does not navigate when logout is clicked', () => {
       // Arrange
       const mocks = createMockServices();
-
-      const { fixture } = await render(NavbarComponent, {
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders(mocks),
-      });
+      }).createComponent(NavbarComponent);
+      TestBed.tick();
 
       const logoutItem = mockUserMenuItems[1];
 
@@ -625,60 +670,62 @@ describe('NavbarComponent', () => {
       expect(fixture.componentInstance).toBeTruthy();
     });
 
-    it('handles menu items without href', async () => {
+    it('handles menu items without href', () => {
       // Arrange
       const mocks = createMockServices();
-
-      const { fixture } = await render(NavbarComponent, {
+      const userMenuSignal = signal<UserMenuItem | null>(null);
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders(mocks),
+      }).createComponent(NavbarComponent, {
+        bindings: [
+          outputBinding('userMenuClick', (item: UserMenuItem) => userMenuSignal.set(item)),
+        ],
       });
+      TestBed.tick();
 
-      const emitSpy = vi.spyOn(fixture.componentInstance.userMenuClick, 'emit');
       const itemWithoutHref = { ...mockUserMenuItems[0], href: undefined };
 
       // Act
       fixture.componentInstance.onUserMenuClick(itemWithoutHref);
+      TestBed.tick();
 
       // Assert
-      expect(emitSpy).toHaveBeenCalledWith(itemWithoutHref);
+      expect(userMenuSignal()).toEqual(itemWithoutHref);
     });
   });
 
   describe('userStateService integration', () => {
-    it('accesses userName from userStateService', async () => {
+    it('accesses userName from userStateService', () => {
       // Arrange
       const mocks = createMockServices();
-
-      // Act
-      const { fixture } = await render(NavbarComponent, {
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders(mocks),
-      });
+      }).createComponent(NavbarComponent);
+      TestBed.tick();
 
       // Assert
       expect(fixture.componentInstance.userState.userName()).toBe('Test User');
     });
 
-    it('accesses userEmail from userStateService', async () => {
+    it('accesses userEmail from userStateService', () => {
       // Arrange
       const mocks = createMockServices();
-
-      // Act
-      const { fixture } = await render(NavbarComponent, {
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders(mocks),
-      });
+      }).createComponent(NavbarComponent);
+      TestBed.tick();
 
       // Assert
       expect(fixture.componentInstance.userState.userEmail()).toBe('test@example.com');
     });
 
-    it('accesses userAvatar from userStateService', async () => {
+    it('accesses userAvatar from userStateService', () => {
       // Arrange
       const mocks = createMockServices();
-
-      // Act
-      const { fixture } = await render(NavbarComponent, {
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders(mocks),
-      });
+      }).createComponent(NavbarComponent);
+      TestBed.tick();
 
       // Assert
       expect(fixture.componentInstance.userState.userAvatar()).toBe('');
@@ -686,84 +733,101 @@ describe('NavbarComponent', () => {
   });
 
   describe('edge cases', () => {
-    it('handles null notification', async () => {
+    it('handles null notification', () => {
       // Arrange
       const mocks = createMockServices();
-
-      const { fixture } = await render(NavbarComponent, {
+      const notificationSignal = signal<Notification | null>(null);
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders(mocks),
+      }).createComponent(NavbarComponent, {
+        bindings: [
+          outputBinding('notificationClick', (notification: Notification) =>
+            notificationSignal.set(notification),
+          ),
+        ],
       });
-
-      const emitSpy = vi.spyOn(fixture.componentInstance.notificationClick, 'emit');
+      TestBed.tick();
 
       // Act & Assert
       expect(() => {
         fixture.componentInstance.onNotificationClick(null as any);
       }).not.toThrow();
 
-      expect(emitSpy).toHaveBeenCalledWith(null);
+      TestBed.tick();
+      expect(notificationSignal()).toBeNull();
     });
 
-    it('handles empty search query', async () => {
+    it('handles empty search query', () => {
       // Arrange
       const mocks = createMockServices();
-
-      const { fixture } = await render(NavbarComponent, {
+      const searchSignal = signal('');
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders(mocks),
+      }).createComponent(NavbarComponent, {
+        bindings: [outputBinding('searchChange', (query: string) => searchSignal.set(query))],
       });
-
-      const emitSpy = vi.spyOn(fixture.componentInstance.searchChange, 'emit');
+      TestBed.tick();
 
       // Act
       fixture.componentInstance.onSearchChange('');
+      TestBed.tick();
 
       // Assert
-      expect(emitSpy).toHaveBeenCalledWith('');
+      expect(searchSignal()).toBe('');
     });
 
-    it('handles special characters in search', async () => {
+    it('handles special characters in search', () => {
       // Arrange
       const mocks = createMockServices();
-
-      const { fixture } = await render(NavbarComponent, {
+      const searchSubmitSignal = signal('');
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders(mocks),
+      }).createComponent(NavbarComponent, {
+        bindings: [
+          outputBinding('searchSubmit', (query: string) => searchSubmitSignal.set(query)),
+        ],
       });
-
-      const emitSpy = vi.spyOn(fixture.componentInstance.searchSubmit, 'emit');
+      TestBed.tick();
       const specialQuery = '<script>alert("xss")</script>';
 
       // Act
       fixture.componentInstance.onSearchSubmit(specialQuery);
+      TestBed.tick();
 
       // Assert
-      expect(emitSpy).toHaveBeenCalledWith(specialQuery);
+      expect(searchSubmitSignal()).toBe(specialQuery);
     });
 
-    it('handles menu item with empty action', async () => {
+    it('handles menu item with empty action', () => {
       // Arrange
       const mocks = createMockServices();
-
-      const { fixture } = await render(NavbarComponent, {
+      const userMenuSignal = signal<UserMenuItem | null>(null);
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders(mocks),
+      }).createComponent(NavbarComponent, {
+        bindings: [
+          outputBinding('userMenuClick', (item: UserMenuItem) => userMenuSignal.set(item)),
+        ],
       });
+      TestBed.tick();
 
-      const emitSpy = vi.spyOn(fixture.componentInstance.userMenuClick, 'emit');
       const itemWithEmptyAction = { ...mockUserMenuItems[0], action: '' };
 
       // Act
       fixture.componentInstance.onUserMenuClick(itemWithEmptyAction);
+      TestBed.tick();
 
       // Assert
-      expect(emitSpy).toHaveBeenCalledWith(itemWithEmptyAction);
+      expect(userMenuSignal()).toEqual(itemWithEmptyAction);
     });
 
-    it('handles multiple rapid logout attempts', async () => {
+    it('handles multiple rapid logout attempts', () => {
       // Arrange
       const mocks = createMockServices();
-
-      const { fixture } = await render(NavbarComponent, {
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders(mocks),
-      });
+      }).createComponent(NavbarComponent);
+      TestBed.tick();
 
       const logoutItem = mockUserMenuItems.find((item) => item.action === 'logout')!;
 
@@ -778,111 +842,100 @@ describe('NavbarComponent', () => {
   });
 
   describe('template integration', () => {
-    it('renders navbar element', async () => {
+    it('renders navbar element', () => {
       // Arrange
       const mocks = createMockServices();
-
-      // Act
-      const { fixture } = await render(NavbarComponent, {
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders(mocks),
-      });
-
-      const nav = fixture.nativeElement.querySelector('nav');
+      }).createComponent(NavbarComponent);
+      TestBed.tick();
+      const queries = within(fixture.nativeElement);
 
       // Assert
+      const nav = queries.getByRole('navigation');
       expect(nav).toBeTruthy();
     });
 
-    it('renders search bar component when showSearch is true', async () => {
+    it('renders search bar component when showSearch is true', () => {
       // Arrange
       const mocks = createMockServices();
-
-      // Act
-      const { fixture } = await render(NavbarComponent, {
-        componentProperties: { showSearch: true },
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders(mocks),
+      }).createComponent(NavbarComponent, {
+        bindings: [inputBinding('showSearch', () => true)],
       });
-
-      const searchBar = fixture.nativeElement.querySelector('app-search-bar');
+      TestBed.tick();
 
       // Assert
+      const searchBar = fixture.nativeElement.querySelector('app-search-bar');
       expect(searchBar).toBeTruthy();
     });
 
-    it('renders notification button component', async () => {
+    it('renders notification button component', () => {
       // Arrange
       const mocks = createMockServices();
-
-      // Act
-      const { fixture } = await render(NavbarComponent, {
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders(mocks),
-      });
-
-      const notificationButton = fixture.nativeElement.querySelector('app-notification-button');
+      }).createComponent(NavbarComponent);
+      TestBed.tick();
 
       // Assert
+      const notificationButton = fixture.nativeElement.querySelector('app-notification-button');
       expect(notificationButton).toBeTruthy();
     });
 
-    it('renders apps menu component', async () => {
+    it('renders apps menu component', () => {
       // Arrange
       const mocks = createMockServices();
-
-      // Act
-      const { fixture } = await render(NavbarComponent, {
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders(mocks),
-      });
-
-      const appsMenu = fixture.nativeElement.querySelector('app-apps-menu');
+      }).createComponent(NavbarComponent);
+      TestBed.tick();
 
       // Assert
+      const appsMenu = fixture.nativeElement.querySelector('app-apps-menu');
       expect(appsMenu).toBeTruthy();
     });
 
-    it('renders user menu component', async () => {
+    it('renders user menu component', () => {
       // Arrange
       const mocks = createMockServices();
-
-      // Act
-      const { fixture } = await render(NavbarComponent, {
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders(mocks),
-      });
-
-      const userMenu = fixture.nativeElement.querySelector('app-user-menu');
+      }).createComponent(NavbarComponent);
+      TestBed.tick();
 
       // Assert
+      const userMenu = fixture.nativeElement.querySelector('app-user-menu');
       expect(userMenu).toBeTruthy();
     });
   });
 
   describe('accessibility', () => {
-    it('has proper navigation role', async () => {
+    it('has proper navigation role', () => {
       // Arrange
       const mocks = createMockServices();
-
-      // Act
-      const { fixture } = await render(NavbarComponent, {
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders(mocks),
-      });
-
-      const nav = fixture.nativeElement.querySelector('nav');
+      }).createComponent(NavbarComponent);
+      TestBed.tick();
+      const queries = within(fixture.nativeElement);
 
       // Assert
+      const nav = queries.getByRole('navigation');
       expect(nav).toBeTruthy();
     });
 
-    it('provides toggle sidebar button with aria-label', async () => {
+    it('provides toggle sidebar button with aria-label', () => {
       // Arrange
       const mocks = createMockServices();
-
-      // Act
-      const { fixture } = await render(NavbarComponent, {
+      const fixture = TestBed.configureTestingModule({
         providers: defaultProviders(mocks),
-      });
-
-      const toggleButton = fixture.nativeElement.querySelector('button[aria-label="Toggle sidebar"]');
+      }).createComponent(NavbarComponent);
+      TestBed.tick();
 
       // Assert
+      const toggleButton = fixture.nativeElement.querySelector('button[aria-label="Toggle sidebar"]');
       expect(toggleButton).toBeTruthy();
     });
   });
