@@ -872,6 +872,7 @@ describe('DropdownBasic - Hover Strategy', () => {
 
     const hostComponent = fixture.componentInstance as TestHostComponent;
     hostComponent.openStrategy.set('hover');
+    TestBed.tick();
 
     const dropdown = fixture.debugElement.children[0].componentInstance as DropdownBasic;
     const trigger = fixture.nativeElement.querySelector('button');
@@ -893,6 +894,7 @@ describe('DropdownBasic - Hover Strategy', () => {
 
     const hostComponent = fixture.componentInstance as TestHostComponent;
     hostComponent.openStrategy.set('hover');
+    TestBed.tick();
 
     const dropdown = fixture.debugElement.children[0].componentInstance as DropdownBasic;
     const trigger = fixture.nativeElement.querySelector('button');
@@ -908,6 +910,7 @@ describe('DropdownBasic - Hover Strategy', () => {
 
     // Wait for hover close timeout (80ms)
     await new Promise((resolve) => setTimeout(resolve, 100));
+    TestBed.tick();
 
     expect(dropdown.isOpen()).toBe(false);
   });
@@ -955,6 +958,7 @@ describe('DropdownBasic - Hover Strategy', () => {
 
     const hostComponent = fixture.componentInstance as TestHostComponent;
     hostComponent.openStrategy.set('hover');
+    TestBed.tick();
 
     const dropdown = fixture.debugElement.children[0].componentInstance as DropdownBasic;
     const trigger = fixture.nativeElement.querySelector('button');
@@ -976,6 +980,7 @@ describe('DropdownBasic - Hover Strategy', () => {
 
     // Wait for timeout
     await new Promise((resolve) => setTimeout(resolve, 100));
+    TestBed.tick();
 
     expect(dropdown.isOpen()).toBe(true);
   });
@@ -1025,6 +1030,7 @@ describe('DropdownBasic - Hover Strategy', () => {
 
     const hostComponent = fixture.componentInstance as TestHostComponent;
     hostComponent.openStrategy.set('hover');
+    TestBed.tick();
 
     const dropdown = fixture.debugElement.children[0].componentInstance as DropdownBasic;
     const trigger = fixture.nativeElement.querySelector('button');
@@ -1077,6 +1083,7 @@ describe('DropdownBasic - Different Variants', () => {
 
     const hostComponent = fixture.componentInstance as TestHostComponent;
     hostComponent.triggerConfig.set({ variant: 'soft', size: 'md' });
+    TestBed.tick();
 
     const trigger = fixture.nativeElement.querySelector('button');
     expect(trigger.className).toContain('bg-bg-secondary');
@@ -1093,6 +1100,7 @@ describe('DropdownBasic - Different Variants', () => {
 
     const hostComponent = fixture.componentInstance as TestHostComponent;
     hostComponent.triggerConfig.set({ variant: 'ghost', size: 'md' });
+    TestBed.tick();
 
     const trigger = fixture.nativeElement.querySelector('button');
     expect(trigger.className).toContain('bg-transparent');
@@ -1109,6 +1117,7 @@ describe('DropdownBasic - Different Variants', () => {
 
     const hostComponent = fixture.componentInstance as TestHostComponent;
     hostComponent.triggerConfig.set({ variant: 'solid', size: 'sm' });
+    TestBed.tick();
 
     const trigger = fixture.nativeElement.querySelector('button');
     expect(trigger.className).toContain('px-3');
@@ -1124,6 +1133,7 @@ describe('DropdownBasic - Different Variants', () => {
 
     const hostComponent = fixture.componentInstance as TestHostComponent;
     hostComponent.placement.set('bottom-start');
+    TestBed.tick();
 
     const dropdown = fixture.debugElement.children[0].componentInstance as DropdownBasic;
     const positions = dropdown.overlayPositions();
@@ -1135,7 +1145,6 @@ describe('DropdownBasic - Different Variants', () => {
       overlayY: 'top',
       offsetY: 8,
     });
-    TestBed.tick();
   });
 
   it('should calculate positions for top-end placement', () => {
@@ -1147,6 +1156,7 @@ describe('DropdownBasic - Different Variants', () => {
 
     const hostComponent = fixture.componentInstance as TestHostComponent;
     hostComponent.placement.set('top-end');
+    TestBed.tick();
 
     const dropdown = fixture.debugElement.children[0].componentInstance as DropdownBasic;
     const positions = dropdown.overlayPositions();
@@ -1158,7 +1168,6 @@ describe('DropdownBasic - Different Variants', () => {
       overlayY: 'bottom',
       offsetY: -8,
     });
-    TestBed.tick();
   });
 
   it('should calculate positions for top-start placement', () => {
@@ -1170,6 +1179,7 @@ describe('DropdownBasic - Different Variants', () => {
 
     const hostComponent = fixture.componentInstance as TestHostComponent;
     hostComponent.placement.set('top-start');
+    TestBed.tick();
 
     const dropdown = fixture.debugElement.children[0].componentInstance as DropdownBasic;
     const positions = dropdown.overlayPositions();
