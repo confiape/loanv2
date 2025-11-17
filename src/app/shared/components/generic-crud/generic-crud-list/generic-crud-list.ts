@@ -53,8 +53,8 @@ export class GenericCrudListComponent<TDto extends { id: string }> implements On
   // Input: CRUD service (required)
   service = input.required<ICrudService<TDto, unknown>>();
 
-  // Input: Test ID prefix for E2E testing (optional)
-  testIdPrefix = input<string>('crud');
+  // Input: Test ID for E2E testing (optional)
+  readonly dataTestId = input<string | null>(null);
 
   // Table configuration
   tableColumns = signal<TableColumn<TDto>[]>([]);

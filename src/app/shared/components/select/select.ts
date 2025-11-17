@@ -7,8 +7,6 @@ import {
   ChangeDetectionStrategy,
   forwardRef,
   effect,
-  inject,
-  HostAttributeToken,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
@@ -18,8 +16,7 @@ import {
   getLabelClasses,
   generateInputTestIds,
 } from '../input/input-helpers';
-
-const DATA_TESTID = new HostAttributeToken('data-testid');
+import { generateItemTestId } from '@loan/app/shared/utils/test-id.utils';
 
 export interface SelectOption {
   value: string;
@@ -59,7 +56,11 @@ export interface SelectOption {
             <option value="" disabled selected>{{ placeholder() }}</option>
           }
           @for (option of options(); track option.value) {
-            <option [value]="option.value" [disabled]="option.disabled || false">
+            <option
+              [value]="option.value"
+              [disabled]="option.disabled || false"
+              [attr.data-testid]="getOptionTestId(option.value)"
+            >
               {{ option.label }}
             </option>
           }
@@ -113,8 +114,8 @@ export interface SelectOption {
   },
 })
 export class Select implements ControlValueAccessor {
-  // Test ID from host
-  private readonly hostTestId = inject(DATA_TESTID, { optional: true });
+  // Test ID input
+  readonly dataTestId = input<string | null>(null);
 
   // Input properties
   readonly label = input<string>('');
@@ -142,15 +143,15 @@ export class Select implements ControlValueAccessor {
   protected onTouched: () => void = () => undefined;
 
   // Test IDs using helper
-  private readonly testIds = generateInputTestIds(this.hostTestId);
+  private readonly testIds = generateInputTestIds(() => this.dataTestId());
   readonly wrapperTestId = this.testIds.wrapper;
   readonly labelTestId = this.testIds.label;
   readonly helpTextTestId = this.testIds.helpText;
   readonly successMessageTestId = this.testIds.successMessage;
   readonly errorMessageTestId = this.testIds.errorMessage;
 
-  // Select-specific test ID
-  readonly selectTestId = computed(() => (this.hostTestId ? `${this.hostTestId}-select` : null));
+  // Select-specific test ID (the main element gets dataTestId directly)
+  readonly selectTestId = computed(() => this.dataTestId());
 
   // Computed classes
   readonly labelClasses = computed(() => {
@@ -237,5 +238,10 @@ export class Select implements ControlValueAccessor {
     this.value.set(newValue);
     this.onChangeCallback(newValue);
     this.valueChange.emit(newValue);
+  }
+
+  // Helper methods for test IDs
+  protected getOptionTestId(value: string): string | null {
+    return generateItemTestId(this.dataTestId(), 'option', value);
   }
 }

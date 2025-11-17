@@ -15,7 +15,7 @@ export interface ModalTestIds {
 export function generateModalTestIds(hostTestId: string | null): ModalTestIds {
   return {
     overlay: computed(() => (hostTestId ? `${hostTestId}-overlay` : null)),
-    container: computed(() => (hostTestId ? `${hostTestId}-container` : null)),
+    container: computed(() => hostTestId),
     content: computed(() => (hostTestId ? `${hostTestId}-content` : null)),
     header: computed(() => (hostTestId ? `${hostTestId}-header` : null)),
     closeButton: computed(() => (hostTestId ? `${hostTestId}-close-btn` : null)),

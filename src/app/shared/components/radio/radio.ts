@@ -7,14 +7,11 @@ import {
   ChangeDetectionStrategy,
   forwardRef,
   effect,
-  inject,
-  HostAttributeToken,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { InputSize, ValidationState, getLabelClasses } from '../input/input-helpers';
-
-const DATA_TESTID = new HostAttributeToken('data-testid');
+import { generateItemTestId } from '@loan/app/shared/utils/test-id.utils';
 
 export interface RadioOption {
   value: string;
@@ -38,7 +35,7 @@ export interface RadioOption {
       <!-- Radio Options -->
       <div [class]="containerClasses()">
         @for (option of options(); track option.value) {
-          <div class="flex items-center" [attr.data-testid]="getOptionWrapperTestId(option.value)">
+          <div class="flex items-center">
             <input
               [id]="getOptionId(option.value)"
               type="radio"
@@ -110,7 +107,7 @@ export interface RadioOption {
   },
 })
 export class RadioGroup implements ControlValueAccessor {
-  private readonly hostTestId = inject(DATA_TESTID, { optional: true });
+  readonly dataTestId = input<string | null>(null);
 
   // Input properties
   readonly label = input<string>('');
@@ -137,19 +134,30 @@ export class RadioGroup implements ControlValueAccessor {
   protected onTouched: () => void = () => undefined;
 
   // Test IDs
-  readonly wrapperTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-wrapper` : null,
-  );
-  readonly labelTestId = computed(() => (this.hostTestId ? `${this.hostTestId}-label` : null));
-  readonly helpTextTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-help-text` : null,
-  );
-  readonly successMessageTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-success-message` : null,
-  );
-  readonly errorMessageTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-error-message` : null,
-  );
+  readonly wrapperTestId = computed(() => {
+    const id = this.dataTestId();
+    return id ? `${id}-wrapper` : null;
+  });
+
+  readonly labelTestId = computed(() => {
+    const id = this.dataTestId();
+    return id ? `${id}-label` : null;
+  });
+
+  readonly helpTextTestId = computed(() => {
+    const id = this.dataTestId();
+    return id ? `${id}-help` : null;
+  });
+
+  readonly successMessageTestId = computed(() => {
+    const id = this.dataTestId();
+    return id ? `${id}-success` : null;
+  });
+
+  readonly errorMessageTestId = computed(() => {
+    const id = this.dataTestId();
+    return id ? `${id}-error` : null;
+  });
 
   // Computed classes
   readonly labelClasses = computed(() => {
@@ -272,14 +280,11 @@ export class RadioGroup implements ControlValueAccessor {
   }
 
   protected getOptionTestId(value: string): string | null {
-    return this.hostTestId ? `${this.hostTestId}-option-${value}` : null;
-  }
-
-  protected getOptionWrapperTestId(value: string): string | null {
-    return this.hostTestId ? `${this.hostTestId}-option-${value}-wrapper` : null;
+    return generateItemTestId(this.dataTestId(), 'option', value);
   }
 
   protected getOptionLabelTestId(value: string): string | null {
-    return this.hostTestId ? `${this.hostTestId}-option-${value}-label` : null;
+    const base = generateItemTestId(this.dataTestId(), 'option', value);
+    return base ? `${base}-label` : null;
   }
 }

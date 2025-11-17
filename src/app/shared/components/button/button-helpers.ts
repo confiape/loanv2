@@ -180,10 +180,16 @@ export interface ButtonTestIds {
   spinner: Signal<string | null>;
 }
 
-export function generateButtonTestIds(hostTestId: string | null): ButtonTestIds {
+export function generateButtonTestIds(getHostTestId: () => string | null): ButtonTestIds {
   return {
-    button: computed(() => hostTestId),
-    content: computed(() => (hostTestId ? `${hostTestId}-content` : null)),
-    spinner: computed(() => (hostTestId ? `${hostTestId}-spinner` : null)),
+    button: computed(() => getHostTestId()),
+    content: computed(() => {
+      const id = getHostTestId();
+      return id ? `${id}-content` : null;
+    }),
+    spinner: computed(() => {
+      const id = getHostTestId();
+      return id ? `${id}-spinner` : null;
+    }),
   };
 }

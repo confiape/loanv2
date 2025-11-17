@@ -92,4 +92,47 @@ describe('Button', () => {
     const button = getButtonElement();
     expect(button.className).toContain('w-full');
   });
+
+  describe('data-testid rendering', () => {
+    it('should not render data-testid when not provided', () => {
+      const compiled = fixture.nativeElement as HTMLElement;
+      const button = compiled.querySelector('button[data-testid]');
+      expect(button).toBeFalsy();
+    });
+
+    it('should render data-testid on button element (main element)', () => {
+      fixture.componentRef.setInput('dataTestId', 'submit-btn');
+      fixture.detectChanges();
+      const compiled = fixture.nativeElement as HTMLElement;
+      const button = compiled.querySelector('button[data-testid="submit-btn"]');
+      expect(button).toBeTruthy();
+    });
+
+    it('should render data-testid on content with -content suffix', () => {
+      fixture.componentRef.setInput('dataTestId', 'login');
+      fixture.detectChanges();
+      const compiled = fixture.nativeElement as HTMLElement;
+      const content = compiled.querySelector('[data-testid="login-content"]');
+      expect(content).toBeTruthy();
+    });
+
+    it('should render data-testid on spinner with -spinner suffix when loading', () => {
+      fixture.componentRef.setInput('dataTestId', 'save');
+      fixture.componentRef.setInput('loading', true);
+      fixture.detectChanges();
+      const compiled = fixture.nativeElement as HTMLElement;
+      const spinner = compiled.querySelector('[data-testid="save-spinner"]');
+      expect(spinner).toBeTruthy();
+    });
+
+    it('should render all data-testid attributes when loading', () => {
+      fixture.componentRef.setInput('dataTestId', 'submit');
+      fixture.componentRef.setInput('loading', true);
+      fixture.componentRef.setInput('loadingText', 'Submitting...');
+      fixture.detectChanges();
+      const compiled = fixture.nativeElement as HTMLElement;
+      expect(compiled.querySelector('button[data-testid="submit"]')).toBeTruthy();
+      expect(compiled.querySelector('[data-testid="submit-spinner"]')).toBeTruthy();
+    });
+  });
 });

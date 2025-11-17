@@ -126,25 +126,26 @@
 
     <!-- Cuerpo -->
     <tbody>
-      @for (row of visibleData(); track $index) {
+      @for (row of visibleData(); track $index; let rowIndex = $index) {
         <tr
           class="bg-bg-primary border-b border-border"
           [class.hover:bg-bg-secondary]="hoverable()"
           [class.cursor-pointer]="hoverable()"
+          [attr.data-testid]="getRowTestId(row, rowIndex)"
         >
           <!-- Celda de selección -->
           @if (selectable()) {
             <td class="w-4 p-4">
               <div class="flex items-center">
                 <input
-                  [id]="'checkbox-table-' + $index"
+                  [id]="'checkbox-table-' + rowIndex"
                   type="checkbox"
                   class="w-4 h-4 text-accent bg-bg-primary border-border rounded-sm focus:ring-accent focus:ring-2"
-                  [checked]="isRowSelected($index)"
-                  (change)="toggleRow($index)"
+                  [checked]="isRowSelected(rowIndex)"
+                  (change)="toggleRow(rowIndex)"
                 />
-                <label [for]="'checkbox-table-' + $index" class="sr-only"
-                  >Select row {{ $index + 1 }}</label
+                <label [for]="'checkbox-table-' + rowIndex" class="sr-only"
+                  >Select row {{ rowIndex + 1 }}</label
                 >
               </div>
             </td>
@@ -182,6 +183,7 @@
                         'font-medium underline transition-colors ' +
                         getActionClass(action.variant)
                       "
+                      [attr.data-testid]="getActionTestId(action, row, rowIndex)"
                       (click)="executeAction(action, row)"
                     >
                       {{ action.label }}

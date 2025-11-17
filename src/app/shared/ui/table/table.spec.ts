@@ -507,4 +507,192 @@ describe('Table Component', () => {
       expect(fixture.nativeElement.textContent).toContain('$99.50');
     });
   });
+
+  describe('data-testid Attributes', () => {
+    it('should render data-testid on table wrapper', () => {
+      fixture.componentRef.setInput('columns', mockColumns);
+      fixture.componentRef.setInput('data', mockData.slice(0, 2));
+      fixture.componentRef.setInput('dataTestId', 'test-table');
+      fixture.detectChanges();
+
+      const wrapper = fixture.nativeElement.querySelector('[data-testid="test-table-wrapper"]');
+      expect(wrapper).toBeTruthy();
+    });
+
+    it('should render data-testid on table element', () => {
+      fixture.componentRef.setInput('columns', mockColumns);
+      fixture.componentRef.setInput('data', mockData.slice(0, 2));
+      fixture.componentRef.setInput('dataTestId', 'test-table');
+      fixture.detectChanges();
+
+      const table = fixture.nativeElement.querySelector('table[data-testid="test-table"]');
+      expect(table).toBeTruthy();
+    });
+
+    it('should render data-testid on search input when searchable', () => {
+      fixture.componentRef.setInput('columns', mockColumns);
+      fixture.componentRef.setInput('data', mockData.slice(0, 2));
+      fixture.componentRef.setInput('dataTestId', 'test-table');
+      fixture.componentRef.setInput('searchable', true);
+      fixture.detectChanges();
+
+      const searchInput = fixture.nativeElement.querySelector('input[data-testid="test-table-search"]');
+      expect(searchInput).toBeTruthy();
+    });
+
+    it('should render data-testid on pagination when paginated', () => {
+      fixture.componentRef.setInput('columns', mockColumns);
+      fixture.componentRef.setInput('data', mockData);
+      fixture.componentRef.setInput('dataTestId', 'test-table');
+      fixture.componentRef.setInput('paginated', true);
+      fixture.componentRef.setInput('pageSize', 2);
+      fixture.detectChanges();
+
+      const pagination = fixture.nativeElement.querySelector('nav[data-testid="test-table-pagination"]');
+      expect(pagination).toBeTruthy();
+    });
+
+    it('should render data-testid on table rows using row ID', () => {
+      fixture.componentRef.setInput('columns', mockColumns);
+      fixture.componentRef.setInput('data', mockData.slice(0, 3));
+      fixture.componentRef.setInput('dataTestId', 'test-table');
+      fixture.detectChanges();
+
+      // Check that rows have data-testid with their IDs
+      const row1 = fixture.nativeElement.querySelector('tr[data-testid="test-table-row-1"]');
+      const row2 = fixture.nativeElement.querySelector('tr[data-testid="test-table-row-2"]');
+      const row3 = fixture.nativeElement.querySelector('tr[data-testid="test-table-row-3"]');
+
+      expect(row1).toBeTruthy();
+      expect(row2).toBeTruthy();
+      expect(row3).toBeTruthy();
+    });
+
+    it('should render data-testid on table rows using index when no ID property', () => {
+      interface DataWithoutId {
+        name: string;
+        category: string;
+      }
+
+      const dataWithoutId: DataWithoutId[] = [
+        { name: 'Item A', category: 'Cat A' },
+        { name: 'Item B', category: 'Cat B' },
+      ];
+
+      const columnsForDataWithoutId: TableColumn<DataWithoutId>[] = [
+        { key: 'name', label: 'Name' },
+        { key: 'category', label: 'Category' },
+      ];
+
+      fixture.componentRef.setInput('columns', columnsForDataWithoutId);
+      fixture.componentRef.setInput('data', dataWithoutId);
+      fixture.componentRef.setInput('dataTestId', 'test-table');
+      fixture.detectChanges();
+
+      // Check that rows have data-testid with their indices
+      const row0 = fixture.nativeElement.querySelector('tr[data-testid="test-table-row-0"]');
+      const row1 = fixture.nativeElement.querySelector('tr[data-testid="test-table-row-1"]');
+
+      expect(row0).toBeTruthy();
+      expect(row1).toBeTruthy();
+    });
+
+    it('should render data-testid on action buttons with row ID', () => {
+      const mockActions: TableAction<TestData>[] = [
+        { label: 'Edit', variant: 'primary', handler: () => {} },
+        { label: 'Delete', variant: 'danger', handler: () => {} },
+      ];
+
+      fixture.componentRef.setInput('columns', mockColumns);
+      fixture.componentRef.setInput('data', mockData.slice(0, 2));
+      fixture.componentRef.setInput('actions', mockActions);
+      fixture.componentRef.setInput('dataTestId', 'test-table');
+      fixture.detectChanges();
+
+      // Check Edit button for row with ID 1
+      const editBtn1 = fixture.nativeElement.querySelector(
+        'button[data-testid="test-table-action-edit-row-1"]'
+      );
+      expect(editBtn1).toBeTruthy();
+
+      // Check Delete button for row with ID 1
+      const deleteBtn1 = fixture.nativeElement.querySelector(
+        'button[data-testid="test-table-action-delete-row-1"]'
+      );
+      expect(deleteBtn1).toBeTruthy();
+
+      // Check Edit button for row with ID 2
+      const editBtn2 = fixture.nativeElement.querySelector(
+        'button[data-testid="test-table-action-edit-row-2"]'
+      );
+      expect(editBtn2).toBeTruthy();
+    });
+
+    it('should render data-testid on action buttons with index when no ID property', () => {
+      interface DataWithoutId {
+        name: string;
+        category: string;
+      }
+
+      const dataWithoutId: DataWithoutId[] = [
+        { name: 'Item A', category: 'Cat A' },
+        { name: 'Item B', category: 'Cat B' },
+      ];
+
+      const columnsForDataWithoutId: TableColumn<DataWithoutId>[] = [
+        { key: 'name', label: 'Name' },
+        { key: 'category', label: 'Category' },
+      ];
+
+      const mockActions: TableAction<DataWithoutId>[] = [
+        { label: 'Edit', variant: 'primary', handler: () => {} },
+      ];
+
+      fixture.componentRef.setInput('columns', columnsForDataWithoutId);
+      fixture.componentRef.setInput('data', dataWithoutId);
+      fixture.componentRef.setInput('actions', mockActions);
+      fixture.componentRef.setInput('dataTestId', 'test-table');
+      fixture.detectChanges();
+
+      // Check Edit button for row with index 0
+      const editBtn0 = fixture.nativeElement.querySelector(
+        'button[data-testid="test-table-action-edit-row-0"]'
+      );
+      expect(editBtn0).toBeTruthy();
+
+      // Check Edit button for row with index 1
+      const editBtn1 = fixture.nativeElement.querySelector(
+        'button[data-testid="test-table-action-edit-row-1"]'
+      );
+      expect(editBtn1).toBeTruthy();
+    });
+
+    it('should sanitize action labels with spaces in data-testid', () => {
+      const mockActions: TableAction<TestData>[] = [
+        { label: 'View Details', variant: 'primary', handler: () => {} },
+      ];
+
+      fixture.componentRef.setInput('columns', mockColumns);
+      fixture.componentRef.setInput('data', mockData.slice(0, 1));
+      fixture.componentRef.setInput('actions', mockActions);
+      fixture.componentRef.setInput('dataTestId', 'test-table');
+      fixture.detectChanges();
+
+      // Should convert "View Details" to "view-details"
+      const viewBtn = fixture.nativeElement.querySelector(
+        'button[data-testid="test-table-action-view-details-row-1"]'
+      );
+      expect(viewBtn).toBeTruthy();
+    });
+
+    it('should not render data-testid attributes when dataTestId is null', () => {
+      fixture.componentRef.setInput('columns', mockColumns);
+      fixture.componentRef.setInput('data', mockData.slice(0, 2));
+      fixture.componentRef.setInput('dataTestId', null);
+      fixture.detectChanges();
+
+      const rows = fixture.nativeElement.querySelectorAll('tbody tr[data-testid]');
+      expect(rows.length).toBe(0);
+    });
+  });
 });
