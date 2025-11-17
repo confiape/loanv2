@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { provideZonelessChangeDetection } from '@angular/core';
+import { provideZonelessChangeDetection, signal } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 import { CompaniesListComponent } from './companies-list';
@@ -16,16 +16,16 @@ describe('CompaniesListComponent', () => {
 
   function createComponent() {
     const serviceMock: Partial<CompanyCrudService> = {
-      items: vi.fn().mockReturnValue(mockCompanies),
-      loading: vi.fn().mockReturnValue(false),
-      showModal: vi.fn().mockReturnValue(false),
-      editingItem: vi.fn().mockReturnValue(null),
-      showDeleteConfirm: vi.fn().mockReturnValue(false),
-      selectedItems: vi.fn().mockReturnValue(new Set<string>()),
-      searchTerm: vi.fn().mockReturnValue(''),
-      currentPage: vi.fn().mockReturnValue(1),
-      pageSize: vi.fn().mockReturnValue(10),
-      filteredItems: vi.fn().mockReturnValue(mockCompanies),
+      items: signal(mockCompanies),
+      loading: signal(false),
+      showModal: signal(false),
+      editingItem: signal<CompanyDto | null>(null),
+      showDeleteConfirm: signal(false),
+      selectedItems: signal(new Set<string>()),
+      searchTerm: signal(''),
+      currentPage: signal(1),
+      pageSize: signal(10),
+      filteredItems: signal(mockCompanies),
       loadItems: vi.fn(),
       onNewItem: vi.fn(),
       onEditItem: vi.fn(),
@@ -44,7 +44,7 @@ describe('CompaniesListComponent', () => {
       hasSelection: vi.fn().mockReturnValue(false),
       selectedItemsData: vi.fn().mockReturnValue([]),
       getTableData: vi.fn().mockReturnValue(mockCompanies),
-      deleteMessage: vi.fn().mockReturnValue('Are you sure?'),
+      deleteMessage: signal('Are you sure?'),
       loadAllItems: vi.fn().mockReturnValue(of(mockCompanies)),
       saveItem: vi.fn().mockReturnValue(of(mockCompanies[0])),
       deleteItem: vi.fn().mockReturnValue(of({})),
