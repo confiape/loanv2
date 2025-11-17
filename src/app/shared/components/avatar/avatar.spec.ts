@@ -1,72 +1,9 @@
-import { beforeEach, describe, expect, it } from 'vitest';
-import { Component, ViewChild } from '@angular/core';
+import { describe, expect, it } from 'vitest';
+import { Component, ViewChild, inputBinding } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 
 import { Avatar, AvatarSize, AvatarShape, AvatarVariant, StatusIndicator } from './avatar';
-
-type AvatarInputs = Partial<{
-  variant: AvatarVariant;
-  size: AvatarSize;
-  shape: AvatarShape;
-  imageSrc: string;
-  imageAlt: string;
-  initials: string;
-  statusIndicator: StatusIndicator;
-  statusPosition: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
-}>;
-
-interface RenderOptions {
-  inputs?: AvatarInputs;
-  hostAttributes?: Record<string, string>;
-}
-
-interface RenderResult {
-  fixture: ComponentFixture<Avatar>;
-  component: Avatar;
-  host: HTMLElement;
-  rerender: (options?: RenderOptions) => Promise<void>;
-}
-
-async function renderAvatar(options: RenderOptions = {}): Promise<RenderResult> {
-  const fixture = TestBed.createComponent(Avatar);
-  const component = fixture.componentInstance;
-  const host = fixture.nativeElement as HTMLElement;
-
-  if (options.hostAttributes) {
-    for (const [attr, value] of Object.entries(options.hostAttributes)) {
-      host.setAttribute(attr, value);
-    }
-  }
-
-  if (options.inputs) {
-    for (const [key, value] of Object.entries(options.inputs)) {
-      fixture.componentRef.setInput(key as keyof AvatarInputs, value as never);
-    }
-  }
-
-  fixture.detectChanges();
-  await fixture.whenStable();
-
-  const rerender = async (update: RenderOptions = {}) => {
-    if (update.hostAttributes) {
-      for (const [attr, value] of Object.entries(update.hostAttributes)) {
-        host.setAttribute(attr, value);
-      }
-    }
-
-    if (update.inputs) {
-      for (const [key, value] of Object.entries(update.inputs)) {
-        fixture.componentRef.setInput(key as keyof AvatarInputs, value as never);
-      }
-    }
-
-    fixture.detectChanges();
-    await fixture.whenStable();
-  };
-
-  return { fixture, component, host, rerender };
-}
 
 @Component({
   selector: 'app-avatar-host',
@@ -91,19 +28,18 @@ class AvatarHostComponent {
 }
 
 describe('Avatar', () => {
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [Avatar, AvatarHostComponent],
-      providers: [provideZonelessChangeDetection()],
-    }).compileComponents();
-  });
-
   describe('defaults', () => {
-    it('renders a placeholder icon with default configuration', async () => {
-      const { host, component } = await renderAvatar();
+    it('renders a placeholder icon with default configuration', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: [provideZonelessChangeDetection()],
+      }).createComponent(Avatar);
+      const component = fixture.componentInstance;
+      TestBed.tick();
 
+      // Assert
       expect(component.variant()).toBe('placeholder');
-      expect(host.querySelector('svg')).toBeTruthy();
+      expect(fixture.nativeElement.querySelector('svg')).toBeTruthy();
       expect(component.size()).toBe('md');
       expect(component.shape()).toBe('full');
       expect(component.statusIndicator()).toBeNull();
@@ -111,78 +47,123 @@ describe('Avatar', () => {
   });
 
   describe('placeholder variant', () => {
-    it('shows the placeholder SVG with expected attributes', async () => {
-      const { host, component } = await renderAvatar({ inputs: { variant: 'placeholder' } });
+    it('shows the placeholder SVG with expected attributes', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: [provideZonelessChangeDetection()],
+      }).createComponent(Avatar, {
+        bindings: [inputBinding('variant', () => 'placeholder')],
+      });
+      TestBed.tick();
+      const host = fixture.nativeElement;
+
+      // Assert
       const svg = host.querySelector('svg');
       const path = host.querySelector('svg path');
-
       expect(svg?.getAttribute('fill')).toBe('currentColor');
       expect(svg?.getAttribute('viewBox')).toBe('0 0 20 20');
       expect(svg?.getAttribute('aria-hidden')).toBe('true');
       expect(path?.getAttribute('d')).toBe('M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z');
-      expect(component.placeholderIconClasses()).toContain('-left-1');
+      expect(fixture.componentInstance.placeholderIconClasses()).toContain('-left-1');
     });
 
-    it('adjusts placeholder icon size when avatar size changes', async () => {
-      const { component, rerender } = await renderAvatar({
-        inputs: { variant: 'placeholder', size: 'xs' },
+    it('adjusts placeholder icon size when avatar size changes', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: [provideZonelessChangeDetection()],
+      }).createComponent(Avatar, {
+        bindings: [
+          inputBinding('variant', () => 'placeholder'),
+          inputBinding('size', () => 'xs'),
+        ],
       });
+      TestBed.tick();
+      const component = fixture.componentInstance;
       expect(component.placeholderIconClasses()).toContain('w-8 h-8');
 
-      await rerender({ inputs: { size: 'xl' } });
+      // Act
+      fixture.componentRef.setInput('size', 'xl');
+      TestBed.tick();
+
+      // Assert
       expect(component.placeholderIconClasses()).toContain('w-40 h-40');
     });
   });
 
   describe('image variant', () => {
-    it('renders the provided image source and alt text', async () => {
-      const { host, component } = await renderAvatar({
-        inputs: {
-          variant: 'image',
-          imageSrc: 'https://example.com/avatar.jpg',
-          imageAlt: 'Jane Doe',
-        },
+    it('renders the provided image source and alt text', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: [provideZonelessChangeDetection()],
+      }).createComponent(Avatar, {
+        bindings: [
+          inputBinding('variant', () => 'image'),
+          inputBinding('imageSrc', () => 'https://example.com/avatar.jpg'),
+          inputBinding('imageAlt', () => 'Jane Doe'),
+        ],
       });
+      TestBed.tick();
+      const host = fixture.nativeElement;
 
+      // Assert
       const img = host.querySelector('img');
       expect(img?.getAttribute('src')).toBe('https://example.com/avatar.jpg');
       expect(img?.getAttribute('alt')).toBe('Jane Doe');
-      expect(component.imageClasses()).toContain('object-cover');
+      expect(fixture.componentInstance.imageClasses()).toContain('object-cover');
     });
 
-    it('falls back to default alt text when none is supplied', async () => {
-      const { host } = await renderAvatar({
-        inputs: {
-          variant: 'image',
-          imageSrc: 'test.jpg',
-        },
+    it('falls back to default alt text when none is supplied', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: [provideZonelessChangeDetection()],
+      }).createComponent(Avatar, {
+        bindings: [
+          inputBinding('variant', () => 'image'),
+          inputBinding('imageSrc', () => 'test.jpg'),
+        ],
       });
+      TestBed.tick();
 
-      expect(host.querySelector('img')?.getAttribute('alt')).toBe('Avatar');
+      // Assert
+      expect(fixture.nativeElement.querySelector('img')?.getAttribute('alt')).toBe('Avatar');
     });
   });
 
   describe('initials variant', () => {
-    it('renders provided initials and associated classes', async () => {
-      const { host, component } = await renderAvatar({
-        inputs: {
-          variant: 'initials',
-          initials: 'JD',
-        },
+    it('renders provided initials and associated classes', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: [provideZonelessChangeDetection()],
+      }).createComponent(Avatar, {
+        bindings: [
+          inputBinding('variant', () => 'initials'),
+          inputBinding('initials', () => 'JD'),
+        ],
       });
+      TestBed.tick();
+      const host = fixture.nativeElement;
 
+      // Assert
       const initials = host.querySelector('span');
       expect(initials?.textContent?.trim()).toBe('JD');
-      expect(component.initialsClasses()).toContain('font-medium');
-      expect(component.initialsClasses()).toContain('bg-bg-secondary');
+      expect(fixture.componentInstance.initialsClasses()).toContain('font-medium');
+      expect(fixture.componentInstance.initialsClasses()).toContain('bg-bg-secondary');
     });
 
-    it('supports empty initials without crashing', async () => {
-      const { host } = await renderAvatar({
-        inputs: { variant: 'initials', initials: '' },
+    it('supports empty initials without crashing', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: [provideZonelessChangeDetection()],
+      }).createComponent(Avatar, {
+        bindings: [
+          inputBinding('variant', () => 'initials'),
+          inputBinding('initials', () => ''),
+        ],
       });
+      TestBed.tick();
 
-      const initials = host.querySelector('span');
+      // Assert
+      const initials = fixture.nativeElement.querySelector('span');
       expect(initials?.textContent?.trim()).toBe('');
     });
   });
@@ -200,11 +181,22 @@ describe('Avatar', () => {
     };
 
     (Object.keys(sizeExpectations) as AvatarSize[]).forEach((size) => {
-      it(`applies classes for size ${size}`, async () => {
-        const { component } = await renderAvatar({
-          inputs: { size, variant: 'initials', initials: 'JD', statusIndicator: 'online' },
+      it(`applies classes for size ${size}`, () => {
+        // Arrange
+        const fixture = TestBed.configureTestingModule({
+          providers: [provideZonelessChangeDetection()],
+        }).createComponent(Avatar, {
+          bindings: [
+            inputBinding('size', () => size),
+            inputBinding('variant', () => 'initials'),
+            inputBinding('initials', () => 'JD'),
+            inputBinding('statusIndicator', () => 'online'),
+          ],
         });
+        TestBed.tick();
+        const component = fixture.componentInstance;
 
+        // Assert
         expect(component.containerClasses()).toContain(sizeExpectations[size].container);
         expect(component.initialsClasses()).toContain(sizeExpectations[size].text);
         expect(component.indicatorClasses()).toContain(sizeExpectations[size].indicator);
@@ -219,15 +211,21 @@ describe('Avatar', () => {
     };
 
     (Object.keys(shapeExpectations) as AvatarShape[]).forEach((shape) => {
-      it(`applies ${shape} to container, image, and initials`, async () => {
-        const { component } = await renderAvatar({
-          inputs: {
-            shape,
-            variant: 'initials',
-            initials: 'JD',
-          },
+      it(`applies ${shape} to container, image, and initials`, () => {
+        // Arrange
+        const fixture = TestBed.configureTestingModule({
+          providers: [provideZonelessChangeDetection()],
+        }).createComponent(Avatar, {
+          bindings: [
+            inputBinding('shape', () => shape),
+            inputBinding('variant', () => 'initials'),
+            inputBinding('initials', () => 'JD'),
+          ],
         });
+        TestBed.tick();
+        const component = fixture.componentInstance;
 
+        // Assert
         expect(component.containerClasses()).toContain(shapeExpectations[shape]);
         expect(component.imageClasses()).toContain(shapeExpectations[shape]);
         expect(component.initialsClasses()).toContain(shapeExpectations[shape]);
@@ -236,24 +234,41 @@ describe('Avatar', () => {
   });
 
   describe('status indicator', () => {
-    it('omits the indicator by default', async () => {
-      const { host } = await renderAvatar();
-      expect(host.querySelector('span.absolute.rounded-full')).toBeNull();
+    it('omits the indicator by default', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: [provideZonelessChangeDetection()],
+      }).createComponent(Avatar);
+      TestBed.tick();
+
+      // Assert
+      expect(fixture.nativeElement.querySelector('span.absolute.rounded-full')).toBeNull();
     });
 
-    it('renders indicator with correct color and positioning', async () => {
-      const { component, host } = await renderAvatar({
-        inputs: { statusIndicator: 'away', statusPosition: 'top-left', size: 'md' },
+    it('renders indicator with correct color and positioning', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: [provideZonelessChangeDetection()],
+      }).createComponent(Avatar, {
+        bindings: [
+          inputBinding('statusIndicator', () => 'away'),
+          inputBinding('statusPosition', () => 'top-left'),
+          inputBinding('size', () => 'md'),
+        ],
       });
+      TestBed.tick();
+      const component = fixture.componentInstance;
 
-      const indicator = host.querySelector('span.absolute.rounded-full');
+      // Assert
+      const indicator = fixture.nativeElement.querySelector('span.absolute.rounded-full');
       expect(indicator).toBeTruthy();
       expect(component.indicatorClasses()).toContain('top-0 left-0');
       expect(component.indicatorClasses()).toContain('bg-yellow-400');
       expect(component.indicatorClasses()).toContain('border-2');
     });
 
-    it('supports multiple indicator positions', async () => {
+    it('supports multiple indicator positions', () => {
+      // Arrange
       const positions: ['top-left' | 'top-right' | 'bottom-left' | 'bottom-right', string][] = [
         ['top-left', 'top-0 left-0'],
         ['top-right', 'top-0 right-0'],
@@ -262,29 +277,57 @@ describe('Avatar', () => {
       ];
 
       for (const [position, expected] of positions) {
-        const { component } = await renderAvatar({
-          inputs: { statusIndicator: 'online', statusPosition: position },
+        const fixture = TestBed.configureTestingModule({
+          providers: [provideZonelessChangeDetection()],
+        }).createComponent(Avatar, {
+          bindings: [
+            inputBinding('statusIndicator', () => 'online'),
+            inputBinding('statusPosition', () => position),
+          ],
         });
+        TestBed.tick();
 
-        expect(component.indicatorClasses()).toContain(expected);
+        // Assert
+        expect(fixture.componentInstance.indicatorClasses()).toContain(expected);
       }
     });
   });
 
   describe('computed class composition', () => {
-    it('combines container classes consistently', async () => {
-      const { component } = await renderAvatar({ inputs: { size: 'lg', shape: 'sm' } });
-      expect(component.containerClasses()).toContain('w-20 h-20');
-      expect(component.containerClasses()).toContain('rounded-sm');
-      expect(component.containerClasses()).toContain('overflow-hidden');
+    it('combines container classes consistently', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: [provideZonelessChangeDetection()],
+      }).createComponent(Avatar, {
+        bindings: [
+          inputBinding('size', () => 'lg'),
+          inputBinding('shape', () => 'sm'),
+        ],
+      });
+      TestBed.tick();
+
+      // Assert
+      expect(fixture.componentInstance.containerClasses()).toContain('w-20 h-20');
+      expect(fixture.componentInstance.containerClasses()).toContain('rounded-sm');
+      expect(fixture.componentInstance.containerClasses()).toContain('overflow-hidden');
     });
 
-    it('combines initials classes consistently', async () => {
-      const { component } = await renderAvatar({
-        inputs: { variant: 'initials', initials: 'JD', size: 'sm', shape: 'full' },
+    it('combines initials classes consistently', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: [provideZonelessChangeDetection()],
+      }).createComponent(Avatar, {
+        bindings: [
+          inputBinding('variant', () => 'initials'),
+          inputBinding('initials', () => 'JD'),
+          inputBinding('size', () => 'sm'),
+          inputBinding('shape', () => 'full'),
+        ],
       });
+      TestBed.tick();
 
-      const classes = component.initialsClasses();
+      // Assert
+      const classes = fixture.componentInstance.initialsClasses();
       ['font-medium', 'text-sm', 'text-text-primary', 'bg-bg-secondary', 'rounded-full'].forEach(
         (cls) => {
           expect(classes).toContain(cls);
@@ -294,22 +337,35 @@ describe('Avatar', () => {
   });
 
   describe('data-testid integration', () => {
-    it('generates prefixed IDs when host attribute is provided', async () => {
+    it('generates prefixed IDs when host attribute is provided', () => {
+      // Arrange
+      TestBed.configureTestingModule({
+        imports: [AvatarHostComponent],
+        providers: [provideZonelessChangeDetection()],
+      });
       const fixture = TestBed.createComponent(AvatarHostComponent);
-      fixture.detectChanges();
-      await fixture.whenStable();
+      TestBed.tick();
 
+      // Act
       const hostElement = fixture.nativeElement.querySelector('app-avatar') as HTMLElement;
       const avatarInstance = fixture.componentInstance.avatar;
 
+      // Assert
       expect(avatarInstance.componentTestId()).toBe('user-avatar-avatar');
       expect(avatarInstance.imageTestId()).toBe('user-avatar-image');
       expect(avatarInstance.indicatorTestId()).toBe('user-avatar-indicator');
       expect(hostElement.getAttribute('data-testid')).toBe('user-avatar-avatar');
     });
 
-    it('returns null when no host attribute is provided', async () => {
-      const { component } = await renderAvatar();
+    it('returns null when no host attribute is provided', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: [provideZonelessChangeDetection()],
+      }).createComponent(Avatar);
+      TestBed.tick();
+      const component = fixture.componentInstance;
+
+      // Assert
       expect(component.componentTestId()).toBeNull();
       expect(component.imageTestId()).toBeNull();
       expect(component.initialsTestId()).toBeNull();
@@ -319,24 +375,43 @@ describe('Avatar', () => {
   });
 
   describe('reactivity', () => {
-    it('updates when inputs change via rerender', async () => {
-      const { rerender, host } = await renderAvatar({
-        inputs: { variant: 'placeholder' },
+    it('updates when inputs change via rerender', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: [provideZonelessChangeDetection()],
+      }).createComponent(Avatar, {
+        bindings: [inputBinding('variant', () => 'placeholder')],
       });
-
+      TestBed.tick();
+      const host = fixture.nativeElement;
       expect(host.querySelector('svg')).toBeTruthy();
 
-      await rerender({ inputs: { variant: 'initials', initials: 'AB' } });
+      // Act
+      fixture.componentRef.setInput('variant', 'initials');
+      fixture.componentRef.setInput('initials', 'AB');
+      TestBed.tick();
 
+      // Assert
       expect(host.querySelector('svg')).toBeNull();
       expect(host.querySelector('span')?.textContent?.trim()).toBe('AB');
     });
 
-    it('handles empty strings across inputs', async () => {
-      const { host } = await renderAvatar({
-        inputs: { variant: 'image', imageSrc: '', imageAlt: '', initials: '' },
+    it('handles empty strings across inputs', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: [provideZonelessChangeDetection()],
+      }).createComponent(Avatar, {
+        bindings: [
+          inputBinding('variant', () => 'image'),
+          inputBinding('imageSrc', () => ''),
+          inputBinding('imageAlt', () => ''),
+          inputBinding('initials', () => ''),
+        ],
       });
+      TestBed.tick();
+      const host = fixture.nativeElement;
 
+      // Assert
       const img = host.querySelector('img');
       expect(img?.getAttribute('src')).toBe('');
       expect(img?.getAttribute('alt')).toBe('');
@@ -344,8 +419,15 @@ describe('Avatar', () => {
   });
 
   describe('accessibility and layout', () => {
-    it('keeps content centered and inline-flex', async () => {
-      const { host } = await renderAvatar();
+    it('keeps content centered and inline-flex', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: [provideZonelessChangeDetection()],
+      }).createComponent(Avatar);
+      TestBed.tick();
+      const host = fixture.nativeElement;
+
+      // Assert
       const container = host.querySelector('.inline-flex');
       expect(container).toBeTruthy();
       expect(container?.classList.contains('items-center')).toBe(true);

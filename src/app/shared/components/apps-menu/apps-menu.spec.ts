@@ -1,13 +1,9 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { describe, it, expect, vi } from 'vitest';
+import { render } from '@testing-library/angular';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { AppsMenuComponent, AppMenuItem } from '@loan/app/shared/components/apps-menu/apps-menu';
 
 describe('AppsMenuComponent', () => {
-  let fixture: ComponentFixture<AppsMenuComponent>;
-  let component: AppsMenuComponent;
-  let host: HTMLElement;
-
   const mockApps: AppMenuItem[] = [
     {
       id: 'sales',
@@ -32,86 +28,83 @@ describe('AppsMenuComponent', () => {
     },
   ];
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [AppsMenuComponent],
-      providers: [
-        provideZonelessChangeDetection(),
-      ],
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(AppsMenuComponent);
-    component = fixture.componentInstance;
-    host = fixture.nativeElement as HTMLElement;
-    fixture.detectChanges();
-  });
+  async function renderComponent(props?: Record<string, unknown>) {
+    return render(AppsMenuComponent, {
+      providers: [provideZonelessChangeDetection()],
+      componentProperties: props,
+    });
+  }
 
   describe('initialization', () => {
-    it('creates the component', () => {
-      expect(component).toBeDefined();
+    it('creates the component', async () => {
+      const { fixture } = await renderComponent();
+      expect(fixture.componentInstance).toBeDefined();
     });
 
-    it('has empty apps array by default', () => {
-      expect(component.apps()).toEqual([]);
+    it('has empty apps array by default', async () => {
+      const { fixture } = await renderComponent();
+      expect(fixture.componentInstance.apps()).toEqual([]);
     });
 
-    it('has default title', () => {
-      expect(component.title()).toBe('Apps');
+    it('has default title', async () => {
+      const { fixture } = await renderComponent();
+      expect(fixture.componentInstance.title()).toBe('Apps');
     });
 
-    it('starts with menu closed', () => {
-      expect(component.isOpen()).toBe(false);
+    it('starts with menu closed', async () => {
+      const { fixture } = await renderComponent();
+      expect(fixture.componentInstance.isOpen()).toBe(false);
     });
 
-    it('renders the apps button', () => {
-      const button = host.querySelector('button');
+    it('renders the apps button', async () => {
+      const { container } = await renderComponent();
+      const button = container.querySelector('button');
       expect(button).toBeTruthy();
       expect(button?.getAttribute('aria-label')).toBe('View apps');
     });
   });
 
   describe('apps input', () => {
-    it('accepts apps array', () => {
-      fixture.componentRef.setInput('apps', mockApps);
-      fixture.detectChanges();
+    it('accepts apps array', async () => {
+      const { fixture } = await renderComponent({ apps: mockApps });
 
-      expect(component.apps()).toEqual(mockApps);
+      expect(fixture.componentInstance.apps()).toEqual(mockApps);
     });
 
-    it('renders all app items when menu is open', () => {
-      fixture.componentRef.setInput('apps', mockApps);
-      component.toggle();
+    it('renders all app items when menu is open', async () => {
+      const { container, fixture } = await renderComponent({ apps: mockApps });
+      fixture.componentInstance.toggle();
       fixture.detectChanges();
 
-      const appLinks = host.querySelectorAll('a[role="menuitem"]');
+      const appLinks = container.querySelectorAll('a[role="menuitem"]');
       expect(appLinks.length).toBe(mockApps.length);
     });
 
-    it('displays app labels correctly', () => {
-      fixture.componentRef.setInput('apps', mockApps);
-      component.toggle();
+    it('displays app labels correctly', async () => {
+      const { container, fixture } = await renderComponent({ apps: mockApps });
+      fixture.componentInstance.toggle();
       fixture.detectChanges();
 
       mockApps.forEach((app) => {
-        expect(host.textContent).toContain(app.label);
+        expect(container.textContent).toContain(app.label);
       });
     });
 
-    it('renders app icons using innerHTML', () => {
-      fixture.componentRef.setInput('apps', mockApps);
-      component.toggle();
+    it('renders app icons using innerHTML', async () => {
+      const { container, fixture } = await renderComponent({ apps: mockApps });
+      fixture.componentInstance.toggle();
       fixture.detectChanges();
 
-      const icons = host.querySelectorAll('div[class*="w-7 h-7"]');
+      const icons = container.querySelectorAll('div[class*="w-7 h-7"]');
       expect(icons.length).toBe(mockApps.length);
     });
 
-    it('sets href on app links', () => {
-      fixture.componentRef.setInput('apps', mockApps);
-      component.toggle();
+    it('sets href on app links', async () => {
+      const { container, fixture } = await renderComponent({ apps: mockApps });
+      fixture.componentInstance.toggle();
       fixture.detectChanges();
 
-      const dropdown = host.querySelector('[role="menu"]');
+      const dropdown = container.querySelector('[role="menu"]');
       const links = dropdown?.querySelectorAll('a[role="menuitem"]');
       expect(links?.length).toBe(mockApps.length);
       links?.forEach((link, index) => {
@@ -119,87 +112,91 @@ describe('AppsMenuComponent', () => {
       });
     });
 
-    it('updates when apps change', () => {
-      fixture.componentRef.setInput('apps', mockApps);
-      component.toggle();
+    it('updates when apps change', async () => {
+      const { container, fixture } = await renderComponent({ apps: mockApps });
+      fixture.componentInstance.toggle();
       fixture.detectChanges();
-      expect(host.querySelectorAll('a[role="menuitem"]').length).toBe(3);
+      expect(container.querySelectorAll('a[role="menuitem"]').length).toBe(3);
 
       const newApps = mockApps.slice(0, 1);
       fixture.componentRef.setInput('apps', newApps);
       fixture.detectChanges();
-      expect(host.querySelectorAll('a[role="menuitem"]').length).toBe(1);
+      expect(container.querySelectorAll('a[role="menuitem"]').length).toBe(1);
     });
   });
 
   describe('title input', () => {
-    it('accepts custom title', () => {
-      fixture.componentRef.setInput('title', 'Applications');
-      fixture.detectChanges();
+    it('accepts custom title', async () => {
+      const { fixture } = await renderComponent({ title: 'Applications' });
 
-      expect(component.title()).toBe('Applications');
+      expect(fixture.componentInstance.title()).toBe('Applications');
     });
 
-    it('displays title in dropdown header', () => {
-      fixture.componentRef.setInput('title', 'My Apps');
-      component.toggle();
+    it('displays title in dropdown header', async () => {
+      const { container, fixture } = await renderComponent({ title: 'My Apps' });
+      fixture.componentInstance.toggle();
       fixture.detectChanges();
 
-      expect(host.textContent).toContain('My Apps');
+      expect(container.textContent).toContain('My Apps');
     });
 
-    it('updates title dynamically', () => {
-      component.toggle();
+    it('updates title dynamically', async () => {
+      const { container, fixture } = await renderComponent();
+      fixture.componentInstance.toggle();
       fixture.detectChanges();
 
       fixture.componentRef.setInput('title', 'First Title');
       fixture.detectChanges();
-      expect(host.textContent).toContain('First Title');
+      expect(container.textContent).toContain('First Title');
 
       fixture.componentRef.setInput('title', 'Second Title');
       fixture.detectChanges();
-      expect(host.textContent).toContain('Second Title');
+      expect(container.textContent).toContain('Second Title');
     });
   });
 
   describe('menu toggle', () => {
-    it('opens menu when toggle is called', () => {
-      expect(component.isOpen()).toBe(false);
+    it('opens menu when toggle is called', async () => {
+      const { fixture } = await renderComponent();
+      expect(fixture.componentInstance.isOpen()).toBe(false);
 
-      component.toggle();
+      fixture.componentInstance.toggle();
 
-      expect(component.isOpen()).toBe(true);
+      expect(fixture.componentInstance.isOpen()).toBe(true);
     });
 
-    it('closes menu when toggle is called again', () => {
-      component.toggle();
-      expect(component.isOpen()).toBe(true);
+    it('closes menu when toggle is called again', async () => {
+      const { fixture } = await renderComponent();
+      fixture.componentInstance.toggle();
+      expect(fixture.componentInstance.isOpen()).toBe(true);
 
-      component.toggle();
-      expect(component.isOpen()).toBe(false);
+      fixture.componentInstance.toggle();
+      expect(fixture.componentInstance.isOpen()).toBe(false);
     });
 
-    it('shows dropdown when menu is open', () => {
-      component.toggle();
+    it('shows dropdown when menu is open', async () => {
+      const { container, fixture } = await renderComponent();
+      fixture.componentInstance.toggle();
       fixture.detectChanges();
 
-      const dropdown = host.querySelector('div[role="menu"]');
+      const dropdown = container.querySelector('div[role="menu"]');
       expect(dropdown).toBeTruthy();
     });
 
-    it('hides dropdown when menu is closed', () => {
-      fixture.detectChanges();
+    it('hides dropdown when menu is closed', async () => {
+      const { container } = await renderComponent();
 
-      const dropdown = host.querySelector('div[role="menu"]');
+      const dropdown = container.querySelector('div[role="menu"]');
       expect(dropdown).toBeFalsy();
     });
 
-    it('sets aria-expanded attribute correctly', () => {
-      const button = host.querySelector('button');
+    it('sets aria-expanded attribute correctly', async () => {
+      const { container, fixture } = await renderComponent();
+      const button = container.querySelector('button');
 
       expect(button?.getAttribute('aria-expanded')).toBe('false');
 
-      component.toggle();
+      fixture.componentInstance.toggle();
       fixture.detectChanges();
 
       expect(button?.getAttribute('aria-expanded')).toBe('true');
@@ -207,71 +204,76 @@ describe('AppsMenuComponent', () => {
   });
 
   describe('close method', () => {
-    it('closes the menu', () => {
-      component.toggle();
-      expect(component.isOpen()).toBe(true);
+    it('closes the menu', async () => {
+      const { fixture } = await renderComponent();
+      fixture.componentInstance.toggle();
+      expect(fixture.componentInstance.isOpen()).toBe(true);
 
-      component.close();
+      fixture.componentInstance.close();
 
-      expect(component.isOpen()).toBe(false);
+      expect(fixture.componentInstance.isOpen()).toBe(false);
     });
 
-    it('sets menu to closed state explicitly', () => {
-      component.isOpen.set(true);
+    it('sets menu to closed state explicitly', async () => {
+      const { fixture } = await renderComponent();
+      fixture.componentInstance.isOpen.set(true);
 
-      component.close();
+      fixture.componentInstance.close();
 
-      expect(component.isOpen()).toBe(false);
+      expect(fixture.componentInstance.isOpen()).toBe(false);
     });
   });
 
   describe('appClick output', () => {
-    it('emits app when clicked', () => {
-      fixture.componentRef.setInput('apps', mockApps);
-      component.toggle();
+    it('emits app when clicked', async () => {
+      const { fixture } = await renderComponent({ apps: mockApps });
+      fixture.componentInstance.toggle();
       fixture.detectChanges();
 
-      const emitSpy = vi.spyOn(component.appClick, 'emit');
+      const emitSpy = vi.spyOn(fixture.componentInstance.appClick, 'emit');
       const event = new Event('click');
 
-      component.onAppClick(mockApps[0], event);
+      fixture.componentInstance.onAppClick(mockApps[0], event);
 
       expect(emitSpy).toHaveBeenCalledWith(mockApps[0]);
     });
 
-    it('prevents default event', () => {
+    it('prevents default event', async () => {
+      const { fixture } = await renderComponent();
       const event = new Event('click');
       const preventDefaultSpy = vi.spyOn(event, 'preventDefault');
 
-      component.onAppClick(mockApps[0], event);
+      fixture.componentInstance.onAppClick(mockApps[0], event);
 
       expect(preventDefaultSpy).toHaveBeenCalled();
     });
 
-    it('closes menu after app click', () => {
-      component.toggle();
-      expect(component.isOpen()).toBe(true);
+    it('closes menu after app click', async () => {
+      const { fixture } = await renderComponent();
+      fixture.componentInstance.toggle();
+      expect(fixture.componentInstance.isOpen()).toBe(true);
 
-      component.onAppClick(mockApps[0], new Event('click'));
+      fixture.componentInstance.onAppClick(mockApps[0], new Event('click'));
 
-      expect(component.isOpen()).toBe(false);
+      expect(fixture.componentInstance.isOpen()).toBe(false);
     });
 
-    it('emits correct app data', () => {
-      fixture.componentRef.setInput('apps', mockApps);
-      const emitSpy = vi.spyOn(component.appClick, 'emit');
+    it('emits correct app data', async () => {
+      const { fixture } = await renderComponent({ apps: mockApps });
+      const emitSpy = vi.spyOn(fixture.componentInstance.appClick, 'emit');
 
       mockApps.forEach((app) => {
-        component.onAppClick(app, new Event('click'));
+        fixture.componentInstance.onAppClick(app, new Event('click'));
         expect(emitSpy).toHaveBeenCalledWith(app);
       });
     });
   });
 
   describe('click outside to close', () => {
-    it('closes menu when clicking outside', () => {
-      component.toggle();
-      expect(component.isOpen()).toBe(true);
+    it('closes menu when clicking outside', async () => {
+      const { fixture } = await renderComponent();
+      fixture.componentInstance.toggle();
+      expect(fixture.componentInstance.isOpen()).toBe(true);
 
       const outsideElement = document.createElement('div');
       document.body.appendChild(outsideElement);
@@ -282,18 +284,19 @@ describe('AppsMenuComponent', () => {
       });
       outsideElement.dispatchEvent(clickEvent);
 
-      component.onDocumentClick(clickEvent);
+      fixture.componentInstance.onDocumentClick(clickEvent);
 
-      expect(component.isOpen()).toBe(false);
+      expect(fixture.componentInstance.isOpen()).toBe(false);
 
       document.body.removeChild(outsideElement);
     });
 
-    it('does not close menu when clicking inside', () => {
-      component.toggle();
+    it('does not close menu when clicking inside', async () => {
+      const { container, fixture } = await renderComponent();
+      fixture.componentInstance.toggle();
       fixture.detectChanges();
 
-      const button = host.querySelector('button') as HTMLButtonElement;
+      const button = container.querySelector('button') as HTMLButtonElement;
       const clickEvent = new MouseEvent('click', {
         bubbles: true,
         cancelable: true,
@@ -304,13 +307,14 @@ describe('AppsMenuComponent', () => {
         writable: false,
       });
 
-      component.onDocumentClick(clickEvent);
+      fixture.componentInstance.onDocumentClick(clickEvent);
 
-      expect(component.isOpen()).toBe(true);
+      expect(fixture.componentInstance.isOpen()).toBe(true);
     });
 
-    it('does nothing when menu is already closed', () => {
-      expect(component.isOpen()).toBe(false);
+    it('does nothing when menu is already closed', async () => {
+      const { fixture } = await renderComponent();
+      expect(fixture.componentInstance.isOpen()).toBe(false);
 
       const outsideElement = document.createElement('div');
       const clickEvent = new MouseEvent('click');
@@ -319,113 +323,120 @@ describe('AppsMenuComponent', () => {
         writable: false,
       });
 
-      component.onDocumentClick(clickEvent);
+      fixture.componentInstance.onDocumentClick(clickEvent);
 
-      expect(component.isOpen()).toBe(false);
+      expect(fixture.componentInstance.isOpen()).toBe(false);
     });
   });
 
   describe('keyboard navigation', () => {
-    it('closes menu on Escape key', () => {
-      component.toggle();
-      expect(component.isOpen()).toBe(true);
+    it('closes menu on Escape key', async () => {
+      const { fixture } = await renderComponent();
+      fixture.componentInstance.toggle();
+      expect(fixture.componentInstance.isOpen()).toBe(true);
 
-      component.onEscapeKey();
+      fixture.componentInstance.onEscapeKey();
 
-      expect(component.isOpen()).toBe(false);
+      expect(fixture.componentInstance.isOpen()).toBe(false);
     });
 
-    it('does nothing on Escape when menu is closed', () => {
-      expect(component.isOpen()).toBe(false);
+    it('does nothing on Escape when menu is closed', async () => {
+      const { fixture } = await renderComponent();
+      expect(fixture.componentInstance.isOpen()).toBe(false);
 
-      component.onEscapeKey();
+      fixture.componentInstance.onEscapeKey();
 
-      expect(component.isOpen()).toBe(false);
+      expect(fixture.componentInstance.isOpen()).toBe(false);
     });
   });
 
   describe('accessibility', () => {
-    it('sets correct ARIA attributes on button', () => {
-      const button = host.querySelector('button');
+    it('sets correct ARIA attributes on button', async () => {
+      const { container } = await renderComponent();
+      const button = container.querySelector('button');
 
       expect(button?.getAttribute('aria-label')).toBe('View apps');
       expect(button?.getAttribute('aria-haspopup')).toBe('true');
     });
 
-    it('sets role="menu" on dropdown', () => {
-      component.toggle();
+    it('sets role="menu" on dropdown', async () => {
+      const { container, fixture } = await renderComponent();
+      fixture.componentInstance.toggle();
       fixture.detectChanges();
 
-      const dropdown = host.querySelector('div[role="menu"]');
+      const dropdown = container.querySelector('div[role="menu"]');
       expect(dropdown).toBeTruthy();
     });
 
-    it('sets aria-label on dropdown from title', () => {
-      fixture.componentRef.setInput('title', 'My Applications');
-      component.toggle();
+    it('sets aria-label on dropdown from title', async () => {
+      const { container, fixture } = await renderComponent({ title: 'My Applications' });
+      fixture.componentInstance.toggle();
       fixture.detectChanges();
 
-      const dropdown = host.querySelector('div[role="menu"]');
+      const dropdown = container.querySelector('div[role="menu"]');
       expect(dropdown?.getAttribute('aria-label')).toBe('My Applications');
     });
 
-    it('sets role="menuitem" on each app link', () => {
-      fixture.componentRef.setInput('apps', mockApps);
-      component.toggle();
+    it('sets role="menuitem" on each app link', async () => {
+      const { container, fixture } = await renderComponent({ apps: mockApps });
+      fixture.componentInstance.toggle();
       fixture.detectChanges();
 
-      const menuItems = host.querySelectorAll('a[role="menuitem"]');
+      const menuItems = container.querySelectorAll('a[role="menuitem"]');
       expect(menuItems.length).toBe(mockApps.length);
     });
 
-    it('sets aria-label on each app link', () => {
-      fixture.componentRef.setInput('apps', mockApps);
-      component.toggle();
+    it('sets aria-label on each app link', async () => {
+      const { container, fixture } = await renderComponent({ apps: mockApps });
+      fixture.componentInstance.toggle();
       fixture.detectChanges();
 
-      const links = host.querySelectorAll('a[role="menuitem"]');
+      const links = container.querySelectorAll('a[role="menuitem"]');
       links.forEach((link, index) => {
         expect(link.getAttribute('aria-label')).toBe(mockApps[index].label);
       });
     });
 
-    it('hides icon SVG from screen readers', () => {
-      const button = host.querySelector('button svg');
+    it('hides icon SVG from screen readers', async () => {
+      const { container } = await renderComponent();
+      const button = container.querySelector('button svg');
       expect(button?.getAttribute('aria-hidden')).toBeNull();
     });
   });
 
   describe('styling', () => {
-    it('applies grid layout for apps', () => {
-      fixture.componentRef.setInput('apps', mockApps);
-      component.toggle();
+    it('applies grid layout for apps', async () => {
+      const { container, fixture } = await renderComponent({ apps: mockApps });
+      fixture.componentInstance.toggle();
       fixture.detectChanges();
 
-      const grid = host.querySelector('.grid-cols-3');
+      const grid = container.querySelector('.grid-cols-3');
       expect(grid).toBeTruthy();
     });
 
-    it('applies correct button styles', () => {
-      const button = host.querySelector('button');
+    it('applies correct button styles', async () => {
+      const { container } = await renderComponent();
+      const button = container.querySelector('button');
       expect(button?.className).toContain('rounded-lg');
       expect(button?.className).toContain('hover:bg-bg-secondary');
     });
 
-    it('positions dropdown absolutely', () => {
-      component.toggle();
+    it('positions dropdown absolutely', async () => {
+      const { container, fixture } = await renderComponent();
+      fixture.componentInstance.toggle();
       fixture.detectChanges();
 
-      const dropdown = host.querySelector('div[role="menu"]') as HTMLElement;
+      const dropdown = container.querySelector('div[role="menu"]') as HTMLElement;
       expect(dropdown?.className).toContain('absolute');
       expect(dropdown?.className).toContain('right-0');
     });
 
-    it('applies hover styles to app items', () => {
-      fixture.componentRef.setInput('apps', mockApps);
-      component.toggle();
+    it('applies hover styles to app items', async () => {
+      const { container, fixture } = await renderComponent({ apps: mockApps });
+      fixture.componentInstance.toggle();
       fixture.detectChanges();
 
-      const links = host.querySelectorAll('a[role="menuitem"]');
+      const links = container.querySelectorAll('a[role="menuitem"]');
       links.forEach((link) => {
         expect(link.className).toContain('hover:bg-bg-secondary');
         expect(link.className).toContain('group');
@@ -434,102 +445,107 @@ describe('AppsMenuComponent', () => {
   });
 
   describe('edge cases', () => {
-    it('handles empty apps array', () => {
-      fixture.componentRef.setInput('apps', []);
-      component.toggle();
+    it('handles empty apps array', async () => {
+      const { container, fixture } = await renderComponent({ apps: [] });
+      fixture.componentInstance.toggle();
       fixture.detectChanges();
 
-      const appLinks = host.querySelectorAll('a[role="menuitem"]');
+      const appLinks = container.querySelectorAll('a[role="menuitem"]');
       expect(appLinks.length).toBe(0);
     });
 
-    it('handles app with missing href', () => {
+    it('handles app with missing href', async () => {
       const appWithoutHref = [{ ...mockApps[0], href: undefined }];
-      fixture.componentRef.setInput('apps', appWithoutHref);
-      component.toggle();
+      const { container, fixture } = await renderComponent({ apps: appWithoutHref });
+      fixture.componentInstance.toggle();
       fixture.detectChanges();
 
-      const link = host.querySelector('a[role="menuitem"]');
+      const link = container.querySelector('a[role="menuitem"]');
       expect(link?.getAttribute('href')).toBe('#');
     });
 
-    it('handles app with empty icon', () => {
+    it('handles app with empty icon', async () => {
       const appWithEmptyIcon = [{ ...mockApps[0], icon: '' }];
-      fixture.componentRef.setInput('apps', appWithEmptyIcon);
-      component.toggle();
+      const { container, fixture } = await renderComponent({ apps: appWithEmptyIcon });
+      fixture.componentInstance.toggle();
       fixture.detectChanges();
 
-      expect(host.textContent).toContain(mockApps[0].label);
+      expect(container.textContent).toContain(mockApps[0].label);
     });
 
-    it('handles special characters in labels', () => {
+    it('handles special characters in labels', async () => {
       const specialApp = [
         {
           ...mockApps[0],
           label: 'Reports & Analytics',
         },
       ];
-      fixture.componentRef.setInput('apps', specialApp);
-      component.toggle();
+      const { container, fixture } = await renderComponent({ apps: specialApp });
+      fixture.componentInstance.toggle();
       fixture.detectChanges();
 
-      expect(host.textContent).toContain('Reports & Analytics');
+      expect(container.textContent).toContain('Reports & Analytics');
     });
 
-    it('handles rapid toggle clicks', () => {
+    it('handles rapid toggle clicks', async () => {
+      const { fixture } = await renderComponent();
       for (let i = 0; i < 10; i++) {
-        component.toggle();
+        fixture.componentInstance.toggle();
       }
 
-      expect(component.isOpen()).toBe(false);
+      expect(fixture.componentInstance.isOpen()).toBe(false);
     });
 
-    it('handles multiple app clicks', () => {
-      fixture.componentRef.setInput('apps', mockApps);
-      const emitSpy = vi.spyOn(component.appClick, 'emit');
+    it('handles multiple app clicks', async () => {
+      const { fixture } = await renderComponent({ apps: mockApps });
+      const emitSpy = vi.spyOn(fixture.componentInstance.appClick, 'emit');
 
       mockApps.forEach((app) => {
-        component.toggle();
-        component.onAppClick(app, new Event('click'));
+        fixture.componentInstance.toggle();
+        fixture.componentInstance.onAppClick(app, new Event('click'));
       });
 
       expect(emitSpy).toHaveBeenCalledTimes(mockApps.length);
-      expect(component.isOpen()).toBe(false);
+      expect(fixture.componentInstance.isOpen()).toBe(false);
     });
 
-    it('maintains state after component re-renders', () => {
-      component.toggle();
+    it('maintains state after component re-renders', async () => {
+      const { fixture } = await renderComponent();
+      fixture.componentInstance.toggle();
       fixture.detectChanges();
 
-      expect(component.isOpen()).toBe(true);
+      expect(fixture.componentInstance.isOpen()).toBe(true);
 
       fixture.detectChanges();
-      expect(component.isOpen()).toBe(true);
+      expect(fixture.componentInstance.isOpen()).toBe(true);
     });
   });
 
   describe('dropdown positioning', () => {
-    it('positions dropdown to the right', () => {
-      component.toggle();
+    it('positions dropdown to the right', async () => {
+      const { container, fixture } = await renderComponent();
+      fixture.componentInstance.toggle();
       fixture.detectChanges();
 
-      const dropdown = host.querySelector('div[role="menu"]') as HTMLElement;
+      const dropdown = container.querySelector('div[role="menu"]') as HTMLElement;
       expect(dropdown.className).toContain('right-0');
     });
 
-    it('positions dropdown below button', () => {
-      component.toggle();
+    it('positions dropdown below button', async () => {
+      const { container, fixture } = await renderComponent();
+      fixture.componentInstance.toggle();
       fixture.detectChanges();
 
-      const dropdown = host.querySelector('div[role="menu"]') as HTMLElement;
+      const dropdown = container.querySelector('div[role="menu"]') as HTMLElement;
       expect(dropdown.className).toContain('top-full');
     });
 
-    it('has correct z-index for layering', () => {
-      component.toggle();
+    it('has correct z-index for layering', async () => {
+      const { container, fixture } = await renderComponent();
+      fixture.componentInstance.toggle();
       fixture.detectChanges();
 
-      const dropdown = host.querySelector('div[role="menu"]') as HTMLElement;
+      const dropdown = container.querySelector('div[role="menu"]') as HTMLElement;
       expect(dropdown.className).toContain('z-50');
     });
   });

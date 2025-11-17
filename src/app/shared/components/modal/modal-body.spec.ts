@@ -1,39 +1,38 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
+import { render } from '@testing-library/angular';
 import { ModalBody } from './modal-body';
 
-describe('ModalBody', () => {
-  let fixture: ComponentFixture<ModalBody>;
-  let component: ModalBody;
-
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [ModalBody],
-      providers: [provideZonelessChangeDetection()],
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(ModalBody);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+const setupModalBody = async () => {
+  const { fixture, component } = await render(ModalBody, {
+    providers: [provideZonelessChangeDetection()],
   });
 
-  it('should create', () => {
+  return { fixture, component };
+};
+
+describe('ModalBody', () => {
+  it('should create', async () => {
+    const { component } = await setupModalBody();
     expect(component).toBeTruthy();
   });
 
-  it('should render body with correct styles', () => {
+  it('should render body with correct styles', async () => {
+    const { fixture } = await setupModalBody();
     const body = fixture.nativeElement.querySelector('div');
     expect(body.className).toContain('p-4');
     expect(body.className).toContain('md:p-5');
     expect(body.className).toContain('space-y-4');
   });
 
-  it('should project content', () => {
-    const testContent = 'Test body content';
-    const testFixture = TestBed.createComponent(ModalBody);
-    testFixture.nativeElement.innerHTML = testContent;
-    testFixture.detectChanges();
+  it('should project content', async () => {
+    const { fixture } = await render(ModalBody, {
+      providers: [provideZonelessChangeDetection()],
+    });
 
-    expect(testFixture.nativeElement.textContent).toContain('');
+    const testContent = 'Test body content';
+    fixture.nativeElement.innerHTML = `<p>${testContent}</p>`;
+    await fixture.whenStable();
+
+    expect(fixture.nativeElement.textContent).toContain(testContent);
   });
 });

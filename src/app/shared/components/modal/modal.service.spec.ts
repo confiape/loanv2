@@ -15,10 +15,8 @@ class TestComponent {}
 type DialogSpy = Pick<Dialog, 'open' | 'closeAll'>;
 
 describe('ModalService', () => {
-  let service: ModalService;
-  let dialog: DialogSpy;
-
-  beforeEach(() => {
+  it('should be created', () => {
+    // Arrange
     const dialogSpy: DialogSpy = {
       open: vi.fn(),
       closeAll: vi.fn(),
@@ -33,23 +31,41 @@ describe('ModalService', () => {
       ],
     });
 
-    service = TestBed.inject(ModalService);
-    dialog = TestBed.inject(Dialog);
-  });
+    const service = TestBed.inject(ModalService);
 
-  it('should be created', () => {
+    // Act & Assert
     expect(service).toBeTruthy();
   });
 
   it('should open a modal with custom component', () => {
+    // Arrange
+    const dialogSpy: DialogSpy = {
+      open: vi.fn(),
+      closeAll: vi.fn(),
+    };
+
+    TestBed.configureTestingModule({
+      imports: [DialogModule],
+      providers: [
+        provideZonelessChangeDetection(),
+        ModalService,
+        { provide: Dialog, useValue: dialogSpy },
+      ],
+    });
+
+    const service = TestBed.inject(ModalService);
+    const dialog = TestBed.inject(Dialog);
+
     const config = {
       size: 'lg' as const,
       dismissible: true,
       testId: 'test-modal',
     };
 
+    // Act
     service.open(TestComponent, config);
 
+    // Assert
     expect(dialog.open).toHaveBeenCalledWith(
       TestComponent,
       expect.objectContaining({
@@ -61,6 +77,24 @@ describe('ModalService', () => {
   });
 
   it('should open a simple modal with title and content', () => {
+    // Arrange
+    const dialogSpy: DialogSpy = {
+      open: vi.fn(),
+      closeAll: vi.fn(),
+    };
+
+    TestBed.configureTestingModule({
+      imports: [DialogModule],
+      providers: [
+        provideZonelessChangeDetection(),
+        ModalService,
+        { provide: Dialog, useValue: dialogSpy },
+      ],
+    });
+
+    const service = TestBed.inject(ModalService);
+    const dialog = TestBed.inject(Dialog);
+
     const config = {
       title: 'Test Title',
       content: 'Test content',
@@ -69,8 +103,6 @@ describe('ModalService', () => {
       testId: 'simple-modal',
     };
 
-    service.openSimple(config);
-
     const expectedData: ModalData = {
       title: 'Test Title',
       content: 'Test content',
@@ -78,6 +110,10 @@ describe('ModalService', () => {
       testId: 'simple-modal',
     };
 
+    // Act
+    service.openSimple(config);
+
+    // Assert
     expect(dialog.open).toHaveBeenCalledWith(
       Modal,
       expect.objectContaining({
@@ -90,13 +126,33 @@ describe('ModalService', () => {
   });
 
   it('should disable close when dismissible is false', () => {
+    // Arrange
+    const dialogSpy: DialogSpy = {
+      open: vi.fn(),
+      closeAll: vi.fn(),
+    };
+
+    TestBed.configureTestingModule({
+      imports: [DialogModule],
+      providers: [
+        provideZonelessChangeDetection(),
+        ModalService,
+        { provide: Dialog, useValue: dialogSpy },
+      ],
+    });
+
+    const service = TestBed.inject(ModalService);
+    const dialog = TestBed.inject(Dialog);
+
     const config = {
       size: 'sm' as const,
       dismissible: false,
     };
 
+    // Act
     service.open(TestComponent, config);
 
+    // Assert
     expect(dialog.open).toHaveBeenCalledWith(
       TestComponent,
       expect.objectContaining({
@@ -106,13 +162,54 @@ describe('ModalService', () => {
   });
 
   it('should close all modals', () => {
+    // Arrange
+    const dialogSpy: DialogSpy = {
+      open: vi.fn(),
+      closeAll: vi.fn(),
+    };
+
+    TestBed.configureTestingModule({
+      imports: [DialogModule],
+      providers: [
+        provideZonelessChangeDetection(),
+        ModalService,
+        { provide: Dialog, useValue: dialogSpy },
+      ],
+    });
+
+    const service = TestBed.inject(ModalService);
+    const dialog = TestBed.inject(Dialog);
+
+    // Act
     service.closeAll();
+
+    // Assert
     expect(dialog.closeAll).toHaveBeenCalled();
   });
 
   it('should handle config without optional properties', () => {
+    // Arrange
+    const dialogSpy: DialogSpy = {
+      open: vi.fn(),
+      closeAll: vi.fn(),
+    };
+
+    TestBed.configureTestingModule({
+      imports: [DialogModule],
+      providers: [
+        provideZonelessChangeDetection(),
+        ModalService,
+        { provide: Dialog, useValue: dialogSpy },
+      ],
+    });
+
+    const service = TestBed.inject(ModalService);
+    const dialog = TestBed.inject(Dialog);
+
+    // Act
     service.open(TestComponent);
 
+    // Assert
     expect(dialog.open).toHaveBeenCalledWith(
       TestComponent,
       expect.objectContaining({

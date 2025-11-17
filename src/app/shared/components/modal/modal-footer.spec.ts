@@ -1,27 +1,23 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
+import { render } from '@testing-library/angular';
 import { ModalFooter } from './modal-footer';
 
-describe('ModalFooter', () => {
-  let fixture: ComponentFixture<ModalFooter>;
-  let component: ModalFooter;
-
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [ModalFooter],
-      providers: [provideZonelessChangeDetection()],
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(ModalFooter);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+const setupModalFooter = async () => {
+  const { fixture, component } = await render(ModalFooter, {
+    providers: [provideZonelessChangeDetection()],
   });
 
-  it('should create', () => {
+  return { fixture, component };
+};
+
+describe('ModalFooter', () => {
+  it('should create', async () => {
+    const { component } = await setupModalFooter();
     expect(component).toBeTruthy();
   });
 
-  it('should render footer with correct styles', () => {
+  it('should render footer with correct styles', async () => {
+    const { fixture } = await setupModalFooter();
     const footer = fixture.nativeElement.querySelector('div');
     expect(footer.className).toContain('flex');
     expect(footer.className).toContain('items-center');
@@ -29,7 +25,8 @@ describe('ModalFooter', () => {
     expect(footer.className).toContain('rounded-b');
   });
 
-  it('should have border and padding classes', () => {
+  it('should have border and padding classes', async () => {
+    const { fixture } = await setupModalFooter();
     const footer = fixture.nativeElement.querySelector('div');
     expect(footer.className).toContain('p-4');
     expect(footer.className).toContain('md:p-5');

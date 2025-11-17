@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { Router } from '@angular/router';
@@ -8,37 +8,22 @@ import { AuthService } from '@loan/app/core/services/auth.service';
 import { firstValueFrom } from 'rxjs';
 
 describe('loginGuard', () => {
-  let mockAuthService: {
-    getToken: ReturnType<typeof vi.fn>;
-    checkAuthentication: ReturnType<typeof vi.fn>;
-  };
-  let mockRouter: {
-    navigate: ReturnType<typeof vi.fn>;
-  };
-
-  beforeEach(() => {
-    mockAuthService = {
-      getToken: vi.fn(),
-      checkAuthentication: vi.fn(),
-    };
-
-    mockRouter = {
-      navigate: vi.fn(),
-    };
-
-    TestBed.configureTestingModule({
-      providers: [
-        provideZonelessChangeDetection(),
-        { provide: AuthService, useValue: mockAuthService },
-        { provide: Router, useValue: mockRouter },
-      ],
-    });
-  });
-
   describe('when user has a token', () => {
     it('redirects to dashboard and returns false', () => {
       // Arrange
-      mockAuthService.getToken.mockReturnValue('valid-token');
+      const mockAuthService = {
+        getToken: vi.fn(() => 'valid-token'),
+        checkAuthentication: vi.fn(),
+      };
+      const mockRouter = { navigate: vi.fn() };
+
+      TestBed.configureTestingModule({
+        providers: [
+          provideZonelessChangeDetection(),
+          { provide: AuthService, useValue: mockAuthService },
+          { provide: Router, useValue: mockRouter },
+        ],
+      });
 
       // Act
       const result = TestBed.runInInjectionContext(() => loginGuard({} as any, {} as any));
@@ -52,7 +37,19 @@ describe('loginGuard', () => {
 
     it('does not call checkAuthentication if token exists', () => {
       // Arrange
-      mockAuthService.getToken.mockReturnValue('some-token-123');
+      const mockAuthService = {
+        getToken: vi.fn(() => 'some-token-123'),
+        checkAuthentication: vi.fn(),
+      };
+      const mockRouter = { navigate: vi.fn() };
+
+      TestBed.configureTestingModule({
+        providers: [
+          provideZonelessChangeDetection(),
+          { provide: AuthService, useValue: mockAuthService },
+          { provide: Router, useValue: mockRouter },
+        ],
+      });
 
       // Act
       TestBed.runInInjectionContext(() => loginGuard({} as any, {} as any));
@@ -65,8 +62,19 @@ describe('loginGuard', () => {
   describe('when user does not have a token', () => {
     it('checks authentication status with API', async () => {
       // Arrange
-      mockAuthService.getToken.mockReturnValue(null);
-      mockAuthService.checkAuthentication.mockReturnValue(of(false));
+      const mockAuthService = {
+        getToken: vi.fn(() => null),
+        checkAuthentication: vi.fn(() => of(false)),
+      };
+      const mockRouter = { navigate: vi.fn() };
+
+      TestBed.configureTestingModule({
+        providers: [
+          provideZonelessChangeDetection(),
+          { provide: AuthService, useValue: mockAuthService },
+          { provide: Router, useValue: mockRouter },
+        ],
+      });
 
       // Act
       const result = TestBed.runInInjectionContext(() => loginGuard({} as any, {} as any));
@@ -84,8 +92,19 @@ describe('loginGuard', () => {
 
     it('allows access to login page when user is not authenticated', async () => {
       // Arrange
-      mockAuthService.getToken.mockReturnValue(null);
-      mockAuthService.checkAuthentication.mockReturnValue(of(false));
+      const mockAuthService = {
+        getToken: vi.fn(() => null),
+        checkAuthentication: vi.fn(() => of(false)),
+      };
+      const mockRouter = { navigate: vi.fn() };
+
+      TestBed.configureTestingModule({
+        providers: [
+          provideZonelessChangeDetection(),
+          { provide: AuthService, useValue: mockAuthService },
+          { provide: Router, useValue: mockRouter },
+        ],
+      });
 
       // Act
       const result = TestBed.runInInjectionContext(() => loginGuard({} as any, {} as any));
@@ -100,8 +119,19 @@ describe('loginGuard', () => {
 
     it('redirects to dashboard when API confirms authentication', async () => {
       // Arrange
-      mockAuthService.getToken.mockReturnValue(null);
-      mockAuthService.checkAuthentication.mockReturnValue(of(true));
+      const mockAuthService = {
+        getToken: vi.fn(() => null),
+        checkAuthentication: vi.fn(() => of(true)),
+      };
+      const mockRouter = { navigate: vi.fn() };
+
+      TestBed.configureTestingModule({
+        providers: [
+          provideZonelessChangeDetection(),
+          { provide: AuthService, useValue: mockAuthService },
+          { provide: Router, useValue: mockRouter },
+        ],
+      });
 
       // Act
       const result = TestBed.runInInjectionContext(() => loginGuard({} as any, {} as any));
@@ -118,10 +148,19 @@ describe('loginGuard', () => {
   describe('error handling', () => {
     it('allows access to login page when authentication check fails', async () => {
       // Arrange
-      mockAuthService.getToken.mockReturnValue(null);
-      mockAuthService.checkAuthentication.mockReturnValue(
-        throwError(() => new Error('Network error')),
-      );
+      const mockAuthService = {
+        getToken: vi.fn(() => null),
+        checkAuthentication: vi.fn(() => throwError(() => new Error('Network error'))),
+      };
+      const mockRouter = { navigate: vi.fn() };
+
+      TestBed.configureTestingModule({
+        providers: [
+          provideZonelessChangeDetection(),
+          { provide: AuthService, useValue: mockAuthService },
+          { provide: Router, useValue: mockRouter },
+        ],
+      });
 
       // Act
       const result = TestBed.runInInjectionContext(() => loginGuard({} as any, {} as any));
@@ -136,10 +175,19 @@ describe('loginGuard', () => {
 
     it('handles API errors gracefully', async () => {
       // Arrange
-      mockAuthService.getToken.mockReturnValue(null);
-      mockAuthService.checkAuthentication.mockReturnValue(
-        throwError(() => new Error('API unavailable')),
-      );
+      const mockAuthService = {
+        getToken: vi.fn(() => null),
+        checkAuthentication: vi.fn(() => throwError(() => new Error('API unavailable'))),
+      };
+      const mockRouter = { navigate: vi.fn() };
+
+      TestBed.configureTestingModule({
+        providers: [
+          provideZonelessChangeDetection(),
+          { provide: AuthService, useValue: mockAuthService },
+          { provide: Router, useValue: mockRouter },
+        ],
+      });
 
       // Act
       const result = TestBed.runInInjectionContext(() => loginGuard({} as any, {} as any));
@@ -153,10 +201,19 @@ describe('loginGuard', () => {
 
     it('handles timeout errors', async () => {
       // Arrange
-      mockAuthService.getToken.mockReturnValue(null);
-      mockAuthService.checkAuthentication.mockReturnValue(
-        throwError(() => new Error('Timeout')),
-      );
+      const mockAuthService = {
+        getToken: vi.fn(() => null),
+        checkAuthentication: vi.fn(() => throwError(() => new Error('Timeout'))),
+      };
+      const mockRouter = { navigate: vi.fn() };
+
+      TestBed.configureTestingModule({
+        providers: [
+          provideZonelessChangeDetection(),
+          { provide: AuthService, useValue: mockAuthService },
+          { provide: Router, useValue: mockRouter },
+        ],
+      });
 
       // Act
       const result = TestBed.runInInjectionContext(() => loginGuard({} as any, {} as any));
@@ -172,14 +229,24 @@ describe('loginGuard', () => {
   describe('edge cases', () => {
     it('handles empty string token as no token', async () => {
       // Arrange
-      mockAuthService.getToken.mockReturnValue('');
-      mockAuthService.checkAuthentication.mockReturnValue(of(false));
+      const mockAuthService = {
+        getToken: vi.fn(() => ''),
+        checkAuthentication: vi.fn(() => of(false)),
+      };
+      const mockRouter = { navigate: vi.fn() };
+
+      TestBed.configureTestingModule({
+        providers: [
+          provideZonelessChangeDetection(),
+          { provide: AuthService, useValue: mockAuthService },
+          { provide: Router, useValue: mockRouter },
+        ],
+      });
 
       // Act
       const result = TestBed.runInInjectionContext(() => loginGuard({} as any, {} as any));
 
       // Assert
-      // Empty string is falsy, so should check authentication
       if (result instanceof Observable) {
         const canActivate = await firstValueFrom(result);
         expect(mockAuthService.checkAuthentication).toHaveBeenCalled();
@@ -189,10 +256,21 @@ describe('loginGuard', () => {
 
     it('handles whitespace-only token as no token', async () => {
       // Arrange
-      mockAuthService.getToken.mockReturnValue('   ');
-      mockAuthService.checkAuthentication.mockReturnValue(of(false));
+      const mockAuthService = {
+        getToken: vi.fn(() => '   '),
+        checkAuthentication: vi.fn(() => of(false)),
+      };
+      const mockRouter = { navigate: vi.fn() };
 
-      // Act - whitespace is truthy, so should redirect immediately
+      TestBed.configureTestingModule({
+        providers: [
+          provideZonelessChangeDetection(),
+          { provide: AuthService, useValue: mockAuthService },
+          { provide: Router, useValue: mockRouter },
+        ],
+      });
+
+      // Act
       const result = TestBed.runInInjectionContext(() => loginGuard({} as any, {} as any));
 
       // Assert
@@ -202,7 +280,19 @@ describe('loginGuard', () => {
 
     it('returns correct type when token exists', () => {
       // Arrange
-      mockAuthService.getToken.mockReturnValue('token');
+      const mockAuthService = {
+        getToken: vi.fn(() => 'token'),
+        checkAuthentication: vi.fn(),
+      };
+      const mockRouter = { navigate: vi.fn() };
+
+      TestBed.configureTestingModule({
+        providers: [
+          provideZonelessChangeDetection(),
+          { provide: AuthService, useValue: mockAuthService },
+          { provide: Router, useValue: mockRouter },
+        ],
+      });
 
       // Act
       const result = TestBed.runInInjectionContext(() => loginGuard({} as any, {} as any));
@@ -213,8 +303,19 @@ describe('loginGuard', () => {
 
     it('returns Observable when no token exists', () => {
       // Arrange
-      mockAuthService.getToken.mockReturnValue(null);
-      mockAuthService.checkAuthentication.mockReturnValue(of(true));
+      const mockAuthService = {
+        getToken: vi.fn(() => null),
+        checkAuthentication: vi.fn(() => of(true)),
+      };
+      const mockRouter = { navigate: vi.fn() };
+
+      TestBed.configureTestingModule({
+        providers: [
+          provideZonelessChangeDetection(),
+          { provide: AuthService, useValue: mockAuthService },
+          { provide: Router, useValue: mockRouter },
+        ],
+      });
 
       // Act
       const result = TestBed.runInInjectionContext(() => loginGuard({} as any, {} as any));
@@ -227,7 +328,19 @@ describe('loginGuard', () => {
   describe('multiple guard invocations', () => {
     it('consistently returns false when token exists', () => {
       // Arrange
-      mockAuthService.getToken.mockReturnValue('token');
+      const mockAuthService = {
+        getToken: vi.fn(() => 'token'),
+        checkAuthentication: vi.fn(),
+      };
+      const mockRouter = { navigate: vi.fn() };
+
+      TestBed.configureTestingModule({
+        providers: [
+          provideZonelessChangeDetection(),
+          { provide: AuthService, useValue: mockAuthService },
+          { provide: Router, useValue: mockRouter },
+        ],
+      });
 
       // Act & Assert
       for (let i = 0; i < 3; i++) {
@@ -238,8 +351,19 @@ describe('loginGuard', () => {
 
     it('invokes authentication check each time when no token', async () => {
       // Arrange
-      mockAuthService.getToken.mockReturnValue(null);
-      mockAuthService.checkAuthentication.mockReturnValue(of(false));
+      const mockAuthService = {
+        getToken: vi.fn(() => null),
+        checkAuthentication: vi.fn(() => of(false)),
+      };
+      const mockRouter = { navigate: vi.fn() };
+
+      TestBed.configureTestingModule({
+        providers: [
+          provideZonelessChangeDetection(),
+          { provide: AuthService, useValue: mockAuthService },
+          { provide: Router, useValue: mockRouter },
+        ],
+      });
 
       // Act
       for (let i = 0; i < 3; i++) {
@@ -256,21 +380,44 @@ describe('loginGuard', () => {
 
   describe('integration scenarios', () => {
     it('handles expired token scenario (has token but API says not authenticated)', async () => {
-      // Arrange - user has token but it might be expired
-      mockAuthService.getToken.mockReturnValue('expired-token');
+      // Arrange
+      const mockAuthService = {
+        getToken: vi.fn(() => 'expired-token'),
+        checkAuthentication: vi.fn(),
+      };
+      const mockRouter = { navigate: vi.fn() };
+
+      TestBed.configureTestingModule({
+        providers: [
+          provideZonelessChangeDetection(),
+          { provide: AuthService, useValue: mockAuthService },
+          { provide: Router, useValue: mockRouter },
+        ],
+      });
 
       // Act
       const result = TestBed.runInInjectionContext(() => loginGuard({} as any, {} as any));
 
-      // Assert - guard redirects immediately if token exists
+      // Assert
       expect(result).toBe(false);
       expect(mockRouter.navigate).toHaveBeenCalledWith(['/dashboard']);
     });
 
     it('prevents direct navigation to login when authenticated', async () => {
       // Arrange
-      mockAuthService.getToken.mockReturnValue(null);
-      mockAuthService.checkAuthentication.mockReturnValue(of(true));
+      const mockAuthService = {
+        getToken: vi.fn(() => null),
+        checkAuthentication: vi.fn(() => of(true)),
+      };
+      const mockRouter = { navigate: vi.fn() };
+
+      TestBed.configureTestingModule({
+        providers: [
+          provideZonelessChangeDetection(),
+          { provide: AuthService, useValue: mockAuthService },
+          { provide: Router, useValue: mockRouter },
+        ],
+      });
 
       // Act
       const result = TestBed.runInInjectionContext(() => loginGuard({} as any, {} as any));

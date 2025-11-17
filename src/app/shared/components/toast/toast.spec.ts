@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ToastComponent, Toast, ToastPosition } from './toast';
@@ -16,7 +16,13 @@ interface RenderResult {
   fixture: ComponentFixture<ToastComponent>;
   component: ToastComponent;
   host: HTMLElement;
-  rerender: (options?: RenderOptions) => Promise<void>;
+}
+
+async function setupTestBed(): Promise<void> {
+  await TestBed.configureTestingModule({
+    imports: [ToastComponent],
+    providers: [provideZonelessChangeDetection()],
+  }).compileComponents();
 }
 
 async function renderToast(options: RenderOptions = {}): Promise<RenderResult> {
@@ -24,27 +30,17 @@ async function renderToast(options: RenderOptions = {}): Promise<RenderResult> {
   const component = fixture.componentInstance;
   const host = fixture.nativeElement as HTMLElement;
 
-  if (options.inputs) {
-    for (const [key, value] of Object.entries(options.inputs)) {
-      fixture.componentRef.setInput(key as keyof ToastInputs, value as never);
-    }
+  if (options.inputs?.toast) {
+    fixture.componentRef.setInput('toast', options.inputs.toast);
+  }
+  if (options.inputs?.position) {
+    fixture.componentRef.setInput('position', options.inputs.position);
   }
 
   fixture.detectChanges();
   await fixture.whenStable();
 
-  const rerender = async (update: RenderOptions = {}) => {
-    if (update.inputs) {
-      for (const [key, value] of Object.entries(update.inputs)) {
-        fixture.componentRef.setInput(key as keyof ToastInputs, value as never);
-      }
-    }
-
-    fixture.detectChanges();
-    await fixture.whenStable();
-  };
-
-  return { fixture, component, host, rerender };
+  return { fixture, component, host };
 }
 
 const createMockToast = (overrides?: Partial<Toast>): Toast => ({
@@ -56,16 +52,20 @@ const createMockToast = (overrides?: Partial<Toast>): Toast => ({
   ...overrides,
 });
 
+const within = (element: HTMLElement) => ({
+  getByText: (text: string) => {
+    const node = element.textContent?.includes(text) ? element : element.querySelector(`*:has(${text})`);
+    return node || null;
+  },
+  querySelector: (selector: string) => element.querySelector(selector),
+  querySelectorAll: (selector: string) => element.querySelectorAll(selector),
+});
+
 describe('ToastComponent', () => {
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [ToastComponent],
-      providers: [provideZonelessChangeDetection()],
-    }).compileComponents();
-  });
 
   describe('Rendering', () => {
     it('should render toast message', async () => {
+      await setupTestBed();
       const toast = createMockToast({ message: 'Hello Toast!' });
       const { host } = await renderToast({ inputs: { toast } });
 
@@ -73,17 +73,19 @@ describe('ToastComponent', () => {
     });
 
     it('should render toast title when provided', async () => {
+      await setupTestBed();
       const toast = createMockToast({
         title: 'Success',
         message: 'Operation completed',
       });
       const { host } = await renderToast({ inputs: { toast } });
 
-      expect(host.textContent).toContain('Success');
-      expect(host.textContent).toContain('Operation completed');
+      expect(within(host).getByText('Success')).toBeTruthy();
+      expect(within(host).getByText('Operation completed')).toBeTruthy();
     });
 
     it('should not render title when not provided', async () => {
+      await setupTestBed();
       const toast = createMockToast({ message: 'Just a message' });
       const { host } = await renderToast({ inputs: { toast } });
 
@@ -92,24 +94,27 @@ describe('ToastComponent', () => {
     });
 
     it('should render close button when dismissible is true', async () => {
+      await setupTestBed();
       const toast = createMockToast({ dismissible: true });
       const { host } = await renderToast({ inputs: { toast } });
 
-      const closeButton = host.querySelector('button[aria-label="Close"]');
+      const closeButton = within(host).querySelector('button[aria-label="Close"]');
       expect(closeButton).toBeTruthy();
     });
 
     it('should not render close button when dismissible is false', async () => {
+      await setupTestBed();
       const toast = createMockToast({ dismissible: false });
       const { host } = await renderToast({ inputs: { toast } });
 
-      const closeButton = host.querySelector('button[aria-label="Close"]');
+      const closeButton = within(host).querySelector('button[aria-label="Close"]');
       expect(closeButton).toBeNull();
     });
   });
 
   describe('Toast Types', () => {
     it('should render success toast with correct classes', async () => {
+      await setupTestBed();
       const toast = createMockToast({ type: 'success' });
       const { component } = await renderToast({ inputs: { toast } });
 
@@ -118,6 +123,7 @@ describe('ToastComponent', () => {
     });
 
     it('should render error toast with correct classes', async () => {
+      await setupTestBed();
       const toast = createMockToast({ type: 'error' });
       const { component } = await renderToast({ inputs: { toast } });
 
@@ -126,6 +132,7 @@ describe('ToastComponent', () => {
     });
 
     it('should render warning toast with correct classes', async () => {
+      await setupTestBed();
       const toast = createMockToast({ type: 'warning' });
       const { component } = await renderToast({ inputs: { toast } });
 
@@ -134,6 +141,7 @@ describe('ToastComponent', () => {
     });
 
     it('should render info toast with correct classes', async () => {
+      await setupTestBed();
       const toast = createMockToast({ type: 'info' });
       const { component } = await renderToast({ inputs: { toast } });
 
@@ -142,6 +150,7 @@ describe('ToastComponent', () => {
     });
 
     it('should display correct icon for success toast', async () => {
+      await setupTestBed();
       const toast = createMockToast({ type: 'success' });
       const { component } = await renderToast({ inputs: { toast } });
 
@@ -149,6 +158,7 @@ describe('ToastComponent', () => {
     });
 
     it('should display correct icon for error toast', async () => {
+      await setupTestBed();
       const toast = createMockToast({ type: 'error' });
       const { component } = await renderToast({ inputs: { toast } });
 
@@ -156,6 +166,7 @@ describe('ToastComponent', () => {
     });
 
     it('should display correct icon for warning toast', async () => {
+      await setupTestBed();
       const toast = createMockToast({ type: 'warning' });
       const { component } = await renderToast({ inputs: { toast } });
 
@@ -163,6 +174,7 @@ describe('ToastComponent', () => {
     });
 
     it('should display correct icon for info toast', async () => {
+      await setupTestBed();
       const toast = createMockToast({ type: 'info' });
       const { component } = await renderToast({ inputs: { toast } });
 
@@ -172,6 +184,7 @@ describe('ToastComponent', () => {
 
   describe('Icon Classes', () => {
     it('should apply success icon classes', async () => {
+      await setupTestBed();
       const toast = createMockToast({ type: 'success' });
       const { component } = await renderToast({ inputs: { toast } });
 
@@ -179,6 +192,7 @@ describe('ToastComponent', () => {
     });
 
     it('should apply error icon classes', async () => {
+      await setupTestBed();
       const toast = createMockToast({ type: 'error' });
       const { component } = await renderToast({ inputs: { toast } });
 
@@ -186,6 +200,7 @@ describe('ToastComponent', () => {
     });
 
     it('should apply warning icon classes', async () => {
+      await setupTestBed();
       const toast = createMockToast({ type: 'warning' });
       const { component } = await renderToast({ inputs: { toast } });
 
@@ -193,6 +208,7 @@ describe('ToastComponent', () => {
     });
 
     it('should apply info icon classes', async () => {
+      await setupTestBed();
       const toast = createMockToast({ type: 'info' });
       const { component } = await renderToast({ inputs: { toast } });
 
@@ -202,67 +218,75 @@ describe('ToastComponent', () => {
 
   describe('Dismiss Functionality', () => {
     it('should emit dismissed event when close button is clicked', async () => {
+      await setupTestBed();
       const toast = createMockToast({ dismissible: true });
-      const { host, fixture } = await renderToast({ inputs: { toast } });
+      const { host, component } = await renderToast({ inputs: { toast } });
 
-      const dismissedSpy = vi.fn();
-      fixture.componentInstance.dismissed.subscribe(dismissedSpy);
+      const dismissedIds: string[] = [];
+      const subscription = component.dismissed.subscribe((id) => dismissedIds.push(id));
 
-      const closeButton = host.querySelector('button[aria-label="Close"]') as HTMLButtonElement;
-      closeButton.click();
+      const closeButton = within(host).querySelector('button[aria-label="Close"]') as HTMLButtonElement;
+      closeButton?.click();
 
-      expect(dismissedSpy).toHaveBeenCalledWith('toast-123');
+      expect(dismissedIds).toContain('toast-123');
+      subscription.unsubscribe();
     });
 
     it('should auto-dismiss after duration', async () => {
+      await setupTestBed();
       vi.useFakeTimers();
 
       const toast = createMockToast({ duration: 2000 });
-      const { fixture } = await renderToast({ inputs: { toast } });
+      const { component } = await renderToast({ inputs: { toast } });
 
-      const dismissedSpy = vi.fn();
-      fixture.componentInstance.dismissed.subscribe(dismissedSpy);
+      const dismissedIds: string[] = [];
+      const subscription = component.dismissed.subscribe((id) => dismissedIds.push(id));
 
       vi.advanceTimersByTime(2000);
 
-      expect(dismissedSpy).toHaveBeenCalledWith('toast-123');
+      expect(dismissedIds).toContain('toast-123');
 
+      subscription.unsubscribe();
       vi.useRealTimers();
     });
 
     it('should not auto-dismiss when duration is 0', async () => {
+      await setupTestBed();
       vi.useFakeTimers();
 
       const toast = createMockToast({ duration: 0 });
-      const { fixture } = await renderToast({ inputs: { toast } });
+      const { component } = await renderToast({ inputs: { toast } });
 
-      const dismissedSpy = vi.fn();
-      fixture.componentInstance.dismissed.subscribe(dismissedSpy);
+      const dismissedIds: string[] = [];
+      const subscription = component.dismissed.subscribe((id) => dismissedIds.push(id));
 
       vi.advanceTimersByTime(5000);
 
-      expect(dismissedSpy).not.toHaveBeenCalled();
+      expect(dismissedIds.length).toBe(0);
 
+      subscription.unsubscribe();
       vi.useRealTimers();
     });
   });
 
   describe('Accessibility', () => {
     it('should have correct ARIA attributes', async () => {
+      await setupTestBed();
       const toast = createMockToast();
       const { host } = await renderToast({ inputs: { toast } });
 
-      const toastElement = host.querySelector('[role="alert"]');
+      const toastElement = within(host).querySelector('[role="alert"]');
       expect(toastElement?.getAttribute('role')).toBe('alert');
       expect(toastElement?.getAttribute('aria-live')).toBe('assertive');
       expect(toastElement?.getAttribute('aria-atomic')).toBe('true');
     });
 
     it('should have accessible close button', async () => {
+      await setupTestBed();
       const toast = createMockToast({ dismissible: true });
       const { host } = await renderToast({ inputs: { toast } });
 
-      const closeButton = host.querySelector('button[aria-label="Close"]');
+      const closeButton = within(host).querySelector('button[aria-label="Close"]');
       expect(closeButton?.getAttribute('aria-label')).toBe('Close');
     });
   });

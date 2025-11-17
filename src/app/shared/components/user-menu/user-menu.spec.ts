@@ -1,148 +1,137 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { render } from '@testing-library/angular';
 import { provideZonelessChangeDetection } from '@angular/core';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { UserMenuComponent, UserMenuItem } from './user-menu';
 
 describe('UserMenuComponent', () => {
-  let component: UserMenuComponent;
-  let fixture: ComponentFixture<UserMenuComponent>;
-  let compiled: HTMLElement;
-
   const mockMenuItems: UserMenuItem[] = [
     { id: '1', label: 'Profile', icon: 'user', action: 'profile' },
     { id: '2', label: 'Settings', icon: 'settings', action: 'settings' },
     { id: '3', label: 'Logout', icon: 'logout', action: 'logout' },
   ];
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [UserMenuComponent],
+  async function renderComponent(props?: Record<string, unknown>) {
+    return render(UserMenuComponent, {
       providers: [provideZonelessChangeDetection()],
-    }).compileComponents();
+      componentProperties: props,
+    });
+  }
 
-    fixture = TestBed.createComponent(UserMenuComponent);
-    component = fixture.componentInstance;
-    compiled = fixture.nativeElement;
-  });
+  it('renders with default user name', async () => {
+    const { container } = await renderComponent();
 
-  it('renders with default user name', () => {
-    fixture.detectChanges();
-
-    const initials = compiled.querySelector('[aria-label*="Iniciales"]');
+    const initials = container.querySelector('[aria-label*="Iniciales"]');
     expect(initials?.textContent?.trim()).toBe('US');
   });
 
-  it('computes user initials from full name', () => {
-    fixture.componentRef.setInput('userName', 'John Doe');
-    fixture.detectChanges();
+  it('computes user initials from full name', async () => {
+    const { fixture } = await renderComponent({ userName: 'John Doe' });
 
-    expect(component.userInitials()).toBe('JD');
+    expect(fixture.componentInstance.userInitials()).toBe('JD');
   });
 
-  it('computes user initials from single name', () => {
-    fixture.componentRef.setInput('userName', 'Alice');
-    fixture.detectChanges();
+  it('computes user initials from single name', async () => {
+    const { fixture } = await renderComponent({ userName: 'Alice' });
 
-    expect(component.userInitials()).toBe('AL');
+    expect(fixture.componentInstance.userInitials()).toBe('AL');
   });
 
-  it('opens menu on toggle', () => {
-    fixture.componentRef.setInput('menuItems', mockMenuItems);
-    fixture.detectChanges();
+  it('opens menu on toggle', async () => {
+    const { container, fixture } = await renderComponent({ menuItems: mockMenuItems });
 
-    const button = compiled.querySelector('button');
+    const button = container.querySelector('button');
     button?.click();
     fixture.detectChanges();
 
-    expect(component.isOpen()).toBe(true);
+    expect(fixture.componentInstance.isOpen()).toBe(true);
   });
 
-  it('displays menu items when open', () => {
-    fixture.componentRef.setInput('menuItems', mockMenuItems);
+  it('displays menu items when open', async () => {
+    const { container, fixture } = await renderComponent({ menuItems: mockMenuItems });
+
+    fixture.componentInstance.toggle();
     fixture.detectChanges();
 
-    component.toggle();
-    fixture.detectChanges();
-
-    expect(compiled.textContent).toContain('Profile');
-    expect(compiled.textContent).toContain('Settings');
-    expect(compiled.textContent).toContain('Logout');
+    expect(container.textContent).toContain('Profile');
+    expect(container.textContent).toContain('Settings');
+    expect(container.textContent).toContain('Logout');
   });
 
-  it('emits menuOpened event when opened', () => {
+  it('emits menuOpened event when opened', async () => {
+    const { fixture } = await renderComponent();
     const menuOpenedSpy = vi.fn();
-    component.menuOpened.subscribe(menuOpenedSpy);
+    fixture.componentInstance.menuOpened.subscribe(menuOpenedSpy);
 
-    component.toggle();
+    fixture.componentInstance.toggle();
     fixture.detectChanges();
 
     expect(menuOpenedSpy).toHaveBeenCalledTimes(1);
   });
 
-  it('emits menuClosed event when closed', () => {
+  it('emits menuClosed event when closed', async () => {
+    const { fixture } = await renderComponent();
     const menuClosedSpy = vi.fn();
-    component.menuClosed.subscribe(menuClosedSpy);
+    fixture.componentInstance.menuClosed.subscribe(menuClosedSpy);
 
-    component.toggle();
+    fixture.componentInstance.toggle();
     fixture.detectChanges();
-    component.toggle();
+    fixture.componentInstance.toggle();
     fixture.detectChanges();
 
     expect(menuClosedSpy).toHaveBeenCalledTimes(1);
   });
 
-  it('emits menuItemClick when item is clicked', () => {
+  it('emits menuItemClick when item is clicked', async () => {
+    const { container, fixture } = await renderComponent({ menuItems: mockMenuItems });
     const menuItemClickSpy = vi.fn();
-    fixture.componentRef.setInput('menuItems', mockMenuItems);
-    component.menuItemClick.subscribe(menuItemClickSpy);
+    fixture.componentInstance.menuItemClick.subscribe(menuItemClickSpy);
 
-    component.toggle();
+    fixture.componentInstance.toggle();
     fixture.detectChanges();
 
-    const menuItem = compiled.querySelector('[role="menuitem"]') as HTMLElement;
+    const menuItem = container.querySelector('[role="menuitem"]') as HTMLElement;
     menuItem?.click();
 
     expect(menuItemClickSpy).toHaveBeenCalledWith(mockMenuItems[0]);
   });
 
-  it('closes menu after item click', () => {
-    fixture.componentRef.setInput('menuItems', mockMenuItems);
+  it('closes menu after item click', async () => {
+    const { container, fixture } = await renderComponent({ menuItems: mockMenuItems });
+
+    fixture.componentInstance.toggle();
     fixture.detectChanges();
 
-    component.toggle();
-    fixture.detectChanges();
+    expect(fixture.componentInstance.isOpen()).toBe(true);
 
-    expect(component.isOpen()).toBe(true);
-
-    const menuItem = compiled.querySelector('[role="menuitem"]') as HTMLElement;
+    const menuItem = container.querySelector('[role="menuitem"]') as HTMLElement;
     menuItem?.click();
     fixture.detectChanges();
 
-    expect(component.isOpen()).toBe(false);
+    expect(fixture.componentInstance.isOpen()).toBe(false);
   });
 
-  it('closes menu on Escape key', () => {
+  it('closes menu on Escape key', async () => {
+    const { fixture } = await renderComponent();
+
+    fixture.componentInstance.open();
     fixture.detectChanges();
 
-    component.open();
-    fixture.detectChanges();
-
-    expect(component.isOpen()).toBe(true);
+    expect(fixture.componentInstance.isOpen()).toBe(true);
 
     const event = new KeyboardEvent('keydown', { key: 'Escape' });
     document.dispatchEvent(event);
     fixture.detectChanges();
 
-    expect(component.isOpen()).toBe(false);
+    expect(fixture.componentInstance.isOpen()).toBe(false);
   });
 
   it('closes menu on click outside', async () => {
+    const { fixture } = await renderComponent();
+
+    fixture.componentInstance.open();
     fixture.detectChanges();
 
-    component.open();
-    fixture.detectChanges();
-
-    expect(component.isOpen()).toBe(true);
+    expect(fixture.componentInstance.isOpen()).toBe(true);
 
     await new Promise((resolve) => setTimeout(resolve, 0));
 
@@ -152,60 +141,57 @@ describe('UserMenuComponent', () => {
     await new Promise((resolve) => setTimeout(resolve, 0));
     fixture.detectChanges();
 
-    expect(component.isOpen()).toBe(false);
+    expect(fixture.componentInstance.isOpen()).toBe(false);
   });
 
-  it('filters out divider items from visibleMenuItems', () => {
+  it('filters out divider items from visibleMenuItems', async () => {
     const itemsWithDivider: UserMenuItem[] = [
       ...mockMenuItems,
       { id: '4', label: '', divider: true },
     ];
 
-    fixture.componentRef.setInput('menuItems', itemsWithDivider);
-    fixture.detectChanges();
+    const { fixture } = await renderComponent({ menuItems: itemsWithDivider });
 
-    expect(component.visibleMenuItems().length).toBe(3);
+    expect(fixture.componentInstance.visibleMenuItems().length).toBe(3);
   });
 
-  it('does not emit menuItemClick for divider items', () => {
-    const menuItemClickSpy = vi.fn();
+  it('does not emit menuItemClick for divider items', async () => {
     const itemsWithDivider: UserMenuItem[] = [
       { id: '1', label: 'Profile', action: 'profile' },
       { id: '2', label: '', divider: true },
     ];
 
-    fixture.componentRef.setInput('menuItems', itemsWithDivider);
-    component.menuItemClick.subscribe(menuItemClickSpy);
+    const { fixture } = await renderComponent({ menuItems: itemsWithDivider });
+    const menuItemClickSpy = vi.fn();
+    fixture.componentInstance.menuItemClick.subscribe(menuItemClickSpy);
 
     const dividerItem = itemsWithDivider[1];
-    component.onMenuItemClick(dividerItem, new Event('click'));
+    fixture.componentInstance.onMenuItemClick(dividerItem, new Event('click'));
 
     expect(menuItemClickSpy).not.toHaveBeenCalled();
   });
 
-  it('displays user email when provided', () => {
-    fixture.componentRef.setInput('userName', 'John Doe');
-    fixture.componentRef.setInput('userEmail', 'john@example.com');
+  it('displays user email when provided', async () => {
+    const { container, fixture } = await renderComponent({
+      userName: 'John Doe',
+      userEmail: 'john@example.com',
+    });
+
+    fixture.componentInstance.toggle();
     fixture.detectChanges();
 
-    component.toggle();
-    fixture.detectChanges();
-
-    expect(compiled.textContent).toContain('john@example.com');
+    expect(container.textContent).toContain('john@example.com');
   });
 
-  it('hasUserInfo returns true when userName or userEmail provided', () => {
-    fixture.componentRef.setInput('userName', 'John Doe');
-    fixture.detectChanges();
+  it('hasUserInfo returns true when userName or userEmail provided', async () => {
+    const { fixture } = await renderComponent({ userName: 'John Doe' });
 
-    expect(component.hasUserInfo()).toBe(true);
+    expect(fixture.componentInstance.hasUserInfo()).toBe(true);
   });
 
-  it('hasUserInfo returns false when no user info provided', () => {
-    fixture.componentRef.setInput('userName', '');
-    fixture.componentRef.setInput('userEmail', '');
-    fixture.detectChanges();
+  it('hasUserInfo returns false when no user info provided', async () => {
+    const { fixture } = await renderComponent({ userName: '', userEmail: '' });
 
-    expect(component.hasUserInfo()).toBe(false);
+    expect(fixture.componentInstance.hasUserInfo()).toBe(false);
   });
 });

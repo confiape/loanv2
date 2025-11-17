@@ -1,261 +1,422 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+// Angular testing
+import { TestBed } from '@angular/core/testing';
+import { provideZonelessChangeDetection, inputBinding, outputBinding, signal } from '@angular/core';
+
+// Testing library
+import { within } from '@testing-library/dom';
+import userEvent from '@testing-library/user-event';
+
+// Vitest
+import { describe, it, expect } from 'vitest';
+
+// Component under test
 import { Select } from './select';
-import { provideZonelessChangeDetection } from '@angular/core';
 
 describe('Select', () => {
-  let component: Select;
-  let fixture: ComponentFixture<Select>;
-
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [Select],
-      providers: [provideZonelessChangeDetection()],
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(Select);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
   it('should create', () => {
-    expect(component).toBeTruthy();
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(Select);
+    TestBed.tick();
+
+    // Assert
+    expect(fixture.componentInstance).toBeTruthy();
   });
 
   it('should render select element', () => {
-    const compiled = fixture.nativeElement as HTMLElement;
-    const select = compiled.querySelector('select');
-    expect(select).toBeTruthy();
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(Select);
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
+
+    // Assert
+    expect(queries.queryByRole('combobox')).toBeTruthy();
   });
 
   it('should render label when provided', () => {
-    fixture.componentRef.setInput('label', 'Choose Country');
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    const label = compiled.querySelector('label');
-    expect(label?.textContent?.trim()).toBe('Choose Country');
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(Select, {
+      bindings: [inputBinding('label', () => 'Choose Country')],
+    });
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
+
+    // Assert
+    const label = queries.getByText('Choose Country');
+    expect(label.tagName).toBe('LABEL');
   });
 
   it('should not render label when not provided', () => {
-    const compiled = fixture.nativeElement as HTMLElement;
-    const label = compiled.querySelector('label');
-    expect(label).toBeFalsy();
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(Select);
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
+
+    // Assert
+    expect(queries.queryByRole('label')).toBeFalsy();
   });
 
   it('should render placeholder option when provided', () => {
-    fixture.componentRef.setInput('placeholder', 'Select an option');
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    const options = compiled.querySelectorAll('option');
-    expect(options[0]?.textContent?.trim()).toBe('Select an option');
-    expect(options[0]?.disabled).toBe(true);
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(Select, {
+      bindings: [inputBinding('placeholder', () => 'Select an option')],
+    });
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
+
+    // Assert
+    const options = queries.getAllByRole('option');
+    expect(options[0].textContent?.trim()).toBe('Select an option');
+    expect((options[0] as HTMLOptionElement).disabled).toBe(true);
   });
 
   it('should render options from input', () => {
+    // Arrange
     const options = [
       { value: 'US', label: 'United States' },
       { value: 'CA', label: 'Canada' },
       { value: 'FR', label: 'France' },
     ];
-    fixture.componentRef.setInput('options', options);
-    fixture.detectChanges();
+    const fixture = TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(Select, {
+      bindings: [inputBinding('options', () => options)],
+    });
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
 
-    const compiled = fixture.nativeElement as HTMLElement;
-    const optionElements = compiled.querySelectorAll('option');
-
+    // Assert
+    const optionElements = queries.getAllByRole('option');
     expect(optionElements.length).toBe(3);
-    expect(optionElements[0]?.value).toBe('US');
-    expect(optionElements[0]?.textContent?.trim()).toBe('United States');
+    expect((optionElements[0] as HTMLOptionElement).value).toBe('US');
+    expect(optionElements[0].textContent?.trim()).toBe('United States');
   });
 
   it('should apply disabled state', () => {
-    fixture.componentRef.setInput('disabled', true);
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    const select = compiled.querySelector('select');
-    expect(select?.disabled).toBe(true);
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(Select, {
+      bindings: [inputBinding('disabled', () => true)],
+    });
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
+
+    // Assert
+    const select = queries.getByRole('combobox') as HTMLSelectElement;
+    expect(select.disabled).toBe(true);
   });
 
   it('should render disabled options', () => {
+    // Arrange
     const options = [
       { value: 'US', label: 'United States' },
       { value: 'CA', label: 'Canada', disabled: true },
     ];
-    fixture.componentRef.setInput('options', options);
-    fixture.detectChanges();
+    const fixture = TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(Select, {
+      bindings: [inputBinding('options', () => options)],
+    });
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
 
-    const compiled = fixture.nativeElement as HTMLElement;
-    const optionElements = compiled.querySelectorAll('option');
-
-    expect(optionElements[0]?.disabled).toBe(false);
-    expect(optionElements[1]?.disabled).toBe(true);
+    // Assert
+    const optionElements = queries.getAllByRole('option');
+    expect((optionElements[0] as HTMLOptionElement).disabled).toBe(false);
+    expect((optionElements[1] as HTMLOptionElement).disabled).toBe(true);
   });
 
-  it('should emit valueChange on selection', () => {
-    let emittedValue = '';
-    component.valueChange.subscribe((value) => {
-      emittedValue = value;
-    });
-
+  it('should emit valueChange on selection', async () => {
+    // Arrange
+    const valueChangeSignal = signal<string>('');
     const options = [
       { value: 'US', label: 'United States' },
       { value: 'CA', label: 'Canada' },
     ];
-    fixture.componentRef.setInput('options', options);
-    fixture.detectChanges();
+    const fixture = TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(Select, {
+      bindings: [
+        inputBinding('options', () => options),
+        outputBinding('valueChange', (value: string) => valueChangeSignal.set(value)),
+      ],
+    });
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
+    const user = userEvent.setup();
 
-    const compiled = fixture.nativeElement as HTMLElement;
-    const select = compiled.querySelector('select') as HTMLSelectElement;
-    select.value = 'CA';
-    select.dispatchEvent(new Event('change'));
+    // Act
+    const select = queries.getByRole('combobox') as HTMLSelectElement;
+    await user.selectOptions(select, 'CA');
+    TestBed.tick();
 
-    expect(emittedValue).toBe('CA');
+    // Assert
+    expect(valueChangeSignal()).toBe('CA');
   });
 
   it('should render help text', () => {
-    fixture.componentRef.setInput('helpText', 'Select your country');
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    const helpText = compiled.querySelector('p');
-    expect(helpText?.textContent?.trim()).toBe('Select your country');
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(Select, {
+      bindings: [inputBinding('helpText', () => 'Select your country')],
+    });
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
+
+    // Assert
+    expect(queries.getByText('Select your country')).toBeTruthy();
   });
 
   it('should render success message when validation state is success', () => {
-    fixture.componentRef.setInput('validationState', 'success');
-    fixture.componentRef.setInput('successMessage', 'Valid selection!');
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    const message = compiled.querySelector('p');
-    expect(message?.textContent).toContain('Valid selection!');
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(Select, {
+      bindings: [
+        inputBinding('validationState', () => 'success'),
+        inputBinding('successMessage', () => 'Valid selection!'),
+      ],
+    });
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
+
+    // Assert
+    expect(queries.getByText('Valid selection!')).toBeTruthy();
   });
 
   it('should render error message when validation state is error', () => {
-    fixture.componentRef.setInput('validationState', 'error');
-    fixture.componentRef.setInput('errorMessage', 'Please select an option');
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    const message = compiled.querySelector('p');
-    expect(message?.textContent).toContain('Please select an option');
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(Select, {
+      bindings: [
+        inputBinding('validationState', () => 'error'),
+        inputBinding('errorMessage', () => 'Please select an option'),
+      ],
+    });
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
+
+    // Assert
+    expect(queries.getByText('Please select an option')).toBeTruthy();
   });
 
   it('should apply small size classes', () => {
-    fixture.componentRef.setInput('size', 'small');
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    const select = compiled.querySelector('select');
-    expect(select?.className).toContain('p-2');
-    expect(select?.className).toContain('text-sm');
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(Select, {
+      bindings: [inputBinding('size', () => 'small')],
+    });
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
+
+    // Assert
+    const select = queries.getByRole('combobox') as HTMLSelectElement;
+    expect(select.className).toContain('p-2');
+    expect(select.className).toContain('text-sm');
   });
 
   it('should apply large size classes', () => {
-    fixture.componentRef.setInput('size', 'large');
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    const select = compiled.querySelector('select');
-    expect(select?.className).toContain('px-4');
-    expect(select?.className).toContain('py-3');
-    expect(select?.className).toContain('text-base');
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(Select, {
+      bindings: [inputBinding('size', () => 'large')],
+    });
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
+
+    // Assert
+    const select = queries.getByRole('combobox') as HTMLSelectElement;
+    expect(select.className).toContain('px-4');
+    expect(select.className).toContain('py-3');
+    expect(select.className).toContain('text-base');
   });
 
   it('should apply custom select id', () => {
-    fixture.componentRef.setInput('selectId', 'custom-id');
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    const select = compiled.querySelector('select');
-    expect(select?.id).toBe('custom-id');
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(Select, {
+      bindings: [inputBinding('selectId', () => 'custom-id')],
+    });
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
+
+    // Assert
+    const select = queries.getByRole('combobox') as HTMLSelectElement;
+    expect(select.id).toBe('custom-id');
   });
 
   it('should link label to select via for attribute', () => {
-    fixture.componentRef.setInput('label', 'Country');
-    fixture.componentRef.setInput('selectId', 'country-select');
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    const label = compiled.querySelector('label');
-    const select = compiled.querySelector('select');
-    expect(label?.getAttribute('for')).toBe('country-select');
-    expect(select?.id).toBe('country-select');
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(Select, {
+      bindings: [
+        inputBinding('label', () => 'Country'),
+        inputBinding('selectId', () => 'country-select'),
+      ],
+    });
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
+
+    // Assert
+    const label = queries.getByText('Country') as HTMLLabelElement;
+    const select = queries.getByRole('combobox') as HTMLSelectElement;
+    expect(label.getAttribute('for')).toBe('country-select');
+    expect(select.id).toBe('country-select');
   });
 
   describe('ControlValueAccessor', () => {
     it('should write value', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: [provideZonelessChangeDetection()],
+      }).createComponent(Select);
+      TestBed.tick();
+      const component = fixture.componentInstance;
+
+      // Act
       component.writeValue('US');
+
+      // Assert
       expect(component.value()).toBe('US');
     });
 
-    it('should call onChange when selection changes', () => {
+    it('should call onChange when selection changes', async () => {
+      // Arrange
       let changedValue = '';
-      component.registerOnChange((value) => {
-        changedValue = value;
-      });
-
       const options = [
         { value: 'US', label: 'United States' },
         { value: 'CA', label: 'Canada' },
       ];
-      fixture.componentRef.setInput('options', options);
-      fixture.detectChanges();
+      const fixture = TestBed.configureTestingModule({
+        providers: [provideZonelessChangeDetection()],
+      }).createComponent(Select, {
+        bindings: [inputBinding('options', () => options)],
+      });
+      TestBed.tick();
+      const component = fixture.componentInstance;
+      component.registerOnChange((value) => {
+        changedValue = value;
+      });
+      const queries = within(fixture.nativeElement);
+      const user = userEvent.setup();
 
-      const compiled = fixture.nativeElement as HTMLElement;
-      const select = compiled.querySelector('select') as HTMLSelectElement;
-      select.value = 'CA';
-      select.dispatchEvent(new Event('change'));
+      // Act
+      const select = queries.getByRole('combobox') as HTMLSelectElement;
+      await user.selectOptions(select, 'CA');
+      TestBed.tick();
 
+      // Assert
       expect(changedValue).toBe('CA');
     });
 
-    it('should call onTouched when select loses focus', () => {
+    it('should call onTouched when select loses focus', async () => {
+      // Arrange
       let touched = false;
+      const fixture = TestBed.configureTestingModule({
+        providers: [provideZonelessChangeDetection()],
+      }).createComponent(Select);
+      TestBed.tick();
+      const component = fixture.componentInstance;
       component.registerOnTouched(() => {
         touched = true;
       });
+      const queries = within(fixture.nativeElement);
+      const user = userEvent.setup();
 
-      const compiled = fixture.nativeElement as HTMLElement;
-      const select = compiled.querySelector('select') as HTMLSelectElement;
-      select.dispatchEvent(new Event('blur'));
+      // Act
+      const select = queries.getByRole('combobox') as HTMLSelectElement;
+      await user.click(select);
+      await user.tab();
+      TestBed.tick();
 
+      // Assert
       expect(touched).toBe(true);
     });
   });
 
   describe('data-testid rendering', () => {
     it('should not render any data-testid attributes when dataTestId is not provided', () => {
-      fixture.detectChanges();
-      const compiled = fixture.nativeElement as HTMLElement;
-      const wrapper = compiled.querySelector('[data-testid]');
-      expect(wrapper).toBeFalsy();
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: [provideZonelessChangeDetection()],
+      }).createComponent(Select);
+      TestBed.tick();
+      const queries = within(fixture.nativeElement);
+
+      // Assert
+      expect(queries.queryByTestId('')).toBeFalsy();
     });
 
     it('should render data-testid on select element (main element)', () => {
-      fixture.componentRef.setInput('dataTestId', 'country');
-      fixture.detectChanges();
-      const compiled = fixture.nativeElement as HTMLElement;
-      const select = compiled.querySelector('select[data-testid="country"]');
-      expect(select).toBeTruthy();
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: [provideZonelessChangeDetection()],
+      }).createComponent(Select, {
+        bindings: [inputBinding('dataTestId', () => 'country')],
+      });
+      TestBed.tick();
+      const queries = within(fixture.nativeElement);
+
+      // Assert
+      expect(queries.getByTestId('country')).toBeTruthy();
     });
 
     it('should render data-testid on options with sanitized values', () => {
-      fixture.componentRef.setInput('dataTestId', 'country');
-      fixture.componentRef.setInput('options', [
-        { value: 'us', label: 'United States' },
-        { value: 'ca', label: 'Canada' },
-      ]);
-      fixture.detectChanges();
-      const compiled = fixture.nativeElement as HTMLElement;
-      const optionUs = compiled.querySelector('option[data-testid="country-option-us"]');
-      const optionCa = compiled.querySelector('option[data-testid="country-option-ca"]');
-      expect(optionUs).toBeTruthy();
-      expect(optionCa).toBeTruthy();
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: [provideZonelessChangeDetection()],
+      }).createComponent(Select, {
+        bindings: [
+          inputBinding('dataTestId', () => 'country'),
+          inputBinding('options', () => [
+            { value: 'us', label: 'United States' },
+            { value: 'ca', label: 'Canada' },
+          ]),
+        ],
+      });
+      TestBed.tick();
+      const queries = within(fixture.nativeElement);
+
+      // Assert
+      expect(queries.getByTestId('country-option-us')).toBeTruthy();
+      expect(queries.getByTestId('country-option-ca')).toBeTruthy();
     });
 
     it('should sanitize option values with special characters', () => {
-      fixture.componentRef.setInput('dataTestId', 'role');
-      fixture.componentRef.setInput('options', [
-        { value: 'Super Admin', label: 'Super Admin' },
-        { value: 'user@email.com', label: 'User Email' },
-      ]);
-      fixture.detectChanges();
-      const compiled = fixture.nativeElement as HTMLElement;
-      expect(compiled.querySelector('option[data-testid="role-option-super-admin"]')).toBeTruthy();
-      expect(compiled.querySelector('option[data-testid="role-option-user-email-com"]')).toBeTruthy();
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: [provideZonelessChangeDetection()],
+      }).createComponent(Select, {
+        bindings: [
+          inputBinding('dataTestId', () => 'role'),
+          inputBinding('options', () => [
+            { value: 'Super Admin', label: 'Super Admin' },
+            { value: 'user@email.com', label: 'User Email' },
+          ]),
+        ],
+      });
+      TestBed.tick();
+      const queries = within(fixture.nativeElement);
+
+      // Assert
+      expect(queries.getByTestId('role-option-super-admin')).toBeTruthy();
+      expect(queries.getByTestId('role-option-user-email-com')).toBeTruthy();
     });
   });
 });

@@ -7,18 +7,23 @@ import { UserApiService, UserDto } from '@loan/app/shared/openapi';
 import { UserStateService } from '@loan/app/core/services/user.service';
 
 describe('userResolver', () => {
-  let mockUserApiService: { getCurrentUser: ReturnType<typeof vi.fn> };
-  let mockUserStateService: {
-    setUser: ReturnType<typeof vi.fn>;
-    clearUser: ReturnType<typeof vi.fn>;
-  };
-
-  beforeEach(() => {
-    mockUserApiService = {
-      getCurrentUser: vi.fn(),
+  it('resolves user and updates state on success', async () => {
+    // Arrange
+    const mockUser: UserDto = {
+      id: '123',
+      email: 'john@example.com',
+      isActive: true,
+      person: {} as any,
+      roles: [],
+      permissions: [],
+      companies: [],
     };
 
-    mockUserStateService = {
+    const mockUserApiService = {
+      getCurrentUser: vi.fn(() => of(mockUser)),
+    };
+
+    const mockUserStateService = {
       setUser: vi.fn(),
       clearUser: vi.fn(),
     };
@@ -30,25 +35,14 @@ describe('userResolver', () => {
         { provide: UserStateService, useValue: mockUserStateService },
       ],
     });
-  });
 
-  it('resolves user and updates state on success', async () => {
-    const mockUser: UserDto = {
-      id: '123',
-      email: 'john@example.com',
-      isActive: true,
-      person: {} as any,
-      roles: [],
-      permissions: [],
-      companies: [],
-    };
-    mockUserApiService.getCurrentUser.mockReturnValue(of(mockUser));
-
+    // Act
     const result = await TestBed.runInInjectionContext(() => {
       const resolved = userResolver({} as any, {} as any);
       return firstValueFrom(resolved as any);
     });
 
+    // Assert
     expect(result).toEqual(mockUser);
     expect(mockUserApiService.getCurrentUser).toHaveBeenCalledTimes(1);
     expect(mockUserStateService.setUser).toHaveBeenCalledWith(mockUser);
@@ -56,15 +50,34 @@ describe('userResolver', () => {
   });
 
   it('returns null and clears user state on error', async () => {
+    // Arrange
     const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     const mockError = new Error('API Error');
-    mockUserApiService.getCurrentUser.mockReturnValue(throwError(() => mockError));
 
+    const mockUserApiService = {
+      getCurrentUser: vi.fn(() => throwError(() => mockError)),
+    };
+
+    const mockUserStateService = {
+      setUser: vi.fn(),
+      clearUser: vi.fn(),
+    };
+
+    TestBed.configureTestingModule({
+      providers: [
+        provideZonelessChangeDetection(),
+        { provide: UserApiService, useValue: mockUserApiService },
+        { provide: UserStateService, useValue: mockUserStateService },
+      ],
+    });
+
+    // Act
     const result = await TestBed.runInInjectionContext(() => {
       const resolved = userResolver({} as any, {} as any);
       return firstValueFrom(resolved as any);
     });
 
+    // Assert
     expect(result).toBeNull();
     expect(mockUserApiService.getCurrentUser).toHaveBeenCalledTimes(1);
     expect(mockUserStateService.clearUser).toHaveBeenCalledTimes(1);

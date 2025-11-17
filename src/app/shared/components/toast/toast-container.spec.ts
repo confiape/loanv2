@@ -32,6 +32,11 @@ const createMockToast = (id: string, type: Toast['type'], message: string): Toas
   dismissible: true,
 });
 
+const within = (element: HTMLElement) => ({
+  querySelector: (selector: string) => element.querySelector(selector),
+  querySelectorAll: (selector: string) => element.querySelectorAll(selector),
+});
+
 async function renderToastContainer(options: RenderOptions = {}): Promise<RenderResult> {
   const toastService = {
     toasts$: signal<Toast[]>(options.toasts || []),
@@ -50,10 +55,8 @@ async function renderToastContainer(options: RenderOptions = {}): Promise<Render
   const component = fixture.componentInstance;
   const host = fixture.nativeElement as HTMLElement;
 
-  if (options.inputs) {
-    for (const [key, value] of Object.entries(options.inputs)) {
-      fixture.componentRef.setInput(key as keyof ToastContainerInputs, value as never);
-    }
+  if (options.inputs?.position) {
+    fixture.componentRef.setInput('position', options.inputs.position);
   }
 
   fixture.detectChanges();
@@ -67,7 +70,7 @@ describe('ToastContainerComponent', () => {
     it('should render empty container when no toasts', async () => {
       const { host } = await renderToastContainer();
 
-      const toastElements = host.querySelectorAll('[role="alert"]');
+      const toastElements = within(host).querySelectorAll('[role="alert"]');
       expect(toastElements.length).toBe(0);
     });
 
@@ -164,8 +167,8 @@ describe('ToastContainerComponent', () => {
       const toast = createMockToast('toast-1', 'info', 'Test message');
       const { host, toastService } = await renderToastContainer({ toasts: [toast] });
 
-      const closeButton = host.querySelector('button[aria-label="Close"]') as HTMLButtonElement;
-      closeButton.click();
+      const closeButton = within(host).querySelector('button[aria-label="Close"]') as HTMLButtonElement;
+      closeButton?.click();
 
       expect(toastService.dismiss).toHaveBeenCalledWith('toast-1');
     });
@@ -177,10 +180,10 @@ describe('ToastContainerComponent', () => {
       ];
       const { host, toastService } = await renderToastContainer({ toasts });
 
-      const closeButtons = host.querySelectorAll(
+      const closeButtons = within(host).querySelectorAll(
         'button[aria-label="Close"]',
       ) as NodeListOf<HTMLButtonElement>;
-      closeButtons[1].click();
+      closeButtons[1]?.click();
 
       expect(toastService.dismiss).toHaveBeenCalledWith('toast-2');
     });
@@ -194,7 +197,7 @@ describe('ToastContainerComponent', () => {
       ];
       const { host } = await renderToastContainer({ toasts });
 
-      const toastElements = host.querySelectorAll('[role="alert"]');
+      const toastElements = within(host).querySelectorAll('[role="alert"]');
       expect(toastElements.length).toBe(2);
     });
   });

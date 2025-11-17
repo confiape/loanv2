@@ -1,125 +1,149 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { render } from '@testing-library/angular';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ButtonGroupButton } from './button-group-button';
 
 describe('ButtonGroupButton', () => {
-  let fixture: ComponentFixture<ButtonGroupButton>;
-  let component: ButtonGroupButton;
-
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [ButtonGroupButton],
+  it('should render button', async () => {
+    // Arrange & Act
+    const { getByRole } = await render(ButtonGroupButton, {
       providers: [provideZonelessChangeDetection()],
-    }).compileComponents();
+    });
 
-    fixture = TestBed.createComponent(ButtonGroupButton);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
-  function getButtonElement(): HTMLButtonElement {
-    return fixture.nativeElement.querySelector('button') as HTMLButtonElement;
-  }
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-
-  it('should render button', () => {
-    const button = getButtonElement();
+    // Assert
+    const button = getByRole('button');
     expect(button).toBeTruthy();
   });
 
-  it('should emit click event when clicked', () => {
-    let clicked = false;
-    component.buttonClick.subscribe(() => {
-      clicked = true;
+  it('should emit click event when clicked', async () => {
+    // Arrange
+    const clickSpy = vi.fn();
+    const { getByRole, fixture } = await render(ButtonGroupButton, {
+      providers: [provideZonelessChangeDetection()],
     });
 
-    const button = getButtonElement();
+    fixture.componentInstance.buttonClick.subscribe(clickSpy);
+    const button = getByRole('button');
+
+    // Act
     button.click();
 
-    expect(clicked).toBeTruthy();
+    // Assert
+    expect(clickSpy).toHaveBeenCalled();
   });
 
-  it('should not emit click when disabled', () => {
-    fixture.componentRef.setInput('disabled', true);
-    fixture.detectChanges();
-
-    let clicked = false;
-    component.buttonClick.subscribe(() => {
-      clicked = true;
+  it('should not emit click when disabled', async () => {
+    // Arrange
+    const clickSpy = vi.fn();
+    const { getByRole, fixture } = await render(ButtonGroupButton, {
+      providers: [provideZonelessChangeDetection()],
+      componentProperties: { disabled: true },
     });
 
-    const button = getButtonElement();
+    fixture.componentInstance.buttonClick.subscribe(clickSpy);
+    const button = getByRole('button');
+
+    // Act
     button.click();
 
-    expect(clicked).toBeFalsy();
+    // Assert
+    expect(clickSpy).not.toHaveBeenCalled();
   });
 
-  it('should apply first position styles', () => {
-    fixture.componentRef.setInput('position', 'first');
-    fixture.detectChanges();
+  it('should apply first position styles', async () => {
+    // Arrange
+    const { getByRole } = await render(ButtonGroupButton, {
+      providers: [provideZonelessChangeDetection()],
+      componentProperties: { position: 'first' },
+    });
 
-    const button = getButtonElement();
+    // Act & Assert
+    const button = getByRole('button');
     expect(button.className).toContain('rounded-s-lg');
   });
 
-  it('should apply last position styles', () => {
-    fixture.componentRef.setInput('position', 'last');
-    fixture.detectChanges();
+  it('should apply last position styles', async () => {
+    // Arrange
+    const { getByRole } = await render(ButtonGroupButton, {
+      providers: [provideZonelessChangeDetection()],
+      componentProperties: { position: 'last' },
+    });
 
-    const button = getButtonElement();
+    // Act & Assert
+    const button = getByRole('button');
     expect(button.className).toContain('rounded-e-lg');
   });
 
-  it('should apply middle position styles', () => {
-    fixture.componentRef.setInput('position', 'middle');
-    fixture.detectChanges();
+  it('should apply middle position styles', async () => {
+    // Arrange
+    const { getByRole } = await render(ButtonGroupButton, {
+      providers: [provideZonelessChangeDetection()],
+      componentProperties: { position: 'middle' },
+    });
 
-    const button = getButtonElement();
+    // Act & Assert
+    const button = getByRole('button');
     expect(button.className).toContain('border-t');
     expect(button.className).toContain('border-b');
   });
 
-  it('should apply only position styles', () => {
-    fixture.componentRef.setInput('position', 'only');
-    fixture.detectChanges();
+  it('should apply only position styles', async () => {
+    // Arrange
+    const { getByRole } = await render(ButtonGroupButton, {
+      providers: [provideZonelessChangeDetection()],
+      componentProperties: { position: 'only' },
+    });
 
-    const button = getButtonElement();
+    // Act & Assert
+    const button = getByRole('button');
     expect(button.className).toContain('rounded-s-lg');
     expect(button.className).toContain('rounded-e-lg');
   });
 
-  it('should apply outline variant styles', () => {
-    fixture.componentRef.setInput('variant', 'outline');
-    fixture.detectChanges();
+  it('should apply outline variant styles', async () => {
+    // Arrange
+    const { getByRole } = await render(ButtonGroupButton, {
+      providers: [provideZonelessChangeDetection()],
+      componentProperties: { variant: 'outline' },
+    });
 
-    const button = getButtonElement();
+    // Act & Assert
+    const button = getByRole('button');
     expect(button.className).toContain('bg-transparent');
   });
 
-  it('should apply default variant styles', () => {
-    fixture.componentRef.setInput('variant', 'default');
-    fixture.detectChanges();
+  it('should apply default variant styles', async () => {
+    // Arrange
+    const { getByRole } = await render(ButtonGroupButton, {
+      providers: [provideZonelessChangeDetection()],
+      componentProperties: { variant: 'default' },
+    });
 
-    const button = getButtonElement();
+    // Act & Assert
+    const button = getByRole('button');
     expect(button.className).toContain('bg-bg-primary');
   });
 
-  it('should render different button types', () => {
-    fixture.componentRef.setInput('type', 'submit');
-    fixture.detectChanges();
+  it('should render different button types', async () => {
+    // Arrange
+    const { getByRole } = await render(ButtonGroupButton, {
+      providers: [provideZonelessChangeDetection()],
+      componentProperties: { type: 'submit' },
+    });
 
-    const button = getButtonElement();
-    expect(button.getAttribute('type')).toBe('submit');
+    // Act & Assert
+    const button = getByRole('button') as HTMLButtonElement;
+    expect(button.type).toBe('submit');
   });
 
-  it('should apply disabled state', () => {
-    fixture.componentRef.setInput('disabled', true);
-    fixture.detectChanges();
+  it('should apply disabled state', async () => {
+    // Arrange
+    const { getByRole } = await render(ButtonGroupButton, {
+      providers: [provideZonelessChangeDetection()],
+      componentProperties: { disabled: true },
+    });
 
-    const button = getButtonElement();
+    // Act & Assert
+    const button = getByRole('button') as HTMLButtonElement;
     expect(button.disabled).toBeTruthy();
     expect(button.className).toContain('opacity-50');
     expect(button.className).toContain('cursor-not-allowed');

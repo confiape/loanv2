@@ -1,7 +1,7 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideZonelessChangeDetection } from '@angular/core';
+import { render } from '@testing-library/angular';
 import { Table } from './table';
 import type { TableColumn, TableAction } from './table.models';
+import { vi } from 'vitest';
 
 interface TestData {
   id: number;
@@ -25,294 +25,289 @@ const mockColumns: TableColumn<TestData>[] = [
 ];
 
 describe('Table Component', () => {
-  let fixture: ComponentFixture<Table<TestData>>;
-  let component: Table<TestData>;
-
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [Table],
-      providers: [provideZonelessChangeDetection()],
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(Table<TestData>);
-    component = fixture.componentInstance;
-  });
-
-  function getTableElement(): HTMLTableElement {
-    return fixture.nativeElement.querySelector('table') as HTMLTableElement;
-  }
-
-  function getSearchInput(): HTMLInputElement | null {
-    return fixture.nativeElement.querySelector('input[type="text"]');
-  }
-
-  function getRows(): NodeListOf<HTMLTableRowElement> {
-    return fixture.nativeElement.querySelectorAll('tbody tr');
-  }
-
-  function getCheckboxes(): NodeListOf<HTMLInputElement> {
-    return fixture.nativeElement.querySelectorAll('input[type="checkbox"]');
-  }
-
   describe('Basic Rendering', () => {
-    it('should create', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData);
-      fixture.detectChanges();
+    it('should create', async () => {
+      // Arrange
+      const props = { columns: mockColumns, data: mockData };
 
-      expect(component).toBeTruthy();
+      // Act
+      const { container } = await render(Table<TestData>, { componentProperties: props });
+
+      // Assert
+      expect(container).toBeTruthy();
     });
 
-    it('should render table with columns', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData);
-      fixture.detectChanges();
+    it('should render table with columns', async () => {
+      // Arrange
+      const props = { columns: mockColumns, data: mockData };
 
-      const headers = fixture.nativeElement.querySelectorAll('thead th');
+      // Act
+      const { container } = await render(Table<TestData>, { componentProperties: props });
+      const headers = container.querySelectorAll('thead th');
+
+      // Assert
       expect(headers.length).toBeGreaterThan(0);
-      expect(fixture.nativeElement.textContent).toContain('Name');
-      expect(fixture.nativeElement.textContent).toContain('Category');
-      expect(fixture.nativeElement.textContent).toContain('Price');
+      expect(container.textContent).toContain('Name');
+      expect(container.textContent).toContain('Category');
+      expect(container.textContent).toContain('Price');
     });
 
-    it('should render data rows', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData);
-      fixture.detectChanges();
+    it('should render data rows', async () => {
+      // Arrange
+      const props = { columns: mockColumns, data: mockData };
 
-      expect(fixture.nativeElement.textContent).toContain('Product A');
-      expect(fixture.nativeElement.textContent).toContain('Product B');
+      // Act
+      const { container } = await render(Table<TestData>, { componentProperties: props });
+
+      // Assert
+      expect(container.textContent).toContain('Product A');
+      expect(container.textContent).toContain('Product B');
     });
 
-    it('should render empty state when no data', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', []);
-      fixture.detectChanges();
+    it('should render empty state when no data', async () => {
+      // Arrange
+      const props = { columns: mockColumns, data: [] };
 
-      expect(fixture.nativeElement.textContent).toContain('No data available');
+      // Act
+      const { container } = await render(Table<TestData>, { componentProperties: props });
+
+      // Assert
+      expect(container.textContent).toContain('No data available');
     });
 
-    it('should apply compact density classes', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData.slice(0, 1));
-      fixture.componentRef.setInput('density', 'compact');
-      fixture.detectChanges();
+    it('should apply compact density classes', async () => {
+      // Arrange
+      const props = { columns: mockColumns, data: mockData.slice(0, 1), density: 'compact' };
 
-      const cell = fixture.nativeElement.querySelector('td');
+      // Act
+      const { container } = await render(Table<TestData>, { componentProperties: props });
+      const cell = container.querySelector('td');
+
+      // Assert
       expect(cell?.className).toContain('px-4');
       expect(cell?.className).toContain('py-2');
     });
 
-    it('should apply spacious density classes', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData.slice(0, 1));
-      fixture.componentRef.setInput('density', 'spacious');
-      fixture.detectChanges();
+    it('should apply spacious density classes', async () => {
+      // Arrange
+      const props = { columns: mockColumns, data: mockData.slice(0, 1), density: 'spacious' };
 
-      const cell = fixture.nativeElement.querySelector('td');
+      // Act
+      const { container } = await render(Table<TestData>, { componentProperties: props });
+      const cell = container.querySelector('td');
+
+      // Assert
       expect(cell?.className).toContain('px-8');
       expect(cell?.className).toContain('py-5');
     });
   });
 
   describe('Search Functionality', () => {
-    it('should render search input when searchable is true', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData);
-      fixture.componentRef.setInput('searchable', true);
-      fixture.detectChanges();
+    it('should render search input when searchable is true', async () => {
+      // Arrange
+      const props = { columns: mockColumns, data: mockData, searchable: true };
 
-      const searchInput = getSearchInput();
+      // Act
+      const { container } = await render(Table<TestData>, { componentProperties: props });
+      const searchInput = container.querySelector('input[type="text"]') as HTMLInputElement;
+
+      // Assert
       expect(searchInput).toBeTruthy();
     });
 
-    it('should not render search input when searchable is false', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData);
-      fixture.componentRef.setInput('searchable', false);
-      fixture.detectChanges();
+    it('should not render search input when searchable is false', async () => {
+      // Arrange
+      const props = { columns: mockColumns, data: mockData, searchable: false };
 
-      const searchInput = getSearchInput();
+      // Act
+      const { container } = await render(Table<TestData>, { componentProperties: props });
+      const searchInput = container.querySelector('input[type="text"]') as HTMLInputElement;
+
+      // Assert
       expect(searchInput).toBeFalsy();
     });
 
-    it('should filter data based on search term', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData);
-      fixture.componentRef.setInput('searchable', true);
-      fixture.detectChanges();
+    it('should filter data based on search term', async () => {
+      // Arrange
+      const props = { columns: mockColumns, data: mockData, searchable: true };
+      const { container } = await render(Table<TestData>, { componentProperties: props });
+      const searchInput = container.querySelector('input[type="text"]') as HTMLInputElement;
 
-      const searchInput = getSearchInput();
-      expect(searchInput).toBeTruthy();
+      // Act
+      searchInput.value = 'Electronics';
+      searchInput.dispatchEvent(new Event('input'));
+      await new Promise((r) => setTimeout(r, 0));
 
-      if (searchInput) {
-        searchInput.value = 'Electronics';
-        searchInput.dispatchEvent(new Event('input'));
-        fixture.detectChanges();
-
-        expect(fixture.nativeElement.textContent).toContain('Product A');
-        expect(fixture.nativeElement.textContent).toContain('Product C');
-        expect(fixture.nativeElement.textContent).not.toContain('Product B');
-      }
+      // Assert
+      expect(container.textContent).toContain('Product A');
+      expect(container.textContent).toContain('Product C');
+      expect(container.textContent).not.toContain('Product B');
     });
 
-    it('should show all data when search is cleared', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData);
-      fixture.componentRef.setInput('searchable', true);
-      fixture.detectChanges();
+    it('should show all data when search is cleared', async () => {
+      // Arrange
+      const props = { columns: mockColumns, data: mockData, searchable: true };
+      const { container } = await render(Table<TestData>, { componentProperties: props });
+      const searchInput = container.querySelector('input[type="text"]') as HTMLInputElement;
 
-      const searchInput = getSearchInput();
-      if (searchInput) {
-        searchInput.value = 'Electronics';
-        searchInput.dispatchEvent(new Event('input'));
-        fixture.detectChanges();
+      // Act
+      searchInput.value = 'Electronics';
+      searchInput.dispatchEvent(new Event('input'));
+      await new Promise((r) => setTimeout(r, 0));
 
-        searchInput.value = '';
-        searchInput.dispatchEvent(new Event('input'));
-        fixture.detectChanges();
+      searchInput.value = '';
+      searchInput.dispatchEvent(new Event('input'));
+      await new Promise((r) => setTimeout(r, 0));
 
-        expect(fixture.nativeElement.textContent).toContain('Product A');
-        expect(fixture.nativeElement.textContent).toContain('Product B');
-      }
+      // Assert
+      expect(container.textContent).toContain('Product A');
+      expect(container.textContent).toContain('Product B');
     });
   });
 
   describe('Selection Functionality', () => {
-    it('should render checkboxes when selectable is true', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData.slice(0, 2));
-      fixture.componentRef.setInput('selectable', true);
-      fixture.detectChanges();
+    it('should render checkboxes when selectable is true', async () => {
+      // Arrange
+      const props = { columns: mockColumns, data: mockData.slice(0, 2), selectable: true };
 
-      const checkboxes = getCheckboxes();
+      // Act
+      const { container } = await render(Table<TestData>, { componentProperties: props });
+      const checkboxes = container.querySelectorAll('input[type="checkbox"]');
+
+      // Assert
       expect(checkboxes.length).toBeGreaterThan(0);
     });
 
-    it('should not render checkboxes when selectable is false', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData.slice(0, 2));
-      fixture.componentRef.setInput('selectable', false);
-      fixture.detectChanges();
+    it('should not render checkboxes when selectable is false', async () => {
+      // Arrange
+      const props = { columns: mockColumns, data: mockData.slice(0, 2), selectable: false };
 
-      const checkboxes = getCheckboxes();
+      // Act
+      const { container } = await render(Table<TestData>, { componentProperties: props });
+      const checkboxes = container.querySelectorAll('input[type="checkbox"]');
+
+      // Assert
       expect(checkboxes.length).toBe(0);
     });
 
-    it('should select and deselect rows', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData.slice(0, 2));
-      fixture.componentRef.setInput('selectable', true);
-      fixture.detectChanges();
+    it('should select and deselect rows', async () => {
+      // Arrange
+      const props = { columns: mockColumns, data: mockData.slice(0, 2), selectable: true };
+      const { container } = await render(Table<TestData>, { componentProperties: props });
+      const checkboxes = container.querySelectorAll('input[type="checkbox"]');
+      const rowCheckbox = checkboxes[1] as HTMLInputElement;
 
-      const checkboxes = getCheckboxes();
-      const rowCheckbox = checkboxes[1] as HTMLInputElement; // Skip "select all"
-
+      // Act & Assert - Initial state
       expect(rowCheckbox.checked).toBe(false);
 
+      // Act - Click to select
       rowCheckbox.click();
-      fixture.detectChanges();
+      await new Promise((r) => setTimeout(r, 0));
       expect(rowCheckbox.checked).toBe(true);
 
+      // Act - Click to deselect
       rowCheckbox.click();
-      fixture.detectChanges();
+      await new Promise((r) => setTimeout(r, 0));
       expect(rowCheckbox.checked).toBe(false);
     });
 
-    it('should emit selectionChange event', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData.slice(0, 2));
-      fixture.componentRef.setInput('selectable', true);
-      fixture.detectChanges();
+    it('should emit selectionChange event', async () => {
+      // Arrange
+      const props = { columns: mockColumns, data: mockData.slice(0, 2), selectable: true };
+      const { container, component } = await render(Table<TestData>, { componentProperties: props });
 
-      let emittedValue: TestData[] | undefined;
+      let emittedValue: readonly TestData[] | undefined;
       component.selectionChange.subscribe((value) => {
         emittedValue = value;
       });
 
-      const checkboxes = getCheckboxes();
+      const checkboxes = container.querySelectorAll('input[type="checkbox"]');
       const rowCheckbox = checkboxes[1] as HTMLInputElement;
-      rowCheckbox.click();
-      fixture.detectChanges();
 
+      // Act
+      rowCheckbox.click();
+      await new Promise((r) => setTimeout(r, 0));
+
+      // Assert
       expect(emittedValue).toBeDefined();
       expect(emittedValue?.length).toBeGreaterThan(0);
     });
   });
 
   describe('Pagination Functionality', () => {
-    it('should render pagination controls when paginated is true', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData);
-      fixture.componentRef.setInput('paginated', true);
-      fixture.componentRef.setInput('pageSize', 2);
-      fixture.detectChanges();
+    it('should render pagination controls when paginated is true', async () => {
+      // Arrange
+      const props = { columns: mockColumns, data: mockData, paginated: true, pageSize: 2 };
 
-      expect(fixture.nativeElement.textContent).toContain('Previous');
-      expect(fixture.nativeElement.textContent).toContain('Next');
+      // Act
+      const { container } = await render(Table<TestData>, { componentProperties: props });
+
+      // Assert
+      expect(container.textContent).toContain('Previous');
+      expect(container.textContent).toContain('Next');
     });
 
-    it('should not render pagination when paginated is false', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData);
-      fixture.componentRef.setInput('paginated', false);
-      fixture.detectChanges();
+    it('should not render pagination when paginated is false', async () => {
+      // Arrange
+      const props = { columns: mockColumns, data: mockData, paginated: false };
 
-      expect(fixture.nativeElement.textContent).not.toContain('Previous');
-      expect(fixture.nativeElement.textContent).not.toContain('Next');
+      // Act
+      const { container } = await render(Table<TestData>, { componentProperties: props });
+
+      // Assert
+      expect(container.textContent).not.toContain('Previous');
+      expect(container.textContent).not.toContain('Next');
     });
 
-    it('should show correct page size of data', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData);
-      fixture.componentRef.setInput('paginated', true);
-      fixture.componentRef.setInput('pageSize', 2);
-      fixture.detectChanges();
+    it('should show correct page size of data', async () => {
+      // Arrange
+      const props = { columns: mockColumns, data: mockData, paginated: true, pageSize: 2 };
 
-      expect(fixture.nativeElement.textContent).toContain('Product A');
-      expect(fixture.nativeElement.textContent).toContain('Product B');
-      expect(fixture.nativeElement.textContent).not.toContain('Product C');
+      // Act
+      const { container } = await render(Table<TestData>, { componentProperties: props });
+
+      // Assert
+      expect(container.textContent).toContain('Product A');
+      expect(container.textContent).toContain('Product B');
+      expect(container.textContent).not.toContain('Product C');
     });
 
-    it('should navigate to next page', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData);
-      fixture.componentRef.setInput('paginated', true);
-      fixture.componentRef.setInput('pageSize', 2);
-      fixture.detectChanges();
+    it('should navigate to next page', async () => {
+      // Arrange
+      const props = { columns: mockColumns, data: mockData, paginated: true, pageSize: 2 };
+      const { container } = await render(Table<TestData>, { componentProperties: props });
 
       const nextButton = Array.from<HTMLButtonElement>(
-        fixture.nativeElement.querySelectorAll('button')
+        container.querySelectorAll('button')
       ).find((btn) => btn.textContent?.includes('Next'));
 
+      // Act
       expect(nextButton).toBeTruthy();
       nextButton?.click();
-      fixture.detectChanges();
+      await new Promise((r) => setTimeout(r, 0));
 
-      expect(fixture.nativeElement.textContent).not.toContain('Product A');
-      expect(fixture.nativeElement.textContent).toContain('Product C');
+      // Assert
+      expect(container.textContent).not.toContain('Product A');
+      expect(container.textContent).toContain('Product C');
     });
 
-    it('should disable Previous on first page', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData);
-      fixture.componentRef.setInput('paginated', true);
-      fixture.componentRef.setInput('pageSize', 2);
-      fixture.detectChanges();
+    it('should disable Previous on first page', async () => {
+      // Arrange
+      const props = { columns: mockColumns, data: mockData, paginated: true, pageSize: 2 };
+      const { container } = await render(Table<TestData>, { componentProperties: props });
 
       const prevButton = Array.from<HTMLButtonElement>(
-        fixture.nativeElement.querySelectorAll('button')
+        container.querySelectorAll('button')
       ).find((btn) => btn.textContent?.includes('Previous'));
 
+      // Assert
       expect(prevButton?.disabled).toBe(true);
     });
 
-    it('should emit pageChange event', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData);
-      fixture.componentRef.setInput('paginated', true);
-      fixture.componentRef.setInput('pageSize', 2);
-      fixture.detectChanges();
+    it('should emit pageChange event', async () => {
+      // Arrange
+      const props = { columns: mockColumns, data: mockData, paginated: true, pageSize: 2 };
+      const { container, component } = await render(Table<TestData>, { componentProperties: props });
 
       let emittedPage: number | undefined;
       component.pageChange.subscribe((page) => {
@@ -320,62 +315,66 @@ describe('Table Component', () => {
       });
 
       const nextButton = Array.from<HTMLButtonElement>(
-        fixture.nativeElement.querySelectorAll('button')
+        container.querySelectorAll('button')
       ).find((btn) => btn.textContent?.includes('Next'));
 
+      // Act
       nextButton?.click();
-      fixture.detectChanges();
+      await new Promise((r) => setTimeout(r, 0));
 
+      // Assert
       expect(emittedPage).toBe(2);
     });
   });
 
   describe('Sorting Functionality', () => {
-    it('should sort data in ascending order', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData);
-      fixture.componentRef.setInput('sortable', true);
-      fixture.detectChanges();
+    it('should sort data in ascending order', async () => {
+      // Arrange
+      const props = { columns: mockColumns, data: mockData, sortable: true };
+      const { container } = await render(Table<TestData>, { componentProperties: props });
 
-      // Find the Price header button
       const priceButton = Array.from<HTMLButtonElement>(
-        fixture.nativeElement.querySelectorAll('th button')
+        container.querySelectorAll('th button')
       ).find((btn) => btn.textContent?.includes('Price'));
 
+      // Act
       expect(priceButton).toBeTruthy();
       priceButton?.click();
-      fixture.detectChanges();
+      await new Promise((r) => setTimeout(r, 0));
 
-      const rows = getRows();
+      const rows = container.querySelectorAll('tbody tr');
       const firstRowText = rows[0]?.textContent || '';
-      expect(firstRowText).toContain('Product B'); // Price 20
+
+      // Assert
+      expect(firstRowText).toContain('Product B');
     });
 
-    it('should sort data in descending order on second click', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData);
-      fixture.componentRef.setInput('sortable', true);
-      fixture.detectChanges();
+    it('should sort data in descending order on second click', async () => {
+      // Arrange
+      const props = { columns: mockColumns, data: mockData, sortable: true };
+      const { container } = await render(Table<TestData>, { componentProperties: props });
 
       const priceButton = Array.from<HTMLButtonElement>(
-        fixture.nativeElement.querySelectorAll('th button')
+        container.querySelectorAll('th button')
       ).find((btn) => btn.textContent?.includes('Price'));
 
+      // Act
       priceButton?.click();
-      fixture.detectChanges();
+      await new Promise((r) => setTimeout(r, 0));
       priceButton?.click();
-      fixture.detectChanges();
+      await new Promise((r) => setTimeout(r, 0));
 
-      const rows = getRows();
+      const rows = container.querySelectorAll('tbody tr');
       const firstRowText = rows[0]?.textContent || '';
-      expect(firstRowText).toContain('Product C'); // Price 150
+
+      // Assert
+      expect(firstRowText).toContain('Product C');
     });
 
-    it('should emit sortChange event', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData);
-      fixture.componentRef.setInput('sortable', true);
-      fixture.detectChanges();
+    it('should emit sortChange event', async () => {
+      // Arrange
+      const props = { columns: mockColumns, data: mockData, sortable: true };
+      const { container, component } = await render(Table<TestData>, { componentProperties: props });
 
       let emittedSort: { key: string; direction: 'asc' | 'desc' | null } | undefined;
       component.sortChange.subscribe((sort) => {
@@ -383,12 +382,14 @@ describe('Table Component', () => {
       });
 
       const priceButton = Array.from<HTMLButtonElement>(
-        fixture.nativeElement.querySelectorAll('th button')
+        container.querySelectorAll('th button')
       ).find((btn) => btn.textContent?.includes('Price'));
 
+      // Act
       priceButton?.click();
-      fixture.detectChanges();
+      await new Promise((r) => setTimeout(r, 0));
 
+      // Assert
       expect(emittedSort).toBeDefined();
       expect(emittedSort?.key).toBe('price');
       expect(emittedSort?.direction).toBe('asc');
@@ -396,22 +397,24 @@ describe('Table Component', () => {
   });
 
   describe('Actions Functionality', () => {
-    it('should render action buttons', () => {
+    it('should render action buttons', async () => {
+      // Arrange
       const mockActions: TableAction<TestData>[] = [
         { label: 'Edit', variant: 'primary', handler: () => {} },
         { label: 'Delete', variant: 'danger', handler: () => {} },
       ];
+      const props = { columns: mockColumns, data: mockData.slice(0, 2), actions: mockActions };
 
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData.slice(0, 2));
-      fixture.componentRef.setInput('actions', mockActions);
-      fixture.detectChanges();
+      // Act
+      const { container } = await render(Table<TestData>, { componentProperties: props });
 
-      expect(fixture.nativeElement.textContent).toContain('Edit');
-      expect(fixture.nativeElement.textContent).toContain('Delete');
+      // Assert
+      expect(container.textContent).toContain('Edit');
+      expect(container.textContent).toContain('Delete');
     });
 
-    it('should call action handler when clicked', () => {
+    it('should call action handler when clicked', async () => {
+      // Arrange
       let handlerCalled = false;
       let receivedRow: TestData | undefined;
 
@@ -425,24 +428,24 @@ describe('Table Component', () => {
           },
         },
       ];
-
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData.slice(0, 1));
-      fixture.componentRef.setInput('actions', mockActions);
-      fixture.detectChanges();
+      const props = { columns: mockColumns, data: mockData.slice(0, 1), actions: mockActions };
+      const { container } = await render(Table<TestData>, { componentProperties: props });
 
       const editButton = Array.from<HTMLButtonElement>(
-        fixture.nativeElement.querySelectorAll('button')
+        container.querySelectorAll('button')
       ).find((btn) => btn.textContent?.includes('Edit'));
 
+      // Act
       editButton?.click();
-      fixture.detectChanges();
+      await new Promise((r) => setTimeout(r, 0));
 
+      // Assert
       expect(handlerCalled).toBe(true);
       expect(receivedRow).toEqual(mockData[0]);
     });
 
-    it('should respect action conditions', () => {
+    it('should respect action conditions', async () => {
+      // Arrange
       const mockActions: TableAction<TestData>[] = [
         {
           label: 'Premium',
@@ -451,45 +454,49 @@ describe('Table Component', () => {
           condition: (row) => row.price > 100,
         },
       ];
+      const props = { columns: mockColumns, data: mockData.slice(0, 3), actions: mockActions };
 
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData.slice(0, 3));
-      fixture.componentRef.setInput('actions', mockActions);
-      fixture.detectChanges();
+      // Act
+      const { container } = await render(Table<TestData>, { componentProperties: props });
 
       const premiumButtons = Array.from<HTMLButtonElement>(
-        fixture.nativeElement.querySelectorAll('button')
+        container.querySelectorAll('button')
       ).filter((btn) => btn.textContent?.includes('Premium'));
 
-      // Only Product C (price 150) should have the button
+      // Assert
       expect(premiumButtons.length).toBe(1);
     });
   });
 
   describe('Hoverable Functionality', () => {
-    it('should apply hover classes when hoverable is true', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData.slice(0, 1));
-      fixture.componentRef.setInput('hoverable', true);
-      fixture.detectChanges();
+    it('should apply hover classes when hoverable is true', async () => {
+      // Arrange
+      const props = { columns: mockColumns, data: mockData.slice(0, 1), hoverable: true };
 
-      const row = fixture.nativeElement.querySelector('tbody tr');
+      // Act
+      const { container } = await render(Table<TestData>, { componentProperties: props });
+      const row = container.querySelector('tbody tr');
+
+      // Assert
       expect(row?.className).toContain('hover:bg-bg-secondary');
     });
 
-    it('should not apply hover classes when hoverable is false', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData.slice(0, 1));
-      fixture.componentRef.setInput('hoverable', false);
-      fixture.detectChanges();
+    it('should not apply hover classes when hoverable is false', async () => {
+      // Arrange
+      const props = { columns: mockColumns, data: mockData.slice(0, 1), hoverable: false };
 
-      const row = fixture.nativeElement.querySelector('tbody tr');
+      // Act
+      const { container } = await render(Table<TestData>, { componentProperties: props });
+      const row = container.querySelector('tbody tr');
+
+      // Assert
       expect(row?.className).not.toContain('hover:bg-bg-secondary');
     });
   });
 
   describe('Custom Rendering', () => {
-    it('should use custom render function for columns', () => {
+    it('should use custom render function for columns', async () => {
+      // Arrange
       const customColumns: TableColumn<TestData>[] = [
         {
           key: 'price',
@@ -497,78 +504,98 @@ describe('Table Component', () => {
           render: (value: number) => `$${value.toFixed(2)}`,
         },
       ];
+      const props = {
+        columns: customColumns,
+        data: [{ id: 1, name: 'Test', category: 'Cat', price: 99.5 }],
+      };
 
-      fixture.componentRef.setInput('columns', customColumns);
-      fixture.componentRef.setInput('data', [
-        { id: 1, name: 'Test', category: 'Cat', price: 99.5 },
-      ]);
-      fixture.detectChanges();
+      // Act
+      const { container } = await render(Table<TestData>, { componentProperties: props });
 
-      expect(fixture.nativeElement.textContent).toContain('$99.50');
+      // Assert
+      expect(container.textContent).toContain('$99.50');
     });
   });
 
   describe('data-testid Attributes', () => {
-    it('should render data-testid on table wrapper', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData.slice(0, 2));
-      fixture.componentRef.setInput('dataTestId', 'test-table');
-      fixture.detectChanges();
+    it('should render data-testid on table wrapper', async () => {
+      // Arrange
+      const props = { columns: mockColumns, data: mockData.slice(0, 2), dataTestId: 'test-table' };
 
-      const wrapper = fixture.nativeElement.querySelector('[data-testid="test-table-wrapper"]');
+      // Act
+      const { container } = await render(Table<TestData>, { componentProperties: props });
+      const wrapper = container.querySelector('[data-testid="test-table-wrapper"]');
+
+      // Assert
       expect(wrapper).toBeTruthy();
     });
 
-    it('should render data-testid on table element', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData.slice(0, 2));
-      fixture.componentRef.setInput('dataTestId', 'test-table');
-      fixture.detectChanges();
+    it('should render data-testid on table element', async () => {
+      // Arrange
+      const props = { columns: mockColumns, data: mockData.slice(0, 2), dataTestId: 'test-table' };
 
-      const table = fixture.nativeElement.querySelector('table[data-testid="test-table"]');
+      // Act
+      const { container } = await render(Table<TestData>, { componentProperties: props });
+      const table = container.querySelector('table[data-testid="test-table"]');
+
+      // Assert
       expect(table).toBeTruthy();
     });
 
-    it('should render data-testid on search input when searchable', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData.slice(0, 2));
-      fixture.componentRef.setInput('dataTestId', 'test-table');
-      fixture.componentRef.setInput('searchable', true);
-      fixture.detectChanges();
+    it('should render data-testid on search input when searchable', async () => {
+      // Arrange
+      const props = {
+        columns: mockColumns,
+        data: mockData.slice(0, 2),
+        dataTestId: 'test-table',
+        searchable: true,
+      };
 
-      const searchInput = fixture.nativeElement.querySelector('input[data-testid="test-table-search"]');
+      // Act
+      const { container } = await render(Table<TestData>, { componentProperties: props });
+      const searchInput = container.querySelector('input[data-testid="test-table-search"]');
+
+      // Assert
       expect(searchInput).toBeTruthy();
     });
 
-    it('should render data-testid on pagination when paginated', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData);
-      fixture.componentRef.setInput('dataTestId', 'test-table');
-      fixture.componentRef.setInput('paginated', true);
-      fixture.componentRef.setInput('pageSize', 2);
-      fixture.detectChanges();
+    it('should render data-testid on pagination when paginated', async () => {
+      // Arrange
+      const props = {
+        columns: mockColumns,
+        data: mockData,
+        dataTestId: 'test-table',
+        paginated: true,
+        pageSize: 2,
+      };
 
-      const pagination = fixture.nativeElement.querySelector('nav[data-testid="test-table-pagination"]');
+      // Act
+      const { container } = await render(Table<TestData>, { componentProperties: props });
+      const pagination = container.querySelector('nav[data-testid="test-table-pagination"]');
+
+      // Assert
       expect(pagination).toBeTruthy();
     });
 
-    it('should render data-testid on table rows using row ID', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData.slice(0, 3));
-      fixture.componentRef.setInput('dataTestId', 'test-table');
-      fixture.detectChanges();
+    it('should render data-testid on table rows using row ID', async () => {
+      // Arrange
+      const props = { columns: mockColumns, data: mockData.slice(0, 3), dataTestId: 'test-table' };
 
-      // Check that rows have data-testid with their IDs
-      const row1 = fixture.nativeElement.querySelector('tr[data-testid="test-table-row-1"]');
-      const row2 = fixture.nativeElement.querySelector('tr[data-testid="test-table-row-2"]');
-      const row3 = fixture.nativeElement.querySelector('tr[data-testid="test-table-row-3"]');
+      // Act
+      const { container } = await render(Table<TestData>, { componentProperties: props });
 
+      const row1 = container.querySelector('tr[data-testid="test-table-row-1"]');
+      const row2 = container.querySelector('tr[data-testid="test-table-row-2"]');
+      const row3 = container.querySelector('tr[data-testid="test-table-row-3"]');
+
+      // Assert
       expect(row1).toBeTruthy();
       expect(row2).toBeTruthy();
       expect(row3).toBeTruthy();
     });
 
-    it('should render data-testid on table rows using index when no ID property', () => {
+    it('should render data-testid on table rows using index when no ID property', async () => {
+      // Arrange
       interface DataWithoutId {
         name: string;
         category: string;
@@ -584,51 +611,48 @@ describe('Table Component', () => {
         { key: 'category', label: 'Category' },
       ];
 
-      fixture.componentRef.setInput('columns', columnsForDataWithoutId);
-      fixture.componentRef.setInput('data', dataWithoutId);
-      fixture.componentRef.setInput('dataTestId', 'test-table');
-      fixture.detectChanges();
+      const props = { columns: columnsForDataWithoutId, data: dataWithoutId, dataTestId: 'test-table' };
 
-      // Check that rows have data-testid with their indices
-      const row0 = fixture.nativeElement.querySelector('tr[data-testid="test-table-row-0"]');
-      const row1 = fixture.nativeElement.querySelector('tr[data-testid="test-table-row-1"]');
+      // Act
+      const { container } = await render(Table<DataWithoutId>, { componentProperties: props });
 
+      const row0 = container.querySelector('tr[data-testid="test-table-row-0"]');
+      const row1 = container.querySelector('tr[data-testid="test-table-row-1"]');
+
+      // Assert
       expect(row0).toBeTruthy();
       expect(row1).toBeTruthy();
     });
 
-    it('should render data-testid on action buttons with row ID', () => {
+    it('should render data-testid on action buttons with row ID', async () => {
+      // Arrange
       const mockActions: TableAction<TestData>[] = [
         { label: 'Edit', variant: 'primary', handler: () => {} },
         { label: 'Delete', variant: 'danger', handler: () => {} },
       ];
 
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData.slice(0, 2));
-      fixture.componentRef.setInput('actions', mockActions);
-      fixture.componentRef.setInput('dataTestId', 'test-table');
-      fixture.detectChanges();
+      const props = {
+        columns: mockColumns,
+        data: mockData.slice(0, 2),
+        actions: mockActions,
+        dataTestId: 'test-table',
+      };
 
-      // Check Edit button for row with ID 1
-      const editBtn1 = fixture.nativeElement.querySelector(
-        'button[data-testid="test-table-action-edit-row-1"]'
-      );
+      // Act
+      const { container } = await render(Table<TestData>, { componentProperties: props });
+
+      const editBtn1 = container.querySelector('button[data-testid="test-table-action-edit-row-1"]');
+      const deleteBtn1 = container.querySelector('button[data-testid="test-table-action-delete-row-1"]');
+      const editBtn2 = container.querySelector('button[data-testid="test-table-action-edit-row-2"]');
+
+      // Assert
       expect(editBtn1).toBeTruthy();
-
-      // Check Delete button for row with ID 1
-      const deleteBtn1 = fixture.nativeElement.querySelector(
-        'button[data-testid="test-table-action-delete-row-1"]'
-      );
       expect(deleteBtn1).toBeTruthy();
-
-      // Check Edit button for row with ID 2
-      const editBtn2 = fixture.nativeElement.querySelector(
-        'button[data-testid="test-table-action-edit-row-2"]'
-      );
       expect(editBtn2).toBeTruthy();
     });
 
-    it('should render data-testid on action buttons with index when no ID property', () => {
+    it('should render data-testid on action buttons with index when no ID property', async () => {
+      // Arrange
       interface DataWithoutId {
         name: string;
         category: string;
@@ -644,54 +668,57 @@ describe('Table Component', () => {
         { key: 'category', label: 'Category' },
       ];
 
-      const mockActions: TableAction<DataWithoutId>[] = [
-        { label: 'Edit', variant: 'primary', handler: () => {} },
-      ];
+      const mockActions: TableAction<DataWithoutId>[] = [{ label: 'Edit', variant: 'primary', handler: () => {} }];
 
-      fixture.componentRef.setInput('columns', columnsForDataWithoutId);
-      fixture.componentRef.setInput('data', dataWithoutId);
-      fixture.componentRef.setInput('actions', mockActions);
-      fixture.componentRef.setInput('dataTestId', 'test-table');
-      fixture.detectChanges();
+      const props = {
+        columns: columnsForDataWithoutId,
+        data: dataWithoutId,
+        actions: mockActions,
+        dataTestId: 'test-table',
+      };
 
-      // Check Edit button for row with index 0
-      const editBtn0 = fixture.nativeElement.querySelector(
-        'button[data-testid="test-table-action-edit-row-0"]'
-      );
+      // Act
+      const { container } = await render(Table<DataWithoutId>, { componentProperties: props });
+
+      const editBtn0 = container.querySelector('button[data-testid="test-table-action-edit-row-0"]');
+      const editBtn1 = container.querySelector('button[data-testid="test-table-action-edit-row-1"]');
+
+      // Assert
       expect(editBtn0).toBeTruthy();
-
-      // Check Edit button for row with index 1
-      const editBtn1 = fixture.nativeElement.querySelector(
-        'button[data-testid="test-table-action-edit-row-1"]'
-      );
       expect(editBtn1).toBeTruthy();
     });
 
-    it('should sanitize action labels with spaces in data-testid', () => {
+    it('should sanitize action labels with spaces in data-testid', async () => {
+      // Arrange
       const mockActions: TableAction<TestData>[] = [
         { label: 'View Details', variant: 'primary', handler: () => {} },
       ];
 
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData.slice(0, 1));
-      fixture.componentRef.setInput('actions', mockActions);
-      fixture.componentRef.setInput('dataTestId', 'test-table');
-      fixture.detectChanges();
+      const props = {
+        columns: mockColumns,
+        data: mockData.slice(0, 1),
+        actions: mockActions,
+        dataTestId: 'test-table',
+      };
 
-      // Should convert "View Details" to "view-details"
-      const viewBtn = fixture.nativeElement.querySelector(
-        'button[data-testid="test-table-action-view-details-row-1"]'
-      );
+      // Act
+      const { container } = await render(Table<TestData>, { componentProperties: props });
+
+      const viewBtn = container.querySelector('button[data-testid="test-table-action-view-details-row-1"]');
+
+      // Assert
       expect(viewBtn).toBeTruthy();
     });
 
-    it('should not render data-testid attributes when dataTestId is null', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData.slice(0, 2));
-      fixture.componentRef.setInput('dataTestId', null);
-      fixture.detectChanges();
+    it('should not render data-testid attributes when dataTestId is null', async () => {
+      // Arrange
+      const props = { columns: mockColumns, data: mockData.slice(0, 2), dataTestId: null };
 
-      const rows = fixture.nativeElement.querySelectorAll('tbody tr[data-testid]');
+      // Act
+      const { container } = await render(Table<TestData>, { componentProperties: props });
+      const rows = container.querySelectorAll('tbody tr[data-testid]');
+
+      // Assert
       expect(rows.length).toBe(0);
     });
   });

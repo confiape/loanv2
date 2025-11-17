@@ -1,92 +1,182 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideZonelessChangeDetection } from '@angular/core';
+// Angular testing
+import { TestBed } from '@angular/core/testing';
+import {
+  provideZonelessChangeDetection,
+  inputBinding,
+  outputBinding,
+  signal,
+} from '@angular/core';
 
+// Testing library
+import { within } from '@testing-library/dom';
+import userEvent from '@testing-library/user-event';
+
+// Vitest
+import { describe, it, expect } from 'vitest';
+
+// Component under test
 import { PasswordInput } from '@loan/app/shared/components/password-input/password-input';
 
 describe('PasswordInput', () => {
-  let fixture: ComponentFixture<PasswordInput>;
-  let component: PasswordInput;
-
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [PasswordInput],
-      providers: [provideZonelessChangeDetection()],
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(PasswordInput);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
   it('should create', () => {
-    expect(component).toBeTruthy();
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(PasswordInput, {
+      bindings: [],
+    });
+    TestBed.tick();
+
+    // Assert
+    expect(fixture.componentInstance).toBeTruthy();
   });
 
   it('should render password input by default', () => {
-    const input = fixture.nativeElement.querySelector('input') as HTMLInputElement;
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(PasswordInput, {
+      bindings: [],
+    });
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
+
+    // Assert
+    const input = queries.getByRole('textbox') as HTMLInputElement;
     expect(input.type).toBe('password');
   });
 
-  it('should toggle visibility when button is clicked', () => {
-    const button = fixture.nativeElement.querySelector('button') as HTMLButtonElement;
-    button.click();
-    fixture.detectChanges();
+  it('should toggle visibility when button is clicked', async () => {
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(PasswordInput, {
+      bindings: [],
+    });
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
+    const user = userEvent.setup();
 
-    const input = fixture.nativeElement.querySelector('input') as HTMLInputElement;
+    // Act
+    const button = queries.getByRole('button');
+    await user.click(button);
+    TestBed.tick();
+
+    // Assert
+    const input = queries.getByRole('textbox') as HTMLInputElement;
     expect(input.type).toBe('text');
   });
 
   it('should render visibility toggle icon', () => {
-    const icon = fixture.nativeElement.querySelector('button ng-icon');
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(PasswordInput, {
+      bindings: [],
+    });
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
+
+    // Assert
+    const button = queries.getByRole('button');
+    const icon = button.querySelector('ng-icon');
     expect(icon).toBeTruthy();
   });
 
-  it('should emit visibilityChange output', () => {
-    let emitted = false;
-    component.visibilityChange.subscribe((value) => {
-      emitted = value;
+  it('should emit visibilityChange output', async () => {
+    // Arrange
+    const visibilitySignal = signal(false);
+    const fixture = TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(PasswordInput, {
+      bindings: [outputBinding('visibilityChange', (value: boolean) => visibilitySignal.set(value))],
     });
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
+    const user = userEvent.setup();
 
-    const button = fixture.nativeElement.querySelector('button') as HTMLButtonElement;
-    button.click();
+    // Act
+    const button = queries.getByRole('button');
+    await user.click(button);
+    TestBed.tick();
 
-    expect(emitted).toBe(true);
+    // Assert
+    expect(visibilitySignal()).toBe(true);
   });
 
-  it('should emit valueChange when typing', () => {
-    let emitted = '';
-    component.valueChange.subscribe((value) => {
-      emitted = value;
+  it('should emit valueChange when typing', async () => {
+    // Arrange
+    const valueSignal = signal('');
+    const fixture = TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(PasswordInput, {
+      bindings: [outputBinding('valueChange', (value: string) => valueSignal.set(value))],
     });
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
+    const user = userEvent.setup();
 
-    const input = fixture.nativeElement.querySelector('input') as HTMLInputElement;
-    input.value = 'secret';
-    input.dispatchEvent(new Event('input'));
+    // Act
+    const input = queries.getByRole('textbox') as HTMLInputElement;
+    await user.type(input, 'secret');
+    TestBed.tick();
 
-    expect(emitted).toBe('secret');
+    // Assert
+    expect(valueSignal()).toBe('secret');
   });
 
   it('should update value when writeValue is called', () => {
-    component.writeValue('updated');
-    fixture.detectChanges();
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(PasswordInput, {
+      bindings: [],
+    });
+    TestBed.tick();
+    const component = fixture.componentInstance;
+    const queries = within(fixture.nativeElement);
 
-    const input = fixture.nativeElement.querySelector('input') as HTMLInputElement;
+    // Act
+    component.writeValue('updated');
+    TestBed.tick();
+
+    // Assert
+    const input = queries.getByRole('textbox') as HTMLInputElement;
     expect(input.value).toBe('updated');
   });
 
   it('should respect disabled state from forms API', () => {
-    component.setDisabledState(true);
-    fixture.detectChanges();
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(PasswordInput, {
+      bindings: [],
+    });
+    TestBed.tick();
+    const component = fixture.componentInstance;
+    const queries = within(fixture.nativeElement);
 
-    const input = fixture.nativeElement.querySelector('input') as HTMLInputElement;
+    // Act
+    component.setDisabledState(true);
+    TestBed.tick();
+
+    // Assert
+    const input = queries.getByRole('textbox') as HTMLInputElement;
     expect(input.disabled).toBe(true);
   });
 
   it('should forward host data-testid to inner input', () => {
-    fixture.componentRef.setInput('dataTestId', 'pwd-field');
-    fixture.detectChanges();
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(PasswordInput, {
+      bindings: [inputBinding('dataTestId', () => 'pwd-field')],
+    });
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
 
-    const inner = fixture.nativeElement.querySelector('app-input');
-    expect(inner.getAttribute('data-testid')).toBe('pwd-field');
+    // Assert
+    const inner = queries.getByRole('textbox').closest('app-input');
+    expect(inner?.getAttribute('data-testid')).toBe('pwd-field');
   });
 });
