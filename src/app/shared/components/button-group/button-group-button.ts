@@ -5,12 +5,12 @@ import {
   computed,
   inject,
   ChangeDetectionStrategy,
-  HostAttributeToken,
+
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonGroupPosition, ButtonGroupVariant } from './button-group-helpers';
 
-const DATA_TESTID = new HostAttributeToken('data-testid');
+
 
 @Component({
   selector: 'app-button-group-button',
@@ -33,7 +33,7 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
   },
 })
 export class ButtonGroupButton {
-  private readonly hostTestId = inject(DATA_TESTID, { optional: true });
+  readonly dataTestId = input<string | null>(null);
 
   readonly type = input<'button' | 'submit' | 'reset'>('button');
   readonly disabled = input<boolean>(false);
@@ -43,7 +43,7 @@ export class ButtonGroupButton {
   readonly buttonClick = output<MouseEvent>();
 
   protected readonly buttonTestId = computed(() =>
-    this.hostTestId ? `${this.hostTestId}-button` : null,
+    this.dataTestId() ? `${this.dataTestId()}-button` : null,
   );
 
   protected readonly buttonClasses = computed(() => {

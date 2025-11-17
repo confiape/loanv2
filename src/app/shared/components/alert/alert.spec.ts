@@ -121,4 +121,58 @@ describe('Alert', () => {
     const iconContainer = fixture.nativeElement.querySelector('.shrink-0');
     expect(iconContainer.getAttribute('aria-hidden')).toBe('true');
   });
+
+  describe('data-testid rendering', () => {
+    it('should not render data-testid when not provided', () => {
+      const compiled = fixture.nativeElement as HTMLElement;
+      const alert = compiled.querySelector('[data-testid]');
+      expect(alert).toBeFalsy();
+    });
+
+    it('should render data-testid on alert element (main element)', () => {
+      fixture.componentRef.setInput('dataTestId', 'error-alert');
+      fixture.detectChanges();
+      const compiled = fixture.nativeElement as HTMLElement;
+      const alert = compiled.querySelector('[data-testid="error-alert"]');
+      expect(alert).toBeTruthy();
+    });
+
+    it('should render data-testid on icon with -icon suffix', () => {
+      fixture.componentRef.setInput('dataTestId', 'success-alert');
+      fixture.componentRef.setInput('showIcon', true);
+      fixture.detectChanges();
+      const compiled = fixture.nativeElement as HTMLElement;
+      const icon = compiled.querySelector('[data-testid="success-alert-icon"]');
+      expect(icon).toBeTruthy();
+    });
+
+    it('should render data-testid on content with -content suffix', () => {
+      fixture.componentRef.setInput('dataTestId', 'info-alert');
+      fixture.detectChanges();
+      const compiled = fixture.nativeElement as HTMLElement;
+      const content = compiled.querySelector('[data-testid="info-alert-content"]');
+      expect(content).toBeTruthy();
+    });
+
+    it('should render data-testid on close button with -close-btn suffix', () => {
+      fixture.componentRef.setInput('dataTestId', 'warning-alert');
+      fixture.componentRef.setInput('dismissible', true);
+      fixture.detectChanges();
+      const compiled = fixture.nativeElement as HTMLElement;
+      const closeBtn = compiled.querySelector('button[data-testid="warning-alert-close-btn"]');
+      expect(closeBtn).toBeTruthy();
+    });
+
+    it('should render all data-testid attributes for dismissible alert', () => {
+      fixture.componentRef.setInput('dataTestId', 'notification');
+      fixture.componentRef.setInput('dismissible', true);
+      fixture.componentRef.setInput('showIcon', true);
+      fixture.detectChanges();
+      const compiled = fixture.nativeElement as HTMLElement;
+      expect(compiled.querySelector('[data-testid="notification"]')).toBeTruthy();
+      expect(compiled.querySelector('[data-testid="notification-icon"]')).toBeTruthy();
+      expect(compiled.querySelector('[data-testid="notification-content"]')).toBeTruthy();
+      expect(compiled.querySelector('[data-testid="notification-close-btn"]')).toBeTruthy();
+    });
+  });
 });

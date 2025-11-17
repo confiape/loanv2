@@ -60,7 +60,7 @@ export class GenericCrudFormComponent implements OnInit {
   fields = input.required<FormFieldMetadata[]>();
   loading = input<boolean>(false);
   error = input<string | null>(null);
-  testIdPrefix = input<string>('crud');
+  readonly dataTestId = input<string | null>(null);
 
   // Outputs
   formSubmit = output<unknown>();

@@ -8,7 +8,7 @@ import {
   forwardRef,
   effect,
   inject,
-  HostAttributeToken,
+
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
@@ -20,7 +20,7 @@ import {
   generateInputTestIds,
 } from '../input/input-helpers';
 
-const DATA_TESTID = new HostAttributeToken('data-testid');
+
 
 @Component({
   selector: 'app-date-input',
@@ -125,12 +125,8 @@ const DATA_TESTID = new HostAttributeToken('data-testid');
   },
 })
 export class DateInput implements ControlValueAccessor {
-  // Test ID from host or explicit input
-  private readonly injectedTestId = inject(DATA_TESTID, { optional: true });
+  // Test ID input
   readonly dataTestId = input<string | null>(null);
-  private readonly resolvedTestId = computed(
-    () => this.dataTestId() ?? this.injectedTestId ?? null,
-  );
 
   // Input properties
   readonly label = input<string>('');
@@ -162,7 +158,7 @@ export class DateInput implements ControlValueAccessor {
   protected onTouched: () => void = () => undefined;
 
   // Test IDs using helper
-  private readonly testIds = generateInputTestIds(() => this.resolvedTestId());
+  private readonly testIds = generateInputTestIds(() => this.dataTestId());
   readonly wrapperTestId = this.testIds.wrapper;
   readonly labelTestId = this.testIds.label;
   readonly inputTestId = this.testIds.input;
@@ -171,7 +167,7 @@ export class DateInput implements ControlValueAccessor {
   readonly errorMessageTestId = this.testIds.errorMessage;
 
   readonly iconTestId = computed(() => {
-    const id = this.resolvedTestId();
+    const id = this.dataTestId();
     return id ? `${id}-icon` : null;
   });
 

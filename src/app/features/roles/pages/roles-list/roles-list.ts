@@ -13,7 +13,7 @@ import { RoleCrudService } from '../../services/role-crud.service';
   template: `
     <app-generic-crud-list
       [service]="service"
-      [testIdPrefix]="'roles'"
+      [dataTestId]="'roles'"
     />
   `,
 })

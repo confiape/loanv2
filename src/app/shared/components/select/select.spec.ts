@@ -215,4 +215,47 @@ describe('Select', () => {
       expect(touched).toBe(true);
     });
   });
+
+  describe('data-testid rendering', () => {
+    it('should not render any data-testid attributes when dataTestId is not provided', () => {
+      fixture.detectChanges();
+      const compiled = fixture.nativeElement as HTMLElement;
+      const wrapper = compiled.querySelector('[data-testid]');
+      expect(wrapper).toBeFalsy();
+    });
+
+    it('should render data-testid on select element (main element)', () => {
+      fixture.componentRef.setInput('dataTestId', 'country');
+      fixture.detectChanges();
+      const compiled = fixture.nativeElement as HTMLElement;
+      const select = compiled.querySelector('select[data-testid="country"]');
+      expect(select).toBeTruthy();
+    });
+
+    it('should render data-testid on options with sanitized values', () => {
+      fixture.componentRef.setInput('dataTestId', 'country');
+      fixture.componentRef.setInput('options', [
+        { value: 'us', label: 'United States' },
+        { value: 'ca', label: 'Canada' },
+      ]);
+      fixture.detectChanges();
+      const compiled = fixture.nativeElement as HTMLElement;
+      const optionUs = compiled.querySelector('option[data-testid="country-option-us"]');
+      const optionCa = compiled.querySelector('option[data-testid="country-option-ca"]');
+      expect(optionUs).toBeTruthy();
+      expect(optionCa).toBeTruthy();
+    });
+
+    it('should sanitize option values with special characters', () => {
+      fixture.componentRef.setInput('dataTestId', 'role');
+      fixture.componentRef.setInput('options', [
+        { value: 'Super Admin', label: 'Super Admin' },
+        { value: 'user@email.com', label: 'User Email' },
+      ]);
+      fixture.detectChanges();
+      const compiled = fixture.nativeElement as HTMLElement;
+      expect(compiled.querySelector('option[data-testid="role-option-super-admin"]')).toBeTruthy();
+      expect(compiled.querySelector('option[data-testid="role-option-user-email-com"]')).toBeTruthy();
+    });
+  });
 });

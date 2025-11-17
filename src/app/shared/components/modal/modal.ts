@@ -1,15 +1,12 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  HostAttributeToken,
   computed,
   inject,
   input,
 } from '@angular/core';
 import { DialogModule, DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { ModalSize, generateModalTestIds, getModalSizeClasses } from './modal-helpers';
-
-const DATA_TESTID = new HostAttributeToken('data-testid');
 
 export interface ModalData {
   title?: string;
@@ -51,14 +48,15 @@ export interface ModalData {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Modal {
-  private readonly hostTestId = inject(DATA_TESTID, { optional: true });
+  readonly dataTestId = input<string | null>(null);
   readonly dialogRef = inject(DialogRef<unknown>, { optional: true });
   readonly data = inject<ModalData>(DIALOG_DATA, { optional: true });
 
   readonly size = input<ModalSize>('2xl');
   readonly dismissible = input<boolean>(true);
 
-  private readonly testIds = generateModalTestIds(this.hostTestId ?? this.data?.testId ?? null);
+  private readonly resolvedTestId = computed(() => this.dataTestId() ?? this.data?.testId ?? null);
+  private readonly testIds = generateModalTestIds(this.resolvedTestId());
   readonly overlayTestId = this.testIds.overlay;
   readonly containerTestId = this.testIds.container;
   readonly contentTestId = this.testIds.content;

@@ -108,6 +108,8 @@ export function getSuffixButtonClasses(size: InputSize, iconOnly = false): strin
 
 /**
  * Generates test IDs for input components
+ * The main input element receives the dataTestId directly
+ * All other elements receive the dataTestId with a suffix
  */
 export interface InputTestIds {
   wrapper: Signal<string | null>;
@@ -141,10 +143,7 @@ export function generateInputTestIds(hostTestId: HostTestIdSource): InputTestIds
       const id = getHostTestId();
       return id ? `${id}-label` : null;
     }),
-    input: computed(() => {
-      const id = getHostTestId();
-      return id ? `${id}-input` : null;
-    }),
+    input: computed(() => getHostTestId()),
     prefixIcon: computed(() => {
       const id = getHostTestId();
       return id ? `${id}-prefix-icon` : null;
@@ -155,19 +154,19 @@ export function generateInputTestIds(hostTestId: HostTestIdSource): InputTestIds
     }),
     suffixButton: computed(() => {
       const id = getHostTestId();
-      return id ? `${id}-button` : null;
+      return id ? `${id}-suffix-btn` : null;
     }),
     helpText: computed(() => {
       const id = getHostTestId();
-      return id ? `${id}-help-text` : null;
+      return id ? `${id}-help` : null;
     }),
     successMessage: computed(() => {
       const id = getHostTestId();
-      return id ? `${id}-success-message` : null;
+      return id ? `${id}-success` : null;
     }),
     errorMessage: computed(() => {
       const id = getHostTestId();
-      return id ? `${id}-error-message` : null;
+      return id ? `${id}-error` : null;
     }),
   };
 }

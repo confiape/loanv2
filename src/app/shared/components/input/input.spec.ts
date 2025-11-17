@@ -241,4 +241,127 @@ describe('Input', () => {
       expect(touched).toBe(true);
     });
   });
+
+  describe('data-testid rendering', () => {
+    it('should not render any data-testid attributes when dataTestId is not provided', () => {
+      fixture.detectChanges();
+      const compiled = fixture.nativeElement as HTMLElement;
+
+      const wrapper = compiled.querySelector('[data-testid]');
+      expect(wrapper).toBeFalsy();
+    });
+
+    it('should render data-testid on input element (main element)', () => {
+      fixture.componentRef.setInput('dataTestId', 'email');
+      fixture.detectChanges();
+      const compiled = fixture.nativeElement as HTMLElement;
+
+      const input = compiled.querySelector('input[data-testid="email"]');
+      expect(input).toBeTruthy();
+    });
+
+    it('should render data-testid on wrapper with -wrapper suffix', () => {
+      fixture.componentRef.setInput('dataTestId', 'email');
+      fixture.detectChanges();
+      const compiled = fixture.nativeElement as HTMLElement;
+
+      const wrapper = compiled.querySelector('[data-testid="email-wrapper"]');
+      expect(wrapper).toBeTruthy();
+    });
+
+    it('should render data-testid on label with -label suffix', () => {
+      fixture.componentRef.setInput('dataTestId', 'email');
+      fixture.componentRef.setInput('label', 'Email Address');
+      fixture.detectChanges();
+      const compiled = fixture.nativeElement as HTMLElement;
+
+      const label = compiled.querySelector('label[data-testid="email-label"]');
+      expect(label).toBeTruthy();
+      expect(label?.textContent?.trim()).toBe('Email Address');
+    });
+
+    it('should render data-testid on prefix icon with -prefix-icon suffix', () => {
+      fixture.componentRef.setInput('dataTestId', 'search');
+      fixture.componentRef.setInput('prefixIcon', 'heroMagnifyingGlass');
+      fixture.detectChanges();
+      const compiled = fixture.nativeElement as HTMLElement;
+
+      const iconWrapper = compiled.querySelector('[data-testid="search-prefix-icon"]');
+      expect(iconWrapper).toBeTruthy();
+    });
+
+    it('should render data-testid on suffix icon with -suffix-icon suffix', () => {
+      fixture.componentRef.setInput('dataTestId', 'password');
+      fixture.componentRef.setInput('suffixIcon', 'heroEyeSlash');
+      fixture.detectChanges();
+      const compiled = fixture.nativeElement as HTMLElement;
+
+      const iconWrapper = compiled.querySelector('[data-testid="password-suffix-icon"]');
+      expect(iconWrapper).toBeTruthy();
+    });
+
+    it('should render data-testid on suffix button with -suffix-btn suffix', () => {
+      fixture.componentRef.setInput('dataTestId', 'search');
+      fixture.componentRef.setInput('suffixButton', true);
+      fixture.componentRef.setInput('suffixButtonText', 'Search');
+      fixture.detectChanges();
+      const compiled = fixture.nativeElement as HTMLElement;
+
+      const button = compiled.querySelector('button[data-testid="search-suffix-btn"]');
+      expect(button).toBeTruthy();
+    });
+
+    it('should render data-testid on help text with -help suffix', () => {
+      fixture.componentRef.setInput('dataTestId', 'username');
+      fixture.componentRef.setInput('helpText', 'Choose a unique username');
+      fixture.detectChanges();
+      const compiled = fixture.nativeElement as HTMLElement;
+
+      const helpText = compiled.querySelector('p[data-testid="username-help"]');
+      expect(helpText).toBeTruthy();
+      expect(helpText?.textContent?.trim()).toBe('Choose a unique username');
+    });
+
+    it('should render data-testid on success message with -success suffix', () => {
+      fixture.componentRef.setInput('dataTestId', 'email');
+      fixture.componentRef.setInput('validationState', 'success');
+      fixture.componentRef.setInput('successMessage', 'Email is valid');
+      fixture.detectChanges();
+      const compiled = fixture.nativeElement as HTMLElement;
+
+      const successMsg = compiled.querySelector('p[data-testid="email-success"]');
+      expect(successMsg).toBeTruthy();
+      expect(successMsg?.textContent).toContain('Email is valid');
+    });
+
+    it('should render data-testid on error message with -error suffix', () => {
+      fixture.componentRef.setInput('dataTestId', 'email');
+      fixture.componentRef.setInput('validationState', 'error');
+      fixture.componentRef.setInput('errorMessage', 'Invalid email format');
+      fixture.detectChanges();
+      const compiled = fixture.nativeElement as HTMLElement;
+
+      const errorMsg = compiled.querySelector('p[data-testid="email-error"]');
+      expect(errorMsg).toBeTruthy();
+      expect(errorMsg?.textContent).toContain('Invalid email format');
+    });
+
+    it('should render all data-testid attributes for complete form', () => {
+      fixture.componentRef.setInput('dataTestId', 'contact-email');
+      fixture.componentRef.setInput('label', 'Email');
+      fixture.componentRef.setInput('prefixIcon', 'heroMagnifyingGlass');
+      fixture.componentRef.setInput('suffixButton', true);
+      fixture.componentRef.setInput('suffixButtonText', 'Verify');
+      fixture.componentRef.setInput('helpText', 'We will never share your email');
+      fixture.detectChanges();
+      const compiled = fixture.nativeElement as HTMLElement;
+
+      expect(compiled.querySelector('[data-testid="contact-email-wrapper"]')).toBeTruthy();
+      expect(compiled.querySelector('[data-testid="contact-email-label"]')).toBeTruthy();
+      expect(compiled.querySelector('input[data-testid="contact-email"]')).toBeTruthy();
+      expect(compiled.querySelector('[data-testid="contact-email-prefix-icon"]')).toBeTruthy();
+      expect(compiled.querySelector('button[data-testid="contact-email-suffix-btn"]')).toBeTruthy();
+      expect(compiled.querySelector('[data-testid="contact-email-help"]')).toBeTruthy();
+    });
+  });
 });

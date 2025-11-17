@@ -6,13 +6,9 @@ import {
   computed,
   ChangeDetectionStrategy,
   contentChildren,
-  inject,
-  HostAttributeToken,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AccordionItemComponent } from './accordion-item';
-
-const DATA_TESTID = new HostAttributeToken('data-testid');
 
 export interface AccordionItem {
   id: string;
@@ -34,10 +30,9 @@ export interface AccordionItem {
   },
 })
 export class Accordion {
-  // Test ID from host
-  private readonly hostTestId = inject(DATA_TESTID, { optional: true });
+  readonly dataTestId = input<string | null>(null);
 
-  readonly testId = computed(() => (this.hostTestId ? `${this.hostTestId}-accordion` : null));
+  readonly testId = computed(() => this.dataTestId());
 
   readonly items = input<AccordionItem[]>([]);
   readonly allowMultiple = input(false);
@@ -75,7 +70,12 @@ export class Accordion {
   }
 
   getTestIdPrefix(): string | null {
-    return this.hostTestId;
+    return this.dataTestId();
+  }
+
+  getItemIndex(itemId: string): number {
+    const items = this.contentItems();
+    return items.findIndex((i) => i.id() === itemId);
   }
 
   toggleItem(itemId: string): void {

@@ -9,12 +9,21 @@ export interface AlertTestIds {
   content: Signal<string | null>;
 }
 
-export function generateAlertTestIds(hostTestId: string | null): AlertTestIds {
+export function generateAlertTestIds(getHostTestId: () => string | null): AlertTestIds {
   return {
-    alert: computed(() => (hostTestId ? `${hostTestId}-alert` : null)),
-    icon: computed(() => (hostTestId ? `${hostTestId}-icon` : null)),
-    closeButton: computed(() => (hostTestId ? `${hostTestId}-close` : null)),
-    content: computed(() => (hostTestId ? `${hostTestId}-content` : null)),
+    alert: computed(() => getHostTestId()),
+    icon: computed(() => {
+      const id = getHostTestId();
+      return id ? `${id}-icon` : null;
+    }),
+    closeButton: computed(() => {
+      const id = getHostTestId();
+      return id ? `${id}-close-btn` : null;
+    }),
+    content: computed(() => {
+      const id = getHostTestId();
+      return id ? `${id}-content` : null;
+    }),
   };
 }
 

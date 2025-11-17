@@ -1,9 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  HostAttributeToken,
   computed,
-  inject,
   input,
   output,
 } from '@angular/core';
@@ -16,8 +14,6 @@ import {
   generateButtonTestIds,
   getButtonClasses,
 } from './button-helpers';
-
-const DATA_TESTID = new HostAttributeToken('data-testid');
 
 export type ButtonType = 'button' | 'submit' | 'reset';
 
@@ -73,7 +69,7 @@ export type ButtonType = 'button' | 'submit' | 'reset';
   },
 })
 export class Button {
-  private readonly hostTestId = inject(DATA_TESTID, { optional: true });
+  readonly dataTestId = input<string | null>(null);
 
   readonly variant = input<ButtonVariant>('solid');
   readonly tone = input<ButtonTone>('primary');
@@ -88,7 +84,7 @@ export class Button {
 
   readonly buttonClick = output<MouseEvent>();
 
-  private readonly testIds = generateButtonTestIds(this.hostTestId);
+  private readonly testIds = generateButtonTestIds(() => this.dataTestId());
   readonly buttonTestId = this.testIds.button;
   readonly contentTestId = this.testIds.content;
   readonly spinnerTestId = this.testIds.spinner;
