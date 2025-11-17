@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
+import { TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
-import { render } from '@testing-library/angular';
 import { CompaniesListComponent } from './companies-list';
 import { CompanyCrudService } from '../../services/company-crud.service';
 import { CompanyDto } from '@loan/app/shared/openapi';
@@ -14,7 +14,7 @@ describe('CompaniesListComponent', () => {
     { id: '3', name: 'ABC Corp' },
   ];
 
-  async function createComponent() {
+  function createComponent() {
     const serviceMock: Partial<CompanyCrudService> = {
       items: vi.fn().mockReturnValue(mockCompanies),
       loading: vi.fn().mockReturnValue(false),
@@ -67,79 +67,111 @@ describe('CompaniesListComponent', () => {
       openEditModal: vi.fn(),
     };
 
-    const { container, fixture } = await render(CompaniesListComponent, {
+    const fixture = TestBed.configureTestingModule({
       providers: [
         provideZonelessChangeDetection(),
         provideRouter([]),
         { provide: CompanyCrudService, useValue: serviceMock },
       ],
-    });
+    }).createComponent(CompaniesListComponent);
+    TestBed.tick();
 
-    return { container, fixture, serviceMock };
+    return { fixture, serviceMock };
   }
 
   describe('Component Initialization', () => {
-    it('should create', async () => {
-      const { container } = await createComponent();
-      expect(container).toBeTruthy();
+    it('should create', () => {
+      // Arrange
+      const { fixture } = createComponent();
+
+      // Assert
+      expect(fixture.componentInstance).toBeTruthy();
     });
 
-    it('should render as standalone component', async () => {
-      const { fixture } = await createComponent();
+    it('should render as standalone component', () => {
+      // Arrange
+      const { fixture } = createComponent();
       const metadata = (CompaniesListComponent as any).ɵcmp;
+
+      // Assert
       expect(metadata.standalone).toBe(true);
     });
   });
 
   describe('Template Rendering', () => {
-    it('should render generic-crud-list component', async () => {
-      const { container } = await createComponent();
-      const crudList = container.querySelector('app-generic-crud-list');
+    it('should render generic-crud-list component', () => {
+      // Arrange
+      const { fixture } = createComponent();
+
+      // Assert
+      const crudList = fixture.nativeElement.querySelector('app-generic-crud-list');
       expect(crudList).toBeTruthy();
     });
 
-    it('should render with proper structure', async () => {
-      const { container } = await createComponent();
-      const children = container.children;
+    it('should render with proper structure', () => {
+      // Arrange
+      const { fixture } = createComponent();
+
+      // Assert
+      const children = fixture.nativeElement.children;
       expect(children.length).toBeGreaterThan(0);
 
-      const genericCrud = container.querySelector('app-generic-crud-list');
+      const genericCrud = fixture.nativeElement.querySelector('app-generic-crud-list');
       expect(genericCrud).toBeTruthy();
     });
   });
 
   describe('Service Integration', () => {
-    it('should inject CompanyCrudService', async () => {
-      const { fixture, serviceMock } = await createComponent();
-      const component = (fixture as any).componentInstance;
+    it('should inject CompanyCrudService', () => {
+      // Arrange
+      const { fixture, serviceMock } = createComponent();
+      const component = fixture.componentInstance as any;
+
+      // Assert
       expect(component['service']).toBeDefined();
       expect(component['service']).toBe(serviceMock);
     });
 
-    it('should provide CRUD operations', async () => {
-      const { serviceMock } = await createComponent();
+    it('should provide CRUD operations', () => {
+      // Arrange
+      const { serviceMock } = createComponent();
+
+      // Assert
       expect(typeof serviceMock.loadItems).toBe('function');
       expect(typeof serviceMock.onNewItem).toBe('function');
       expect(typeof serviceMock.onEditItem).toBe('function');
       expect(typeof serviceMock.onDeleteItem).toBe('function');
     });
 
-    it('should provide table configuration', async () => {
-      const { serviceMock } = await createComponent();
+    it('should provide table configuration', () => {
+      // Arrange
+      const { serviceMock } = createComponent();
+
+      // Act
       const columns = serviceMock.getTableColumns!();
+
+      // Assert
       expect(columns).toHaveLength(2);
       expect(columns[0].key).toBe('name');
     });
 
-    it('should provide form configuration', async () => {
-      const { serviceMock } = await createComponent();
+    it('should provide form configuration', () => {
+      // Arrange
+      const { serviceMock } = createComponent();
+
+      // Act
       const fields = serviceMock.getFormFields!();
+
+      // Assert
       expect(fields).toHaveLength(1);
       expect(fields[0].key).toBe('name');
     });
 
-    it('should provide metadata', async () => {
-      const { serviceMock } = await createComponent();
+    it('should provide metadata', () => {
+      // Arrange
+      const { serviceMock } = createComponent();
+
+      // Assert
       expect(serviceMock.getRouteBasePath!()).toBe('/companies');
       expect(serviceMock.getItemTypeName!()).toBe('company');
       expect(serviceMock.getItemTypePluralName!()).toBe('companies');
@@ -147,47 +179,78 @@ describe('CompaniesListComponent', () => {
   });
 
   describe('Service State Access', () => {
-    it('should provide access to items', async () => {
-      const { serviceMock } = await createComponent();
+    it('should provide access to items', () => {
+      // Arrange
+      const { serviceMock } = createComponent();
+
+      // Act
       const items = (serviceMock.items as any)();
+
+      // Assert
       expect(items).toEqual(mockCompanies);
     });
 
-    it('should provide access to loading state', async () => {
-      const { serviceMock } = await createComponent();
+    it('should provide access to loading state', () => {
+      // Arrange
+      const { serviceMock } = createComponent();
+
+      // Act
       const loading = (serviceMock.loading as any)();
+
+      // Assert
       expect(loading).toBe(false);
     });
 
-    it('should provide access to modal state', async () => {
-      const { serviceMock } = await createComponent();
+    it('should provide access to modal state', () => {
+      // Arrange
+      const { serviceMock } = createComponent();
+
+      // Act
       const showModal = (serviceMock.showModal as any)();
+
+      // Assert
       expect(showModal).toBe(false);
     });
 
-    it('should provide access to editing item', async () => {
-      const { serviceMock } = await createComponent();
+    it('should provide access to editing item', () => {
+      // Arrange
+      const { serviceMock } = createComponent();
+
+      // Act
       const editingItem = (serviceMock.editingItem as any)();
+
+      // Assert
       expect(editingItem).toBeNull();
     });
 
-    it('should provide access to search term', async () => {
-      const { serviceMock } = await createComponent();
+    it('should provide access to search term', () => {
+      // Arrange
+      const { serviceMock } = createComponent();
+
+      // Act
       const searchTerm = (serviceMock.searchTerm as any)();
+
+      // Assert
       expect(searchTerm).toBe('');
     });
   });
 
   describe('Component Composition', () => {
-    it('should delegate rendering to GenericCrudListComponent', async () => {
-      const { container } = await createComponent();
-      const genericCrud = container.querySelector('app-generic-crud-list');
+    it('should delegate rendering to GenericCrudListComponent', () => {
+      // Arrange
+      const { fixture } = createComponent();
+
+      // Assert
+      const genericCrud = fixture.nativeElement.querySelector('app-generic-crud-list');
       expect(genericCrud).toBeTruthy();
     });
 
-    it('should pass service to child component', async () => {
-      const { fixture, serviceMock } = await createComponent();
-      const component = (fixture as any).componentInstance;
+    it('should pass service to child component', () => {
+      // Arrange
+      const { fixture, serviceMock } = createComponent();
+      const component = fixture.componentInstance as any;
+
+      // Assert
       expect(component['service']).toBe(serviceMock);
     });
   });
