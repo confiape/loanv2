@@ -1,6 +1,6 @@
+import { TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { DialogModule, DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
-import { render } from '@testing-library/angular';
 import { Modal, ModalData } from './modal';
 import { vi } from 'vitest';
 
@@ -10,100 +10,129 @@ const createMockDialogRef = (): DialogRefSpy => ({
   close: vi.fn(),
 });
 
-const setupModal = async (
-  data: ModalData | null = null,
-  mockDialogRef?: DialogRefSpy,
-) => {
+const setupModal = (data: ModalData | null = null, mockDialogRef?: DialogRefSpy) => {
   const dialogRef = mockDialogRef ?? createMockDialogRef();
 
-  const { fixture, component } = await render(Modal, {
+  const fixture = TestBed.configureTestingModule({
     providers: [
       provideZonelessChangeDetection(),
       { provide: DialogRef, useValue: dialogRef },
       { provide: DIALOG_DATA, useValue: data },
     ],
-  });
+  }).createComponent(Modal);
+  TestBed.tick();
 
-  return { fixture, component, dialogRef };
+  return { fixture, dialogRef };
 };
 
 describe('Modal', () => {
-  it('should create', async () => {
-    const { component } = await setupModal();
-    expect(component).toBeTruthy();
+  it('should create', () => {
+    // Arrange
+    const { fixture } = setupModal();
+
+    // Assert
+    expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('should render overlay and container', async () => {
-    const { fixture } = await setupModal();
+  it('should render overlay and container', () => {
+    // Arrange
+    const { fixture } = setupModal();
+
+    // Assert
     const overlay = fixture.nativeElement.querySelector('.bg-overlay');
-    const container = fixture.nativeElement.querySelector(
-      '.overflow-y-auto',
-    );
+    const container = fixture.nativeElement.querySelector('.overflow-y-auto');
 
     expect(overlay).toBeTruthy();
     expect(container).toBeTruthy();
   });
 
-  it('should apply default 2xl size', async () => {
-    const { fixture } = await setupModal();
+  it('should apply default 2xl size', () => {
+    // Arrange
+    const { fixture } = setupModal();
+
+    // Assert
     const content = fixture.nativeElement.querySelector('[role="dialog"]');
     expect(content.className).toContain('max-w-2xl');
   });
 
-  it('should apply custom size', async () => {
-    const { fixture } = await setupModal();
-    fixture.componentRef.setInput('size', 'sm');
-    await fixture.whenStable();
+  it('should apply custom size', () => {
+    // Arrange
+    const { fixture } = setupModal();
 
+    // Act
+    fixture.componentRef.setInput('size', 'sm');
+    TestBed.tick();
+
+    // Assert
     const content = fixture.nativeElement.querySelector('[role="dialog"]');
     expect(content.className).toContain('max-w-sm');
   });
 
-  it('should close on backdrop click when dismissible', async () => {
+  it('should close on backdrop click when dismissible', () => {
+    // Arrange
     const mockDialogRef = createMockDialogRef();
-    const { fixture } = await setupModal(null, mockDialogRef);
+    const { fixture } = setupModal(null, mockDialogRef);
     fixture.componentRef.setInput('dismissible', true);
-    await fixture.whenStable();
+    TestBed.tick();
 
     const overlay = fixture.nativeElement.querySelector('.bg-overlay');
+
+    // Act
     overlay.click();
 
+    // Assert
     expect(mockDialogRef.close).toHaveBeenCalled();
   });
 
-  it('should not close on backdrop click when not dismissible', async () => {
+  it('should not close on backdrop click when not dismissible', () => {
+    // Arrange
     const mockDialogRef = createMockDialogRef();
-    const { fixture } = await setupModal(null, mockDialogRef);
+    const { fixture } = setupModal(null, mockDialogRef);
     fixture.componentRef.setInput('dismissible', false);
-    await fixture.whenStable();
+    TestBed.tick();
 
     const overlay = fixture.nativeElement.querySelector('.bg-overlay');
+
+    // Act
     overlay.click();
 
+    // Assert
     expect(mockDialogRef.close).not.toHaveBeenCalled();
   });
 
-  it('should not close when clicking content area', async () => {
+  it('should not close when clicking content area', () => {
+    // Arrange
     const mockDialogRef = createMockDialogRef();
-    const { fixture } = await setupModal(null, mockDialogRef);
+    const { fixture } = setupModal(null, mockDialogRef);
     fixture.componentRef.setInput('dismissible', true);
-    await fixture.whenStable();
+    TestBed.tick();
 
     const content = fixture.nativeElement.querySelector('[role="dialog"]');
+
+    // Act
     content.click();
 
+    // Assert
     expect(mockDialogRef.close).not.toHaveBeenCalled();
   });
 
-  it('should close programmatically', async () => {
+  it('should close programmatically', () => {
+    // Arrange
     const mockDialogRef = createMockDialogRef();
-    const { component } = await setupModal(null, mockDialogRef);
-    component.close();
+    const { fixture } = setupModal(null, mockDialogRef);
+
+    // Act
+    fixture.componentInstance.close();
+
+    // Assert
     expect(mockDialogRef.close).toHaveBeenCalled();
   });
 
-  it('should render with correct accessibility attributes', async () => {
-    const { fixture } = await setupModal();
+  it('should render with correct accessibility attributes', () => {
+    // Arrange
+    const { fixture } = setupModal();
+
+    // Assert
     const content = fixture.nativeElement.querySelector('[role="dialog"]');
     expect(content.getAttribute('role')).toBe('dialog');
     expect(content.getAttribute('aria-modal')).toBe('true');
@@ -118,13 +147,19 @@ describe('Modal with data', () => {
     testId: 'test-modal',
   };
 
-  it('should have access to injected data', async () => {
-    const { component } = await setupModal(mockData);
-    expect(component.data).toEqual(mockData);
+  it('should have access to injected data', () => {
+    // Arrange
+    const { fixture } = setupModal(mockData);
+
+    // Assert
+    expect(fixture.componentInstance.data).toEqual(mockData);
   });
 
-  it('should set aria-labelledby when title is provided', async () => {
-    const { fixture } = await setupModal(mockData);
+  it('should set aria-labelledby when title is provided', () => {
+    // Arrange
+    const { fixture } = setupModal(mockData);
+
+    // Assert
     const content = fixture.nativeElement.querySelector('[role="dialog"]');
     expect(content.getAttribute('aria-labelledby')).toBe('modal-title');
   });
