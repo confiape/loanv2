@@ -48,7 +48,15 @@ describe('BottomNavigationComponent', () => {
     },
   ];
 
-  const defaultProviders = [provideZonelessChangeDetection(), provideRouter([])];
+  const defaultProviders = [
+    provideZonelessChangeDetection(),
+    provideRouter([
+      { path: 'dashboard', component: class {} },
+      { path: 'loans', component: class {} },
+      { path: 'customers', component: class {} },
+      { path: 'reports', component: class {} },
+    ]),
+  ];
 
   describe('initialization', () => {
     it('creates the component', () => {

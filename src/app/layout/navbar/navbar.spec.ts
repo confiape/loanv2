@@ -72,14 +72,15 @@ describe('NavbarComponent', () => {
       userAvatar: vi.fn(() => ''),
       clearUser: vi.fn(),
     },
-    router: {
-      navigate: vi.fn().mockResolvedValue(true),
-    },
   });
 
   const defaultProviders = (mocks: ReturnType<typeof createMockServices>) => [
     provideZonelessChangeDetection(),
-    provideRouter([]),
+    provideRouter([
+      { path: 'login', component: class {} },
+      { path: 'profile', component: class {} },
+      { path: 'dashboard', component: class {} },
+    ]),
     { provide: AuthService, useValue: mocks.authService },
     { provide: UserStateService, useValue: mocks.userStateService },
   ];
@@ -459,10 +460,7 @@ describe('NavbarComponent', () => {
       // Arrange
       const mocks = createMockServices();
       const fixture = TestBed.configureTestingModule({
-        providers: [
-          ...defaultProviders(mocks),
-          { provide: 'Router', useValue: mocks.router },
-        ],
+        providers: defaultProviders(mocks),
       }).createComponent(NavbarComponent);
       TestBed.tick();
 
@@ -480,10 +478,7 @@ describe('NavbarComponent', () => {
       // Arrange
       const mocks = createMockServices();
       const fixture = TestBed.configureTestingModule({
-        providers: [
-          ...defaultProviders(mocks),
-          { provide: 'Router', useValue: mocks.router },
-        ],
+        providers: defaultProviders(mocks),
       }).createComponent(NavbarComponent);
       TestBed.tick();
 
@@ -503,10 +498,7 @@ describe('NavbarComponent', () => {
       mocks.authService.logout.mockReturnValue(throwError(() => new Error('Logout failed')));
 
       const fixture = TestBed.configureTestingModule({
-        providers: [
-          ...defaultProviders(mocks),
-          { provide: 'Router', useValue: mocks.router },
-        ],
+        providers: defaultProviders(mocks),
       }).createComponent(NavbarComponent);
       TestBed.tick();
 
@@ -526,10 +518,7 @@ describe('NavbarComponent', () => {
       mocks.authService.logout.mockReturnValue(throwError(() => new Error('API Error')));
 
       const fixture = TestBed.configureTestingModule({
-        providers: [
-          ...defaultProviders(mocks),
-          { provide: 'Router', useValue: mocks.router },
-        ],
+        providers: defaultProviders(mocks),
       }).createComponent(NavbarComponent);
       TestBed.tick();
 
