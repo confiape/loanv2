@@ -1,7 +1,7 @@
 import { signal } from '@angular/core';
 import { ComponentTestBuilder } from './component-builder';
-import { Alert } from '@loan/shared/components/alert/alert';
-import { AlertVariant } from '@loan/shared/components/alert/alert-helpers';
+import { Alert } from '@loan/app/shared/components/alert/alert';
+import { AlertVariant } from '@loan/app/shared/components/alert/alert-helpers';
 
 /**
  * Specialized test builder for Alert component

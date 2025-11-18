@@ -1,5 +1,15 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Type, Provider, inputBinding, outputBinding, provideZonelessChangeDetection } from '@angular/core';
+import { Type, Provider, EnvironmentProviders, InputSignal, OutputEmitterRef, inputBinding, outputBinding, provideZonelessChangeDetection } from '@angular/core';
+
+/**
+ * Type helper to extract the value type from InputSignal<T>
+ */
+type InputSignalValue<T> = T extends InputSignal<infer U> ? U : T;
+
+/**
+ * Type helper to extract the value type from OutputEmitterRef<T>
+ */
+type OutputEmitterValue<T> = T extends OutputEmitterRef<infer U> ? U : T;
 
 /**
  * Generic component test builder with auto-cloning build() method
@@ -38,7 +48,7 @@ import { Type, Provider, inputBinding, outputBinding, provideZonelessChangeDetec
  */
 export class ComponentTestBuilder<T> {
   private bindings: any[] = [];
-  private providers: Provider[] = [provideZonelessChangeDetection()];
+  private providers: (Provider | EnvironmentProviders)[] = [provideZonelessChangeDetection()];
 
   constructor(private componentType: Type<T>) {}
 
@@ -46,7 +56,7 @@ export class ComponentTestBuilder<T> {
    * Configure an input binding
    * Automatically replaces previous binding for the same property
    */
-  withInput<K extends keyof T>(property: K, value: T[K]): this {
+  withInput<K extends keyof T>(property: K, value: InputSignalValue<T[K]>): this {
     // Remove previous binding for this property
     this.bindings = this.bindings.filter(
       (b) => !this.isInputBinding(b, property as string)
@@ -74,7 +84,7 @@ export class ComponentTestBuilder<T> {
   /**
    * Add custom providers to the TestBed configuration
    */
-  withProviders(providers: Provider[]): this {
+  withProviders(providers: (Provider | EnvironmentProviders)[]): this {
     this.providers = [...this.providers, ...providers];
     return this;
   }
