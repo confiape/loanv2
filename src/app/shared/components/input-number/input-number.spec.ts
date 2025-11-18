@@ -1,282 +1,589 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideZonelessChangeDetection } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
+import { inputBinding, outputBinding, provideZonelessChangeDetection, signal } from '@angular/core';
 import { provideIcons } from '@ng-icons/core';
 import { heroMagnifyingGlass, heroChevronUp, heroChevronDown } from '@ng-icons/heroicons/outline';
+import { within } from '@testing-library/dom';
+import userEvent from '@testing-library/user-event';
+import { describe, it, expect } from 'vitest';
 
 import { InputNumber } from '@loan/app/shared/components/input-number/input-number';
 
 describe('InputNumber', () => {
-  let component: InputNumber;
-  let fixture: ComponentFixture<InputNumber>;
-  const getEmittedNumber = (value: number | null): number => {
-    if (value === null) {
-      throw new Error('Expected emitted value to be a number');
-    }
-    return value;
-  };
-
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
+  it('should create', () => {
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
       imports: [InputNumber],
       providers: [
         provideZonelessChangeDetection(),
         provideIcons({ heroMagnifyingGlass, heroChevronUp, heroChevronDown }),
       ],
-    }).compileComponents();
+    }).createComponent(InputNumber);
+    TestBed.tick();
 
-    fixture = TestBed.createComponent(InputNumber);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
+    // Assert
+    expect(fixture.componentInstance).toBeTruthy();
   });
 
   it('should render input element with type number', () => {
-    const compiled = fixture.nativeElement as HTMLElement;
-    const input = compiled.querySelector('input');
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      imports: [InputNumber],
+      providers: [
+        provideZonelessChangeDetection(),
+        provideIcons({ heroMagnifyingGlass, heroChevronUp, heroChevronDown }),
+      ],
+    }).createComponent(InputNumber);
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
+
+    // Assert
+    const input = queries.getByRole('spinbutton') as HTMLInputElement;
     expect(input).toBeTruthy();
-    expect(input?.type).toBe('number');
+    expect(input.type).toBe('number');
   });
 
   it('should render label when provided', () => {
-    fixture.componentRef.setInput('label', 'Quantity');
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    const label = compiled.querySelector('label');
-    expect(label?.textContent?.trim()).toBe('Quantity');
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      imports: [InputNumber],
+      providers: [
+        provideZonelessChangeDetection(),
+        provideIcons({ heroMagnifyingGlass, heroChevronUp, heroChevronDown }),
+      ],
+    }).createComponent(InputNumber, {
+      bindings: [inputBinding('label', () => 'Quantity')],
+    });
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
+
+    // Assert
+    const label = queries.getByText('Quantity');
+    expect(label).toBeTruthy();
   });
 
   it('should apply min and max attributes', () => {
-    fixture.componentRef.setInput('min', 0);
-    fixture.componentRef.setInput('max', 100);
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    const input = compiled.querySelector('input');
-    expect(input?.min).toBe('0');
-    expect(input?.max).toBe('100');
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      imports: [InputNumber],
+      providers: [
+        provideZonelessChangeDetection(),
+        provideIcons({ heroMagnifyingGlass, heroChevronUp, heroChevronDown }),
+      ],
+    }).createComponent(InputNumber, {
+      bindings: [inputBinding('min', () => 0), inputBinding('max', () => 100)],
+    });
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
+
+    // Assert
+    const input = queries.getByRole('spinbutton') as HTMLInputElement;
+    expect(input.min).toBe('0');
+    expect(input.max).toBe('100');
   });
 
   it('should apply step attribute', () => {
-    fixture.componentRef.setInput('step', 5);
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    const input = compiled.querySelector('input');
-    expect(input?.step).toBe('5');
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      imports: [InputNumber],
+      providers: [
+        provideZonelessChangeDetection(),
+        provideIcons({ heroMagnifyingGlass, heroChevronUp, heroChevronDown }),
+      ],
+    }).createComponent(InputNumber, {
+      bindings: [inputBinding('step', () => 5)],
+    });
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
+
+    // Assert
+    const input = queries.getByRole('spinbutton') as HTMLInputElement;
+    expect(input.step).toBe('5');
   });
 
   it('should show increment and decrement buttons by default', () => {
-    const compiled = fixture.nativeElement as HTMLElement;
-    const buttons = compiled.querySelectorAll('button');
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      imports: [InputNumber],
+      providers: [
+        provideZonelessChangeDetection(),
+        provideIcons({ heroMagnifyingGlass, heroChevronUp, heroChevronDown }),
+      ],
+    }).createComponent(InputNumber);
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
+
+    // Assert
+    const buttons = queries.getAllByRole('button');
     expect(buttons.length).toBe(2);
   });
 
   it('should render prefix icon when provided', () => {
-    fixture.componentRef.setInput('prefixIcon', 'heroMagnifyingGlass');
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    const icon = compiled.querySelector('ng-icon');
-    expect(icon).not.toBeNull();
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      imports: [InputNumber],
+      providers: [
+        provideZonelessChangeDetection(),
+        provideIcons({ heroMagnifyingGlass, heroChevronUp, heroChevronDown }),
+      ],
+    }).createComponent(InputNumber, {
+      bindings: [inputBinding('prefixIcon', () => 'heroMagnifyingGlass')],
+    });
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
+
+    // Assert
+    const icons = queries.getAllByRole('img', { hidden: true });
+    expect(icons.length).toBeGreaterThan(0);
   });
 
   it('should hide buttons when showButtons is false', () => {
-    fixture.componentRef.setInput('showButtons', false);
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    const buttons = compiled.querySelectorAll('button');
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      imports: [InputNumber],
+      providers: [
+        provideZonelessChangeDetection(),
+        provideIcons({ heroMagnifyingGlass, heroChevronUp, heroChevronDown }),
+      ],
+    }).createComponent(InputNumber, {
+      bindings: [inputBinding('showButtons', () => false)],
+    });
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
+
+    // Assert
+    const buttons = queries.queryAllByRole('button');
     expect(buttons.length).toBe(0);
   });
 
-  it('should increment value when increment button is clicked', () => {
+  it('should increment value when increment button is clicked', async () => {
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      imports: [InputNumber],
+      providers: [
+        provideZonelessChangeDetection(),
+        provideIcons({ heroMagnifyingGlass, heroChevronUp, heroChevronDown }),
+      ],
+    }).createComponent(InputNumber);
+    TestBed.tick();
+    const component = fixture.componentInstance;
     component.writeValue(5);
-    fixture.detectChanges();
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
+    const user = userEvent.setup();
 
-    const compiled = fixture.nativeElement as HTMLElement;
-    const incrementButton = compiled.querySelectorAll('button')[0];
-    incrementButton.click();
+    // Act
+    const incrementButton = queries.getAllByRole('button')[0];
+    await user.click(incrementButton);
+    TestBed.tick();
 
+    // Assert
     expect(component.value()).toBe(6);
   });
 
-  it('should decrement value when decrement button is clicked', () => {
+  it('should decrement value when decrement button is clicked', async () => {
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      imports: [InputNumber],
+      providers: [
+        provideZonelessChangeDetection(),
+        provideIcons({ heroMagnifyingGlass, heroChevronUp, heroChevronDown }),
+      ],
+    }).createComponent(InputNumber);
+    TestBed.tick();
+    const component = fixture.componentInstance;
     component.writeValue(5);
-    fixture.detectChanges();
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
+    const user = userEvent.setup();
 
-    const compiled = fixture.nativeElement as HTMLElement;
-    const decrementButton = compiled.querySelectorAll('button')[1];
-    decrementButton.click();
+    // Act
+    const decrementButton = queries.getAllByRole('button')[1];
+    await user.click(decrementButton);
+    TestBed.tick();
 
+    // Assert
     expect(component.value()).toBe(4);
   });
 
-  it('should respect min value when decrementing', () => {
-    fixture.componentRef.setInput('min', 0);
+  it('should respect min value when decrementing', async () => {
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      imports: [InputNumber],
+      providers: [
+        provideZonelessChangeDetection(),
+        provideIcons({ heroMagnifyingGlass, heroChevronUp, heroChevronDown }),
+      ],
+    }).createComponent(InputNumber, {
+      bindings: [inputBinding('min', () => 0)],
+    });
+    TestBed.tick();
+    const component = fixture.componentInstance;
     component.writeValue(0);
-    fixture.detectChanges();
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
+    const user = userEvent.setup();
 
-    const compiled = fixture.nativeElement as HTMLElement;
-    const decrementButton = compiled.querySelectorAll('button')[1];
-    decrementButton.click();
+    // Act
+    const decrementButton = queries.getAllByRole('button')[1];
+    await user.click(decrementButton);
+    TestBed.tick();
 
+    // Assert
     expect(component.value()).toBe(0);
   });
 
-  it('should respect max value when incrementing', () => {
-    fixture.componentRef.setInput('max', 10);
+  it('should respect max value when incrementing', async () => {
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      imports: [InputNumber],
+      providers: [
+        provideZonelessChangeDetection(),
+        provideIcons({ heroMagnifyingGlass, heroChevronUp, heroChevronDown }),
+      ],
+    }).createComponent(InputNumber, {
+      bindings: [inputBinding('max', () => 10)],
+    });
+    TestBed.tick();
+    const component = fixture.componentInstance;
     component.writeValue(10);
-    fixture.detectChanges();
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
+    const user = userEvent.setup();
 
-    const compiled = fixture.nativeElement as HTMLElement;
-    const incrementButton = compiled.querySelectorAll('button')[0];
-    incrementButton.click();
+    // Act
+    const incrementButton = queries.getAllByRole('button')[0];
+    await user.click(incrementButton);
+    TestBed.tick();
 
+    // Assert
     expect(component.value()).toBe(10);
   });
 
-  it('should increment by step value', () => {
-    fixture.componentRef.setInput('step', 5);
+  it('should increment by step value', async () => {
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      imports: [InputNumber],
+      providers: [
+        provideZonelessChangeDetection(),
+        provideIcons({ heroMagnifyingGlass, heroChevronUp, heroChevronDown }),
+      ],
+    }).createComponent(InputNumber, {
+      bindings: [inputBinding('step', () => 5)],
+    });
+    TestBed.tick();
+    const component = fixture.componentInstance;
     component.writeValue(0);
-    fixture.detectChanges();
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
+    const user = userEvent.setup();
 
-    const compiled = fixture.nativeElement as HTMLElement;
-    const incrementButton = compiled.querySelectorAll('button')[0];
-    incrementButton.click();
+    // Act
+    const incrementButton = queries.getAllByRole('button')[0];
+    await user.click(incrementButton);
+    TestBed.tick();
 
+    // Assert
     expect(component.value()).toBe(5);
   });
 
-  it('should emit valueChange on increment', () => {
-    let emittedValue: number | null = null;
-    component.valueChange.subscribe((value) => {
-      emittedValue = value;
+  it('should emit valueChange on increment', async () => {
+    // Arrange
+    const emittedValue = signal<number | null>(null);
+    const fixture = TestBed.configureTestingModule({
+      imports: [InputNumber],
+      providers: [
+        provideZonelessChangeDetection(),
+        provideIcons({ heroMagnifyingGlass, heroChevronUp, heroChevronDown }),
+      ],
+    }).createComponent(InputNumber, {
+      bindings: [outputBinding('valueChange', (value: number | null) => emittedValue.set(value))],
     });
-
+    TestBed.tick();
+    const component = fixture.componentInstance;
     component.writeValue(5);
-    fixture.detectChanges();
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
+    const user = userEvent.setup();
 
-    const compiled = fixture.nativeElement as HTMLElement;
-    const incrementButton = compiled.querySelectorAll('button')[0];
-    incrementButton.click();
+    // Act
+    const incrementButton = queries.getAllByRole('button')[0];
+    await user.click(incrementButton);
+    TestBed.tick();
 
-    expect(getEmittedNumber(emittedValue)).toBe(6);
+    // Assert
+    expect(emittedValue()).toBe(6);
   });
 
-  it('should emit valueChange on input', () => {
-    let emittedValue: number | null = null;
-    component.valueChange.subscribe((value) => {
-      emittedValue = value;
+  it('should emit valueChange on input', async () => {
+    // Arrange
+    const emittedValue = signal<number | null>(null);
+    const fixture = TestBed.configureTestingModule({
+      imports: [InputNumber],
+      providers: [
+        provideZonelessChangeDetection(),
+        provideIcons({ heroMagnifyingGlass, heroChevronUp, heroChevronDown }),
+      ],
+    }).createComponent(InputNumber, {
+      bindings: [outputBinding('valueChange', (value: number | null) => emittedValue.set(value))],
     });
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
+    const user = userEvent.setup();
 
-    const compiled = fixture.nativeElement as HTMLElement;
-    const input = compiled.querySelector('input') as HTMLInputElement;
-    input.value = '42';
-    input.dispatchEvent(new Event('input'));
+    // Act
+    const input = queries.getByRole('spinbutton') as HTMLInputElement;
+    await user.clear(input);
+    await user.type(input, '42');
+    TestBed.tick();
 
-    expect(getEmittedNumber(emittedValue)).toBe(42);
+    // Assert
+    expect(emittedValue()).toBe(42);
   });
 
   it('should disable increment button when max is reached', () => {
-    fixture.componentRef.setInput('max', 10);
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      imports: [InputNumber],
+      providers: [
+        provideZonelessChangeDetection(),
+        provideIcons({ heroMagnifyingGlass, heroChevronUp, heroChevronDown }),
+      ],
+    }).createComponent(InputNumber, {
+      bindings: [inputBinding('max', () => 10)],
+    });
+    TestBed.tick();
+    const component = fixture.componentInstance;
     component.writeValue(10);
-    fixture.detectChanges();
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
 
-    const compiled = fixture.nativeElement as HTMLElement;
-    const incrementButton = compiled.querySelectorAll('button')[0] as HTMLButtonElement;
-
+    // Assert
+    const incrementButton = queries.getAllByRole('button')[0] as HTMLButtonElement;
     expect(incrementButton.disabled).toBe(true);
   });
 
   it('should disable decrement button when min is reached', () => {
-    fixture.componentRef.setInput('min', 0);
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      imports: [InputNumber],
+      providers: [
+        provideZonelessChangeDetection(),
+        provideIcons({ heroMagnifyingGlass, heroChevronUp, heroChevronDown }),
+      ],
+    }).createComponent(InputNumber, {
+      bindings: [inputBinding('min', () => 0)],
+    });
+    TestBed.tick();
+    const component = fixture.componentInstance;
     component.writeValue(0);
-    fixture.detectChanges();
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
 
-    const compiled = fixture.nativeElement as HTMLElement;
-    const decrementButton = compiled.querySelectorAll('button')[1] as HTMLButtonElement;
-
+    // Assert
+    const decrementButton = queries.getAllByRole('button')[1] as HTMLButtonElement;
     expect(decrementButton.disabled).toBe(true);
   });
 
   it('should render help text', () => {
-    fixture.componentRef.setInput('helpText', 'Enter a number between 1-100');
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    const helpText = compiled.querySelector('p');
-    expect(helpText?.textContent?.trim()).toBe('Enter a number between 1-100');
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      imports: [InputNumber],
+      providers: [
+        provideZonelessChangeDetection(),
+        provideIcons({ heroMagnifyingGlass, heroChevronUp, heroChevronDown }),
+      ],
+    }).createComponent(InputNumber, {
+      bindings: [inputBinding('helpText', () => 'Enter a number between 1-100')],
+    });
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
+
+    // Assert
+    const helpText = queries.getByText('Enter a number between 1-100');
+    expect(helpText).toBeTruthy();
   });
 
   it('should render success message when validation state is success', () => {
-    fixture.componentRef.setInput('validationState', 'success');
-    fixture.componentRef.setInput('successMessage', 'Valid number!');
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    const message = compiled.querySelector('p');
-    expect(message?.textContent).toContain('Valid number!');
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      imports: [InputNumber],
+      providers: [
+        provideZonelessChangeDetection(),
+        provideIcons({ heroMagnifyingGlass, heroChevronUp, heroChevronDown }),
+      ],
+    }).createComponent(InputNumber, {
+      bindings: [
+        inputBinding('validationState', () => 'success'),
+        inputBinding('successMessage', () => 'Valid number!'),
+      ],
+    });
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
+
+    // Assert
+    const message = queries.getByText(/Valid number!/);
+    expect(message).toBeTruthy();
   });
 
   it('should render error message when validation state is error', () => {
-    fixture.componentRef.setInput('validationState', 'error');
-    fixture.componentRef.setInput('errorMessage', 'Number out of range!');
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    const message = compiled.querySelector('p');
-    expect(message?.textContent).toContain('Number out of range!');
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      imports: [InputNumber],
+      providers: [
+        provideZonelessChangeDetection(),
+        provideIcons({ heroMagnifyingGlass, heroChevronUp, heroChevronDown }),
+      ],
+    }).createComponent(InputNumber, {
+      bindings: [
+        inputBinding('validationState', () => 'error'),
+        inputBinding('errorMessage', () => 'Number out of range!'),
+      ],
+    });
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
+
+    // Assert
+    const message = queries.getByText(/Number out of range!/);
+    expect(message).toBeTruthy();
   });
 
   it('should handle null value', () => {
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      imports: [InputNumber],
+      providers: [
+        provideZonelessChangeDetection(),
+        provideIcons({ heroMagnifyingGlass, heroChevronUp, heroChevronDown }),
+      ],
+    }).createComponent(InputNumber);
+    TestBed.tick();
+    const component = fixture.componentInstance;
+
+    // Act
     component.writeValue(null);
+
+    // Assert
     expect(component.value()).toBeNull();
   });
 
-  it('should parse input value to number', () => {
-    const compiled = fixture.nativeElement as HTMLElement;
-    const input = compiled.querySelector('input') as HTMLInputElement;
-    input.value = '123.45';
-    input.dispatchEvent(new Event('input'));
+  it('should parse input value to number', async () => {
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      imports: [InputNumber],
+      providers: [
+        provideZonelessChangeDetection(),
+        provideIcons({ heroMagnifyingGlass, heroChevronUp, heroChevronDown }),
+      ],
+    }).createComponent(InputNumber);
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
+    const user = userEvent.setup();
 
-    expect(component.value()).toBe(123.45);
+    // Act
+    const input = queries.getByRole('spinbutton') as HTMLInputElement;
+    await user.clear(input);
+    await user.type(input, '123.45');
+    TestBed.tick();
+
+    // Assert
+    expect(fixture.componentInstance.value()).toBe(123.45);
   });
 
-  it('should treat empty input as null', () => {
-    const compiled = fixture.nativeElement as HTMLElement;
-    const input = compiled.querySelector('input') as HTMLInputElement;
-    input.value = '';
-    input.dispatchEvent(new Event('input'));
+  it('should treat empty input as null', async () => {
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      imports: [InputNumber],
+      providers: [
+        provideZonelessChangeDetection(),
+        provideIcons({ heroMagnifyingGlass, heroChevronUp, heroChevronDown }),
+      ],
+    }).createComponent(InputNumber);
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
+    const user = userEvent.setup();
 
-    expect(component.value()).toBeNull();
+    // Act
+    const input = queries.getByRole('spinbutton') as HTMLInputElement;
+    await user.clear(input);
+    TestBed.tick();
+
+    // Assert
+    expect(fixture.componentInstance.value()).toBeNull();
   });
 
   describe('ControlValueAccessor', () => {
     it('should write value', () => {
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        imports: [InputNumber],
+        providers: [
+          provideZonelessChangeDetection(),
+          provideIcons({ heroMagnifyingGlass, heroChevronUp, heroChevronDown }),
+        ],
+      }).createComponent(InputNumber);
+      TestBed.tick();
+      const component = fixture.componentInstance;
+
+      // Act
       component.writeValue(42);
+
+      // Assert
       expect(component.value()).toBe(42);
     });
 
-    it('should call onChange when value changes', () => {
-      let changedValue: number | null = null;
+    it('should call onChange when value changes', async () => {
+      // Arrange
+      const changedValue = signal<number | null>(null);
+      const fixture = TestBed.configureTestingModule({
+        imports: [InputNumber],
+        providers: [
+          provideZonelessChangeDetection(),
+          provideIcons({ heroMagnifyingGlass, heroChevronUp, heroChevronDown }),
+        ],
+      }).createComponent(InputNumber);
+      TestBed.tick();
+      const component = fixture.componentInstance;
       component.registerOnChange((value) => {
-        changedValue = value;
+        changedValue.set(value);
       });
+      const queries = within(fixture.nativeElement);
+      const user = userEvent.setup();
 
-      const compiled = fixture.nativeElement as HTMLElement;
-      const input = compiled.querySelector('input') as HTMLInputElement;
-      input.value = '99';
-      input.dispatchEvent(new Event('input'));
+      // Act
+      const input = queries.getByRole('spinbutton') as HTMLInputElement;
+      await user.clear(input);
+      await user.type(input, '99');
+      TestBed.tick();
 
-      expect(getEmittedNumber(changedValue)).toBe(99);
+      // Assert
+      expect(changedValue()).toBe(99);
     });
 
-    it('should call onTouched when input loses focus', () => {
+    it('should call onTouched when input loses focus', async () => {
+      // Arrange
       let touched = false;
+      const fixture = TestBed.configureTestingModule({
+        imports: [InputNumber],
+        providers: [
+          provideZonelessChangeDetection(),
+          provideIcons({ heroMagnifyingGlass, heroChevronUp, heroChevronDown }),
+        ],
+      }).createComponent(InputNumber);
+      TestBed.tick();
+      const component = fixture.componentInstance;
       component.registerOnTouched(() => {
         touched = true;
       });
+      const queries = within(fixture.nativeElement);
+      const user = userEvent.setup();
 
-      const compiled = fixture.nativeElement as HTMLElement;
-      const input = compiled.querySelector('input') as HTMLInputElement;
-      input.dispatchEvent(new Event('blur'));
+      // Act
+      const input = queries.getByRole('spinbutton') as HTMLInputElement;
+      await user.click(input);
+      await user.tab();
+      TestBed.tick();
 
+      // Assert
       expect(touched).toBe(true);
     });
   });

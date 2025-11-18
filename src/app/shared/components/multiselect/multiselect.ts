@@ -35,11 +35,7 @@ export interface MultiSelectOption {
     <div class="w-full relative" [attr.data-testid]="wrapperTestId()">
       <!-- Label -->
       @if (label()) {
-        <label
-          [for]="multiselectId()"
-          [class]="labelClasses()"
-          [attr.data-testid]="labelTestId()"
-        >
+        <label [for]="multiselectId()" [class]="labelClasses()" [attr.data-testid]="labelTestId()">
           {{ label() }}
         </label>
       }
@@ -94,9 +90,7 @@ export interface MultiSelectOption {
             <div class="p-3">
               <label [for]="searchInputId()" class="sr-only">Search</label>
               <div class="relative">
-                <div
-                  class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none"
-                >
+                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                   <svg
                     class="w-4 h-4 text-text-secondary"
                     aria-hidden="true"

@@ -10,12 +10,7 @@ import { CompanyCrudService } from '../../services/company-crud.service';
   selector: 'app-companies-list',
   standalone: true,
   imports: [GenericCrudListComponent],
-  template: `
-    <app-generic-crud-list
-      [service]="service"
-      [dataTestId]="'companies'"
-    />
-  `,
+  template: ` <app-generic-crud-list [service]="service" [dataTestId]="'companies'" /> `,
 })
 export class CompaniesListComponent {
   protected readonly service = inject(CompanyCrudService);

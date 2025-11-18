@@ -96,21 +96,105 @@
 
 ---
 
-## 9. Unit Tests (Vitest + Angular 20)
+## 9. Unit Tests (Vitest + Angular 20.1)
 
-- **Framework:** Vitest + Testing Library Angular.
+- **Framework:** Vitest + `@testing-library/dom` (NO `@testing-library/angular`).
 - One `.spec.ts` per component/service.
 - Co-locate tests with source.
-- Use `inject()` helpers and signals.
-- Arrange / Act / Assert pattern.
+- **Test Builders:** Use `ComponentTestBuilder` for setup reuse (configure in `beforeEach`, create in tests).
+- Use `TestBed.configureTestingModule()` + `createComponent()` in each test.
+- Use `TestBed.tick()` NOT `fixture.detectChanges()`.
+- Use `inputBinding()` and `outputBinding()` from `@angular/core`.(new feature in angular 20.1)
+- Use **signals** to capture output emissions.
+- Use `within(fixture.nativeElement)` from `@testing-library/dom` for queries.
+- Use **native events** (`click()`, `dispatchEvent()`) for interactions.
+- For complex interactions (drag & drop), see `@testing-library/user-event` docs.
+- **Arrange / Act / Assert** pattern with comments.
 - Mocks via `vi.fn()` or providers.
 - Use `data-testid` selectors.
-- Avoid fakeAsync; use real async.
+
+### Component Test Pattern:
 
 ```ts
-it('renders label', async () => {
-  const { getByTestId } = await render(UserForm);
-  expect(getByTestId('userform-label')).toHaveTextContent('User');
+// Angular testing
+import { TestBed } from '@angular/core/testing';
+import { provideZonelessChangeDetection, inputBinding, outputBinding, signal } from '@angular/core';
+
+// Testing library
+import { within } from '@testing-library/dom';
+
+// Vitest
+import { describe, it, expect, vi } from 'vitest';
+
+// Component under test
+import { MyComponent } from './my-component';
+
+describe('MyComponent', () => {
+  it('should emit output when button clicked', () => {
+    // Arrange
+    const emittedValue = signal<string | null>(null);
+    const fixture = TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(MyComponent, {
+      bindings: [
+        inputBinding('label', () => 'Click me'),
+        outputBinding('clicked', (value: string) => emittedValue.set(value)),
+      ],
+    });
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
+
+    // Act
+    const button = queries.getByRole('button');
+    button.click();
+    TestBed.tick();
+
+    // Assert
+    expect(emittedValue()).toBe('clicked');
+  });
+});
+```
+
+### Test Builder Pattern (Recommended for reuse):
+
+```ts
+import { ComponentTestBuilder } from '@loan/shared/testing';
+
+describe('MyComponent', () => {
+  let builder: ComponentTestBuilder<MyComponent>;
+
+  beforeEach(() => {
+    builder = new ComponentTestBuilder(MyComponent).withInput('label', 'Default Label');
+  });
+
+  it('should use defaults', () => {
+    const fixture = builder.build(); // Auto-clones + creates
+    expect(fixture.componentInstance.label()).toBe('Default Label');
+  });
+
+  it('should override inputs', () => {
+    const fixture = builder.withInput('label', 'Custom').build();
+    expect(fixture.componentInstance.label()).toBe('Custom');
+  });
+});
+```
+
+### Service Test Pattern:
+
+```ts
+describe('MyService', () => {
+  it('should fetch data', () => {
+    // Arrange
+    const service = TestBed.configureTestingModule({
+      providers: [MyService, provideZonelessChangeDetection()],
+    }).inject(MyService);
+
+    // Act
+    const result = service.getData();
+
+    // Assert
+    expect(result).toBeDefined();
+  });
 });
 ```
 
@@ -122,34 +206,7 @@ it('renders label', async () => {
 - Use Tailwind tokens only.
 - Use **CSF3**: `export default { component, title }` + named stories.
 - **Render el componente directamente** (sin wrappers extras).
-- **Helpers disponibles y parámetros** (no incluir su código, solo usarlos):
-  - `wrapInLightDarkComparison(template: string): string` → Envuelve cualquier template para ver **Light/Dark**.
-  - `createLightDarkComparison(componentTag: string, bindings?: string): string` → Light/Dark con un **tag** y **bindings**.
-  - `createVariantComparison(componentTag: string, variants: string[], baseBindings?: string): string` → Grid Light/Dark con **todas las variantes**.
-  - `createLightDarkRender(componentTag: string, bindings: string): (args) => { props; template }` → Genera una **función `render`** estándar Light/Dark.
-
-**Ejemplo (usar exactamente este patrón):**
-
-```ts
-export default {
-  title: 'UI/Avatar',
-  component: Avatar,
-};
-
-export const Default: Story = {
-  args: { variant: 'placeholder', size: 'md', shape: 'full' },
-  render: (args) => ({
-    props: args,
-    template: wrapInLightDarkComparison(`
-      <app-avatar
-        [variant]="variant"
-        [size]="size"
-        [shape]="shape"
-      />
-    `),
-  }),
-};
-```
+- All stories live under `src/stories`. Group files by feature (`ui/button/button.stories.ts`, `forms/input.stories.ts`, etc.) so discoverability matches the design system. Global decorators and parameters remain in `src/stories/themes`.
 
 ---
 

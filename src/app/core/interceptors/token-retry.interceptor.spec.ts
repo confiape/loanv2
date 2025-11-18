@@ -3,23 +3,13 @@ import { HttpClient, provideHttpClient, withInterceptors } from '@angular/common
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { of, throwError } from 'rxjs';
-import { vi, Mock } from 'vitest';
+import { vi, Mock, afterEach } from 'vitest';
 import { AuthService } from '../services/auth.service';
 import { LoginResponse } from '@loan/app/shared/openapi';
 import { ToastService } from '@loan/app/core/services/toast.service';
 import { tokenRetryInterceptor } from '@loan/app/core/interceptors/token-retry.interceptor';
 
 describe('tokenRetryInterceptor', () => {
-  let httpClient: HttpClient;
-  let httpTestingController: HttpTestingController;
-  let authService: {
-    refreshToken: Mock;
-    navigateToLogin: Mock;
-  };
-  let toastService: {
-    error: Mock;
-  };
-
   const mockLoginResponse: LoginResponse = {
     user: {
       name: 'Test User',
@@ -30,16 +20,7 @@ describe('tokenRetryInterceptor', () => {
     tokenType: 'Bearer',
   };
 
-  beforeEach(() => {
-    authService = {
-      refreshToken: vi.fn() as Mock,
-      navigateToLogin: vi.fn() as Mock,
-    };
-
-    toastService = {
-      error: vi.fn() as Mock,
-    };
-
+  function setupTestBed(authService: Record<string, Mock>, toastService: Record<string, Mock>) {
     TestBed.configureTestingModule({
       providers: [
         provideZonelessChangeDetection(),
@@ -50,23 +31,35 @@ describe('tokenRetryInterceptor', () => {
       ],
     });
 
-    httpClient = TestBed.inject(HttpClient);
-    httpTestingController = TestBed.inject(HttpTestingController);
-  });
+    const httpClient = TestBed.inject(HttpClient);
+    const httpTestingController = TestBed.inject(HttpTestingController);
 
-  afterEach(() => {
-    httpTestingController.verify();
-  });
+    afterEach(() => {
+      httpTestingController.verify();
+    });
+
+    return { httpClient, httpTestingController };
+  }
 
   describe('401 Unauthorized Errors', () => {
     it('should retry request after refreshing token on 401 error', () => {
-      authService.refreshToken!.mockReturnValue(of(mockLoginResponse));
+      // Arrange
+      const authService = {
+        refreshToken: vi.fn(() => of(mockLoginResponse)) as Mock,
+        navigateToLogin: vi.fn() as Mock,
+      };
+      const toastService = {
+        error: vi.fn() as Mock,
+      };
 
+      const { httpClient, httpTestingController } = setupTestBed(authService, toastService);
+
+      // Act
       httpClient.get('/api/users').subscribe((response) => {
         expect(response).toEqual([{ id: 1, name: 'Test' }]);
       });
 
-      // First request fails with 401
+      // Assert - First request fails with 401
       const req1 = httpTestingController.expectOne('/api/users');
       req1.flush({ message: 'Unauthorized' }, { status: 401, statusText: 'Unauthorized' });
 
@@ -80,8 +73,18 @@ describe('tokenRetryInterceptor', () => {
     });
 
     it('should show error and redirect to login if refresh fails on 401', () => {
-      authService.refreshToken!.mockReturnValue(throwError(() => new Error('Refresh failed')));
+      // Arrange
+      const authService = {
+        refreshToken: vi.fn(() => throwError(() => new Error('Refresh failed'))) as Mock,
+        navigateToLogin: vi.fn() as Mock,
+      };
+      const toastService = {
+        error: vi.fn() as Mock,
+      };
 
+      const { httpClient, httpTestingController } = setupTestBed(authService, toastService);
+
+      // Act
       httpClient.get('/api/users').subscribe({
         next: () => {
           // Expected path
@@ -91,7 +94,7 @@ describe('tokenRetryInterceptor', () => {
         },
       });
 
-      // First request fails with 401
+      // Assert - First request fails with 401
       const req = httpTestingController.expectOne('/api/users');
       req.flush({ message: 'Unauthorized' }, { status: 401, statusText: 'Unauthorized' });
 
@@ -106,13 +109,23 @@ describe('tokenRetryInterceptor', () => {
 
   describe('403 Forbidden Errors', () => {
     it('should retry request after refreshing token on 403 error', () => {
-      authService.refreshToken!.mockReturnValue(of(mockLoginResponse));
+      // Arrange
+      const authService = {
+        refreshToken: vi.fn(() => of(mockLoginResponse)) as Mock,
+        navigateToLogin: vi.fn() as Mock,
+      };
+      const toastService = {
+        error: vi.fn() as Mock,
+      };
 
+      const { httpClient, httpTestingController } = setupTestBed(authService, toastService);
+
+      // Act
       httpClient.get('/api/users').subscribe((response) => {
         expect(response).toEqual([{ id: 1, name: 'Test' }]);
       });
 
-      // First request fails with 403
+      // Assert - First request fails with 403
       const req1 = httpTestingController.expectOne('/api/users');
       req1.flush({ message: 'Forbidden' }, { status: 403, statusText: 'Forbidden' });
 
@@ -125,8 +138,18 @@ describe('tokenRetryInterceptor', () => {
     });
 
     it('should show error and redirect to login if refresh fails on 403', () => {
-      authService.refreshToken!.mockReturnValue(throwError(() => new Error('Refresh failed')));
+      // Arrange
+      const authService = {
+        refreshToken: vi.fn(() => throwError(() => new Error('Refresh failed'))) as Mock,
+        navigateToLogin: vi.fn() as Mock,
+      };
+      const toastService = {
+        error: vi.fn() as Mock,
+      };
 
+      const { httpClient, httpTestingController } = setupTestBed(authService, toastService);
+
+      // Act
       httpClient.get('/api/users').subscribe({
         next: () => {
           // Expected path
@@ -136,7 +159,7 @@ describe('tokenRetryInterceptor', () => {
         },
       });
 
-      // First request fails with 403
+      // Assert - First request fails with 403
       const req = httpTestingController.expectOne('/api/users');
       req.flush({ message: 'Forbidden' }, { status: 403, statusText: 'Forbidden' });
 
@@ -150,6 +173,18 @@ describe('tokenRetryInterceptor', () => {
 
   describe('Other HTTP Errors', () => {
     it('should not retry on 404 error', () => {
+      // Arrange
+      const authService = {
+        refreshToken: vi.fn() as Mock,
+        navigateToLogin: vi.fn() as Mock,
+      };
+      const toastService = {
+        error: vi.fn() as Mock,
+      };
+
+      const { httpClient, httpTestingController } = setupTestBed(authService, toastService);
+
+      // Act
       httpClient.get('/api/users').subscribe({
         next: () => {
           // Expected path
@@ -159,6 +194,7 @@ describe('tokenRetryInterceptor', () => {
         },
       });
 
+      // Assert
       const req = httpTestingController.expectOne('/api/users');
       req.flush({ message: 'Not Found' }, { status: 404, statusText: 'Not Found' });
 
@@ -166,6 +202,18 @@ describe('tokenRetryInterceptor', () => {
     });
 
     it('should not retry on 500 error', () => {
+      // Arrange
+      const authService = {
+        refreshToken: vi.fn() as Mock,
+        navigateToLogin: vi.fn() as Mock,
+      };
+      const toastService = {
+        error: vi.fn() as Mock,
+      };
+
+      const { httpClient, httpTestingController } = setupTestBed(authService, toastService);
+
+      // Act
       httpClient.get('/api/users').subscribe({
         next: () => {
           // Expected path
@@ -175,6 +223,7 @@ describe('tokenRetryInterceptor', () => {
         },
       });
 
+      // Assert
       const req = httpTestingController.expectOne('/api/users');
       req.flush(
         { message: 'Internal Server Error' },
@@ -187,6 +236,18 @@ describe('tokenRetryInterceptor', () => {
 
   describe('Authentication Endpoints', () => {
     it('should not retry authentication endpoints on 401', () => {
+      // Arrange
+      const authService = {
+        refreshToken: vi.fn() as Mock,
+        navigateToLogin: vi.fn() as Mock,
+      };
+      const toastService = {
+        error: vi.fn() as Mock,
+      };
+
+      const { httpClient, httpTestingController } = setupTestBed(authService, toastService);
+
+      // Act
       httpClient.post('/api/Authentication/LogIn', {}).subscribe({
         next: () => {
           // Expected path
@@ -196,6 +257,7 @@ describe('tokenRetryInterceptor', () => {
         },
       });
 
+      // Assert
       const req = httpTestingController.expectOne('/api/Authentication/LogIn');
       req.flush({ message: 'Invalid credentials' }, { status: 401, statusText: 'Unauthorized' });
 
@@ -203,6 +265,18 @@ describe('tokenRetryInterceptor', () => {
     });
 
     it('should not retry GetAuthorizationToken endpoint on 401', () => {
+      // Arrange
+      const authService = {
+        refreshToken: vi.fn() as Mock,
+        navigateToLogin: vi.fn() as Mock,
+      };
+      const toastService = {
+        error: vi.fn() as Mock,
+      };
+
+      const { httpClient, httpTestingController } = setupTestBed(authService, toastService);
+
+      // Act
       httpClient.post('/api/Authentication/GetAuthorizationToken', {}).subscribe({
         next: () => {
           // Expected path
@@ -212,6 +286,7 @@ describe('tokenRetryInterceptor', () => {
         },
       });
 
+      // Assert
       const req = httpTestingController.expectOne('/api/Authentication/GetAuthorizationToken');
       req.flush({ message: 'Unauthorized' }, { status: 401, statusText: 'Unauthorized' });
 
@@ -219,6 +294,18 @@ describe('tokenRetryInterceptor', () => {
     });
 
     it('should not retry IsAuthenticated endpoint on 401', () => {
+      // Arrange
+      const authService = {
+        refreshToken: vi.fn() as Mock,
+        navigateToLogin: vi.fn() as Mock,
+      };
+      const toastService = {
+        error: vi.fn() as Mock,
+      };
+
+      const { httpClient, httpTestingController } = setupTestBed(authService, toastService);
+
+      // Act
       httpClient.get('/api/Authentication/IsAuthenticated').subscribe({
         next: () => {
           // Expected path
@@ -228,6 +315,7 @@ describe('tokenRetryInterceptor', () => {
         },
       });
 
+      // Assert
       const req = httpTestingController.expectOne('/api/Authentication/IsAuthenticated');
       req.flush({ message: 'Unauthorized' }, { status: 401, statusText: 'Unauthorized' });
 
@@ -237,10 +325,23 @@ describe('tokenRetryInterceptor', () => {
 
   describe('Successful Requests', () => {
     it('should not intercept successful requests', () => {
+      // Arrange
+      const authService = {
+        refreshToken: vi.fn() as Mock,
+        navigateToLogin: vi.fn() as Mock,
+      };
+      const toastService = {
+        error: vi.fn() as Mock,
+      };
+
+      const { httpClient, httpTestingController } = setupTestBed(authService, toastService);
+
+      // Act
       httpClient.get('/api/users').subscribe((response) => {
         expect(response).toEqual([{ id: 1, name: 'Test' }]);
       });
 
+      // Assert
       const req = httpTestingController.expectOne('/api/users');
       req.flush([{ id: 1, name: 'Test' }]);
 

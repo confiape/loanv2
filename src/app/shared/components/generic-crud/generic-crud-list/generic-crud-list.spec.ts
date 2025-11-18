@@ -1,5 +1,5 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideZonelessChangeDetection, signal } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
+import { provideZonelessChangeDetection, signal, inputBinding } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { GenericCrudListComponent } from './generic-crud-list';
 import { ICrudService } from '@loan/app/core/services/crud.interface';
@@ -89,61 +89,105 @@ class MockCrudService implements Partial<ICrudService<{ id: string; name: string
 }
 
 describe('GenericCrudListComponent', () => {
-  let component: GenericCrudListComponent<any>;
-  let fixture: ComponentFixture<GenericCrudListComponent<any>>;
-  let mockService: MockCrudService;
-
-  beforeEach(async () => {
-    mockService = new MockCrudService();
-
-    await TestBed.configureTestingModule({
-      imports: [GenericCrudListComponent],
-      providers: [provideZonelessChangeDetection(), provideRouter([])],
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(GenericCrudListComponent);
-    component = fixture.componentInstance;
-    fixture.componentRef.setInput('service', mockService as any);
-    fixture.componentRef.setInput('dataTestId', 'test-crud');
-    fixture.detectChanges();
-  });
+  const defaultProviders = [provideZonelessChangeDetection(), provideRouter([])];
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    // Arrange
+    const mockService = new MockCrudService();
+    const fixture = TestBed.configureTestingModule({
+      providers: defaultProviders,
+    }).createComponent(GenericCrudListComponent, {
+      bindings: [
+        inputBinding('service', () => mockService as any),
+        inputBinding('dataTestId', () => 'test-crud'),
+      ],
+    });
+    TestBed.tick();
+
+    // Assert
+    expect(fixture.componentInstance).toBeTruthy();
   });
 
   describe('data-testid propagation', () => {
     it('should render data-testid on search input', () => {
-      const compiled = fixture.nativeElement as HTMLElement;
-      const searchInput = compiled.querySelector('input[data-testid="test-crud-search-input"]');
+      // Arrange
+      const mockService = new MockCrudService();
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(GenericCrudListComponent, {
+        bindings: [
+          inputBinding('service', () => mockService as any),
+          inputBinding('dataTestId', () => 'test-crud'),
+        ],
+      });
+      TestBed.tick();
+
+      // Assert
+      const searchInput = fixture.nativeElement.querySelector(
+        'input[data-testid="test-crud-search-input"]',
+      );
       expect(searchInput).toBeTruthy();
     });
 
     it('should render data-testid on new button', () => {
-      const compiled = fixture.nativeElement as HTMLElement;
-      const newButton = compiled.querySelector('button[data-testid="test-crud-btn-new"]');
+      // Arrange
+      const mockService = new MockCrudService();
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(GenericCrudListComponent, {
+        bindings: [
+          inputBinding('service', () => mockService as any),
+          inputBinding('dataTestId', () => 'test-crud'),
+        ],
+      });
+      TestBed.tick();
+
+      // Assert
+      const newButton = fixture.nativeElement.querySelector(
+        'button[data-testid="test-crud-btn-new"]',
+      );
       expect(newButton).toBeTruthy();
     });
 
     it('should render data-testid on table', () => {
-      const compiled = fixture.nativeElement as HTMLElement;
-      const table = compiled.querySelector('table[data-testid="test-crud-table"]');
+      // Arrange
+      const mockService = new MockCrudService();
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(GenericCrudListComponent, {
+        bindings: [
+          inputBinding('service', () => mockService as any),
+          inputBinding('dataTestId', () => 'test-crud'),
+        ],
+      });
+      TestBed.tick();
+
+      // Assert
+      const table = fixture.nativeElement.querySelector('table[data-testid="test-crud-table"]');
       expect(table).toBeTruthy();
     });
 
-    // Modal tests skipped due to complex rendering lifecycle
-    // In real E2E tests, modals will render correctly with data-testid propagation
-
     it('should render data-testid on delete confirmation buttons', () => {
+      // Arrange
+      const mockService = new MockCrudService();
       mockService.showDeleteConfirm.set(true);
       mockService.deleteMessage.set('Are you sure?');
-      fixture.detectChanges();
 
-      const compiled = fixture.nativeElement as HTMLElement;
-      const cancelBtn = compiled.querySelector(
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(GenericCrudListComponent, {
+        bindings: [
+          inputBinding('service', () => mockService as any),
+          inputBinding('dataTestId', () => 'test-crud'),
+        ],
+      });
+      TestBed.tick();
+
+      // Assert
+      const cancelBtn = fixture.nativeElement.querySelector(
         'button[data-testid="test-crud-btn-cancel-delete"]',
       );
-      const confirmBtn = compiled.querySelector(
+      const confirmBtn = fixture.nativeElement.querySelector(
         'button[data-testid="test-crud-btn-confirm-delete"]',
       );
 
@@ -152,27 +196,48 @@ describe('GenericCrudListComponent', () => {
     });
 
     it('should render data-testid on selected items section when hasSelection is true', () => {
-      // Mock hasSelection to return true
+      // Arrange
+      const mockService = new MockCrudService();
       mockService.selectedItems.set(new Set(['1']));
       mockService.hasSelection = () => true;
       mockService.selectedItemsData = () => [{ id: '1', name: 'Item 1' }] as any;
-      fixture.detectChanges();
 
-      const compiled = fixture.nativeElement as HTMLElement;
-      const selectedSection = compiled.querySelector(
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(GenericCrudListComponent, {
+        bindings: [
+          inputBinding('service', () => mockService as any),
+          inputBinding('dataTestId', () => 'test-crud'),
+        ],
+      });
+      TestBed.tick();
+
+      // Assert
+      const selectedSection = fixture.nativeElement.querySelector(
         '[data-testid="test-crud-selected-items"]',
       );
       expect(selectedSection).toBeTruthy();
     });
 
     it('should render data-testid on bulk delete button when items are selected', () => {
+      // Arrange
+      const mockService = new MockCrudService();
       mockService.selectedItems.set(new Set(['1']));
       mockService.hasSelection = () => true;
       mockService.selectedItemsData = () => [{ id: '1', name: 'Item 1' }] as any;
-      fixture.detectChanges();
 
-      const compiled = fixture.nativeElement as HTMLElement;
-      const bulkDeleteBtn = compiled.querySelector(
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(GenericCrudListComponent, {
+        bindings: [
+          inputBinding('service', () => mockService as any),
+          inputBinding('dataTestId', () => 'test-crud'),
+        ],
+      });
+      TestBed.tick();
+
+      // Assert
+      const bulkDeleteBtn = fixture.nativeElement.querySelector(
         'button[data-testid="test-crud-btn-bulk-delete"]',
       );
       expect(bulkDeleteBtn).toBeTruthy();

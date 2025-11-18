@@ -1,12 +1,10 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideZonelessChangeDetection } from '@angular/core';
+import { provideZonelessChangeDetection, inputBinding, signal } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
 import { GenericCrudFormComponent } from './generic-crud-form';
 import { FormFieldMetadata } from '@loan/app/core/models/form-metadata';
+import { describe, it, expect } from 'vitest';
 
 describe('GenericCrudFormComponent', () => {
-  let component: GenericCrudFormComponent;
-  let fixture: ComponentFixture<GenericCrudFormComponent>;
-
   const mockFields: FormFieldMetadata[] = [
     {
       key: 'name',
@@ -64,104 +62,219 @@ describe('GenericCrudFormComponent', () => {
     },
   ];
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [GenericCrudFormComponent],
-      providers: [provideZonelessChangeDetection()],
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(GenericCrudFormComponent);
-    component = fixture.componentInstance;
-    fixture.componentRef.setInput('fields', mockFields);
-    fixture.componentRef.setInput('dataTestId', 'test-form');
-    fixture.detectChanges();
-  });
-
   it('should create', () => {
-    expect(component).toBeTruthy();
+    const fixture = TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(GenericCrudFormComponent, {
+      bindings: [
+        inputBinding('fields', () => mockFields),
+        inputBinding('dataTestId', () => 'test-form'),
+      ],
+    });
+    TestBed.tick();
+
+    expect(fixture.nativeElement).toBeTruthy();
   });
 
   describe('data-testid propagation', () => {
     it('should render data-testid on text input field', () => {
-      const compiled = fixture.nativeElement as HTMLElement;
-      const textInput = compiled.querySelector('input[data-testid="test-form-input-name"]');
+      const fixture = TestBed.configureTestingModule({
+        providers: [provideZonelessChangeDetection()],
+      }).createComponent(GenericCrudFormComponent, {
+        bindings: [
+          inputBinding('fields', () => mockFields),
+          inputBinding('dataTestId', () => 'test-form'),
+        ],
+      });
+      TestBed.tick();
+
+      const textInput = fixture.nativeElement.querySelector(
+        'input[data-testid="test-form-input-name"]',
+      );
       expect(textInput).toBeTruthy();
     });
 
     it('should render data-testid on email input field', () => {
-      const compiled = fixture.nativeElement as HTMLElement;
-      const emailInput = compiled.querySelector('input[data-testid="test-form-input-email"]');
+      const fixture = TestBed.configureTestingModule({
+        providers: [provideZonelessChangeDetection()],
+      }).createComponent(GenericCrudFormComponent, {
+        bindings: [
+          inputBinding('fields', () => mockFields),
+          inputBinding('dataTestId', () => 'test-form'),
+        ],
+      });
+      TestBed.tick();
+
+      const emailInput = fixture.nativeElement.querySelector(
+        'input[data-testid="test-form-input-email"]',
+      );
       expect(emailInput).toBeTruthy();
     });
 
     it('should render data-testid on number input field', () => {
-      const compiled = fixture.nativeElement as HTMLElement;
-      const numberInput = compiled.querySelector('input[data-testid="test-form-number-age"]');
+      const fixture = TestBed.configureTestingModule({
+        providers: [provideZonelessChangeDetection()],
+      }).createComponent(GenericCrudFormComponent, {
+        bindings: [
+          inputBinding('fields', () => mockFields),
+          inputBinding('dataTestId', () => 'test-form'),
+        ],
+      });
+      TestBed.tick();
+
+      const numberInput = fixture.nativeElement.querySelector(
+        'input[data-testid="test-form-number-age"]',
+      );
       expect(numberInput).toBeTruthy();
     });
 
     it('should render data-testid on date input field', () => {
-      const compiled = fixture.nativeElement as HTMLElement;
-      const dateInput = compiled.querySelector(
+      const fixture = TestBed.configureTestingModule({
+        providers: [provideZonelessChangeDetection()],
+      }).createComponent(GenericCrudFormComponent, {
+        bindings: [
+          inputBinding('fields', () => mockFields),
+          inputBinding('dataTestId', () => 'test-form'),
+        ],
+      });
+      TestBed.tick();
+
+      const dateInput = fixture.nativeElement.querySelector(
         'input[data-testid="test-form-date-birthDate"]',
       );
       expect(dateInput).toBeTruthy();
     });
 
     it('should render data-testid on checkbox field', () => {
-      const compiled = fixture.nativeElement as HTMLElement;
-      const checkbox = compiled.querySelector('input[data-testid="test-form-checkbox-active"]');
+      const fixture = TestBed.configureTestingModule({
+        providers: [provideZonelessChangeDetection()],
+      }).createComponent(GenericCrudFormComponent, {
+        bindings: [
+          inputBinding('fields', () => mockFields),
+          inputBinding('dataTestId', () => 'test-form'),
+        ],
+      });
+      TestBed.tick();
+
+      const checkbox = fixture.nativeElement.querySelector(
+        'input[data-testid="test-form-checkbox-active"]',
+      );
       expect(checkbox).toBeTruthy();
     });
 
     it('should render data-testid on select field', () => {
-      const compiled = fixture.nativeElement as HTMLElement;
-      const select = compiled.querySelector('select[data-testid="test-form-select-role"]');
+      const fixture = TestBed.configureTestingModule({
+        providers: [provideZonelessChangeDetection()],
+      }).createComponent(GenericCrudFormComponent, {
+        bindings: [
+          inputBinding('fields', () => mockFields),
+          inputBinding('dataTestId', () => 'test-form'),
+        ],
+      });
+      TestBed.tick();
+
+      const select = fixture.nativeElement.querySelector(
+        'select[data-testid="test-form-select-role"]',
+      );
       expect(select).toBeTruthy();
     });
 
     it('should render data-testid on multiselect field', () => {
-      const compiled = fixture.nativeElement as HTMLElement;
-      const multiselect = compiled.querySelector(
+      const fixture = TestBed.configureTestingModule({
+        providers: [provideZonelessChangeDetection()],
+      }).createComponent(GenericCrudFormComponent, {
+        bindings: [
+          inputBinding('fields', () => mockFields),
+          inputBinding('dataTestId', () => 'test-form'),
+        ],
+      });
+      TestBed.tick();
+
+      const multiselect = fixture.nativeElement.querySelector(
         'button[data-testid="test-form-multiselect-permissions"]',
       );
       expect(multiselect).toBeTruthy();
     });
 
     it('should render data-testid on radio group field', () => {
-      const compiled = fixture.nativeElement as HTMLElement;
-      // Radio group should have at least one radio button with the test id
-      const radioOption = compiled.querySelector(
+      const fixture = TestBed.configureTestingModule({
+        providers: [provideZonelessChangeDetection()],
+      }).createComponent(GenericCrudFormComponent, {
+        bindings: [
+          inputBinding('fields', () => mockFields),
+          inputBinding('dataTestId', () => 'test-form'),
+        ],
+      });
+      TestBed.tick();
+
+      const radioOption = fixture.nativeElement.querySelector(
         'input[data-testid="test-form-radio-gender-option-male"]',
       );
       expect(radioOption).toBeTruthy();
     });
 
     it('should render data-testid on submit button', () => {
-      const compiled = fixture.nativeElement as HTMLElement;
-      const submitBtn = compiled.querySelector('button[data-testid="test-form-btn-submit"]');
+      const fixture = TestBed.configureTestingModule({
+        providers: [provideZonelessChangeDetection()],
+      }).createComponent(GenericCrudFormComponent, {
+        bindings: [
+          inputBinding('fields', () => mockFields),
+          inputBinding('dataTestId', () => 'test-form'),
+        ],
+      });
+      TestBed.tick();
+
+      const submitBtn = fixture.nativeElement.querySelector(
+        'button[data-testid="test-form-btn-submit"]',
+      );
       expect(submitBtn).toBeTruthy();
     });
 
     it('should render data-testid on cancel button', () => {
-      const compiled = fixture.nativeElement as HTMLElement;
-      const cancelBtn = compiled.querySelector('button[data-testid="test-form-btn-cancel"]');
+      const fixture = TestBed.configureTestingModule({
+        providers: [provideZonelessChangeDetection()],
+      }).createComponent(GenericCrudFormComponent, {
+        bindings: [
+          inputBinding('fields', () => mockFields),
+          inputBinding('dataTestId', () => 'test-form'),
+        ],
+      });
+      TestBed.tick();
+
+      const cancelBtn = fixture.nativeElement.querySelector(
+        'button[data-testid="test-form-btn-cancel"]',
+      );
       expect(cancelBtn).toBeTruthy();
     });
 
     it('should render all field test IDs with correct prefix', () => {
-      const compiled = fixture.nativeElement as HTMLElement;
-      const allTestIds = compiled.querySelectorAll('[data-testid^="test-form-"]');
-      // Should have at least fields + buttons
+      const fixture = TestBed.configureTestingModule({
+        providers: [provideZonelessChangeDetection()],
+      }).createComponent(GenericCrudFormComponent, {
+        bindings: [
+          inputBinding('fields', () => mockFields),
+          inputBinding('dataTestId', () => 'test-form'),
+        ],
+      });
+      TestBed.tick();
+
+      const allTestIds = fixture.nativeElement.querySelectorAll('[data-testid^="test-form-"]');
       expect(allTestIds.length).toBeGreaterThan(mockFields.length);
     });
 
     it('should display error message when error input is provided', () => {
-      fixture.componentRef.setInput('error', 'Test error message');
-      fixture.detectChanges();
+      const fixture = TestBed.configureTestingModule({
+        providers: [provideZonelessChangeDetection()],
+      }).createComponent(GenericCrudFormComponent, {
+        bindings: [
+          inputBinding('fields', () => mockFields),
+          inputBinding('dataTestId', () => 'test-form'),
+          inputBinding('error', () => 'Test error message'),
+        ],
+      });
+      TestBed.tick();
 
-      const compiled = fixture.nativeElement as HTMLElement;
-      const errorAlert = compiled.querySelector('[role="alert"]');
+      const errorAlert = fixture.nativeElement.querySelector('[role="alert"]');
       expect(errorAlert).toBeTruthy();
       expect(errorAlert?.textContent).toContain('Test error message');
     });
@@ -169,6 +282,17 @@ describe('GenericCrudFormComponent', () => {
 
   describe('form behavior', () => {
     it('should emit formSubmit when form is valid and submitted', () => {
+      const fixture = TestBed.configureTestingModule({
+        providers: [provideZonelessChangeDetection()],
+      }).createComponent(GenericCrudFormComponent, {
+        bindings: [
+          inputBinding('fields', () => mockFields),
+          inputBinding('dataTestId', () => 'test-form'),
+        ],
+      });
+      TestBed.tick();
+
+      const component = fixture.componentInstance;
       let emittedData: unknown = null;
       component.formSubmit.subscribe((data) => {
         emittedData = data;
@@ -181,6 +305,17 @@ describe('GenericCrudFormComponent', () => {
     });
 
     it('should emit formCancel when cancel button is clicked', () => {
+      const fixture = TestBed.configureTestingModule({
+        providers: [provideZonelessChangeDetection()],
+      }).createComponent(GenericCrudFormComponent, {
+        bindings: [
+          inputBinding('fields', () => mockFields),
+          inputBinding('dataTestId', () => 'test-form'),
+        ],
+      });
+      TestBed.tick();
+
+      const component = fixture.componentInstance;
       let cancelled = false;
       component.formCancel.subscribe(() => {
         cancelled = true;
@@ -190,7 +325,5 @@ describe('GenericCrudFormComponent', () => {
 
       expect(cancelled).toBeTruthy();
     });
-
-    // Test for disabled state skipped - form validation behavior tested separately
   });
 });

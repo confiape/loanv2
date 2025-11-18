@@ -1,16 +1,12 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideZonelessChangeDetection } from '@angular/core';
+import { describe, it, expect, vi } from 'vitest';
+import { TestBed } from '@angular/core/testing';
+import { provideZonelessChangeDetection, inputBinding } from '@angular/core';
 import {
   NotificationButtonComponent,
   Notification,
 } from '@loan/app/shared/components/notification-button/notification-button';
 
 describe('NotificationButtonComponent', () => {
-  let fixture: ComponentFixture<NotificationButtonComponent>;
-  let component: NotificationButtonComponent;
-  let host: HTMLElement;
-
   const mockNotifications: Notification[] = [
     {
       id: '1',
@@ -45,42 +41,48 @@ describe('NotificationButtonComponent', () => {
     },
   ];
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [NotificationButtonComponent],
-      providers: [
-        provideZonelessChangeDetection(),
-      ],
-    }).compileComponents();
+  function renderComponent(props?: Record<string, unknown>) {
+    const bindings = props
+      ? Object.entries(props).map(([key, value]) => inputBinding(key, () => value))
+      : [];
 
-    fixture = TestBed.createComponent(NotificationButtonComponent);
-    component = fixture.componentInstance;
-    host = fixture.nativeElement as HTMLElement;
-    fixture.detectChanges();
-  });
+    const fixture = TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(NotificationButtonComponent, {
+      bindings,
+    });
+    TestBed.tick();
+
+    return { fixture, container: fixture.nativeElement };
+  }
 
   describe('initialization', () => {
     it('creates the component', () => {
-      expect(component).toBeDefined();
+      const { fixture } = renderComponent();
+      expect(fixture.componentInstance).toBeDefined();
     });
 
     it('has empty notifications by default', () => {
-      expect(component.notifications()).toEqual([]);
+      const { fixture } = renderComponent();
+      expect(fixture.componentInstance.notifications()).toEqual([]);
     });
 
     it('has default input values', () => {
-      expect(component.badgeCount()).toBe(0);
-      expect(component.showBadge()).toBe(true);
-      expect(component.maxNotificationsDisplay()).toBe(5);
-      expect(component.emptyMessage()).toBe('No notifications');
+      const { fixture } = renderComponent();
+      expect(fixture.componentInstance.badgeCount()).toBe(0);
+      expect(fixture.componentInstance.showBadge()).toBe(true);
+      expect(fixture.componentInstance.maxNotificationsDisplay()).toBe(5);
+      expect(fixture.componentInstance.emptyMessage()).toBe('No notifications');
     });
 
     it('starts with menu closed', () => {
-      expect(component.isOpen()).toBe(false);
+      const { fixture } = renderComponent();
+      expect(fixture.componentInstance.isOpen()).toBe(false);
     });
 
     it('renders the notification button', () => {
-      const button = host.querySelector('button');
+      const { container } = renderComponent();
+      const button = container.querySelector('button');
       expect(button).toBeTruthy();
       expect(button?.getAttribute('aria-label')).toBe('View notifications');
     });
@@ -88,139 +90,139 @@ describe('NotificationButtonComponent', () => {
 
   describe('notifications input', () => {
     it('accepts notifications array', () => {
-      fixture.componentRef.setInput('notifications', mockNotifications);
-      fixture.detectChanges();
+      const { fixture } = renderComponent({ notifications: mockNotifications });
 
-      expect(component.notifications()).toEqual(mockNotifications);
+      expect(fixture.componentInstance.notifications()).toEqual(mockNotifications);
     });
 
     it('displays notifications when menu is open', () => {
-      fixture.componentRef.setInput('notifications', mockNotifications);
-      component.toggle();
-      fixture.detectChanges();
+      const { container, fixture } = renderComponent({ notifications: mockNotifications });
+      fixture.componentInstance.toggle();
+      TestBed.tick();
 
       mockNotifications.slice(0, 5).forEach((notification) => {
-        expect(host.textContent).toContain(notification.title);
+        expect(container.textContent).toContain(notification.title);
       });
     });
 
     it('limits displayed notifications based on maxNotificationsDisplay', () => {
-      fixture.componentRef.setInput('notifications', mockNotifications);
-      fixture.componentRef.setInput('maxNotificationsDisplay', 2);
-      fixture.detectChanges();
+      const { fixture } = renderComponent({
+        notifications: mockNotifications,
+        maxNotificationsDisplay: 2,
+      });
 
-      expect(component.displayedNotifications.length).toBe(2);
+      expect(fixture.componentInstance.displayedNotifications.length).toBe(2);
     });
 
     it('calculates unread count correctly', () => {
-      fixture.componentRef.setInput('notifications', mockNotifications);
-      fixture.detectChanges();
+      const { fixture } = renderComponent({ notifications: mockNotifications });
 
       const unreadCount = mockNotifications.filter((n) => !n.read).length;
-      expect(component.unreadCount).toBe(unreadCount);
+      expect(fixture.componentInstance.unreadCount).toBe(unreadCount);
     });
 
     it('uses badgeCount when provided', () => {
-      fixture.componentRef.setInput('badgeCount', 10);
-      fixture.detectChanges();
+      const { fixture } = renderComponent({ badgeCount: 10 });
 
-      expect(component.unreadCount).toBe(10);
+      expect(fixture.componentInstance.unreadCount).toBe(10);
     });
   });
 
   describe('badge display', () => {
     it('shows badge when showBadge is true and there are unread notifications', () => {
-      fixture.componentRef.setInput('notifications', mockNotifications);
-      fixture.componentRef.setInput('showBadge', true);
-      fixture.detectChanges();
+      const { container } = renderComponent({
+        notifications: mockNotifications,
+        showBadge: true,
+      });
 
-      const badge = host.querySelector('.bg-error');
+      const badge = container.querySelector('.bg-error');
       expect(badge).toBeTruthy();
     });
 
     it('hides badge when showBadge is false', () => {
-      fixture.componentRef.setInput('notifications', mockNotifications);
-      fixture.componentRef.setInput('showBadge', false);
-      fixture.detectChanges();
+      const { container } = renderComponent({
+        notifications: mockNotifications,
+        showBadge: false,
+      });
 
-      const badge = host.querySelector('.bg-error');
+      const badge = container.querySelector('.bg-error');
       expect(badge).toBeFalsy();
     });
 
     it('displays correct unread count on badge', () => {
-      fixture.componentRef.setInput('notifications', mockNotifications);
-      fixture.detectChanges();
+      const { container } = renderComponent({ notifications: mockNotifications });
 
       const unreadCount = mockNotifications.filter((n) => !n.read).length;
-      const badge = host.querySelector('.bg-error');
+      const badge = container.querySelector('.bg-error');
       expect(badge?.textContent?.trim()).toBe(String(unreadCount));
     });
 
     it('displays "99+" when unread count exceeds 99', () => {
-      fixture.componentRef.setInput('badgeCount', 150);
-      fixture.detectChanges();
+      const { container } = renderComponent({ badgeCount: 150 });
 
-      const badge = host.querySelector('.bg-error');
+      const badge = container.querySelector('.bg-error');
       expect(badge?.textContent?.trim()).toBe('99+');
     });
 
     it('does not show badge when unread count is 0', () => {
       const allReadNotifications = mockNotifications.map((n) => ({ ...n, read: true }));
-      fixture.componentRef.setInput('notifications', allReadNotifications);
-      fixture.detectChanges();
+      const { container } = renderComponent({ notifications: allReadNotifications });
 
-      const badge = host.querySelector('.bg-error');
+      const badge = container.querySelector('.bg-error');
       expect(badge).toBeFalsy();
     });
 
     it('sets aria-label on badge with unread count', () => {
-      fixture.componentRef.setInput('badgeCount', 5);
-      fixture.detectChanges();
+      const { container } = renderComponent({ badgeCount: 5 });
 
-      const badge = host.querySelector('.bg-error');
+      const badge = container.querySelector('.bg-error');
       expect(badge?.getAttribute('aria-label')).toBe('5 unread notifications');
     });
   });
 
   describe('menu toggle', () => {
     it('opens menu when toggle is called', () => {
-      expect(component.isOpen()).toBe(false);
+      const { fixture } = renderComponent();
+      expect(fixture.componentInstance.isOpen()).toBe(false);
 
-      component.toggle();
+      fixture.componentInstance.toggle();
 
-      expect(component.isOpen()).toBe(true);
+      expect(fixture.componentInstance.isOpen()).toBe(true);
     });
 
     it('closes menu when toggle is called again', () => {
-      component.toggle();
-      expect(component.isOpen()).toBe(true);
+      const { fixture } = renderComponent();
+      fixture.componentInstance.toggle();
+      expect(fixture.componentInstance.isOpen()).toBe(true);
 
-      component.toggle();
-      expect(component.isOpen()).toBe(false);
+      fixture.componentInstance.toggle();
+      expect(fixture.componentInstance.isOpen()).toBe(false);
     });
 
     it('shows dropdown when menu is open', () => {
-      component.toggle();
-      fixture.detectChanges();
+      const { container, fixture } = renderComponent();
+      fixture.componentInstance.toggle();
+      TestBed.tick();
 
-      const dropdown = host.querySelector('div[role="menu"]');
+      const dropdown = container.querySelector('div[role="menu"]');
       expect(dropdown).toBeTruthy();
     });
 
     it('hides dropdown when menu is closed', () => {
-      fixture.detectChanges();
+      const { container } = renderComponent();
 
-      const dropdown = host.querySelector('div[role="menu"]');
+      const dropdown = container.querySelector('div[role="menu"]');
       expect(dropdown).toBeFalsy();
     });
 
     it('sets aria-expanded attribute correctly', () => {
-      const button = host.querySelector('button');
+      const { container, fixture } = renderComponent();
+      const button = container.querySelector('button');
 
       expect(button?.getAttribute('aria-expanded')).toBe('false');
 
-      component.toggle();
-      fixture.detectChanges();
+      fixture.componentInstance.toggle();
+      TestBed.tick();
 
       expect(button?.getAttribute('aria-expanded')).toBe('true');
     });
@@ -228,39 +230,42 @@ describe('NotificationButtonComponent', () => {
 
   describe('close method', () => {
     it('closes the menu', () => {
-      component.toggle();
-      expect(component.isOpen()).toBe(true);
+      const { fixture } = renderComponent();
+      fixture.componentInstance.toggle();
+      expect(fixture.componentInstance.isOpen()).toBe(true);
 
-      component.close();
+      fixture.componentInstance.close();
 
-      expect(component.isOpen()).toBe(false);
+      expect(fixture.componentInstance.isOpen()).toBe(false);
     });
   });
 
   describe('notificationClick output', () => {
     it('emits notification when clicked', () => {
-      fixture.componentRef.setInput('notifications', mockNotifications);
-      const emitSpy = vi.spyOn(component.notificationClick, 'emit');
+      const { fixture } = renderComponent({ notifications: mockNotifications });
+      const emitSpy = vi.spyOn(fixture.componentInstance.notificationClick, 'emit');
 
-      component.onNotificationClick(mockNotifications[0]);
+      fixture.componentInstance.onNotificationClick(mockNotifications[0]);
 
       expect(emitSpy).toHaveBeenCalledWith(mockNotifications[0]);
     });
 
     it('emits markAsRead for unread notifications', () => {
+      const { fixture } = renderComponent();
       const unreadNotification = mockNotifications[0];
-      const emitSpy = vi.spyOn(component.markAsRead, 'emit');
+      const emitSpy = vi.spyOn(fixture.componentInstance.markAsRead, 'emit');
 
-      component.onNotificationClick(unreadNotification);
+      fixture.componentInstance.onNotificationClick(unreadNotification);
 
       expect(emitSpy).toHaveBeenCalledWith(unreadNotification.id);
     });
 
     it('does not emit markAsRead for already read notifications', () => {
+      const { fixture } = renderComponent();
       const readNotification = mockNotifications[2];
-      const emitSpy = vi.spyOn(component.markAsRead, 'emit');
+      const emitSpy = vi.spyOn(fixture.componentInstance.markAsRead, 'emit');
 
-      component.onNotificationClick(readNotification);
+      fixture.componentInstance.onNotificationClick(readNotification);
 
       expect(emitSpy).not.toHaveBeenCalled();
     });
@@ -268,31 +273,32 @@ describe('NotificationButtonComponent', () => {
 
   describe('mark all as read', () => {
     it('emits markAllAsRead event', () => {
-      const emitSpy = vi.spyOn(component.markAllAsRead, 'emit');
+      const { fixture } = renderComponent();
+      const emitSpy = vi.spyOn(fixture.componentInstance.markAllAsRead, 'emit');
 
-      component.onMarkAllAsRead();
+      fixture.componentInstance.onMarkAllAsRead();
 
       expect(emitSpy).toHaveBeenCalledOnce();
     });
 
     it('shows mark all as read button when there are notifications', () => {
-      fixture.componentRef.setInput('notifications', mockNotifications);
-      component.toggle();
-      fixture.detectChanges();
+      const { container, fixture } = renderComponent({ notifications: mockNotifications });
+      fixture.componentInstance.toggle();
+      TestBed.tick();
 
-      const markAllButton = Array.from(host.querySelectorAll('button')).find((btn) =>
-        btn.textContent?.includes('Mark all as read'),
+      const markAllButton = Array.from(container.querySelectorAll('button')).find((btn) =>
+        (btn as HTMLElement).textContent?.includes('Mark all as read'),
       );
       expect(markAllButton).toBeTruthy();
     });
 
     it('hides mark all as read button when there are no notifications', () => {
-      fixture.componentRef.setInput('notifications', []);
-      component.toggle();
-      fixture.detectChanges();
+      const { container, fixture } = renderComponent({ notifications: [] });
+      fixture.componentInstance.toggle();
+      TestBed.tick();
 
-      const markAllButton = Array.from(host.querySelectorAll('button')).find((btn) =>
-        btn.textContent?.includes('Mark all as read'),
+      const markAllButton = Array.from(container.querySelectorAll('button')).find((btn) =>
+        (btn as HTMLElement).textContent?.includes('Mark all as read'),
       );
       expect(markAllButton).toBeFalsy();
     });
@@ -300,29 +306,31 @@ describe('NotificationButtonComponent', () => {
 
   describe('view all', () => {
     it('emits viewAll event', () => {
-      const emitSpy = vi.spyOn(component.viewAll, 'emit');
+      const { fixture } = renderComponent();
+      const emitSpy = vi.spyOn(fixture.componentInstance.viewAll, 'emit');
 
-      component.onViewAll();
+      fixture.componentInstance.onViewAll();
 
       expect(emitSpy).toHaveBeenCalledOnce();
     });
 
     it('closes menu after view all is clicked', () => {
-      component.toggle();
-      expect(component.isOpen()).toBe(true);
+      const { fixture } = renderComponent();
+      fixture.componentInstance.toggle();
+      expect(fixture.componentInstance.isOpen()).toBe(true);
 
-      component.onViewAll();
+      fixture.componentInstance.onViewAll();
 
-      expect(component.isOpen()).toBe(false);
+      expect(fixture.componentInstance.isOpen()).toBe(false);
     });
 
     it('shows view all button in footer', () => {
-      fixture.componentRef.setInput('notifications', mockNotifications);
-      component.toggle();
-      fixture.detectChanges();
+      const { container, fixture } = renderComponent({ notifications: mockNotifications });
+      fixture.componentInstance.toggle();
+      TestBed.tick();
 
-      const viewAllButton = Array.from(host.querySelectorAll('button')).find((btn) =>
-        btn.textContent?.includes('View all'),
+      const viewAllButton = Array.from(container.querySelectorAll('button')).find((btn) =>
+        (btn as HTMLElement).textContent?.includes('View all'),
       );
       expect(viewAllButton).toBeTruthy();
     });
@@ -330,94 +338,98 @@ describe('NotificationButtonComponent', () => {
 
   describe('empty state', () => {
     it('displays empty message when no notifications', () => {
-      fixture.componentRef.setInput('notifications', []);
-      component.toggle();
-      fixture.detectChanges();
+      const { container, fixture } = renderComponent({ notifications: [] });
+      fixture.componentInstance.toggle();
+      TestBed.tick();
 
-      expect(host.textContent).toContain('No notifications');
+      expect(container.textContent).toContain('No notifications');
     });
 
     it('displays custom empty message', () => {
-      fixture.componentRef.setInput('notifications', []);
-      fixture.componentRef.setInput('emptyMessage', 'All caught up!');
-      component.toggle();
-      fixture.detectChanges();
+      const { container, fixture } = renderComponent({
+        notifications: [],
+        emptyMessage: 'All caught up!',
+      });
+      fixture.componentInstance.toggle();
+      TestBed.tick();
 
-      expect(host.textContent).toContain('All caught up!');
+      expect(container.textContent).toContain('All caught up!');
     });
 
     it('shows empty state icon', () => {
-      fixture.componentRef.setInput('notifications', []);
-      component.toggle();
-      fixture.detectChanges();
+      const { container, fixture } = renderComponent({ notifications: [] });
+      fixture.componentInstance.toggle();
+      TestBed.tick();
 
-      const emptyIcon = host.querySelector('.text-text-secondary.mx-auto');
+      const emptyIcon = container.querySelector('.text-text-secondary.mx-auto');
       expect(emptyIcon).toBeTruthy();
     });
 
     it('hides footer when no notifications', () => {
-      fixture.componentRef.setInput('notifications', []);
-      component.toggle();
-      fixture.detectChanges();
+      const { container, fixture } = renderComponent({ notifications: [] });
+      fixture.componentInstance.toggle();
+      TestBed.tick();
 
-      const footer = host.querySelector('.border-t');
+      const footer = container.querySelector('.border-t');
       expect(footer).toBeFalsy();
     });
   });
 
   describe('notification rendering', () => {
     it('renders notification title and message', () => {
-      fixture.componentRef.setInput('notifications', [mockNotifications[0]]);
-      component.toggle();
-      fixture.detectChanges();
+      const { container, fixture } = renderComponent({ notifications: [mockNotifications[0]] });
+      fixture.componentInstance.toggle();
+      TestBed.tick();
 
-      expect(host.textContent).toContain(mockNotifications[0].title);
-      expect(host.textContent).toContain(mockNotifications[0].message);
+      expect(container.textContent).toContain(mockNotifications[0].title);
+      expect(container.textContent).toContain(mockNotifications[0].message);
     });
 
     it('renders notification time', () => {
-      fixture.componentRef.setInput('notifications', [mockNotifications[0]]);
-      component.toggle();
-      fixture.detectChanges();
+      const { container, fixture } = renderComponent({ notifications: [mockNotifications[0]] });
+      fixture.componentInstance.toggle();
+      TestBed.tick();
 
-      expect(host.textContent).toContain(mockNotifications[0].time);
+      expect(container.textContent).toContain(mockNotifications[0].time);
     });
 
     it('applies different background for unread notifications', () => {
-      fixture.componentRef.setInput('notifications', mockNotifications);
-      component.toggle();
-      fixture.detectChanges();
+      const { container, fixture } = renderComponent({ notifications: mockNotifications });
+      fixture.componentInstance.toggle();
+      TestBed.tick();
 
-      const links = host.querySelectorAll('a[role="menuitem"]');
+      const links = container.querySelectorAll('a[role="menuitem"]');
       const unreadLink = links[0] as HTMLElement;
       expect(unreadLink.className).toContain('bg-bg-info');
     });
 
     it('shows unread indicator for unread notifications', () => {
-      fixture.componentRef.setInput('notifications', [mockNotifications[0]]);
-      component.toggle();
-      fixture.detectChanges();
+      const { container, fixture } = renderComponent({ notifications: [mockNotifications[0]] });
+      fixture.componentInstance.toggle();
+      TestBed.tick();
 
-      const unreadIndicator = host.querySelector('.bg-accent');
+      const unreadIndicator = container.querySelector('.bg-accent');
       expect(unreadIndicator).toBeTruthy();
     });
 
     it('hides unread indicator for read notifications', () => {
-      fixture.componentRef.setInput('notifications', [mockNotifications[2]]);
-      component.toggle();
-      fixture.detectChanges();
+      const { container, fixture } = renderComponent({ notifications: [mockNotifications[2]] });
+      fixture.componentInstance.toggle();
+      TestBed.tick();
 
-      const notificationElement = host.querySelector('a[role="menuitem"]');
+      const notificationElement = container.querySelector('a[role="menuitem"]');
       const unreadIndicator = notificationElement?.querySelector('.bg-accent');
       expect(unreadIndicator).toBeFalsy();
     });
 
     it('renders custom icon color when provided', () => {
-      fixture.componentRef.setInput('notifications', [mockNotifications[0]]);
-      component.toggle();
-      fixture.detectChanges();
+      const { container, fixture } = renderComponent({ notifications: [mockNotifications[0]] });
+      fixture.componentInstance.toggle();
+      TestBed.tick();
 
-      const iconCircle = host.querySelector('div[class*="w-11 h-11 rounded-full"]') as HTMLElement;
+      const iconCircle = container.querySelector(
+        'div[class*="w-11 h-11 rounded-full"]',
+      ) as HTMLElement;
       expect(iconCircle.style.backgroundColor).toBe('var(--color-accent)');
     });
 
@@ -426,11 +438,11 @@ describe('NotificationButtonComponent', () => {
         ...mockNotifications[0],
         avatar: 'https://example.com/avatar.jpg',
       };
-      fixture.componentRef.setInput('notifications', [notificationWithAvatar]);
-      component.toggle();
-      fixture.detectChanges();
+      const { container, fixture } = renderComponent({ notifications: [notificationWithAvatar] });
+      fixture.componentInstance.toggle();
+      TestBed.tick();
 
-      const avatar = host.querySelector('img[alt]');
+      const avatar = container.querySelector('img[alt]');
       expect(avatar).toBeTruthy();
       expect(avatar?.getAttribute('src')).toBe('https://example.com/avatar.jpg');
     });
@@ -438,8 +450,9 @@ describe('NotificationButtonComponent', () => {
 
   describe('click outside to close', () => {
     it('closes menu when clicking outside', () => {
-      component.toggle();
-      expect(component.isOpen()).toBe(true);
+      const { fixture } = renderComponent();
+      fixture.componentInstance.toggle();
+      expect(fixture.componentInstance.isOpen()).toBe(true);
 
       const outsideElement = document.createElement('div');
       document.body.appendChild(outsideElement);
@@ -450,18 +463,19 @@ describe('NotificationButtonComponent', () => {
       });
       outsideElement.dispatchEvent(clickEvent);
 
-      component.onDocumentClick(clickEvent);
+      fixture.componentInstance.onDocumentClick(clickEvent);
 
-      expect(component.isOpen()).toBe(false);
+      expect(fixture.componentInstance.isOpen()).toBe(false);
 
       document.body.removeChild(outsideElement);
     });
 
     it('does not close menu when clicking inside', () => {
-      component.toggle();
-      fixture.detectChanges();
+      const { container, fixture } = renderComponent();
+      fixture.componentInstance.toggle();
+      TestBed.tick();
 
-      const button = host.querySelector('button') as HTMLButtonElement;
+      const button = container.querySelector('button') as HTMLButtonElement;
       const clickEvent = new MouseEvent('click', {
         bubbles: true,
         cancelable: true,
@@ -472,91 +486,94 @@ describe('NotificationButtonComponent', () => {
         writable: false,
       });
 
-      component.onDocumentClick(clickEvent);
+      fixture.componentInstance.onDocumentClick(clickEvent);
 
-      expect(component.isOpen()).toBe(true);
+      expect(fixture.componentInstance.isOpen()).toBe(true);
     });
   });
 
   describe('keyboard navigation', () => {
     it('closes menu on Escape key', () => {
-      component.toggle();
-      expect(component.isOpen()).toBe(true);
+      const { fixture } = renderComponent();
+      fixture.componentInstance.toggle();
+      expect(fixture.componentInstance.isOpen()).toBe(true);
 
-      component.onEscapeKey();
+      fixture.componentInstance.onEscapeKey();
 
-      expect(component.isOpen()).toBe(false);
+      expect(fixture.componentInstance.isOpen()).toBe(false);
     });
 
     it('does nothing on Escape when menu is closed', () => {
-      expect(component.isOpen()).toBe(false);
+      const { fixture } = renderComponent();
+      expect(fixture.componentInstance.isOpen()).toBe(false);
 
-      component.onEscapeKey();
+      fixture.componentInstance.onEscapeKey();
 
-      expect(component.isOpen()).toBe(false);
+      expect(fixture.componentInstance.isOpen()).toBe(false);
     });
   });
 
   describe('accessibility', () => {
     it('sets correct ARIA attributes on button', () => {
-      const button = host.querySelector('button');
+      const { container } = renderComponent();
+      const button = container.querySelector('button');
 
       expect(button?.getAttribute('aria-label')).toBe('View notifications');
       expect(button?.getAttribute('aria-haspopup')).toBe('true');
     });
 
     it('sets role="menu" on dropdown', () => {
-      component.toggle();
-      fixture.detectChanges();
+      const { container, fixture } = renderComponent();
+      fixture.componentInstance.toggle();
+      TestBed.tick();
 
-      const dropdown = host.querySelector('div[role="menu"]');
+      const dropdown = container.querySelector('div[role="menu"]');
       expect(dropdown).toBeTruthy();
       expect(dropdown?.getAttribute('aria-label')).toBe('Notifications menu');
     });
 
     it('sets role="menuitem" on each notification', () => {
-      fixture.componentRef.setInput('notifications', mockNotifications);
-      component.toggle();
-      fixture.detectChanges();
+      const { container, fixture } = renderComponent({ notifications: mockNotifications });
+      fixture.componentInstance.toggle();
+      TestBed.tick();
 
-      const menuItems = host.querySelectorAll('a[role="menuitem"]');
+      const menuItems = container.querySelectorAll('a[role="menuitem"]');
       expect(menuItems.length).toBeGreaterThan(0);
     });
 
     it('sets descriptive aria-label on each notification', () => {
-      fixture.componentRef.setInput('notifications', [mockNotifications[0]]);
-      component.toggle();
-      fixture.detectChanges();
+      const { container, fixture } = renderComponent({ notifications: [mockNotifications[0]] });
+      fixture.componentInstance.toggle();
+      TestBed.tick();
 
-      const link = host.querySelector('a[role="menuitem"]');
+      const link = container.querySelector('a[role="menuitem"]');
       expect(link?.getAttribute('aria-label')).toContain(mockNotifications[0].title);
       expect(link?.getAttribute('aria-label')).toContain(mockNotifications[0].message);
     });
 
     it('hides decorative elements from screen readers', () => {
-      const bellIcon = host.querySelector('button svg');
+      const { container } = renderComponent();
+      const bellIcon = container.querySelector('button svg');
       expect(bellIcon?.getAttribute('aria-hidden')).toBe('true');
     });
   });
 
   describe('edge cases', () => {
     it('handles empty notifications array', () => {
-      fixture.componentRef.setInput('notifications', []);
-      component.toggle();
-      fixture.detectChanges();
+      const { container, fixture } = renderComponent({ notifications: [] });
+      fixture.componentInstance.toggle();
+      TestBed.tick();
 
-      expect(host.textContent).toContain('No notifications');
+      expect(container.textContent).toContain('No notifications');
     });
 
     it('handles notification with missing title', () => {
-      const notificationWithoutTitle = [
-        { ...mockNotifications[0], title: '' },
-      ];
-      fixture.componentRef.setInput('notifications', notificationWithoutTitle);
-      component.toggle();
-      fixture.detectChanges();
+      const notificationWithoutTitle = [{ ...mockNotifications[0], title: '' }];
+      const { container, fixture } = renderComponent({ notifications: notificationWithoutTitle });
+      fixture.componentInstance.toggle();
+      TestBed.tick();
 
-      expect(host.textContent).toContain(mockNotifications[0].message);
+      expect(container.textContent).toContain(mockNotifications[0].message);
     });
 
     it('handles notification with missing icon and iconColor', () => {
@@ -569,19 +586,20 @@ describe('NotificationButtonComponent', () => {
           read: false,
         },
       ];
-      fixture.componentRef.setInput('notifications', plainNotification);
-      component.toggle();
-      fixture.detectChanges();
+      const { container, fixture } = renderComponent({ notifications: plainNotification });
+      fixture.componentInstance.toggle();
+      TestBed.tick();
 
-      expect(host.textContent).toContain('Plain');
+      expect(container.textContent).toContain('Plain');
     });
 
     it('handles maxNotificationsDisplay of 0', () => {
-      fixture.componentRef.setInput('notifications', mockNotifications);
-      fixture.componentRef.setInput('maxNotificationsDisplay', 0);
-      fixture.detectChanges();
+      const { fixture } = renderComponent({
+        notifications: mockNotifications,
+        maxNotificationsDisplay: 0,
+      });
 
-      expect(component.displayedNotifications.length).toBe(0);
+      expect(fixture.componentInstance.displayedNotifications.length).toBe(0);
     });
 
     it('handles very long notification messages', () => {
@@ -592,11 +610,11 @@ describe('NotificationButtonComponent', () => {
           message: longMessage,
         },
       ];
-      fixture.componentRef.setInput('notifications', longNotification);
-      component.toggle();
-      fixture.detectChanges();
+      const { container, fixture } = renderComponent({ notifications: longNotification });
+      fixture.componentInstance.toggle();
+      TestBed.tick();
 
-      expect(host.textContent).toContain(longMessage);
+      expect(container.textContent).toContain(longMessage);
     });
 
     it('handles special characters in notifications', () => {
@@ -607,40 +625,45 @@ describe('NotificationButtonComponent', () => {
           message: 'Test & verify < > " \'',
         },
       ];
-      fixture.componentRef.setInput('notifications', specialNotification);
-      component.toggle();
-      fixture.detectChanges();
+      const { container, fixture } = renderComponent({ notifications: specialNotification });
+      fixture.componentInstance.toggle();
+      TestBed.tick();
 
-      expect(host.textContent).toContain('<script>');
+      expect(container.textContent).toContain('<script>');
     });
 
     it('handles rapid toggle clicks', () => {
+      const { fixture } = renderComponent();
       for (let i = 0; i < 10; i++) {
-        component.toggle();
+        fixture.componentInstance.toggle();
       }
 
-      expect(component.isOpen()).toBe(false);
+      expect(fixture.componentInstance.isOpen()).toBe(false);
     });
   });
 
   describe('displayedNotifications getter', () => {
     it('returns limited notifications', () => {
-      fixture.componentRef.setInput('notifications', mockNotifications);
-      fixture.componentRef.setInput('maxNotificationsDisplay', 2);
-      fixture.detectChanges();
+      const { fixture } = renderComponent({
+        notifications: mockNotifications,
+        maxNotificationsDisplay: 2,
+      });
 
-      const displayed = component.displayedNotifications;
+      const displayed = fixture.componentInstance.displayedNotifications;
       expect(displayed.length).toBe(2);
       expect(displayed[0].id).toBe('1');
       expect(displayed[1].id).toBe('2');
     });
 
     it('returns all notifications when limit exceeds count', () => {
-      fixture.componentRef.setInput('notifications', mockNotifications);
-      fixture.componentRef.setInput('maxNotificationsDisplay', 100);
-      fixture.detectChanges();
+      const { fixture } = renderComponent({
+        notifications: mockNotifications,
+        maxNotificationsDisplay: 100,
+      });
 
-      expect(component.displayedNotifications.length).toBe(mockNotifications.length);
+      expect(fixture.componentInstance.displayedNotifications.length).toBe(
+        mockNotifications.length,
+      );
     });
   });
 });

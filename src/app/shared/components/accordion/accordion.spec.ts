@@ -1,5 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Component, provideZonelessChangeDetection, signal, DebugElement } from '@angular/core';
+import {
+  Component,
+  provideZonelessChangeDetection,
+  signal,
+  DebugElement,
+  inputBinding,
+  outputBinding,
+} from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { Accordion } from './accordion';
 import { AccordionItemComponent } from './accordion-item';
@@ -39,104 +46,171 @@ class TestWrapperComponent {
 }
 
 describe('Accordion', () => {
-  let component: Accordion;
-  let fixture: ComponentFixture<Accordion>;
-
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
+  it('should create', () => {
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
       imports: [Accordion],
       providers: [provideZonelessChangeDetection()],
-    }).compileComponents();
+    }).createComponent(Accordion);
+    TestBed.tick();
+    const component = fixture.componentInstance;
 
-    fixture = TestBed.createComponent(Accordion);
-    component = fixture.componentInstance;
-  });
-
-  it('should create', () => {
+    // Assert
     expect(component).toBeTruthy();
   });
 
   it('should initialize with no expanded items', () => {
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      imports: [Accordion],
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(Accordion);
+    TestBed.tick();
+    const component = fixture.componentInstance;
+
+    // Assert
     expect(component.expandedItems().size).toBe(0);
   });
 
   it('should expand item when toggleItem is called', () => {
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      imports: [Accordion],
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(Accordion);
+    TestBed.tick();
+    const component = fixture.componentInstance;
+
+    // Act
     component.toggleItem('1');
+
+    // Assert
     expect(component.isExpanded('1')).toBe(true);
   });
 
   it('should collapse item when toggleItem is called on expanded item', () => {
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      imports: [Accordion],
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(Accordion);
+    TestBed.tick();
+    const component = fixture.componentInstance;
+
+    // Act
     component.toggleItem('1');
     component.toggleItem('1');
+
+    // Assert
     expect(component.isExpanded('1')).toBe(false);
   });
 
   it('should collapse previous item when opening new item in single mode', () => {
-    fixture.componentRef.setInput('allowMultiple', false);
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      imports: [Accordion],
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(Accordion, {
+      bindings: [inputBinding('allowMultiple', () => false)],
+    });
+    TestBed.tick();
+    const component = fixture.componentInstance;
+
+    // Act
     component.toggleItem('1');
     component.toggleItem('2');
+
+    // Assert
     expect(component.isExpanded('1')).toBe(false);
     expect(component.isExpanded('2')).toBe(true);
   });
 
   it('should allow multiple items to be expanded when allowMultiple is true', () => {
-    fixture.componentRef.setInput('allowMultiple', true);
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      imports: [Accordion],
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(Accordion, {
+      bindings: [inputBinding('allowMultiple', () => true)],
+    });
+    TestBed.tick();
+    const component = fixture.componentInstance;
+
+    // Act
     component.toggleItem('1');
     component.toggleItem('2');
+
+    // Assert
     expect(component.isExpanded('1')).toBe(true);
     expect(component.isExpanded('2')).toBe(true);
   });
 
-  it('should emit itemSelected event when item is toggled', async () => {
-    const promise = new Promise<string>((resolve) => {
-      component.itemSelected.subscribe((itemId: string) => {
-        resolve(itemId);
-      });
+  it('should emit itemSelected event when item is toggled', () => {
+    // Arrange
+    const itemSelectedSignal = signal<string>('');
+    const fixture = TestBed.configureTestingModule({
+      imports: [Accordion],
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(Accordion, {
+      bindings: [outputBinding('itemSelected', (itemId: string) => itemSelectedSignal.set(itemId))],
     });
+    TestBed.tick();
+    const component = fixture.componentInstance;
+
+    // Act
     component.toggleItem('1');
-    const itemId = await promise;
-    expect(itemId).toBe('1');
+    TestBed.tick();
+
+    // Assert
+    expect(itemSelectedSignal()).toBe('1');
   });
 
   it('should collapse all items when Escape key is pressed', () => {
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      imports: [Accordion],
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(Accordion);
+    TestBed.tick();
+    const component = fixture.componentInstance;
+
+    // Act
     component.toggleItem('1');
     component.toggleItem('2');
-
     const event = new KeyboardEvent('keydown', { key: 'Escape' });
     component.onKeyDown(event, '1');
+    TestBed.tick();
 
+    // Assert
     expect(component.isExpanded('1')).toBe(false);
     expect(component.isExpanded('2')).toBe(false);
   });
 
   describe('with content projection', () => {
-    let wrapperFixture: ComponentFixture<TestWrapperComponent>;
-    let wrapperComponent: TestWrapperComponent;
-    let accordionComponent: Accordion;
-
-    beforeEach(async () => {
-      TestBed.resetTestingModule();
-      await TestBed.configureTestingModule({
+    it('should render all projected accordion items', () => {
+      // Arrange
+      TestBed.configureTestingModule({
         imports: [TestWrapperComponent],
         providers: [provideZonelessChangeDetection()],
-      }).compileComponents();
+      });
+      const wrapperFixture = TestBed.createComponent(TestWrapperComponent);
+      TestBed.tick();
 
-      wrapperFixture = TestBed.createComponent(TestWrapperComponent);
-      wrapperComponent = wrapperFixture.componentInstance;
-      wrapperFixture.detectChanges();
-
-      const accordionDebugElement: DebugElement = wrapperFixture.debugElement.query(
-        By.directive(Accordion),
-      );
-      accordionComponent = accordionDebugElement.componentInstance;
-    });
-
-    it('should render all projected accordion items', () => {
+      // Assert
       const items = wrapperFixture.nativeElement.querySelectorAll('app-accordion-item');
       expect(items.length).toBe(3);
     });
 
     it('should render correct headers', () => {
+      // Arrange
+      TestBed.configureTestingModule({
+        imports: [TestWrapperComponent],
+        providers: [provideZonelessChangeDetection()],
+      });
+      const wrapperFixture = TestBed.createComponent(TestWrapperComponent);
+      TestBed.tick();
+
+      // Assert
       const headers = wrapperFixture.nativeElement.querySelectorAll('button span');
       expect(headers[0].textContent?.trim()).toBe('First Item');
       expect(headers[1].textContent?.trim()).toBe('Second Item');
@@ -144,9 +218,24 @@ describe('Accordion', () => {
     });
 
     it('should respect expanded input on initial render', () => {
-      wrapperComponent.item1Expanded.set(true);
-      wrapperFixture.detectChanges();
+      // Arrange
+      TestBed.configureTestingModule({
+        imports: [TestWrapperComponent],
+        providers: [provideZonelessChangeDetection()],
+      });
+      const wrapperFixture = TestBed.createComponent(TestWrapperComponent);
+      const wrapperComponent = wrapperFixture.componentInstance;
+      TestBed.tick();
 
+      // Act
+      wrapperComponent.item1Expanded.set(true);
+      TestBed.tick();
+
+      // Assert
+      const accordionDebugElement: DebugElement = wrapperFixture.debugElement.query(
+        By.directive(Accordion),
+      );
+      const accordionComponent = accordionDebugElement.componentInstance;
       const contentItems = accordionComponent.getContentItems();
       expect(contentItems.length).toBe(3);
 
@@ -155,36 +244,97 @@ describe('Accordion', () => {
     });
 
     it('should not toggle disabled items', () => {
-      wrapperComponent.item1Disabled.set(true);
-      wrapperFixture.detectChanges();
+      // Arrange
+      TestBed.configureTestingModule({
+        imports: [TestWrapperComponent],
+        providers: [provideZonelessChangeDetection()],
+      });
+      const wrapperFixture = TestBed.createComponent(TestWrapperComponent);
+      const wrapperComponent = wrapperFixture.componentInstance;
+      TestBed.tick();
 
+      // Act
+      wrapperComponent.item1Disabled.set(true);
+      TestBed.tick();
+
+      const accordionDebugElement: DebugElement = wrapperFixture.debugElement.query(
+        By.directive(Accordion),
+      );
+      const accordionComponent = accordionDebugElement.componentInstance;
       accordionComponent.toggleItem('item1');
+
+      // Assert
       expect(accordionComponent.isExpanded('item1')).toBe(false);
     });
 
     it('should toggle enabled items', () => {
+      // Arrange
+      TestBed.configureTestingModule({
+        imports: [TestWrapperComponent],
+        providers: [provideZonelessChangeDetection()],
+      });
+      const wrapperFixture = TestBed.createComponent(TestWrapperComponent);
+      TestBed.tick();
+
+      // Act
+      const accordionDebugElement: DebugElement = wrapperFixture.debugElement.query(
+        By.directive(Accordion),
+      );
+      const accordionComponent = accordionDebugElement.componentInstance;
       accordionComponent.toggleItem('item1');
+
+      // Assert
       expect(accordionComponent.isExpanded('item1')).toBe(true);
     });
 
     it('should handle single expansion mode with content projection', () => {
-      wrapperComponent.allowMultiple.set(false);
-      wrapperFixture.detectChanges();
+      // Arrange
+      TestBed.configureTestingModule({
+        imports: [TestWrapperComponent],
+        providers: [provideZonelessChangeDetection()],
+      });
+      const wrapperFixture = TestBed.createComponent(TestWrapperComponent);
+      const wrapperComponent = wrapperFixture.componentInstance;
+      TestBed.tick();
 
+      // Act
+      wrapperComponent.allowMultiple.set(false);
+      TestBed.tick();
+
+      const accordionDebugElement: DebugElement = wrapperFixture.debugElement.query(
+        By.directive(Accordion),
+      );
+      const accordionComponent = accordionDebugElement.componentInstance;
       accordionComponent.toggleItem('item1');
       accordionComponent.toggleItem('item2');
 
+      // Assert
       expect(accordionComponent.isExpanded('item1')).toBe(false);
       expect(accordionComponent.isExpanded('item2')).toBe(true);
     });
 
     it('should handle multiple expansion mode with content projection', () => {
-      wrapperComponent.allowMultiple.set(true);
-      wrapperFixture.detectChanges();
+      // Arrange
+      TestBed.configureTestingModule({
+        imports: [TestWrapperComponent],
+        providers: [provideZonelessChangeDetection()],
+      });
+      const wrapperFixture = TestBed.createComponent(TestWrapperComponent);
+      const wrapperComponent = wrapperFixture.componentInstance;
+      TestBed.tick();
 
+      // Act
+      wrapperComponent.allowMultiple.set(true);
+      TestBed.tick();
+
+      const accordionDebugElement: DebugElement = wrapperFixture.debugElement.query(
+        By.directive(Accordion),
+      );
+      const accordionComponent = accordionDebugElement.componentInstance;
       accordionComponent.toggleItem('item1');
       accordionComponent.toggleItem('item2');
 
+      // Assert
       expect(accordionComponent.isExpanded('item1')).toBe(true);
       expect(accordionComponent.isExpanded('item2')).toBe(true);
     });

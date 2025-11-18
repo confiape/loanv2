@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, afterEach } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { HttpClient, provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
@@ -7,11 +7,7 @@ import { ToastService } from '@loan/app/core/services/toast.service';
 import { httpNotificationInterceptor } from '@loan/app/core/interceptors/http-notification.interceptor';
 
 describe('httpNotificationInterceptor', () => {
-  let httpClient: HttpClient;
-  let httpTestingController: HttpTestingController;
-  let toastService: ToastService;
-
-  beforeEach(() => {
+  function setupTestBed() {
     TestBed.configureTestingModule({
       providers: [
         provideZonelessChangeDetection(),
@@ -21,22 +17,27 @@ describe('httpNotificationInterceptor', () => {
       ],
     });
 
-    httpClient = TestBed.inject(HttpClient);
-    httpTestingController = TestBed.inject(HttpTestingController);
-    toastService = TestBed.inject(ToastService);
+    const httpClient = TestBed.inject(HttpClient);
+    const httpTestingController = TestBed.inject(HttpTestingController);
+    const toastService = TestBed.inject(ToastService);
 
     // Clear toasts before each test
     toastService.clear();
-  });
 
-  afterEach(() => {
-    httpTestingController.verify();
-  });
+    afterEach(() => {
+      httpTestingController.verify();
+    });
+
+    return { httpClient, httpTestingController, toastService };
+  }
 
   describe('Error Handling', () => {
     it('should show error toast with message from response', () => {
+      // Arrange
+      const { httpClient, httpTestingController, toastService } = setupTestBed();
       const errorMessage = 'Usuario no encontrado';
 
+      // Act
       httpClient.get('/api/users/1').subscribe({
         next: () => {
           // Expected path
@@ -46,6 +47,7 @@ describe('httpNotificationInterceptor', () => {
         },
       });
 
+      // Assert
       const req = httpTestingController.expectOne('/api/users/1');
       req.flush({ message: errorMessage }, { status: 404, statusText: 'Not Found' });
 
@@ -57,6 +59,10 @@ describe('httpNotificationInterceptor', () => {
     });
 
     it('should show error message when no message field in error object', () => {
+      // Arrange
+      const { httpClient, httpTestingController, toastService } = setupTestBed();
+
+      // Act
       httpClient.get('/api/users/1').subscribe({
         next: () => {
           // Expected path
@@ -66,6 +72,7 @@ describe('httpNotificationInterceptor', () => {
         },
       });
 
+      // Assert
       const req = httpTestingController.expectOne('/api/users/1');
       req.flush({}, { status: 500, statusText: 'Internal Server Error' });
 
@@ -77,6 +84,10 @@ describe('httpNotificationInterceptor', () => {
     });
 
     it('should use error.message as fallback', () => {
+      // Arrange
+      const { httpClient, httpTestingController, toastService } = setupTestBed();
+
+      // Act
       httpClient.get('/api/users/1').subscribe({
         next: () => {
           // Expected path
@@ -86,6 +97,7 @@ describe('httpNotificationInterceptor', () => {
         },
       });
 
+      // Assert
       const req = httpTestingController.expectOne('/api/users/1');
       req.error(new ProgressEvent('error'), { status: 0, statusText: 'Unknown Error' });
 
@@ -95,6 +107,10 @@ describe('httpNotificationInterceptor', () => {
     });
 
     it('should include status code in title', () => {
+      // Arrange
+      const { httpClient, httpTestingController, toastService } = setupTestBed();
+
+      // Act
       httpClient.get('/api/users/1').subscribe({
         next: () => {
           // Expected path
@@ -104,6 +120,7 @@ describe('httpNotificationInterceptor', () => {
         },
       });
 
+      // Assert
       const req = httpTestingController.expectOne('/api/users/1');
       req.flush({ message: 'Forbidden' }, { status: 403, statusText: 'Forbidden' });
 
@@ -114,8 +131,13 @@ describe('httpNotificationInterceptor', () => {
 
   describe('Success Notifications for Write Operations', () => {
     it('should show success toast for POST request', () => {
+      // Arrange
+      const { httpClient, httpTestingController, toastService } = setupTestBed();
+
+      // Act
       httpClient.post('/api/users', { name: 'John' }).subscribe();
 
+      // Assert
       const req = httpTestingController.expectOne('/api/users');
       req.flush({ id: 1, name: 'John' });
 
@@ -126,8 +148,13 @@ describe('httpNotificationInterceptor', () => {
     });
 
     it('should show success toast for PUT request', () => {
+      // Arrange
+      const { httpClient, httpTestingController, toastService } = setupTestBed();
+
+      // Act
       httpClient.put('/api/users/1', { name: 'John Updated' }).subscribe();
 
+      // Assert
       const req = httpTestingController.expectOne('/api/users/1');
       req.flush({ id: 1, name: 'John Updated' });
 
@@ -137,8 +164,13 @@ describe('httpNotificationInterceptor', () => {
     });
 
     it('should show success toast for PATCH request', () => {
+      // Arrange
+      const { httpClient, httpTestingController, toastService } = setupTestBed();
+
+      // Act
       httpClient.patch('/api/users/1', { name: 'John Patched' }).subscribe();
 
+      // Assert
       const req = httpTestingController.expectOne('/api/users/1');
       req.flush({ id: 1, name: 'John Patched' });
 
@@ -148,8 +180,13 @@ describe('httpNotificationInterceptor', () => {
     });
 
     it('should show success toast for DELETE request', () => {
+      // Arrange
+      const { httpClient, httpTestingController, toastService } = setupTestBed();
+
+      // Act
       httpClient.delete('/api/users/1').subscribe();
 
+      // Assert
       const req = httpTestingController.expectOne('/api/users/1');
       req.flush({});
 
@@ -161,8 +198,13 @@ describe('httpNotificationInterceptor', () => {
 
   describe('No Notifications for Read Operations', () => {
     it('should NOT show success toast for GET request', () => {
+      // Arrange
+      const { httpClient, httpTestingController, toastService } = setupTestBed();
+
+      // Act
       httpClient.get('/api/users').subscribe();
 
+      // Assert
       const req = httpTestingController.expectOne('/api/users');
       req.flush([{ id: 1, name: 'John' }]);
 
@@ -171,8 +213,13 @@ describe('httpNotificationInterceptor', () => {
     });
 
     it('should NOT show success toast for HEAD request', () => {
+      // Arrange
+      const { httpClient, httpTestingController, toastService } = setupTestBed();
+
+      // Act
       httpClient.head('/api/users').subscribe();
 
+      // Assert
       const req = httpTestingController.expectOne('/api/users');
       req.flush({});
 
@@ -181,8 +228,13 @@ describe('httpNotificationInterceptor', () => {
     });
 
     it('should NOT show success toast for OPTIONS request', () => {
+      // Arrange
+      const { httpClient, httpTestingController, toastService } = setupTestBed();
+
+      // Act
       httpClient.options('/api/users').subscribe();
 
+      // Assert
       const req = httpTestingController.expectOne('/api/users');
       req.flush({});
 
@@ -193,8 +245,11 @@ describe('httpNotificationInterceptor', () => {
 
   describe('Error Re-throwing', () => {
     it('should re-throw error so caller can handle it', () => {
+      // Arrange
+      const { httpClient, httpTestingController } = setupTestBed();
       let errorCaught = false;
 
+      // Act
       httpClient.get('/api/users/1').subscribe({
         next: () => {
           // Expected path
@@ -205,6 +260,7 @@ describe('httpNotificationInterceptor', () => {
         },
       });
 
+      // Assert
       const req = httpTestingController.expectOne('/api/users/1');
       req.flush({ message: 'Not found' }, { status: 404, statusText: 'Not Found' });
 
@@ -214,6 +270,10 @@ describe('httpNotificationInterceptor', () => {
 
   describe('Multiple Requests', () => {
     it('should handle multiple errors correctly', () => {
+      // Arrange
+      const { httpClient, httpTestingController, toastService } = setupTestBed();
+
+      // Act
       httpClient.get('/api/users/1').subscribe({
         next: () => {
           // Expected path
@@ -231,6 +291,7 @@ describe('httpNotificationInterceptor', () => {
         },
       });
 
+      // Assert
       const req1 = httpTestingController.expectOne('/api/users/1');
       const req2 = httpTestingController.expectOne('/api/posts/1');
 
@@ -244,9 +305,14 @@ describe('httpNotificationInterceptor', () => {
     });
 
     it('should handle multiple successful write operations', () => {
+      // Arrange
+      const { httpClient, httpTestingController, toastService } = setupTestBed();
+
+      // Act
       httpClient.post('/api/users', { name: 'User 1' }).subscribe();
       httpClient.post('/api/posts', { title: 'Post 1' }).subscribe();
 
+      // Assert
       const req1 = httpTestingController.expectOne('/api/users');
       const req2 = httpTestingController.expectOne('/api/posts');
 

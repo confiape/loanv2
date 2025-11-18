@@ -1,14 +1,17 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideZonelessChangeDetection } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
+import { provideZonelessChangeDetection, inputBinding, outputBinding, signal } from '@angular/core';
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { Dropdown } from './dropdown';
 import { DropdownSection } from './dropdown.types';
+import { describe, expect, it, afterEach } from 'vitest';
 
 describe('Dropdown', () => {
-  let fixture: ComponentFixture<Dropdown>;
-  let component: Dropdown;
-  let overlayContainer: OverlayContainer;
-  let overlayElement: HTMLElement;
+  let overlayContainer: OverlayContainer | null = null;
+
+  afterEach(() => {
+    overlayContainer?.ngOnDestroy();
+    overlayContainer = null;
+  });
 
   const baseSections: DropdownSection[] = [
     {
@@ -28,66 +31,85 @@ describe('Dropdown', () => {
     },
   ];
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [Dropdown],
-      providers: [provideZonelessChangeDetection()],
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(Dropdown);
-    component = fixture.componentInstance;
-    fixture.componentRef.setInput('sections', baseSections);
-    fixture.detectChanges();
-
-    overlayContainer = TestBed.inject(OverlayContainer);
-    overlayElement = overlayContainer.getContainerElement();
-  });
-
-  afterEach(() => {
-    overlayContainer.ngOnDestroy();
-  });
-
   it('should create', () => {
-    expect(component).toBeTruthy();
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(Dropdown, {
+      bindings: [inputBinding('sections', () => baseSections)],
+    });
+    TestBed.tick();
+
+    overlayContainer = fixture.debugElement.injector.get(OverlayContainer);
+
+    // Assert
+    expect(fixture.componentInstance).toBeTruthy();
   });
 
   it('should toggle panel on trigger click', () => {
-    const compiled = fixture.nativeElement as HTMLElement;
-    const trigger = compiled.querySelector('button');
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(Dropdown, {
+      bindings: [inputBinding('sections', () => baseSections)],
+    });
+    TestBed.tick();
+
+    overlayContainer = fixture.debugElement.injector.get(OverlayContainer);
+    const overlayElement = overlayContainer.getContainerElement();
+
+    const trigger = fixture.nativeElement.querySelector('button');
     expect(trigger).toBeTruthy();
 
+    // Act - Open panel
     trigger?.dispatchEvent(new MouseEvent('click'));
-    fixture.detectChanges();
+    TestBed.tick();
 
+    // Assert - Panel is open
     const panel = overlayElement.querySelector('.shadow-lg');
     expect(panel).toBeTruthy();
 
+    // Act - Close panel
     trigger?.dispatchEvent(new MouseEvent('click'));
-    fixture.detectChanges();
+    TestBed.tick();
 
+    // Assert - Panel is closed
     const closedPanel = overlayElement.querySelector('.shadow-lg');
     expect(closedPanel).toBeFalsy();
   });
 
   it('should emit select event when action item clicked', () => {
-    let emittedLabel = '';
-    component.selectChange.subscribe((event) => {
-      emittedLabel = event.item.label;
+    // Arrange
+    const selectedItemSignal = signal<{ id: string; label: string } | null>(null);
+    const fixture = TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(Dropdown, {
+      bindings: [
+        inputBinding('sections', () => baseSections),
+        outputBinding('selectChange', (event: any) => selectedItemSignal.set(event.item)),
+      ],
     });
+    TestBed.tick();
 
-    const compiled = fixture.nativeElement as HTMLElement;
-    const trigger = compiled.querySelector('button');
+    overlayContainer = fixture.debugElement.injector.get(OverlayContainer);
+    const overlayElement = overlayContainer.getContainerElement();
+
+    const trigger = fixture.nativeElement.querySelector('button');
+
+    // Act
     trigger?.dispatchEvent(new MouseEvent('click'));
-    fixture.detectChanges();
+    TestBed.tick();
 
     const itemButton = overlayElement.querySelector('ul li button') as HTMLButtonElement;
     itemButton?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-    fixture.detectChanges();
+    TestBed.tick();
 
-    expect(emittedLabel).toBe('Dashboard');
+    // Assert
+    expect(selectedItemSignal()?.label).toBe('Dashboard');
   });
 
   it('should filter items when search term provided', async () => {
+    // Arrange
     const sections: DropdownSection[] = [
       {
         id: 'searchable',
@@ -106,25 +128,36 @@ describe('Dropdown', () => {
       },
     ];
 
-    fixture.componentRef.setInput('sections', sections);
-    fixture.componentRef.setInput('search', {
-      placeholder: 'Buscar',
+    const fixture = TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(Dropdown, {
+      bindings: [
+        inputBinding('sections', () => sections),
+        inputBinding('search', () => ({ placeholder: 'Buscar' })),
+        inputBinding('searchDebounceDelay', () => 0), // Disable debounce for test
+      ],
     });
-    fixture.componentRef.setInput('searchDebounceDelay', 0); // Disable debounce for test
-    fixture.detectChanges();
+    TestBed.tick();
 
-    const compiled = fixture.nativeElement as HTMLElement;
-    compiled.querySelector('button')?.dispatchEvent(new MouseEvent('click'));
-    fixture.detectChanges();
+    overlayContainer = fixture.debugElement.injector.get(OverlayContainer);
+    const overlayElement = overlayContainer.getContainerElement();
+
+    const trigger = fixture.nativeElement.querySelector('button');
+
+    // Act
+    trigger?.dispatchEvent(new MouseEvent('click'));
+    TestBed.tick();
 
     const searchInput = overlayElement.querySelector('input') as HTMLInputElement;
     searchInput.value = 'ear';
     searchInput.dispatchEvent(new Event('input'));
+    TestBed.tick();
 
     // Wait for debounce (even with 0ms, need to wait for next tick)
     await new Promise((resolve) => setTimeout(resolve, 0));
-    fixture.detectChanges();
+    TestBed.tick();
 
+    // Assert
     const items = overlayElement.querySelectorAll('ul li button');
     expect(items.length).toBe(1);
     expect(items[0]?.textContent?.trim()).toBe('Earnings');

@@ -43,9 +43,7 @@ export class RoleCrudService extends BaseCrudService<RoleDto, SaveRoleDto> {
   protected matchesSearch(item: RoleDto, term: string): boolean {
     const searchableFields = [item.name, item.id];
 
-    return searchableFields.some((field) =>
-      field.toLowerCase().includes(term.toLowerCase())
-    );
+    return searchableFields.some((field) => field.toLowerCase().includes(term.toLowerCase()));
   }
 
   getTableColumns(): TableColumnMetadata<RoleDto>[] {
@@ -92,8 +90,8 @@ export class RoleCrudService extends BaseCrudService<RoleDto, SaveRoleDto> {
               roles.map((role) => ({
                 value: role.id,
                 label: role.name,
-              }))
-            )
+              })),
+            ),
           ),
         valueTransformer: (item: unknown) => {
           const roleItem = item as RoleDto;
@@ -112,8 +110,8 @@ export class RoleCrudService extends BaseCrudService<RoleDto, SaveRoleDto> {
               permissions.map((permission) => ({
                 value: permission.name,
                 label: permission.name,
-              }))
-            )
+              })),
+            ),
           ),
         valueTransformer: (item: unknown) => {
           const roleItem = item as RoleDto;

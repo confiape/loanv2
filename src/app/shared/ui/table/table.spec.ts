@@ -1,5 +1,14 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideZonelessChangeDetection } from '@angular/core';
+// Angular testing
+import { TestBed } from '@angular/core/testing';
+import { provideZonelessChangeDetection, inputBinding, outputBinding, signal } from '@angular/core';
+
+// Testing library
+import { within } from '@testing-library/dom';
+
+// Vitest
+import { describe, it, expect, vi } from 'vitest';
+
+// Component under test
 import { Table } from './table';
 import type { TableColumn, TableAction } from './table.models';
 
@@ -25,50 +34,40 @@ const mockColumns: TableColumn<TestData>[] = [
 ];
 
 describe('Table Component', () => {
-  let fixture: ComponentFixture<Table<TestData>>;
-  let component: Table<TestData>;
-
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [Table],
-      providers: [provideZonelessChangeDetection()],
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(Table<TestData>);
-    component = fixture.componentInstance;
-  });
-
-  function getTableElement(): HTMLTableElement {
-    return fixture.nativeElement.querySelector('table') as HTMLTableElement;
-  }
-
-  function getSearchInput(): HTMLInputElement | null {
-    return fixture.nativeElement.querySelector('input[type="text"]');
-  }
-
-  function getRows(): NodeListOf<HTMLTableRowElement> {
-    return fixture.nativeElement.querySelectorAll('tbody tr');
-  }
-
-  function getCheckboxes(): NodeListOf<HTMLInputElement> {
-    return fixture.nativeElement.querySelectorAll('input[type="checkbox"]');
-  }
+  const defaultProviders = [provideZonelessChangeDetection()];
 
   describe('Basic Rendering', () => {
     it('should create', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData);
-      fixture.detectChanges();
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData),
+        ],
+      });
+      TestBed.tick();
 
-      expect(component).toBeTruthy();
+      // Assert
+      expect(fixture.componentInstance).toBeTruthy();
     });
 
     it('should render table with columns', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData);
-      fixture.detectChanges();
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData),
+        ],
+      });
+      TestBed.tick();
 
       const headers = fixture.nativeElement.querySelectorAll('thead th');
+
+      // Assert
       expect(headers.length).toBeGreaterThan(0);
       expect(fixture.nativeElement.textContent).toContain('Name');
       expect(fixture.nativeElement.textContent).toContain('Category');
@@ -76,40 +75,71 @@ describe('Table Component', () => {
     });
 
     it('should render data rows', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData);
-      fixture.detectChanges();
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData),
+        ],
+      });
+      TestBed.tick();
 
+      // Assert
       expect(fixture.nativeElement.textContent).toContain('Product A');
       expect(fixture.nativeElement.textContent).toContain('Product B');
     });
 
     it('should render empty state when no data', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', []);
-      fixture.detectChanges();
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [inputBinding('columns', () => mockColumns), inputBinding('data', () => [])],
+      });
+      TestBed.tick();
 
+      // Assert
       expect(fixture.nativeElement.textContent).toContain('No data available');
     });
 
     it('should apply compact density classes', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData.slice(0, 1));
-      fixture.componentRef.setInput('density', 'compact');
-      fixture.detectChanges();
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData.slice(0, 1)),
+          inputBinding('density', () => 'compact'),
+        ],
+      });
+      TestBed.tick();
 
       const cell = fixture.nativeElement.querySelector('td');
+
+      // Assert
       expect(cell?.className).toContain('px-4');
       expect(cell?.className).toContain('py-2');
     });
 
     it('should apply spacious density classes', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData.slice(0, 1));
-      fixture.componentRef.setInput('density', 'spacious');
-      fixture.detectChanges();
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData.slice(0, 1)),
+          inputBinding('density', () => 'spacious'),
+        ],
+      });
+      TestBed.tick();
 
       const cell = fixture.nativeElement.querySelector('td');
+
+      // Assert
       expect(cell?.className).toContain('px-8');
       expect(cell?.className).toContain('py-5');
     });
@@ -117,301 +147,462 @@ describe('Table Component', () => {
 
   describe('Search Functionality', () => {
     it('should render search input when searchable is true', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData);
-      fixture.componentRef.setInput('searchable', true);
-      fixture.detectChanges();
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData),
+          inputBinding('searchable', () => true),
+        ],
+      });
+      TestBed.tick();
 
-      const searchInput = getSearchInput();
+      const searchInput = fixture.nativeElement.querySelector(
+        'input[type="text"]',
+      ) as HTMLInputElement;
+
+      // Assert
       expect(searchInput).toBeTruthy();
     });
 
     it('should not render search input when searchable is false', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData);
-      fixture.componentRef.setInput('searchable', false);
-      fixture.detectChanges();
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData),
+          inputBinding('searchable', () => false),
+        ],
+      });
+      TestBed.tick();
 
-      const searchInput = getSearchInput();
+      const searchInput = fixture.nativeElement.querySelector(
+        'input[type="text"]',
+      ) as HTMLInputElement;
+
+      // Assert
       expect(searchInput).toBeFalsy();
     });
 
     it('should filter data based on search term', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData);
-      fixture.componentRef.setInput('searchable', true);
-      fixture.detectChanges();
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData),
+          inputBinding('searchable', () => true),
+        ],
+      });
+      TestBed.tick();
 
-      const searchInput = getSearchInput();
-      expect(searchInput).toBeTruthy();
+      const searchInput = fixture.nativeElement.querySelector(
+        'input[type="text"]',
+      ) as HTMLInputElement;
 
-      if (searchInput) {
-        searchInput.value = 'Electronics';
-        searchInput.dispatchEvent(new Event('input'));
-        fixture.detectChanges();
+      // Act
+      searchInput.value = 'Electronics';
+      searchInput.dispatchEvent(new Event('input'));
+      TestBed.tick();
 
-        expect(fixture.nativeElement.textContent).toContain('Product A');
-        expect(fixture.nativeElement.textContent).toContain('Product C');
-        expect(fixture.nativeElement.textContent).not.toContain('Product B');
-      }
+      // Assert
+      expect(fixture.nativeElement.textContent).toContain('Product A');
+      expect(fixture.nativeElement.textContent).toContain('Product C');
+      expect(fixture.nativeElement.textContent).not.toContain('Product B');
     });
 
     it('should show all data when search is cleared', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData);
-      fixture.componentRef.setInput('searchable', true);
-      fixture.detectChanges();
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData),
+          inputBinding('searchable', () => true),
+        ],
+      });
+      TestBed.tick();
 
-      const searchInput = getSearchInput();
-      if (searchInput) {
-        searchInput.value = 'Electronics';
-        searchInput.dispatchEvent(new Event('input'));
-        fixture.detectChanges();
+      const searchInput = fixture.nativeElement.querySelector(
+        'input[type="text"]',
+      ) as HTMLInputElement;
 
-        searchInput.value = '';
-        searchInput.dispatchEvent(new Event('input'));
-        fixture.detectChanges();
+      // Act
+      searchInput.value = 'Electronics';
+      searchInput.dispatchEvent(new Event('input'));
+      TestBed.tick();
 
-        expect(fixture.nativeElement.textContent).toContain('Product A');
-        expect(fixture.nativeElement.textContent).toContain('Product B');
-      }
+      searchInput.value = '';
+      searchInput.dispatchEvent(new Event('input'));
+      TestBed.tick();
+
+      // Assert
+      expect(fixture.nativeElement.textContent).toContain('Product A');
+      expect(fixture.nativeElement.textContent).toContain('Product B');
     });
   });
 
   describe('Selection Functionality', () => {
     it('should render checkboxes when selectable is true', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData.slice(0, 2));
-      fixture.componentRef.setInput('selectable', true);
-      fixture.detectChanges();
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData.slice(0, 2)),
+          inputBinding('selectable', () => true),
+        ],
+      });
+      TestBed.tick();
 
-      const checkboxes = getCheckboxes();
+      const checkboxes = fixture.nativeElement.querySelectorAll('input[type="checkbox"]');
+
+      // Assert
       expect(checkboxes.length).toBeGreaterThan(0);
     });
 
     it('should not render checkboxes when selectable is false', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData.slice(0, 2));
-      fixture.componentRef.setInput('selectable', false);
-      fixture.detectChanges();
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData.slice(0, 2)),
+          inputBinding('selectable', () => false),
+        ],
+      });
+      TestBed.tick();
 
-      const checkboxes = getCheckboxes();
+      const checkboxes = fixture.nativeElement.querySelectorAll('input[type="checkbox"]');
+
+      // Assert
       expect(checkboxes.length).toBe(0);
     });
 
     it('should select and deselect rows', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData.slice(0, 2));
-      fixture.componentRef.setInput('selectable', true);
-      fixture.detectChanges();
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData.slice(0, 2)),
+          inputBinding('selectable', () => true),
+        ],
+      });
+      TestBed.tick();
 
-      const checkboxes = getCheckboxes();
-      const rowCheckbox = checkboxes[1] as HTMLInputElement; // Skip "select all"
+      const checkboxes = fixture.nativeElement.querySelectorAll('input[type="checkbox"]');
+      const rowCheckbox = checkboxes[1] as HTMLInputElement;
 
+      // Assert - Initial state
       expect(rowCheckbox.checked).toBe(false);
 
+      // Act - Click to select
       rowCheckbox.click();
-      fixture.detectChanges();
+      TestBed.tick();
       expect(rowCheckbox.checked).toBe(true);
 
+      // Act - Click to deselect
       rowCheckbox.click();
-      fixture.detectChanges();
+      TestBed.tick();
+
+      // Assert
       expect(rowCheckbox.checked).toBe(false);
     });
 
     it('should emit selectionChange event', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData.slice(0, 2));
-      fixture.componentRef.setInput('selectable', true);
-      fixture.detectChanges();
-
-      let emittedValue: TestData[] | undefined;
-      component.selectionChange.subscribe((value) => {
-        emittedValue = value;
+      // Arrange
+      const selectionSignal = signal<readonly TestData[]>([]);
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData.slice(0, 2)),
+          inputBinding('selectable', () => true),
+          outputBinding('selectionChange', (value: readonly TestData[]) =>
+            selectionSignal.set(value),
+          ),
+        ],
       });
+      TestBed.tick();
 
-      const checkboxes = getCheckboxes();
+      const checkboxes = fixture.nativeElement.querySelectorAll('input[type="checkbox"]');
       const rowCheckbox = checkboxes[1] as HTMLInputElement;
-      rowCheckbox.click();
-      fixture.detectChanges();
 
-      expect(emittedValue).toBeDefined();
-      expect(emittedValue?.length).toBeGreaterThan(0);
+      // Act
+      rowCheckbox.click();
+      TestBed.tick();
+
+      // Assert
+      expect(selectionSignal().length).toBeGreaterThan(0);
     });
   });
 
   describe('Pagination Functionality', () => {
     it('should render pagination controls when paginated is true', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData);
-      fixture.componentRef.setInput('paginated', true);
-      fixture.componentRef.setInput('pageSize', 2);
-      fixture.detectChanges();
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData),
+          inputBinding('paginated', () => true),
+          inputBinding('pageSize', () => 2),
+        ],
+      });
+      TestBed.tick();
 
+      // Assert
       expect(fixture.nativeElement.textContent).toContain('Previous');
       expect(fixture.nativeElement.textContent).toContain('Next');
     });
 
     it('should not render pagination when paginated is false', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData);
-      fixture.componentRef.setInput('paginated', false);
-      fixture.detectChanges();
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData),
+          inputBinding('paginated', () => false),
+        ],
+      });
+      TestBed.tick();
 
+      // Assert
       expect(fixture.nativeElement.textContent).not.toContain('Previous');
       expect(fixture.nativeElement.textContent).not.toContain('Next');
     });
 
     it('should show correct page size of data', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData);
-      fixture.componentRef.setInput('paginated', true);
-      fixture.componentRef.setInput('pageSize', 2);
-      fixture.detectChanges();
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData),
+          inputBinding('paginated', () => true),
+          inputBinding('pageSize', () => 2),
+        ],
+      });
+      TestBed.tick();
 
+      // Assert
       expect(fixture.nativeElement.textContent).toContain('Product A');
       expect(fixture.nativeElement.textContent).toContain('Product B');
       expect(fixture.nativeElement.textContent).not.toContain('Product C');
     });
 
     it('should navigate to next page', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData);
-      fixture.componentRef.setInput('paginated', true);
-      fixture.componentRef.setInput('pageSize', 2);
-      fixture.detectChanges();
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData),
+          inputBinding('paginated', () => true),
+          inputBinding('pageSize', () => 2),
+        ],
+      });
+      TestBed.tick();
 
       const nextButton = Array.from<HTMLButtonElement>(
-        fixture.nativeElement.querySelectorAll('button')
+        fixture.nativeElement.querySelectorAll('button'),
       ).find((btn) => btn.textContent?.includes('Next'));
 
+      // Act
       expect(nextButton).toBeTruthy();
       nextButton?.click();
-      fixture.detectChanges();
+      TestBed.tick();
 
+      // Assert
       expect(fixture.nativeElement.textContent).not.toContain('Product A');
       expect(fixture.nativeElement.textContent).toContain('Product C');
     });
 
     it('should disable Previous on first page', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData);
-      fixture.componentRef.setInput('paginated', true);
-      fixture.componentRef.setInput('pageSize', 2);
-      fixture.detectChanges();
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData),
+          inputBinding('paginated', () => true),
+          inputBinding('pageSize', () => 2),
+        ],
+      });
+      TestBed.tick();
 
       const prevButton = Array.from<HTMLButtonElement>(
-        fixture.nativeElement.querySelectorAll('button')
+        fixture.nativeElement.querySelectorAll('button'),
       ).find((btn) => btn.textContent?.includes('Previous'));
 
+      // Assert
       expect(prevButton?.disabled).toBe(true);
     });
 
     it('should emit pageChange event', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData);
-      fixture.componentRef.setInput('paginated', true);
-      fixture.componentRef.setInput('pageSize', 2);
-      fixture.detectChanges();
-
-      let emittedPage: number | undefined;
-      component.pageChange.subscribe((page) => {
-        emittedPage = page;
+      // Arrange
+      const pageSignal = signal(1);
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData),
+          inputBinding('paginated', () => true),
+          inputBinding('pageSize', () => 2),
+          outputBinding('pageChange', (page: number) => pageSignal.set(page)),
+        ],
       });
+      TestBed.tick();
 
       const nextButton = Array.from<HTMLButtonElement>(
-        fixture.nativeElement.querySelectorAll('button')
+        fixture.nativeElement.querySelectorAll('button'),
       ).find((btn) => btn.textContent?.includes('Next'));
 
+      // Act
       nextButton?.click();
-      fixture.detectChanges();
+      TestBed.tick();
 
-      expect(emittedPage).toBe(2);
+      // Assert
+      expect(pageSignal()).toBe(2);
     });
   });
 
   describe('Sorting Functionality', () => {
     it('should sort data in ascending order', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData);
-      fixture.componentRef.setInput('sortable', true);
-      fixture.detectChanges();
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData),
+          inputBinding('sortable', () => true),
+        ],
+      });
+      TestBed.tick();
 
-      // Find the Price header button
       const priceButton = Array.from<HTMLButtonElement>(
-        fixture.nativeElement.querySelectorAll('th button')
+        fixture.nativeElement.querySelectorAll('th button'),
       ).find((btn) => btn.textContent?.includes('Price'));
 
+      // Act
       expect(priceButton).toBeTruthy();
       priceButton?.click();
-      fixture.detectChanges();
+      TestBed.tick();
 
-      const rows = getRows();
+      const rows = fixture.nativeElement.querySelectorAll('tbody tr');
       const firstRowText = rows[0]?.textContent || '';
-      expect(firstRowText).toContain('Product B'); // Price 20
+
+      // Assert
+      expect(firstRowText).toContain('Product B');
     });
 
     it('should sort data in descending order on second click', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData);
-      fixture.componentRef.setInput('sortable', true);
-      fixture.detectChanges();
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData),
+          inputBinding('sortable', () => true),
+        ],
+      });
+      TestBed.tick();
 
       const priceButton = Array.from<HTMLButtonElement>(
-        fixture.nativeElement.querySelectorAll('th button')
+        fixture.nativeElement.querySelectorAll('th button'),
       ).find((btn) => btn.textContent?.includes('Price'));
 
+      // Act
       priceButton?.click();
-      fixture.detectChanges();
+      TestBed.tick();
       priceButton?.click();
-      fixture.detectChanges();
+      TestBed.tick();
 
-      const rows = getRows();
+      const rows = fixture.nativeElement.querySelectorAll('tbody tr');
       const firstRowText = rows[0]?.textContent || '';
-      expect(firstRowText).toContain('Product C'); // Price 150
+
+      // Assert
+      expect(firstRowText).toContain('Product C');
     });
 
     it('should emit sortChange event', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData);
-      fixture.componentRef.setInput('sortable', true);
-      fixture.detectChanges();
-
-      let emittedSort: { key: string; direction: 'asc' | 'desc' | null } | undefined;
-      component.sortChange.subscribe((sort) => {
-        emittedSort = sort;
+      // Arrange
+      const sortSignal = signal<{ key: string; direction: 'asc' | 'desc' | null } | null>(null);
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData),
+          inputBinding('sortable', () => true),
+          outputBinding('sortChange', (sort: { key: string; direction: 'asc' | 'desc' | null }) =>
+            sortSignal.set(sort),
+          ),
+        ],
       });
+      TestBed.tick();
 
       const priceButton = Array.from<HTMLButtonElement>(
-        fixture.nativeElement.querySelectorAll('th button')
+        fixture.nativeElement.querySelectorAll('th button'),
       ).find((btn) => btn.textContent?.includes('Price'));
 
+      // Act
       priceButton?.click();
-      fixture.detectChanges();
+      TestBed.tick();
 
-      expect(emittedSort).toBeDefined();
-      expect(emittedSort?.key).toBe('price');
-      expect(emittedSort?.direction).toBe('asc');
+      // Assert
+      expect(sortSignal()).toBeDefined();
+      expect(sortSignal()?.key).toBe('price');
+      expect(sortSignal()?.direction).toBe('asc');
     });
   });
 
   describe('Actions Functionality', () => {
     it('should render action buttons', () => {
+      // Arrange
       const mockActions: TableAction<TestData>[] = [
         { label: 'Edit', variant: 'primary', handler: () => {} },
         { label: 'Delete', variant: 'danger', handler: () => {} },
       ];
 
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData.slice(0, 2));
-      fixture.componentRef.setInput('actions', mockActions);
-      fixture.detectChanges();
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData.slice(0, 2)),
+          inputBinding('actions', () => mockActions),
+        ],
+      });
+      TestBed.tick();
 
+      // Assert
       expect(fixture.nativeElement.textContent).toContain('Edit');
       expect(fixture.nativeElement.textContent).toContain('Delete');
     });
 
     it('should call action handler when clicked', () => {
+      // Arrange
       let handlerCalled = false;
       let receivedRow: TestData | undefined;
 
@@ -426,23 +617,32 @@ describe('Table Component', () => {
         },
       ];
 
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData.slice(0, 1));
-      fixture.componentRef.setInput('actions', mockActions);
-      fixture.detectChanges();
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData.slice(0, 1)),
+          inputBinding('actions', () => mockActions),
+        ],
+      });
+      TestBed.tick();
 
       const editButton = Array.from<HTMLButtonElement>(
-        fixture.nativeElement.querySelectorAll('button')
+        fixture.nativeElement.querySelectorAll('button'),
       ).find((btn) => btn.textContent?.includes('Edit'));
 
+      // Act
       editButton?.click();
-      fixture.detectChanges();
+      TestBed.tick();
 
+      // Assert
       expect(handlerCalled).toBe(true);
       expect(receivedRow).toEqual(mockData[0]);
     });
 
     it('should respect action conditions', () => {
+      // Arrange
       const mockActions: TableAction<TestData>[] = [
         {
           label: 'Premium',
@@ -452,44 +652,69 @@ describe('Table Component', () => {
         },
       ];
 
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData.slice(0, 3));
-      fixture.componentRef.setInput('actions', mockActions);
-      fixture.detectChanges();
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData.slice(0, 3)),
+          inputBinding('actions', () => mockActions),
+        ],
+      });
+      TestBed.tick();
 
       const premiumButtons = Array.from<HTMLButtonElement>(
-        fixture.nativeElement.querySelectorAll('button')
+        fixture.nativeElement.querySelectorAll('button'),
       ).filter((btn) => btn.textContent?.includes('Premium'));
 
-      // Only Product C (price 150) should have the button
+      // Assert
       expect(premiumButtons.length).toBe(1);
     });
   });
 
   describe('Hoverable Functionality', () => {
     it('should apply hover classes when hoverable is true', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData.slice(0, 1));
-      fixture.componentRef.setInput('hoverable', true);
-      fixture.detectChanges();
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData.slice(0, 1)),
+          inputBinding('hoverable', () => true),
+        ],
+      });
+      TestBed.tick();
 
       const row = fixture.nativeElement.querySelector('tbody tr');
+
+      // Assert
       expect(row?.className).toContain('hover:bg-bg-secondary');
     });
 
     it('should not apply hover classes when hoverable is false', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData.slice(0, 1));
-      fixture.componentRef.setInput('hoverable', false);
-      fixture.detectChanges();
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData.slice(0, 1)),
+          inputBinding('hoverable', () => false),
+        ],
+      });
+      TestBed.tick();
 
       const row = fixture.nativeElement.querySelector('tbody tr');
+
+      // Assert
       expect(row?.className).not.toContain('hover:bg-bg-secondary');
     });
   });
 
   describe('Custom Rendering', () => {
     it('should use custom render function for columns', () => {
+      // Arrange
       const customColumns: TableColumn<TestData>[] = [
         {
           key: 'price',
@@ -498,77 +723,130 @@ describe('Table Component', () => {
         },
       ];
 
-      fixture.componentRef.setInput('columns', customColumns);
-      fixture.componentRef.setInput('data', [
-        { id: 1, name: 'Test', category: 'Cat', price: 99.5 },
-      ]);
-      fixture.detectChanges();
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => customColumns),
+          inputBinding('data', () => [{ id: 1, name: 'Test', category: 'Cat', price: 99.5 }]),
+        ],
+      });
+      TestBed.tick();
 
+      // Assert
       expect(fixture.nativeElement.textContent).toContain('$99.50');
     });
   });
 
   describe('data-testid Attributes', () => {
     it('should render data-testid on table wrapper', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData.slice(0, 2));
-      fixture.componentRef.setInput('dataTestId', 'test-table');
-      fixture.detectChanges();
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData.slice(0, 2)),
+          inputBinding('dataTestId', () => 'test-table'),
+        ],
+      });
+      TestBed.tick();
 
       const wrapper = fixture.nativeElement.querySelector('[data-testid="test-table-wrapper"]');
+
+      // Assert
       expect(wrapper).toBeTruthy();
     });
 
     it('should render data-testid on table element', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData.slice(0, 2));
-      fixture.componentRef.setInput('dataTestId', 'test-table');
-      fixture.detectChanges();
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData.slice(0, 2)),
+          inputBinding('dataTestId', () => 'test-table'),
+        ],
+      });
+      TestBed.tick();
 
       const table = fixture.nativeElement.querySelector('table[data-testid="test-table"]');
+
+      // Assert
       expect(table).toBeTruthy();
     });
 
     it('should render data-testid on search input when searchable', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData.slice(0, 2));
-      fixture.componentRef.setInput('dataTestId', 'test-table');
-      fixture.componentRef.setInput('searchable', true);
-      fixture.detectChanges();
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData.slice(0, 2)),
+          inputBinding('dataTestId', () => 'test-table'),
+          inputBinding('searchable', () => true),
+        ],
+      });
+      TestBed.tick();
 
-      const searchInput = fixture.nativeElement.querySelector('input[data-testid="test-table-search"]');
+      const searchInput = fixture.nativeElement.querySelector(
+        'input[data-testid="test-table-search"]',
+      );
+
+      // Assert
       expect(searchInput).toBeTruthy();
     });
 
     it('should render data-testid on pagination when paginated', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData);
-      fixture.componentRef.setInput('dataTestId', 'test-table');
-      fixture.componentRef.setInput('paginated', true);
-      fixture.componentRef.setInput('pageSize', 2);
-      fixture.detectChanges();
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData),
+          inputBinding('dataTestId', () => 'test-table'),
+          inputBinding('paginated', () => true),
+          inputBinding('pageSize', () => 2),
+        ],
+      });
+      TestBed.tick();
 
-      const pagination = fixture.nativeElement.querySelector('nav[data-testid="test-table-pagination"]');
+      const pagination = fixture.nativeElement.querySelector(
+        'nav[data-testid="test-table-pagination"]',
+      );
+
+      // Assert
       expect(pagination).toBeTruthy();
     });
 
     it('should render data-testid on table rows using row ID', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData.slice(0, 3));
-      fixture.componentRef.setInput('dataTestId', 'test-table');
-      fixture.detectChanges();
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData.slice(0, 3)),
+          inputBinding('dataTestId', () => 'test-table'),
+        ],
+      });
+      TestBed.tick();
 
-      // Check that rows have data-testid with their IDs
       const row1 = fixture.nativeElement.querySelector('tr[data-testid="test-table-row-1"]');
       const row2 = fixture.nativeElement.querySelector('tr[data-testid="test-table-row-2"]');
       const row3 = fixture.nativeElement.querySelector('tr[data-testid="test-table-row-3"]');
 
+      // Assert
       expect(row1).toBeTruthy();
       expect(row2).toBeTruthy();
       expect(row3).toBeTruthy();
     });
 
     it('should render data-testid on table rows using index when no ID property', () => {
+      // Arrange
       interface DataWithoutId {
         name: string;
         category: string;
@@ -584,51 +862,62 @@ describe('Table Component', () => {
         { key: 'category', label: 'Category' },
       ];
 
-      fixture.componentRef.setInput('columns', columnsForDataWithoutId);
-      fixture.componentRef.setInput('data', dataWithoutId);
-      fixture.componentRef.setInput('dataTestId', 'test-table');
-      fixture.detectChanges();
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<DataWithoutId>, {
+        bindings: [
+          inputBinding('columns', () => columnsForDataWithoutId),
+          inputBinding('data', () => dataWithoutId),
+          inputBinding('dataTestId', () => 'test-table'),
+        ],
+      });
+      TestBed.tick();
 
-      // Check that rows have data-testid with their indices
       const row0 = fixture.nativeElement.querySelector('tr[data-testid="test-table-row-0"]');
       const row1 = fixture.nativeElement.querySelector('tr[data-testid="test-table-row-1"]');
 
+      // Assert
       expect(row0).toBeTruthy();
       expect(row1).toBeTruthy();
     });
 
     it('should render data-testid on action buttons with row ID', () => {
+      // Arrange
       const mockActions: TableAction<TestData>[] = [
         { label: 'Edit', variant: 'primary', handler: () => {} },
         { label: 'Delete', variant: 'danger', handler: () => {} },
       ];
 
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData.slice(0, 2));
-      fixture.componentRef.setInput('actions', mockActions);
-      fixture.componentRef.setInput('dataTestId', 'test-table');
-      fixture.detectChanges();
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData.slice(0, 2)),
+          inputBinding('actions', () => mockActions),
+          inputBinding('dataTestId', () => 'test-table'),
+        ],
+      });
+      TestBed.tick();
 
-      // Check Edit button for row with ID 1
       const editBtn1 = fixture.nativeElement.querySelector(
-        'button[data-testid="test-table-action-edit-row-1"]'
+        'button[data-testid="test-table-action-edit-row-1"]',
       );
-      expect(editBtn1).toBeTruthy();
-
-      // Check Delete button for row with ID 1
       const deleteBtn1 = fixture.nativeElement.querySelector(
-        'button[data-testid="test-table-action-delete-row-1"]'
+        'button[data-testid="test-table-action-delete-row-1"]',
       );
-      expect(deleteBtn1).toBeTruthy();
-
-      // Check Edit button for row with ID 2
       const editBtn2 = fixture.nativeElement.querySelector(
-        'button[data-testid="test-table-action-edit-row-2"]'
+        'button[data-testid="test-table-action-edit-row-2"]',
       );
+
+      // Assert
+      expect(editBtn1).toBeTruthy();
+      expect(deleteBtn1).toBeTruthy();
       expect(editBtn2).toBeTruthy();
     });
 
     it('should render data-testid on action buttons with index when no ID property', () => {
+      // Arrange
       interface DataWithoutId {
         name: string;
         category: string;
@@ -648,50 +937,72 @@ describe('Table Component', () => {
         { label: 'Edit', variant: 'primary', handler: () => {} },
       ];
 
-      fixture.componentRef.setInput('columns', columnsForDataWithoutId);
-      fixture.componentRef.setInput('data', dataWithoutId);
-      fixture.componentRef.setInput('actions', mockActions);
-      fixture.componentRef.setInput('dataTestId', 'test-table');
-      fixture.detectChanges();
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<DataWithoutId>, {
+        bindings: [
+          inputBinding('columns', () => columnsForDataWithoutId),
+          inputBinding('data', () => dataWithoutId),
+          inputBinding('actions', () => mockActions),
+          inputBinding('dataTestId', () => 'test-table'),
+        ],
+      });
+      TestBed.tick();
 
-      // Check Edit button for row with index 0
       const editBtn0 = fixture.nativeElement.querySelector(
-        'button[data-testid="test-table-action-edit-row-0"]'
+        'button[data-testid="test-table-action-edit-row-0"]',
       );
-      expect(editBtn0).toBeTruthy();
-
-      // Check Edit button for row with index 1
       const editBtn1 = fixture.nativeElement.querySelector(
-        'button[data-testid="test-table-action-edit-row-1"]'
+        'button[data-testid="test-table-action-edit-row-1"]',
       );
+
+      // Assert
+      expect(editBtn0).toBeTruthy();
       expect(editBtn1).toBeTruthy();
     });
 
     it('should sanitize action labels with spaces in data-testid', () => {
+      // Arrange
       const mockActions: TableAction<TestData>[] = [
         { label: 'View Details', variant: 'primary', handler: () => {} },
       ];
 
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData.slice(0, 1));
-      fixture.componentRef.setInput('actions', mockActions);
-      fixture.componentRef.setInput('dataTestId', 'test-table');
-      fixture.detectChanges();
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData.slice(0, 1)),
+          inputBinding('actions', () => mockActions),
+          inputBinding('dataTestId', () => 'test-table'),
+        ],
+      });
+      TestBed.tick();
 
-      // Should convert "View Details" to "view-details"
       const viewBtn = fixture.nativeElement.querySelector(
-        'button[data-testid="test-table-action-view-details-row-1"]'
+        'button[data-testid="test-table-action-view-details-row-1"]',
       );
+
+      // Assert
       expect(viewBtn).toBeTruthy();
     });
 
     it('should not render data-testid attributes when dataTestId is null', () => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData.slice(0, 2));
-      fixture.componentRef.setInput('dataTestId', null);
-      fixture.detectChanges();
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: defaultProviders,
+      }).createComponent(Table<TestData>, {
+        bindings: [
+          inputBinding('columns', () => mockColumns),
+          inputBinding('data', () => mockData.slice(0, 2)),
+          inputBinding('dataTestId', () => null),
+        ],
+      });
+      TestBed.tick();
 
       const rows = fixture.nativeElement.querySelectorAll('tbody tr[data-testid]');
+
+      // Assert
       expect(rows.length).toBe(0);
     });
   });

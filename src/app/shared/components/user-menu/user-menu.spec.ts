@@ -1,211 +1,314 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideZonelessChangeDetection } from '@angular/core';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { TestBed } from '@angular/core/testing';
+import { provideZonelessChangeDetection, inputBinding, outputBinding, signal } from '@angular/core';
+import { describe, expect, it, vi } from 'vitest';
 import { UserMenuComponent, UserMenuItem } from './user-menu';
 
 describe('UserMenuComponent', () => {
-  let component: UserMenuComponent;
-  let fixture: ComponentFixture<UserMenuComponent>;
-  let compiled: HTMLElement;
-
   const mockMenuItems: UserMenuItem[] = [
     { id: '1', label: 'Profile', icon: 'user', action: 'profile' },
     { id: '2', label: 'Settings', icon: 'settings', action: 'settings' },
     { id: '3', label: 'Logout', icon: 'logout', action: 'logout' },
   ];
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [UserMenuComponent],
-      providers: [provideZonelessChangeDetection()],
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(UserMenuComponent);
-    component = fixture.componentInstance;
-    compiled = fixture.nativeElement;
-  });
+  const defaultProviders = [provideZonelessChangeDetection()];
 
   it('renders with default user name', () => {
-    fixture.detectChanges();
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: defaultProviders,
+    }).createComponent(UserMenuComponent);
+    TestBed.tick();
 
-    const initials = compiled.querySelector('[aria-label*="Iniciales"]');
+    // Assert
+    const initials = fixture.nativeElement.querySelector('[aria-label*="Iniciales"]');
     expect(initials?.textContent?.trim()).toBe('US');
   });
 
   it('computes user initials from full name', () => {
-    fixture.componentRef.setInput('userName', 'John Doe');
-    fixture.detectChanges();
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: defaultProviders,
+    }).createComponent(UserMenuComponent, {
+      bindings: [inputBinding('userName', () => 'John Doe')],
+    });
+    TestBed.tick();
 
-    expect(component.userInitials()).toBe('JD');
+    // Assert
+    expect(fixture.componentInstance.userInitials()).toBe('JD');
   });
 
   it('computes user initials from single name', () => {
-    fixture.componentRef.setInput('userName', 'Alice');
-    fixture.detectChanges();
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: defaultProviders,
+    }).createComponent(UserMenuComponent, {
+      bindings: [inputBinding('userName', () => 'Alice')],
+    });
+    TestBed.tick();
 
-    expect(component.userInitials()).toBe('AL');
+    // Assert
+    expect(fixture.componentInstance.userInitials()).toBe('AL');
   });
 
   it('opens menu on toggle', () => {
-    fixture.componentRef.setInput('menuItems', mockMenuItems);
-    fixture.detectChanges();
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: defaultProviders,
+    }).createComponent(UserMenuComponent, {
+      bindings: [inputBinding('menuItems', () => mockMenuItems)],
+    });
+    TestBed.tick();
 
-    const button = compiled.querySelector('button');
+    const button = fixture.nativeElement.querySelector('button');
+
+    // Act
     button?.click();
-    fixture.detectChanges();
+    TestBed.tick();
 
-    expect(component.isOpen()).toBe(true);
+    // Assert
+    expect(fixture.componentInstance.isOpen()).toBe(true);
   });
 
   it('displays menu items when open', () => {
-    fixture.componentRef.setInput('menuItems', mockMenuItems);
-    fixture.detectChanges();
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: defaultProviders,
+    }).createComponent(UserMenuComponent, {
+      bindings: [inputBinding('menuItems', () => mockMenuItems)],
+    });
+    TestBed.tick();
 
-    component.toggle();
-    fixture.detectChanges();
+    // Act
+    fixture.componentInstance.toggle();
+    TestBed.tick();
 
-    expect(compiled.textContent).toContain('Profile');
-    expect(compiled.textContent).toContain('Settings');
-    expect(compiled.textContent).toContain('Logout');
+    // Assert
+    expect(fixture.nativeElement.textContent).toContain('Profile');
+    expect(fixture.nativeElement.textContent).toContain('Settings');
+    expect(fixture.nativeElement.textContent).toContain('Logout');
   });
 
   it('emits menuOpened event when opened', () => {
-    const menuOpenedSpy = vi.fn();
-    component.menuOpened.subscribe(menuOpenedSpy);
+    // Arrange
+    const menuOpenedSignal = signal(0);
+    const fixture = TestBed.configureTestingModule({
+      providers: defaultProviders,
+    }).createComponent(UserMenuComponent, {
+      bindings: [outputBinding('menuOpened', () => menuOpenedSignal.update((v) => v + 1))],
+    });
+    TestBed.tick();
 
-    component.toggle();
-    fixture.detectChanges();
+    // Act
+    fixture.componentInstance.toggle();
+    TestBed.tick();
 
-    expect(menuOpenedSpy).toHaveBeenCalledTimes(1);
+    // Assert
+    expect(menuOpenedSignal()).toBe(1);
   });
 
   it('emits menuClosed event when closed', () => {
-    const menuClosedSpy = vi.fn();
-    component.menuClosed.subscribe(menuClosedSpy);
+    // Arrange
+    const menuClosedSignal = signal(0);
+    const fixture = TestBed.configureTestingModule({
+      providers: defaultProviders,
+    }).createComponent(UserMenuComponent, {
+      bindings: [outputBinding('menuClosed', () => menuClosedSignal.update((v) => v + 1))],
+    });
+    TestBed.tick();
 
-    component.toggle();
-    fixture.detectChanges();
-    component.toggle();
-    fixture.detectChanges();
+    // Act
+    fixture.componentInstance.toggle();
+    TestBed.tick();
+    fixture.componentInstance.toggle();
+    TestBed.tick();
 
-    expect(menuClosedSpy).toHaveBeenCalledTimes(1);
+    // Assert
+    expect(menuClosedSignal()).toBe(1);
   });
 
   it('emits menuItemClick when item is clicked', () => {
-    const menuItemClickSpy = vi.fn();
-    fixture.componentRef.setInput('menuItems', mockMenuItems);
-    component.menuItemClick.subscribe(menuItemClickSpy);
+    // Arrange
+    const menuItemClickSignal = signal<UserMenuItem | null>(null);
+    const fixture = TestBed.configureTestingModule({
+      providers: defaultProviders,
+    }).createComponent(UserMenuComponent, {
+      bindings: [
+        inputBinding('menuItems', () => mockMenuItems),
+        outputBinding('menuItemClick', (item: UserMenuItem) => menuItemClickSignal.set(item)),
+      ],
+    });
+    TestBed.tick();
 
-    component.toggle();
-    fixture.detectChanges();
+    fixture.componentInstance.toggle();
+    TestBed.tick();
 
-    const menuItem = compiled.querySelector('[role="menuitem"]') as HTMLElement;
+    const menuItem = fixture.nativeElement.querySelector('[role="menuitem"]') as HTMLElement;
+
+    // Act
     menuItem?.click();
 
-    expect(menuItemClickSpy).toHaveBeenCalledWith(mockMenuItems[0]);
+    // Assert
+    expect(menuItemClickSignal()).toEqual(mockMenuItems[0]);
   });
 
   it('closes menu after item click', () => {
-    fixture.componentRef.setInput('menuItems', mockMenuItems);
-    fixture.detectChanges();
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: defaultProviders,
+    }).createComponent(UserMenuComponent, {
+      bindings: [inputBinding('menuItems', () => mockMenuItems)],
+    });
+    TestBed.tick();
 
-    component.toggle();
-    fixture.detectChanges();
+    fixture.componentInstance.toggle();
+    TestBed.tick();
 
-    expect(component.isOpen()).toBe(true);
+    expect(fixture.componentInstance.isOpen()).toBe(true);
 
-    const menuItem = compiled.querySelector('[role="menuitem"]') as HTMLElement;
+    const menuItem = fixture.nativeElement.querySelector('[role="menuitem"]') as HTMLElement;
+
+    // Act
     menuItem?.click();
-    fixture.detectChanges();
+    TestBed.tick();
 
-    expect(component.isOpen()).toBe(false);
+    // Assert
+    expect(fixture.componentInstance.isOpen()).toBe(false);
   });
 
   it('closes menu on Escape key', () => {
-    fixture.detectChanges();
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: defaultProviders,
+    }).createComponent(UserMenuComponent);
+    TestBed.tick();
 
-    component.open();
-    fixture.detectChanges();
+    fixture.componentInstance.open();
+    TestBed.tick();
 
-    expect(component.isOpen()).toBe(true);
+    expect(fixture.componentInstance.isOpen()).toBe(true);
 
+    // Act
     const event = new KeyboardEvent('keydown', { key: 'Escape' });
     document.dispatchEvent(event);
-    fixture.detectChanges();
+    TestBed.tick();
 
-    expect(component.isOpen()).toBe(false);
+    // Assert
+    expect(fixture.componentInstance.isOpen()).toBe(false);
   });
 
   it('closes menu on click outside', async () => {
-    fixture.detectChanges();
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: defaultProviders,
+    }).createComponent(UserMenuComponent);
+    TestBed.tick();
 
-    component.open();
-    fixture.detectChanges();
+    fixture.componentInstance.open();
+    TestBed.tick();
 
-    expect(component.isOpen()).toBe(true);
+    expect(fixture.componentInstance.isOpen()).toBe(true);
 
     await new Promise((resolve) => setTimeout(resolve, 0));
 
+    // Act
     const event = new MouseEvent('click', { bubbles: true });
     document.body.dispatchEvent(event);
 
     await new Promise((resolve) => setTimeout(resolve, 0));
-    fixture.detectChanges();
+    TestBed.tick();
 
-    expect(component.isOpen()).toBe(false);
+    // Assert
+    expect(fixture.componentInstance.isOpen()).toBe(false);
   });
 
   it('filters out divider items from visibleMenuItems', () => {
+    // Arrange
     const itemsWithDivider: UserMenuItem[] = [
       ...mockMenuItems,
       { id: '4', label: '', divider: true },
     ];
 
-    fixture.componentRef.setInput('menuItems', itemsWithDivider);
-    fixture.detectChanges();
+    const fixture = TestBed.configureTestingModule({
+      providers: defaultProviders,
+    }).createComponent(UserMenuComponent, {
+      bindings: [inputBinding('menuItems', () => itemsWithDivider)],
+    });
+    TestBed.tick();
 
-    expect(component.visibleMenuItems().length).toBe(3);
+    // Assert
+    expect(fixture.componentInstance.visibleMenuItems().length).toBe(3);
   });
 
   it('does not emit menuItemClick for divider items', () => {
-    const menuItemClickSpy = vi.fn();
+    // Arrange
     const itemsWithDivider: UserMenuItem[] = [
       { id: '1', label: 'Profile', action: 'profile' },
       { id: '2', label: '', divider: true },
     ];
 
-    fixture.componentRef.setInput('menuItems', itemsWithDivider);
-    component.menuItemClick.subscribe(menuItemClickSpy);
+    const menuItemClickSignal = signal<UserMenuItem | null>(null);
+    const fixture = TestBed.configureTestingModule({
+      providers: defaultProviders,
+    }).createComponent(UserMenuComponent, {
+      bindings: [
+        inputBinding('menuItems', () => itemsWithDivider),
+        outputBinding('menuItemClick', (item: UserMenuItem) => menuItemClickSignal.set(item)),
+      ],
+    });
+    TestBed.tick();
 
     const dividerItem = itemsWithDivider[1];
-    component.onMenuItemClick(dividerItem, new Event('click'));
 
-    expect(menuItemClickSpy).not.toHaveBeenCalled();
+    // Act
+    fixture.componentInstance.onMenuItemClick(dividerItem, new Event('click'));
+
+    // Assert
+    expect(menuItemClickSignal()).toBeNull();
   });
 
   it('displays user email when provided', () => {
-    fixture.componentRef.setInput('userName', 'John Doe');
-    fixture.componentRef.setInput('userEmail', 'john@example.com');
-    fixture.detectChanges();
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: defaultProviders,
+    }).createComponent(UserMenuComponent, {
+      bindings: [
+        inputBinding('userName', () => 'John Doe'),
+        inputBinding('userEmail', () => 'john@example.com'),
+      ],
+    });
+    TestBed.tick();
 
-    component.toggle();
-    fixture.detectChanges();
+    // Act
+    fixture.componentInstance.toggle();
+    TestBed.tick();
 
-    expect(compiled.textContent).toContain('john@example.com');
+    // Assert
+    expect(fixture.nativeElement.textContent).toContain('john@example.com');
   });
 
   it('hasUserInfo returns true when userName or userEmail provided', () => {
-    fixture.componentRef.setInput('userName', 'John Doe');
-    fixture.detectChanges();
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: defaultProviders,
+    }).createComponent(UserMenuComponent, {
+      bindings: [inputBinding('userName', () => 'John Doe')],
+    });
+    TestBed.tick();
 
-    expect(component.hasUserInfo()).toBe(true);
+    // Assert
+    expect(fixture.componentInstance.hasUserInfo()).toBe(true);
   });
 
   it('hasUserInfo returns false when no user info provided', () => {
-    fixture.componentRef.setInput('userName', '');
-    fixture.componentRef.setInput('userEmail', '');
-    fixture.detectChanges();
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: defaultProviders,
+    }).createComponent(UserMenuComponent, {
+      bindings: [inputBinding('userName', () => ''), inputBinding('userEmail', () => '')],
+    });
+    TestBed.tick();
 
-    expect(component.hasUserInfo()).toBe(false);
+    // Assert
+    expect(fixture.componentInstance.hasUserInfo()).toBe(false);
   });
 });

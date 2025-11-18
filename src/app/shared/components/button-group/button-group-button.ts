@@ -1,16 +1,6 @@
-import {
-  Component,
-  input,
-  output,
-  computed,
-  inject,
-  ChangeDetectionStrategy,
-
-} from '@angular/core';
+import { Component, input, output, computed, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonGroupPosition, ButtonGroupVariant } from './button-group-helpers';
-
-
 
 @Component({
   selector: 'app-button-group-button',

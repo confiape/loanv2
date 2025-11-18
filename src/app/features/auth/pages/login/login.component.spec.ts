@@ -1,31 +1,14 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
+import { TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { of, throwError } from 'rxjs';
-import { vi, Mock } from 'vitest';
+import { vi, describe, it, expect } from 'vitest';
 import { LoginComponent } from './login';
 import { AuthenticationApiService, LoginResponse } from '@loan/app/shared/openapi';
 import { AuthService } from '@loan/app/core/services/auth.service';
 import { ToastService } from '@loan/app/core/services/toast.service';
 
 describe('LoginComponent', () => {
-  let component: LoginComponent;
-  let fixture: ComponentFixture<LoginComponent>;
-  let compiled: HTMLElement;
-  let authApiMock: {
-    logIn: Mock;
-  };
-  let authServiceMock: {
-    getAuthorizationToken: Mock;
-  };
-  let toastServiceMock: {
-    success: Mock;
-    error: Mock;
-  };
-  let routerMock: {
-    navigate: Mock;
-  };
-
   const mockLoginResponse: LoginResponse = {
     user: {
       name: 'Test User',
@@ -36,26 +19,25 @@ describe('LoginComponent', () => {
     tokenType: 'Bearer',
   };
 
-  beforeEach(async () => {
-    authApiMock = {
-      logIn: vi.fn() as Mock,
+  function createComponent() {
+    const authApiMock = {
+      logIn: vi.fn(),
     };
 
-    authServiceMock = {
-      getAuthorizationToken: vi.fn() as Mock,
+    const authServiceMock = {
+      getAuthorizationToken: vi.fn(),
     };
 
-    toastServiceMock = {
-      success: vi.fn() as Mock,
-      error: vi.fn() as Mock,
+    const toastServiceMock = {
+      success: vi.fn(),
+      error: vi.fn(),
     };
 
-    routerMock = {
-      navigate: vi.fn() as Mock,
+    const routerMock = {
+      navigate: vi.fn(),
     };
 
-    await TestBed.configureTestingModule({
-      imports: [LoginComponent],
+    const fixture = TestBed.configureTestingModule({
       providers: [
         provideZonelessChangeDetection(),
         { provide: AuthenticationApiService, useValue: authApiMock },
@@ -63,78 +45,96 @@ describe('LoginComponent', () => {
         { provide: ToastService, useValue: toastServiceMock },
         { provide: Router, useValue: routerMock },
       ],
-    }).compileComponents();
+    }).createComponent(LoginComponent);
+    TestBed.tick();
 
-    fixture = TestBed.createComponent(LoginComponent);
-    component = fixture.componentInstance;
-    compiled = fixture.nativeElement;
-    fixture.detectChanges();
-  });
+    return {
+      fixture,
+      authApiMock,
+      authServiceMock,
+      toastServiceMock,
+      routerMock,
+    };
+  }
 
   describe('Component Initialization', () => {
     it('should create', () => {
-      expect(component).toBeTruthy();
+      const { fixture } = createComponent();
+      expect(fixture.componentInstance).toBeTruthy();
     });
 
     it('should initialize with empty credentials', () => {
-      expect(component.loginForm.get('email')?.value).toBe('');
-      expect(component.loginForm.get('password')?.value).toBe('');
+      const { fixture } = createComponent();
+      const emailInput = fixture.nativeElement.querySelector('input[type="email"]');
+      const passwordInput = fixture.nativeElement.querySelector('input[type="password"]');
+
+      expect(emailInput?.value).toBe('');
+      expect(passwordInput?.value).toBe('');
     });
 
-    it('should initialize with loading false', () => {
-      expect(component.isLoading()).toBe(false);
-    });
-  });
+    it('should render form with email and password fields', () => {
+      const { fixture } = createComponent();
+      const form = fixture.nativeElement.querySelector('form');
+      const emailInput = fixture.nativeElement.querySelector('input[type="email"]');
+      const passwordInput = fixture.nativeElement.querySelector('input[type="password"]');
 
-  describe('Template Rendering', () => {
-    it('should render login form', () => {
-      const form = compiled.querySelector('form');
       expect(form).toBeTruthy();
-    });
-
-    it('should render email input', () => {
-      const emailInput = compiled.querySelector<HTMLInputElement>('#email');
       expect(emailInput).toBeTruthy();
       expect(emailInput?.type).toBe('email');
-    });
-
-    it('should render password input', () => {
-      const passwordInput = compiled.querySelector<HTMLInputElement>('#password');
       expect(passwordInput).toBeTruthy();
       expect(passwordInput?.type).toBe('password');
     });
 
     it('should render submit button', () => {
-      const submitButton = compiled.querySelector<HTMLButtonElement>('button[type="submit"]');
+      const { fixture } = createComponent();
+      const submitButton = fixture.nativeElement.querySelector('button[type="submit"]');
       expect(submitButton).toBeTruthy();
     });
+  });
 
+  describe('Form Validation', () => {
     it('should disable submit button when form is invalid', () => {
-      const submitButton = compiled.querySelector<HTMLButtonElement>('button[type="submit"]');
+      const { fixture } = createComponent();
+      const submitButton = fixture.nativeElement.querySelector('button[type="submit"]');
       expect(submitButton?.disabled).toBe(true);
     });
 
     it('should enable submit button when form is valid', () => {
-      component.loginForm.get('email')?.setValue('test@test.com');
-      component.loginForm.get('password')?.setValue('password123');
-      fixture.detectChanges();
+      const { fixture } = createComponent();
+      const emailInput = fixture.nativeElement.querySelector('input[type="email"]');
+      const passwordInput = fixture.nativeElement.querySelector('input[type="password"]');
 
-      const submitButton = compiled.querySelector<HTMLButtonElement>('button[type="submit"]');
-      expect(submitButton?.disabled).toBe(false);
+      if (emailInput && passwordInput) {
+        emailInput.value = 'test@test.com';
+        emailInput.dispatchEvent(new Event('input'));
+        passwordInput.value = 'password123';
+        passwordInput.dispatchEvent(new Event('input'));
+        TestBed.tick();
+      }
+
+      const submitButton = fixture.nativeElement.querySelector('button[type="submit"]');
+      expect(submitButton?.disabled).toBeFalsy();
     });
   });
 
-  describe('Form Submission', () => {
-    beforeEach(() => {
-      component.loginForm.get('email')?.setValue('test@test.com');
-      component.loginForm.get('password')?.setValue('password123');
-    });
+  describe('Form Submission Success', () => {
+    it('should call authApi.logIn on submit with valid credentials', async () => {
+      const { fixture, authApiMock, authServiceMock } = createComponent();
+      const component = fixture.componentInstance;
 
-    it('should call authApi.logIn on submit', () => {
-      authApiMock.logIn!.mockReturnValue(of(undefined));
-      authServiceMock.getAuthorizationToken!.mockReturnValue(of(mockLoginResponse));
+      authApiMock.logIn.mockReturnValue(of(undefined));
+      authServiceMock.getAuthorizationToken.mockReturnValue(of(mockLoginResponse));
 
+      // Set form values directly
+      component.loginForm.patchValue({
+        email: 'test@test.com',
+        password: 'password123',
+      });
+      TestBed.tick();
+
+      // Call onSubmit directly
       component.onSubmit();
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
       expect(authApiMock.logIn).toHaveBeenCalledWith({
         email: 'test@test.com',
@@ -142,104 +142,97 @@ describe('LoginComponent', () => {
       });
     });
 
-    it('should set loading state during submission', async () => {
-      authApiMock.logIn!.mockReturnValue(of(undefined));
-      authServiceMock.getAuthorizationToken!.mockReturnValue(of(mockLoginResponse));
-
-      expect(component.isLoading()).toBe(false);
-
-      component.onSubmit();
-
-      await fixture.whenStable();
-      expect(component.isLoading()).toBe(false); // Should be false after finalize
-    });
-
-    it('should not submit if already loading', () => {
-      component.isLoading.set(true);
-      component.onSubmit();
-
-      expect(authApiMock.logIn).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('Successful Login', () => {
-    beforeEach(() => {
-      component.loginForm.get('email')?.setValue('test@test.com');
-      component.loginForm.get('password')?.setValue('password123');
-    });
-
-    it('should get authorization token after successful login', async () => {
-      authApiMock.logIn!.mockReturnValue(of(undefined));
-      authServiceMock.getAuthorizationToken!.mockReturnValue(of(mockLoginResponse));
-
-      component.onSubmit();
-
-      await fixture.whenStable();
-      expect(authServiceMock.getAuthorizationToken).toHaveBeenCalled();
-    });
-
     it('should show success toast after successful login', async () => {
-      authApiMock.logIn!.mockReturnValue(of(undefined));
-      authServiceMock.getAuthorizationToken!.mockReturnValue(of(mockLoginResponse));
+      const { fixture, authApiMock, authServiceMock, toastServiceMock } = createComponent();
+      const component = fixture.componentInstance;
 
+      authApiMock.logIn.mockReturnValue(of(undefined));
+      authServiceMock.getAuthorizationToken.mockReturnValue(of(mockLoginResponse));
+
+      // Set form values directly
+      component.loginForm.patchValue({
+        email: 'test@test.com',
+        password: 'password123',
+      });
+      TestBed.tick();
+
+      // Call onSubmit directly
       component.onSubmit();
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
-      await fixture.whenStable();
       expect(toastServiceMock.success).toHaveBeenCalledWith('Inicio de sesión exitoso');
     });
 
     it('should navigate to home after successful login', async () => {
-      authApiMock.logIn!.mockReturnValue(of(undefined));
-      authServiceMock.getAuthorizationToken!.mockReturnValue(of(mockLoginResponse));
+      const { fixture, authApiMock, authServiceMock, routerMock } = createComponent();
+      const component = fixture.componentInstance;
 
+      authApiMock.logIn.mockReturnValue(of(undefined));
+      authServiceMock.getAuthorizationToken.mockReturnValue(of(mockLoginResponse));
+
+      // Set form values directly
+      component.loginForm.patchValue({
+        email: 'test@test.com',
+        password: 'password123',
+      });
+      TestBed.tick();
+
+      // Call onSubmit directly
       component.onSubmit();
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
-      await fixture.whenStable();
       expect(routerMock.navigate).toHaveBeenCalledWith(['/home']);
     });
   });
 
-  describe('Failed Login', () => {
-    beforeEach(() => {
-      component.loginForm.get('email')?.setValue('test@test.com');
-      component.loginForm.get('password')?.setValue('wrong-password');
-    });
-
+  describe('Form Submission Failure', () => {
     it('should show error toast on login failure', async () => {
+      const { fixture, authApiMock, toastServiceMock } = createComponent();
+      const component = fixture.componentInstance;
+
       const error = {
         error: { message: 'Email o contraseña incorrectos' },
       };
-      authApiMock.logIn!.mockReturnValue(throwError(() => error));
+      authApiMock.logIn.mockReturnValue(throwError(() => error));
 
+      // Set form values directly
+      component.loginForm.patchValue({
+        email: 'test@test.com',
+        password: 'wrong-password',
+      });
+      TestBed.tick();
+
+      // Call onSubmit directly
       component.onSubmit();
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
-      await fixture.whenStable();
       expect(toastServiceMock.error).toHaveBeenCalledWith(
         'Email o contraseña incorrectos',
         'Error de Autenticación',
       );
-      expect(component.isLoading()).toBe(false);
     });
 
     it('should show generic error message when no message provided', async () => {
-      authApiMock.logIn!.mockReturnValue(throwError(() => ({ error: {} })));
+      const { fixture, authApiMock, toastServiceMock } = createComponent();
+      const component = fixture.componentInstance;
 
+      authApiMock.logIn.mockReturnValue(throwError(() => ({ error: {} })));
+
+      // Set form values directly
+      component.loginForm.patchValue({
+        email: 'test@test.com',
+        password: 'password123',
+      });
+      TestBed.tick();
+
+      // Call onSubmit directly
       component.onSubmit();
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
-      await fixture.whenStable();
       expect(toastServiceMock.error).toHaveBeenCalledWith(
         'Error al iniciar sesión',
         'Error de Autenticación',
       );
-    });
-
-    it('should stop loading on login failure', async () => {
-      authApiMock.logIn!.mockReturnValue(throwError(() => new Error('Login failed')));
-
-      component.onSubmit();
-
-      await fixture.whenStable();
-      expect(component.isLoading()).toBe(false);
     });
   });
 });

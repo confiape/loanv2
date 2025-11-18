@@ -3,7 +3,6 @@ import {
   Component,
   ElementRef,
   HostListener,
-
   computed,
   effect,
   inject,
@@ -29,8 +28,6 @@ import {
 } from './dropdown.types';
 import { DropdownTriggerComponent } from './dropdown-trigger';
 import { DropdownPanelComponent } from './dropdown-panel';
-
-
 
 @Component({
   selector: 'app-dropdown',
@@ -121,7 +118,9 @@ export class Dropdown {
     this.dataTestId() ? `${this.dataTestId()}-dropdown` : null,
   );
 
-  readonly triggerTestId = computed(() => (this.dataTestId() ? `${this.dataTestId()}-trigger` : null));
+  readonly triggerTestId = computed(() =>
+    this.dataTestId() ? `${this.dataTestId()}-trigger` : null,
+  );
 
   readonly panelTestId = computed(() => (this.dataTestId() ? `${this.dataTestId()}-panel` : null));
 

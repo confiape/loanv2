@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeEach, vi, Mock } from 'vitest';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideZonelessChangeDetection, signal, computed } from '@angular/core';
+import { describe, it, expect, vi } from 'vitest';
+import { TestBed } from '@angular/core/testing';
+import { provideZonelessChangeDetection, signal } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 import { CompaniesListComponent } from './companies-list';
@@ -8,23 +8,18 @@ import { CompanyCrudService } from '../../services/company-crud.service';
 import { CompanyDto } from '@loan/app/shared/openapi';
 
 describe('CompaniesListComponent', () => {
-  let component: CompaniesListComponent;
-  let fixture: ComponentFixture<CompaniesListComponent>;
-  let compiled: HTMLElement;
-  let serviceMock: Partial<CompanyCrudService>;
-
   const mockCompanies: CompanyDto[] = [
     { id: '1', name: 'Company One' },
     { id: '2', name: 'Company Two' },
     { id: '3', name: 'ABC Corp' },
   ];
 
-  beforeEach(async () => {
-    serviceMock = {
+  function createComponent() {
+    const serviceMock: Partial<CompanyCrudService> = {
       items: signal(mockCompanies),
       loading: signal(false),
       showModal: signal(false),
-      editingItem: signal(null),
+      editingItem: signal<CompanyDto | null>(null),
       showDeleteConfirm: signal(false),
       selectedItems: signal(new Set<string>()),
       searchTerm: signal(''),
@@ -47,9 +42,9 @@ describe('CompaniesListComponent', () => {
       removeFromSelection: vi.fn(),
       clearSelection: vi.fn(),
       hasSelection: vi.fn().mockReturnValue(false),
-      selectedItemsData: computed(() => []),
+      selectedItemsData: signal([]),
       getTableData: vi.fn().mockReturnValue(mockCompanies),
-      deleteMessage: computed(() => 'Are you sure?'),
+      deleteMessage: signal('Are you sure?'),
       loadAllItems: vi.fn().mockReturnValue(of(mockCompanies)),
       saveItem: vi.fn().mockReturnValue(of(mockCompanies[0])),
       deleteItem: vi.fn().mockReturnValue(of({})),
@@ -72,143 +67,191 @@ describe('CompaniesListComponent', () => {
       openEditModal: vi.fn(),
     };
 
-    await TestBed.configureTestingModule({
-      imports: [CompaniesListComponent],
+    const fixture = TestBed.configureTestingModule({
       providers: [
         provideZonelessChangeDetection(),
         provideRouter([]),
         { provide: CompanyCrudService, useValue: serviceMock },
       ],
-    }).compileComponents();
+    }).createComponent(CompaniesListComponent);
+    TestBed.tick();
 
-    fixture = TestBed.createComponent(CompaniesListComponent);
-    component = fixture.componentInstance;
-    compiled = fixture.nativeElement;
-    fixture.detectChanges();
-  });
+    return { fixture, serviceMock };
+  }
 
   describe('Component Initialization', () => {
     it('should create', () => {
-      expect(component).toBeTruthy();
+      // Arrange
+      const { fixture } = createComponent();
+
+      // Assert
+      expect(fixture.componentInstance).toBeTruthy();
     });
 
-    it('should inject CompanyCrudService', () => {
-      expect(component['service']).toBeDefined();
-      expect(component['service']).toBe(serviceMock);
+    it('should render as standalone component', () => {
+      // Arrange
+      const { fixture } = createComponent();
+      const metadata = (CompaniesListComponent as any).ɵcmp;
+
+      // Assert
+      expect(metadata.standalone).toBe(true);
     });
   });
 
   describe('Template Rendering', () => {
     it('should render generic-crud-list component', () => {
-      const crudList = compiled.querySelector('app-generic-crud-list');
+      // Arrange
+      const { fixture } = createComponent();
+
+      // Assert
+      const crudList = fixture.nativeElement.querySelector('app-generic-crud-list');
       expect(crudList).toBeTruthy();
     });
 
-    it('should pass service to generic-crud-list', () => {
-      const crudList = compiled.querySelector('app-generic-crud-list');
-      expect(crudList).toBeTruthy();
-      // The service is passed as an input binding
-    });
+    it('should render with proper structure', () => {
+      // Arrange
+      const { fixture } = createComponent();
 
-    it('should pass testIdPrefix to generic-crud-list', () => {
-      const crudList = compiled.querySelector('app-generic-crud-list');
-      expect(crudList).toBeTruthy();
-      // The testIdPrefix is passed as 'companies'
+      // Assert
+      const children = fixture.nativeElement.children;
+      expect(children.length).toBeGreaterThan(0);
+
+      const genericCrud = fixture.nativeElement.querySelector('app-generic-crud-list');
+      expect(genericCrud).toBeTruthy();
     });
   });
 
-  describe('Integration with GenericCrudListComponent', () => {
-    it('should display companies list through generic component', () => {
-      // The actual rendering happens in GenericCrudListComponent
-      // This test verifies the component is properly configured
-      expect(serviceMock.getTableColumns).toBeDefined();
-      expect(serviceMock.getFormFields).toBeDefined();
-      expect(serviceMock.getItemTypeName).toBeDefined();
+  describe('Service Integration', () => {
+    it('should inject CompanyCrudService', () => {
+      // Arrange
+      const { fixture, serviceMock } = createComponent();
+      const component = fixture.componentInstance as any;
+
+      // Assert
+      expect(component['service']).toBeDefined();
+      expect(component['service']).toBe(serviceMock);
     });
 
-    it('should pass testIdPrefix to GenericCrudListComponent', () => {
-      const crudList = compiled.querySelector('app-generic-crud-list');
-      expect(crudList).toBeTruthy();
-      // The testIdPrefix is passed as 'companies' through the component's template
-      // Verify the element exists which confirms the binding is present
-    });
-  });
+    it('should provide CRUD operations', () => {
+      // Arrange
+      const { serviceMock } = createComponent();
 
-  describe('Service Methods Access', () => {
-    it('should have access to CRUD operations', () => {
+      // Assert
       expect(typeof serviceMock.loadItems).toBe('function');
       expect(typeof serviceMock.onNewItem).toBe('function');
       expect(typeof serviceMock.onEditItem).toBe('function');
       expect(typeof serviceMock.onDeleteItem).toBe('function');
     });
 
-    it('should have access to table configuration', () => {
+    it('should provide table configuration', () => {
+      // Arrange
+      const { serviceMock } = createComponent();
+
+      // Act
       const columns = serviceMock.getTableColumns!();
+
+      // Assert
       expect(columns).toHaveLength(2);
       expect(columns[0].key).toBe('name');
     });
 
-    it('should have access to form configuration', () => {
+    it('should provide form configuration', () => {
+      // Arrange
+      const { serviceMock } = createComponent();
+
+      // Act
       const fields = serviceMock.getFormFields!();
+
+      // Assert
       expect(fields).toHaveLength(1);
       expect(fields[0].key).toBe('name');
     });
 
-    it('should have access to metadata', () => {
+    it('should provide metadata', () => {
+      // Arrange
+      const { serviceMock } = createComponent();
+
+      // Assert
       expect(serviceMock.getRouteBasePath!()).toBe('/companies');
       expect(serviceMock.getItemTypeName!()).toBe('company');
       expect(serviceMock.getItemTypePluralName!()).toBe('companies');
     });
   });
 
-  describe('Component Properties', () => {
-    it('should be a standalone component', () => {
-      // Verify component metadata
-      const metadata = (CompaniesListComponent as any).ɵcmp;
-      expect(metadata.standalone).toBe(true);
-    });
+  describe('Service State Access', () => {
+    it('should provide access to items', () => {
+      // Arrange
+      const { serviceMock } = createComponent();
 
-    it('should render GenericCrudListComponent with service', () => {
-      const crudListElement = compiled.querySelector('app-generic-crud-list');
-      expect(crudListElement).toBeTruthy();
-    });
-  });
+      // Act
+      const items = (serviceMock.items as any)();
 
-  describe('Template Structure', () => {
-    it('should have minimal template delegating to GenericCrudListComponent', () => {
-      const children = compiled.children;
-      expect(children.length).toBeGreaterThan(0);
-
-      // Should primarily contain the generic crud list
-      const genericCrud = compiled.querySelector('app-generic-crud-list');
-      expect(genericCrud).toBeTruthy();
-    });
-  });
-
-  describe('Service Signals', () => {
-    it('should access items signal from service', () => {
-      const items = component['service'].items();
+      // Assert
       expect(items).toEqual(mockCompanies);
     });
 
-    it('should access loading signal from service', () => {
-      const loading = component['service'].loading();
+    it('should provide access to loading state', () => {
+      // Arrange
+      const { serviceMock } = createComponent();
+
+      // Act
+      const loading = (serviceMock.loading as any)();
+
+      // Assert
       expect(loading).toBe(false);
     });
 
-    it('should access showModal signal from service', () => {
-      const showModal = component['service'].showModal();
+    it('should provide access to modal state', () => {
+      // Arrange
+      const { serviceMock } = createComponent();
+
+      // Act
+      const showModal = (serviceMock.showModal as any)();
+
+      // Assert
       expect(showModal).toBe(false);
     });
 
-    it('should access editingItem signal from service', () => {
-      const editingItem = component['service'].editingItem();
+    it('should provide access to editing item', () => {
+      // Arrange
+      const { serviceMock } = createComponent();
+
+      // Act
+      const editingItem = (serviceMock.editingItem as any)();
+
+      // Assert
       expect(editingItem).toBeNull();
     });
 
-    it('should access searchTerm signal from service', () => {
-      const searchTerm = component['service'].searchTerm();
+    it('should provide access to search term', () => {
+      // Arrange
+      const { serviceMock } = createComponent();
+
+      // Act
+      const searchTerm = (serviceMock.searchTerm as any)();
+
+      // Assert
       expect(searchTerm).toBe('');
+    });
+  });
+
+  describe('Component Composition', () => {
+    it('should delegate rendering to GenericCrudListComponent', () => {
+      // Arrange
+      const { fixture } = createComponent();
+
+      // Assert
+      const genericCrud = fixture.nativeElement.querySelector('app-generic-crud-list');
+      expect(genericCrud).toBeTruthy();
+    });
+
+    it('should pass service to child component', () => {
+      // Arrange
+      const { fixture, serviceMock } = createComponent();
+      const component = fixture.componentInstance as any;
+
+      // Assert
+      expect(component['service']).toBe(serviceMock);
     });
   });
 });

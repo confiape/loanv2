@@ -36,11 +36,7 @@ import { InputSize, ValidationState } from '../input/input-helpers';
         </div>
         @if (label()) {
           <div class="ms-2">
-            <label
-              [for]="checkboxId()"
-              [class]="labelClasses()"
-              [attr.data-testid]="labelTestId()"
-            >
+            <label [for]="checkboxId()" [class]="labelClasses()" [attr.data-testid]="labelTestId()">
               {{ label() }}
             </label>
             @if (helpText() && validationState() === 'none') {

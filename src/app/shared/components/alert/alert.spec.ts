@@ -1,178 +1,339 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideZonelessChangeDetection } from '@angular/core';
+// Angular testing
+import { TestBed } from '@angular/core/testing';
+import { provideZonelessChangeDetection, inputBinding, outputBinding, signal } from '@angular/core';
+
+// Testing library
+import { within } from '@testing-library/dom';
+import userEvent from '@testing-library/user-event';
+
+// Vitest
+import { describe, it, expect } from 'vitest';
+
+// Component under test
 import { Alert } from './alert';
 
 describe('Alert', () => {
-  let fixture: ComponentFixture<Alert>;
-  let component: Alert;
-
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [Alert],
-      providers: [provideZonelessChangeDetection()],
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(Alert);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
   it('should create', () => {
-    expect(component).toBeTruthy();
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(Alert, {
+      bindings: [],
+    });
+    TestBed.tick();
+
+    // Assert
+    expect(fixture.componentInstance).toBeTruthy();
   });
 
   it('should render with default info variant', () => {
-    const alertEl = fixture.nativeElement.querySelector('[role="alert"]');
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(Alert, {
+      bindings: [],
+    });
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
+
+    // Assert
+    const alertEl = queries.getByRole('alert');
     expect(alertEl).toBeTruthy();
     expect(alertEl.className).toContain('bg-accent/10');
   });
 
   it('should render success variant', () => {
-    fixture.componentRef.setInput('variant', 'success');
-    fixture.detectChanges();
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(Alert, {
+      bindings: [inputBinding('variant', () => 'success')],
+    });
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
 
-    const alertEl = fixture.nativeElement.querySelector('[role="alert"]');
+    // Assert
+    const alertEl = queries.getByRole('alert');
     expect(alertEl.className).toContain('bg-success/10');
   });
 
   it('should render error variant', () => {
-    fixture.componentRef.setInput('variant', 'error');
-    fixture.detectChanges();
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(Alert, {
+      bindings: [inputBinding('variant', () => 'error')],
+    });
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
 
-    const alertEl = fixture.nativeElement.querySelector('[role="alert"]');
+    // Assert
+    const alertEl = queries.getByRole('alert');
     expect(alertEl.className).toContain('bg-error/10');
   });
 
   it('should render warning variant', () => {
-    fixture.componentRef.setInput('variant', 'warning');
-    fixture.detectChanges();
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(Alert, {
+      bindings: [inputBinding('variant', () => 'warning')],
+    });
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
 
-    const alertEl = fixture.nativeElement.querySelector('[role="alert"]');
+    // Assert
+    const alertEl = queries.getByRole('alert');
     expect(alertEl.className).toContain('bg-warning/10');
   });
 
   it('should display icon by default', () => {
-    const icon = fixture.nativeElement.querySelector('ng-icon');
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(Alert, {
+      bindings: [],
+    });
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
+
+    // Assert
+    const icon = queries.getByRole('alert').querySelector('ng-icon');
     expect(icon).toBeTruthy();
   });
 
   it('should hide icon when showIcon is false', () => {
-    fixture.componentRef.setInput('showIcon', false);
-    fixture.detectChanges();
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(Alert, {
+      bindings: [inputBinding('showIcon', () => false)],
+    });
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
 
-    const icon = fixture.nativeElement.querySelector('ng-icon');
+    // Assert
+    const icon = queries.getByRole('alert').querySelector('ng-icon');
     expect(icon).toBeFalsy();
   });
 
   it('should render title when provided', () => {
-    fixture.componentRef.setInput('title', 'Test Title');
-    fixture.detectChanges();
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(Alert, {
+      bindings: [inputBinding('title', () => 'Test Title')],
+    });
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
 
-    const titleEl = fixture.nativeElement.querySelector('.font-medium');
+    // Assert
+    const titleEl = queries.getByText('Test Title');
     expect(titleEl).toBeTruthy();
-    expect(titleEl.textContent).toContain('Test Title');
+    expect(titleEl.className).toContain('font-medium');
   });
 
   it('should show dismiss button when dismissible is true', () => {
-    fixture.componentRef.setInput('dismissible', true);
-    fixture.detectChanges();
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(Alert, {
+      bindings: [inputBinding('dismissible', () => true)],
+    });
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
 
-    const closeBtn = fixture.nativeElement.querySelector('button[aria-label="Close alert"]');
+    // Assert
+    const closeBtn = queries.getByRole('button', { name: 'Close alert' });
     expect(closeBtn).toBeTruthy();
   });
 
   it('should not show dismiss button by default', () => {
-    const closeBtn = fixture.nativeElement.querySelector('button[aria-label="Close alert"]');
-    expect(closeBtn).toBeFalsy();
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(Alert, {
+      bindings: [],
+    });
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
+
+    // Assert
+    const closeBtn = queries.queryByRole('button', { name: 'Close alert' });
+    expect(closeBtn).toBeNull();
   });
 
-  it('should emit dismissed event when close button clicked', () => {
-    fixture.componentRef.setInput('dismissible', true);
-    fixture.detectChanges();
-
-    let dismissed = false;
-    component.dismissed.subscribe(() => {
-      dismissed = true;
+  it('should emit dismissed event when close button clicked', async () => {
+    // Arrange
+    const dismissedSignal = signal(false);
+    const fixture = TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(Alert, {
+      bindings: [
+        inputBinding('dismissible', () => true),
+        outputBinding('dismissed', () => dismissedSignal.set(true)),
+      ],
     });
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
+    const user = userEvent.setup();
 
-    const closeBtn = fixture.nativeElement.querySelector(
-      'button[aria-label="Close alert"]',
-    ) as HTMLButtonElement;
-    closeBtn.click();
+    // Act
+    const closeBtn = queries.getByRole('button', { name: 'Close alert' });
+    await user.click(closeBtn);
+    TestBed.tick();
 
-    expect(dismissed).toBeTruthy();
+    // Assert
+    expect(dismissedSignal()).toBe(true);
   });
 
   it('should apply border when withBorder is true', () => {
-    fixture.componentRef.setInput('withBorder', true);
-    fixture.detectChanges();
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(Alert, {
+      bindings: [inputBinding('withBorder', () => true)],
+    });
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
 
-    const alertEl = fixture.nativeElement.querySelector('[role="alert"]');
+    // Assert
+    const alertEl = queries.getByRole('alert');
     expect(alertEl.className).toContain('border');
   });
 
   it('should have correct accessibility attributes', () => {
-    const alertEl = fixture.nativeElement.querySelector('[role="alert"]');
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(Alert, {
+      bindings: [],
+    });
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
+
+    // Assert
+    const alertEl = queries.getByRole('alert');
     expect(alertEl.getAttribute('role')).toBe('alert');
     expect(alertEl.getAttribute('aria-live')).toBe('polite');
   });
 
   it('should hide icon aria from screen readers', () => {
-    const iconContainer = fixture.nativeElement.querySelector('.shrink-0');
-    expect(iconContainer.getAttribute('aria-hidden')).toBe('true');
+    // Arrange
+    const fixture = TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    }).createComponent(Alert, {
+      bindings: [],
+    });
+    TestBed.tick();
+    const queries = within(fixture.nativeElement);
+
+    // Assert
+    const iconContainer = queries.getByRole('alert').querySelector('.shrink-0');
+    expect(iconContainer?.getAttribute('aria-hidden')).toBe('true');
   });
 
   describe('data-testid rendering', () => {
     it('should not render data-testid when not provided', () => {
-      const compiled = fixture.nativeElement as HTMLElement;
-      const alert = compiled.querySelector('[data-testid]');
-      expect(alert).toBeFalsy();
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: [provideZonelessChangeDetection()],
+      }).createComponent(Alert, {
+        bindings: [],
+      });
+      TestBed.tick();
+      const queries = within(fixture.nativeElement);
+
+      // Assert
+      const alert = queries.queryByTestId('error-alert');
+      expect(alert).toBeNull();
     });
 
     it('should render data-testid on alert element (main element)', () => {
-      fixture.componentRef.setInput('dataTestId', 'error-alert');
-      fixture.detectChanges();
-      const compiled = fixture.nativeElement as HTMLElement;
-      const alert = compiled.querySelector('[data-testid="error-alert"]');
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: [provideZonelessChangeDetection()],
+      }).createComponent(Alert, {
+        bindings: [inputBinding('dataTestId', () => 'error-alert')],
+      });
+      TestBed.tick();
+      const queries = within(fixture.nativeElement);
+
+      // Assert
+      const alert = queries.getByTestId('error-alert');
       expect(alert).toBeTruthy();
     });
 
     it('should render data-testid on icon with -icon suffix', () => {
-      fixture.componentRef.setInput('dataTestId', 'success-alert');
-      fixture.componentRef.setInput('showIcon', true);
-      fixture.detectChanges();
-      const compiled = fixture.nativeElement as HTMLElement;
-      const icon = compiled.querySelector('[data-testid="success-alert-icon"]');
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: [provideZonelessChangeDetection()],
+      }).createComponent(Alert, {
+        bindings: [
+          inputBinding('dataTestId', () => 'success-alert'),
+          inputBinding('showIcon', () => true),
+        ],
+      });
+      TestBed.tick();
+      const queries = within(fixture.nativeElement);
+
+      // Assert
+      const icon = queries.getByTestId('success-alert-icon');
       expect(icon).toBeTruthy();
     });
 
     it('should render data-testid on content with -content suffix', () => {
-      fixture.componentRef.setInput('dataTestId', 'info-alert');
-      fixture.detectChanges();
-      const compiled = fixture.nativeElement as HTMLElement;
-      const content = compiled.querySelector('[data-testid="info-alert-content"]');
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: [provideZonelessChangeDetection()],
+      }).createComponent(Alert, {
+        bindings: [inputBinding('dataTestId', () => 'info-alert')],
+      });
+      TestBed.tick();
+      const queries = within(fixture.nativeElement);
+
+      // Assert
+      const content = queries.getByTestId('info-alert-content');
       expect(content).toBeTruthy();
     });
 
     it('should render data-testid on close button with -close-btn suffix', () => {
-      fixture.componentRef.setInput('dataTestId', 'warning-alert');
-      fixture.componentRef.setInput('dismissible', true);
-      fixture.detectChanges();
-      const compiled = fixture.nativeElement as HTMLElement;
-      const closeBtn = compiled.querySelector('button[data-testid="warning-alert-close-btn"]');
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: [provideZonelessChangeDetection()],
+      }).createComponent(Alert, {
+        bindings: [
+          inputBinding('dataTestId', () => 'warning-alert'),
+          inputBinding('dismissible', () => true),
+        ],
+      });
+      TestBed.tick();
+      const queries = within(fixture.nativeElement);
+
+      // Assert
+      const closeBtn = queries.getByTestId('warning-alert-close-btn');
       expect(closeBtn).toBeTruthy();
     });
 
     it('should render all data-testid attributes for dismissible alert', () => {
-      fixture.componentRef.setInput('dataTestId', 'notification');
-      fixture.componentRef.setInput('dismissible', true);
-      fixture.componentRef.setInput('showIcon', true);
-      fixture.detectChanges();
-      const compiled = fixture.nativeElement as HTMLElement;
-      expect(compiled.querySelector('[data-testid="notification"]')).toBeTruthy();
-      expect(compiled.querySelector('[data-testid="notification-icon"]')).toBeTruthy();
-      expect(compiled.querySelector('[data-testid="notification-content"]')).toBeTruthy();
-      expect(compiled.querySelector('[data-testid="notification-close-btn"]')).toBeTruthy();
+      // Arrange
+      const fixture = TestBed.configureTestingModule({
+        providers: [provideZonelessChangeDetection()],
+      }).createComponent(Alert, {
+        bindings: [
+          inputBinding('dataTestId', () => 'notification'),
+          inputBinding('dismissible', () => true),
+          inputBinding('showIcon', () => true),
+        ],
+      });
+      TestBed.tick();
+      const queries = within(fixture.nativeElement);
+
+      // Assert
+      expect(queries.getByTestId('notification')).toBeTruthy();
+      expect(queries.getByTestId('notification-icon')).toBeTruthy();
+      expect(queries.getByTestId('notification-content')).toBeTruthy();
+      expect(queries.getByTestId('notification-close-btn')).toBeTruthy();
     });
   });
 });
