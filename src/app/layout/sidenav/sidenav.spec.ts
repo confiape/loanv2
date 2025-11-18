@@ -1,11 +1,6 @@
 // Angular testing
 import { TestBed } from '@angular/core/testing';
-import {
-  provideZonelessChangeDetection,
-  inputBinding,
-  outputBinding,
-  signal,
-} from '@angular/core';
+import { provideZonelessChangeDetection, inputBinding, outputBinding, signal } from '@angular/core';
 import { provideRouter } from '@angular/router';
 
 // Testing library
@@ -315,10 +310,7 @@ describe('SidenavComponent', () => {
       const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
       }).createComponent(SidenavComponent, {
-        bindings: [
-          inputBinding('items', () => mockItems),
-          inputBinding('collapsible', () => true),
-        ],
+        bindings: [inputBinding('items', () => mockItems), inputBinding('collapsible', () => true)],
       });
       TestBed.tick();
 
@@ -507,9 +499,7 @@ describe('SidenavComponent', () => {
       }).createComponent(SidenavComponent, {
         bindings: [
           inputBinding('items', () => mockItems),
-          outputBinding('selectionChange', (item: SidenavItem) =>
-            selectionChangeSignal.set(item),
-          ),
+          outputBinding('selectionChange', (item: SidenavItem) => selectionChangeSignal.set(item)),
         ],
       });
       TestBed.tick();
@@ -874,10 +864,7 @@ describe('SidenavComponent', () => {
       const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
       }).createComponent(SidenavComponent, {
-        bindings: [
-          inputBinding('collapsible', () => true),
-          inputBinding('showToggle', () => true),
-        ],
+        bindings: [inputBinding('collapsible', () => true), inputBinding('showToggle', () => true)],
       });
       TestBed.tick();
 

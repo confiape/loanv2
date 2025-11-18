@@ -1,13 +1,5 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  input,
-  inject,
-  output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, inject, output } from '@angular/core';
 import { generateModalTestIds } from './modal-helpers';
-
-
 
 @Component({
   selector: 'app-modal-header',

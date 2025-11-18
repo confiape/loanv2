@@ -19,7 +19,7 @@ export default defineConfig({
       enabled: true,
       provider: 'v8',
       all: true,
-      reporter: ['text', 'lcov' , 'html'],
+      reporter: ['text', 'lcov', 'html'],
       include: ['src/**/*.ts'],
       exclude: [
         '**/node_modules/**',

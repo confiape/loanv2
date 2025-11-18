@@ -13,10 +13,7 @@ const mockRole1: RoleDto = {
   id: 'role-1',
   name: 'Admin',
   roles: [],
-  permissions: [
-    { name: 'read' },
-    { name: 'write' },
-  ],
+  permissions: [{ name: 'read' }, { name: 'write' }],
 };
 
 const mockRole2: RoleDto = {
@@ -500,7 +497,7 @@ describe('RoleCrudService', () => {
       expect(nameField?.type).toBe('text');
       expect(nameField?.placeholder).toBe('Enter role name');
       expect(nameField?.helpText).toBe(
-        'Role name must be between 2-40 characters with no special characters'
+        'Role name must be between 2-40 characters with no special characters',
       );
     });
 

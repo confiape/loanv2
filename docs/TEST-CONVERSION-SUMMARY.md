@@ -7,12 +7,14 @@ This document summarizes the complete refactoring of unit tests from `@testing-l
 ## Final Results
 
 **Test Execution:**
+
 - **Total Tests:** 1095
 - **Passing:** 1044 (95.3%)
 - **Failing:** 51 (4.7%)
 - **Test Files:** 46 total (38 passing, 8 with failures)
 
 **Comparison with Initial State:**
+
 - **Before:** 860/1098 passing (78.3%)
 - **After:** 1044/1095 passing (95.3%)
 - **Improvement:** +17% pass rate
@@ -20,6 +22,7 @@ This document summarizes the complete refactoring of unit tests from `@testing-l
 ## Files Converted
 
 ### Layout Components (6 files)
+
 1. ✅ `src/app/layout/main-layout/main-layout.spec.ts` - 9 tests
 2. ✅ `src/app/layout/navbar/navbar.spec.ts` - 26 tests
 3. ✅ `src/app/layout/sidenav/sidenav.spec.ts` - 48 tests
@@ -28,6 +31,7 @@ This document summarizes the complete refactoring of unit tests from `@testing-l
 6. ✅ `src/app/layout/breadcrumb/breadcrumb.spec.ts` - 7 tests
 
 ### Shared Components (24 files)
+
 1. ✅ `src/app/shared/components/button/button.spec.ts` - 17 tests
 2. ✅ `src/app/shared/components/button-group/button-group.spec.ts` - 9 tests
 3. ✅ `src/app/shared/components/button-group/button-group-button.spec.ts` - 6 tests
@@ -54,14 +58,17 @@ This document summarizes the complete refactoring of unit tests from `@testing-l
 24. ✅ `src/app/shared/components/generic-crud/generic-crud-form/generic-crud-form.spec.ts` - 22 tests
 
 ### Shared UI (1 file)
+
 1. ✅ `src/app/shared/ui/table/table.spec.ts` - 39 tests
 
 ### Feature Components (3 files)
+
 1. ✅ `src/app/features/auth/pages/login/login.component.spec.ts` - 11 tests
 2. ✅ `src/app/features/companies/pages/companies-list/companies-list.spec.ts` - 18 tests
 3. ✅ `src/app/features/roles/pages/roles-list/roles-list.spec.ts` - 24 tests
 
 ### Services (3 files)
+
 1. ✅ `src/app/features/companies/services/company-crud.service.spec.ts` - 12 tests
 2. ✅ `src/app/features/roles/services/role-crud.service.spec.ts` - 12 tests
 3. ✅ `src/app/shared/components/modal/modal.service.spec.ts` - 8 tests
@@ -69,26 +76,26 @@ This document summarizes the complete refactoring of unit tests from `@testing-l
 ## Key Changes Made
 
 ### 1. Import Changes
+
 **Before:**
+
 ```typescript
 import { render } from '@testing-library/angular';
 ```
 
 **After:**
+
 ```typescript
 import { TestBed } from '@angular/core/testing';
-import {
-  provideZonelessChangeDetection,
-  inputBinding,
-  outputBinding,
-  signal,
-} from '@angular/core';
+import { provideZonelessChangeDetection, inputBinding, outputBinding, signal } from '@angular/core';
 import { within } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 ```
 
 ### 2. Component Creation Pattern
+
 **Before:**
+
 ```typescript
 const { container, fixture } = await render(MyComponent, {
   componentInputs: { label: 'Click me' },
@@ -100,6 +107,7 @@ const { container, fixture } = await render(MyComponent, {
 ```
 
 **After:**
+
 ```typescript
 const emittedValue = signal<string | null>(null);
 const fixture = TestBed.configureTestingModule({
@@ -115,7 +123,9 @@ const queries = within(fixture.nativeElement);
 ```
 
 ### 3. Test Structure
+
 **Before:**
+
 ```typescript
 it('should emit output when button clicked', async () => {
   const mockFn = vi.fn();
@@ -131,6 +141,7 @@ it('should emit output when button clicked', async () => {
 ```
 
 **After:**
+
 ```typescript
 it('should emit output when button clicked', async () => {
   // Arrange
@@ -157,6 +168,7 @@ it('should emit output when button clicked', async () => {
 ## Common Issues Fixed
 
 ### 1. Signal Mock Errors
+
 **Problem:** Using `vi.fn().mockReturnValue()` for signal properties
 **Solution:** Use actual `signal()` from `@angular/core`
 
@@ -175,6 +187,7 @@ const mockService = {
 ```
 
 ### 2. Input Immutability
+
 **Problem:** Trying to modify inputs after binding with `inputBinding()`
 **Solution:** Inputs are read-only; use `fixture.componentRef.setInput()` for dynamic changes
 
@@ -194,6 +207,7 @@ TestBed.tick();
 ```
 
 ### 3. querySelector Type Parameters
+
 **Problem:** TypeScript strict mode doesn't allow type parameters on untyped querySelector
 **Solution:** Remove type parameters or cast result
 
@@ -206,6 +220,7 @@ const input = fixture.nativeElement.querySelector('input') as HTMLInputElement;
 ```
 
 ### 4. Testing Library Matchers
+
 **Problem:** Vitest doesn't have all Testing Library matchers
 **Solution:** Use standard DOM assertions
 
@@ -218,6 +233,7 @@ expect(button.hasAttribute('disabled')).toBe(true);
 ```
 
 ### 5. Async Test Functions
+
 **Problem:** Tests were marked as `async` unnecessarily
 **Solution:** Remove `async` keyword when not using `await` (except for `userEvent`)
 
@@ -324,6 +340,7 @@ All tests compile successfully, and the pass rate has improved from 78.3% to 95.
 ## Update: Additional Test Fixes (Session 2)
 
 ### 📊 Final Results After Continued Fixes
+
 - **Tests Passing**: 1085/1095 (99.1%) ⬆️ (before session 2: 95.3%)
 - **Tests Failing**: 10 ⬇️ (before: 51)
 - **Improvement**: +41 tests fixed in this session (+3.8% pass rate)
@@ -331,46 +348,55 @@ All tests compile successfully, and the pass rate has improved from 78.3% to 95.
 ### ✅ Additional Tests Fixed (Session 2)
 
 **7. Avatar Tests (3 additional fixes)**
+
 - Added `TestBed.resetTestingModule()` between multiple component creations
 - Fixed "adjusts placeholder icon size when avatar size changes"
 - Fixed "supports multiple indicator positions"
 - Fixed "updates when inputs change via rerender"
 
 **8. Apps-Menu (1 additional fix)**
+
 - Added `TestBed.resetTestingModule()` before second component creation
 - Fixed "updates when apps change"
 
 **9. Test-ID Utils (1 fix)**
+
 - Fixed `generateTestId()` to handle empty suffix correctly
 - Changed from `suffix ? ...` to `suffix !== undefined ? ...`
 
 **10. Password-Input (5 fixes)**
+
 - Replaced `getByRole('textbox')` with `querySelector('input')`
 - Password inputs with type="password" don't expose textbox role
 - All 5 password-input tests now passing
 
 **11. Login Component (5 fixes)**
+
 - Changed from DOM event simulation to direct method calls
 - Use `component.loginForm.patchValue()` instead of setting input values
 - Call `component.onSubmit()` directly instead of clicking submit button
 - Ensures FormControl values are properly synchronized
 
 **12. Navbar Component (9 fixes)**
+
 - Injected `DestroyRef` in NavbarComponent
 - Pass `destroyRef` to `takeUntilDestroyed()` operator
 - `takeUntilDestroyed()` requires injection context when called in methods
 
 **13. Dropdown Advanced (3 fixes)**
+
 - Added `TestBed.tick()` after all `MouseEvent` dispatches
 - CDK Overlay requires tick() to properly render/update panel
 - Added tick() after opening panel, clicking items, and input events
 
 **14. Dropdown Basic (17 fixes via automation)**
+
 - Automatically added `TestBed.tick()` after all `dispatchEvent` calls
 - Used `sed` to insert tick() after mouseenter, mouseleave, and click events
 - Fixed most overlay rendering issues systematically
 
 ### 📝 Additional Commits (Session 2)
+
 1. `58b960b` - avatar, apps-menu, test-id fixes
 2. `edcffd3` - password-input fixes
 3. `a5a54ed` - login form submission fixes
@@ -381,12 +407,14 @@ All tests compile successfully, and the pass rate has improved from 78.3% to 95.
 ### 🔄 Remaining Tests (10 - All dropdown-basic)
 
 **Hover Strategy Tests (4):**
+
 - "should open panel on mouse enter"
 - "should close panel on mouse leave after delay"
 - "should not close if hovering over panel"
 - "should not respond to click events when using hover strategy"
 
 **Different Variants Tests (6):**
+
 - "should apply soft variant classes"
 - "should apply ghost variant classes"
 - "should apply small size classes"
@@ -395,11 +423,13 @@ All tests compile successfully, and the pass rate has improved from 78.3% to 95.
 - "should calculate positions for top-start placement"
 
 **Analysis**: These remaining tests likely need:
+
 - Additional timer/delay handling for hover strategy
 - Input binding adjustments for variant properties
 - Component configuration for positioning tests
 
 ### 🎯 Total Session 2 Impact
+
 - **Started**: 51 failing tests (95.3% pass rate)
 - **Ended**: 10 failing tests (99.1% pass rate)
 - **Fixed**: 41 tests (80% of failures resolved)
@@ -413,6 +443,7 @@ All changes committed and pushed to branch `claude/refactor-angular-tests-01JGRy
 ## Update: Complete Test Suite Fixed (Session 3)
 
 ### 🎉 FINAL RESULTS - 100% TESTS PASSING!
+
 - **Tests Passing**: 1095/1095 (100%) ⬆️ (before session 3: 99.1%)
 - **Tests Failing**: 0 ✅ (before: 10)
 - **Improvement**: +10 tests fixed in this session (+0.9% to reach 100%)
@@ -420,6 +451,7 @@ All changes committed and pushed to branch `claude/refactor-angular-tests-01JGRy
 ### ✅ Final 10 Tests Fixed (Session 3)
 
 **15. Dropdown Basic - Hover Strategy (4 fixes)**
+
 - "should open panel on mouse enter"
 - "should close panel on mouse leave after delay"
 - "should not close if hovering over panel"
@@ -428,6 +460,7 @@ All changes committed and pushed to branch `claude/refactor-angular-tests-01JGRy
 **Key Fix**: Added `TestBed.tick()` after `hostComponent.openStrategy.set('hover')` and after `setTimeout()` for async delays.
 
 **16. Dropdown Basic - Variants (3 fixes)**
+
 - "should apply soft variant classes"
 - "should apply ghost variant classes"
 - "should apply small size classes"
@@ -435,6 +468,7 @@ All changes committed and pushed to branch `claude/refactor-angular-tests-01JGRy
 **Key Fix**: Added `TestBed.tick()` after `hostComponent.triggerConfig.set()` to propagate signal changes to DOM classes.
 
 **17. Dropdown Basic - Positioning (3 fixes)**
+
 - "should calculate positions for bottom-start placement"
 - "should calculate positions for top-end placement"
 - "should calculate positions for top-start placement"
@@ -461,34 +495,39 @@ expect(dropdown.isOpen()).toBe(true); // PASSES!
 This is crucial in zoneless change detection where signals drive reactivity but need explicit ticks to propagate.
 
 ### 📝 Final Commit (Session 3)
+
 1. `6bbc257` - fix: resolve final 10 dropdown-basic test failures
 
 ### 🎯 Total Project Impact (All Sessions)
 
-| Metric | Initial | Final | Total Improvement |
-|--------|---------|-------|-------------------|
-| **Pass Rate** | 78.3% | 100% | +21.7% |
-| **Tests Passing** | 860 | 1095 | +235 |
-| **Tests Failing** | 238 | 0 | -238 (-100%) |
-| **Files Converted** | 0 | 46 | 46 files |
+| Metric              | Initial | Final | Total Improvement |
+| ------------------- | ------- | ----- | ----------------- |
+| **Pass Rate**       | 78.3%   | 100%  | +21.7%            |
+| **Tests Passing**   | 860     | 1095  | +235              |
+| **Tests Failing**   | 238     | 0     | -238 (-100%)      |
+| **Files Converted** | 0       | 46    | 46 files          |
 
 ### 📊 Session Breakdown
 
 **Session 1**: Initial conversion
+
 - Converted 40+ test files from `render()` to `TestBed.createComponent()`
 - 860/1098 passing (78.3%)
 
 **Session 2**: Major bug fixes
+
 - Fixed 41 tests (avatar, apps-menu, test-id, password-input, login, navbar, dropdowns)
 - 1085/1095 passing (99.1%)
 
 **Session 3**: Final 10 tests
+
 - Fixed all remaining dropdown tests (hover, variants, positioning)
 - 1095/1095 passing (100%) ✅
 
 ### 🏆 Achievement Unlocked: 100% Test Coverage
 
 All 1095 unit tests in the Angular 20.1 project are now:
+
 - ✅ **Passing** without errors
 - ✅ **Using modern Angular 20.1 API** (inputBinding/outputBinding)
 - ✅ **Type-safe** with strict TypeScript
@@ -505,6 +544,7 @@ All 1095 unit tests in the Angular 20.1 project are now:
 ### 🚀 Ready for Production
 
 The test suite is now in excellent condition with:
+
 - Zero failing tests
 - Modern Angular 20.1 patterns
 - Comprehensive test coverage

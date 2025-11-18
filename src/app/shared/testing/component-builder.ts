@@ -1,5 +1,14 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Type, Provider, EnvironmentProviders, InputSignal, OutputEmitterRef, inputBinding, outputBinding, provideZonelessChangeDetection } from '@angular/core';
+import {
+  Type,
+  Provider,
+  EnvironmentProviders,
+  InputSignal,
+  OutputEmitterRef,
+  inputBinding,
+  outputBinding,
+  provideZonelessChangeDetection,
+} from '@angular/core';
 
 /**
  * Type helper to extract the value type from InputSignal<T>
@@ -58,9 +67,7 @@ export class ComponentTestBuilder<T> {
    */
   withInput<K extends keyof T>(property: K, value: InputSignalValue<T[K]>): this {
     // Remove previous binding for this property
-    this.bindings = this.bindings.filter(
-      (b) => !this.isInputBinding(b, property as string)
-    );
+    this.bindings = this.bindings.filter((b) => !this.isInputBinding(b, property as string));
     this.bindings.push(inputBinding(property as string, () => value));
     return this;
   }
@@ -69,14 +76,9 @@ export class ComponentTestBuilder<T> {
    * Configure an output binding
    * Automatically replaces previous binding for the same property
    */
-  withOutput<K extends keyof T>(
-    property: K,
-    handler: (value: any) => void
-  ): this {
+  withOutput<K extends keyof T>(property: K, handler: (value: any) => void): this {
     // Remove previous binding for this property
-    this.bindings = this.bindings.filter(
-      (b) => !this.isOutputBinding(b, property as string)
-    );
+    this.bindings = this.bindings.filter((b) => !this.isOutputBinding(b, property as string));
     this.bindings.push(outputBinding(property as string, handler));
     return this;
   }

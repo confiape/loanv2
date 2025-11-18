@@ -27,17 +27,17 @@
           d="M12 4v16m8-8H4"
         ></path>
       </svg>
-      New {{ service().getItemTypeName().charAt(0).toUpperCase() +
-      service().getItemTypeName().slice(1) }}
+      New
+      {{
+        service().getItemTypeName().charAt(0).toUpperCase() + service().getItemTypeName().slice(1)
+      }}
     </app-button>
   </div>
 
   <!-- Search Bar -->
   <div class="mb-4">
     <div class="relative">
-      <div
-        class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none"
-      >
+      <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
         <svg
           class="w-4 h-4 text-text-secondary"
           aria-hidden="true"
@@ -148,7 +148,10 @@
         Showing
         <span class="font-semibold text-text-primary"
           >{{ (service().currentPage() - 1) * service().pageSize() + 1 }}-{{
-            Math.min(service().currentPage() * service().pageSize(), service().filteredItems().length)
+            Math.min(
+              service().currentPage() * service().pageSize(),
+              service().filteredItems().length
+            )
           }}</span
         >
         of
@@ -211,9 +214,7 @@
       [dismissible]="true"
       [dataTestId]="dataTestId() ? dataTestId() + '-delete-modal' : null"
     >
-      <app-modal-header (closeClick)="closeDeleteModal()">
-        Confirm Delete
-      </app-modal-header>
+      <app-modal-header (closeClick)="closeDeleteModal()"> Confirm Delete </app-modal-header>
       <app-modal-body>
         <div class="space-y-4">
           <div class="flex items-center gap-3 p-4 bg-bg-error border border-error rounded-lg">

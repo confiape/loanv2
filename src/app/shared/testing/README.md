@@ -45,9 +45,7 @@ describe('Alert', () => {
   let builder: AlertTestBuilder;
 
   beforeEach(() => {
-    builder = new AlertTestBuilder()
-      .withMessage('Default message')
-      .asDismissible();
+    builder = new AlertTestBuilder().withMessage('Default message').asDismissible();
   });
 
   it('should display info message', () => {
@@ -69,6 +67,7 @@ describe('Alert', () => {
 **El método `build()` automáticamente clona el estado interno antes de crear el componente.**
 
 Esto significa:
+
 - ✅ Puedes usar `beforeEach` para configurar defaults
 - ✅ NO necesitas llamar `.clone()` manualmente
 - ✅ Los tests son independientes automáticamente
@@ -76,8 +75,7 @@ Esto significa:
 
 ```typescript
 beforeEach(() => {
-  builder = new ComponentTestBuilder(Alert)
-    .withInput('message', 'Default');
+  builder = new ComponentTestBuilder(Alert).withInput('message', 'Default');
 });
 
 it('test 1', () => {
@@ -86,9 +84,7 @@ it('test 1', () => {
 });
 
 it('test 2', () => {
-  const fixture = builder
-    .withInput('message', 'Override')
-    .build(); // Auto-clona el estado modificado
+  const fixture = builder.withInput('message', 'Override').build(); // Auto-clona el estado modificado
   // El builder en beforeEach sigue intacto
 });
 ```
@@ -133,6 +129,7 @@ describe('MyComponent', () => {
 ```
 
 **Métodos disponibles:**
+
 - `withInput<K>(property: K, value: T[K]): this`
 - `withOutput<K>(property: K, handler: (value: any) => void): this`
 - `withProviders(providers: Provider[]): this`
@@ -162,16 +159,14 @@ describe('Alert', () => {
   });
 
   it('should display error alert', () => {
-    const fixture = builder
-      .withErrorVariant()
-      .withMessage('Error occurred')
-      .build();
+    const fixture = builder.withErrorVariant().withMessage('Error occurred').build();
     expect(fixture.componentInstance.variant()).toBe('error');
   });
 });
 ```
 
 **Métodos de Variante:**
+
 - `withInfoVariant()` - Info variant
 - `withSuccessVariant()` - Success variant
 - `withWarningVariant()` - Warning variant
@@ -179,20 +174,24 @@ describe('Alert', () => {
 - `withVariant(variant: AlertVariant)` - Custom variant
 
 **Métodos de Contenido:**
+
 - `withMessage(title: string)` - Set title/message
 - `withoutMessage()` - Clear message
 
 **Métodos de Features:**
+
 - `asDismissible()` / `asNotDismissible()`
 - `withIcon()` / `withoutIcon()`
 - `withBorder()` / `withoutBorder()`
 - `withActions()` / `withoutActions()`
 
 **Métodos de TestId:**
+
 - `withTestId(testId: string)`
 - `withoutTestId()`
 
 **Métodos de Outputs:**
+
 - `onDismissed(handler: () => void)` - Custom handler
 - `getDismissedSignal()` - Get signal for assertions
 - `resetDismissed()` - Reset signal between actions
@@ -204,10 +203,7 @@ describe('Alert', () => {
 ```typescript
 describe('Alert', () => {
   it('should render info alert', () => {
-    const fixture = new AlertTestBuilder()
-      .withInfoVariant()
-      .withMessage('Information')
-      .build();
+    const fixture = new AlertTestBuilder().withInfoVariant().withMessage('Information').build();
 
     const queries = within(fixture.nativeElement);
     expect(queries.getByText('Information')).toBeInTheDocument();
@@ -223,9 +219,7 @@ describe('Alert', () => {
 
   beforeEach(() => {
     // Configura defaults, NO crea componente
-    builder = new AlertTestBuilder()
-      .withMessage('Default message')
-      .withIcon();
+    builder = new AlertTestBuilder().withMessage('Default message').withIcon();
   });
 
   it('should use defaults', () => {
@@ -234,9 +228,7 @@ describe('Alert', () => {
   });
 
   it('should override defaults', () => {
-    const fixture = builder
-      .withMessage('Custom message')
-      .build();
+    const fixture = builder.withMessage('Custom message').build();
     expect(fixture.componentInstance.message()).toBe('Custom message');
   });
 });
@@ -249,9 +241,7 @@ describe('Alert Variants', () => {
   let builder: AlertTestBuilder;
 
   beforeEach(() => {
-    builder = new AlertTestBuilder()
-      .withMessage('Test message')
-      .withIcon();
+    builder = new AlertTestBuilder().withMessage('Test message').withIcon();
   });
 
   it('should render info variant', () => {
@@ -276,9 +266,7 @@ describe('Alert Variants', () => {
 ```typescript
 describe('Alert Dismissible', () => {
   it('should emit dismissed event', async () => {
-    const builder = new AlertTestBuilder()
-      .asDismissible()
-      .withMessage('Dismissible alert');
+    const builder = new AlertTestBuilder().asDismissible().withMessage('Dismissible alert');
 
     const fixture = builder.build();
     const dismissedSignal = builder.getDismissedSignal();
@@ -302,10 +290,7 @@ describe('Alert Dismissible', () => {
 describe('Alert Custom Handler', () => {
   it('should call custom handler on dismiss', async () => {
     const dismissHandler = vi.fn();
-    const fixture = new AlertTestBuilder()
-      .asDismissible()
-      .onDismissed(dismissHandler)
-      .build();
+    const fixture = new AlertTestBuilder().asDismissible().onDismissed(dismissHandler).build();
 
     const queries = within(fixture.nativeElement);
     const user = userEvent.setup();
@@ -371,6 +356,7 @@ const clonedProviders = [...this.providers]; // Shallow copy - O(m) where m = # 
 ```
 
 Para componentes típicos:
+
 - ~5-10 inputs = ~5-10 referencias copiadas
 - ~1-3 providers = ~1-3 referencias copiadas
 - **Tiempo total: < 1ms**
@@ -379,14 +365,14 @@ El tiempo de crear el componente con TestBed es **órdenes de magnitud mayor** q
 
 ## ✅ Ventajas vs Otras Opciones
 
-| Aspecto | beforeEach + Component | beforeEach + Builder | Factory Functions |
-|---------|------------------------|---------------------|-------------------|
-| **Código duplicado** | ❌ Mucho | ✅ Mínimo | ✅ Mínimo |
-| **Independencia tests** | ❌ Puede fallar | ✅ Garantizada | ✅ Garantizada |
-| **Type safety** | ✅ Sí | ✅ Sí | ⚠️ Depende |
-| **Overrides** | ❌ Difícil | ✅ Fácil | ⚠️ Parámetros |
-| **Descubribilidad** | ⚠️ Regular | ✅ Excelente | ⚠️ Regular |
-| **Reusabilidad** | ❌ Baja | ✅ Alta | ✅ Alta |
+| Aspecto                 | beforeEach + Component | beforeEach + Builder | Factory Functions |
+| ----------------------- | ---------------------- | -------------------- | ----------------- |
+| **Código duplicado**    | ❌ Mucho               | ✅ Mínimo            | ✅ Mínimo         |
+| **Independencia tests** | ❌ Puede fallar        | ✅ Garantizada       | ✅ Garantizada    |
+| **Type safety**         | ✅ Sí                  | ✅ Sí                | ⚠️ Depende        |
+| **Overrides**           | ❌ Difícil             | ✅ Fácil             | ⚠️ Parámetros     |
+| **Descubribilidad**     | ⚠️ Regular             | ✅ Excelente         | ⚠️ Regular        |
+| **Reusabilidad**        | ❌ Baja                | ✅ Alta              | ✅ Alta           |
 
 ## 🚫 Anti-Patrones
 
@@ -406,8 +392,7 @@ beforeEach(() => {
 ```typescript
 // MAL - No crea el componente
 beforeEach(() => {
-  builder = new AlertTestBuilder()
-    .withMessage('Test');
+  builder = new AlertTestBuilder().withMessage('Test');
 });
 
 it('test', () => {
@@ -421,14 +406,11 @@ it('test', () => {
 ```typescript
 // BIEN
 beforeEach(() => {
-  builder = new AlertTestBuilder()
-    .withMessage('Default');
+  builder = new AlertTestBuilder().withMessage('Default');
 });
 
 it('test', () => {
-  const fixture = builder
-    .withInfoVariant()
-    .build(); // ✅ Construye con auto-clone
+  const fixture = builder.withInfoVariant().build(); // ✅ Construye con auto-clone
 });
 ```
 

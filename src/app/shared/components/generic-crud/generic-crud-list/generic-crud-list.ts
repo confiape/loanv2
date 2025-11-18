@@ -32,15 +32,7 @@ import { TableColumnMetadata } from '@loan/app/core/models/form-metadata';
 @Component({
   selector: 'app-generic-crud-list',
   standalone: true,
-  imports: [
-    CommonModule,
-    Table,
-    Modal,
-    ModalHeader,
-    ModalBody,
-    Button,
-    GenericCrudFormComponent,
-  ],
+  imports: [CommonModule, Table, Modal, ModalHeader, ModalBody, Button, GenericCrudFormComponent],
   templateUrl: './generic-crud-list.html',
 })
 export class GenericCrudListComponent<TDto extends { id: string }> implements OnInit {

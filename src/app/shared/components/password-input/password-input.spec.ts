@@ -1,11 +1,6 @@
 // Angular testing
 import { TestBed } from '@angular/core/testing';
-import {
-  provideZonelessChangeDetection,
-  inputBinding,
-  outputBinding,
-  signal,
-} from '@angular/core';
+import { provideZonelessChangeDetection, inputBinding, outputBinding, signal } from '@angular/core';
 
 // Testing library
 import { within } from '@testing-library/dom';
@@ -89,7 +84,9 @@ describe('PasswordInput', () => {
     const fixture = TestBed.configureTestingModule({
       providers: [provideZonelessChangeDetection()],
     }).createComponent(PasswordInput, {
-      bindings: [outputBinding('visibilityChange', (value: boolean) => visibilitySignal.set(value))],
+      bindings: [
+        outputBinding('visibilityChange', (value: boolean) => visibilitySignal.set(value)),
+      ],
     });
     TestBed.tick();
     const queries = within(fixture.nativeElement);

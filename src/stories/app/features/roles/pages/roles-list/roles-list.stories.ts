@@ -49,19 +49,13 @@ const mockRoles: RoleDto[] = [
     id: '2',
     name: 'Manager',
     roles: [],
-    permissions: [
-      { name: 'users.read' },
-      { name: 'reports.read' },
-    ],
+    permissions: [{ name: 'users.read' }, { name: 'reports.read' }],
   },
   {
     id: '3',
     name: 'User',
     roles: [],
-    permissions: [
-      { name: 'profile.read' },
-      { name: 'profile.write' },
-    ],
+    permissions: [{ name: 'profile.read' }, { name: 'profile.write' }],
   },
   {
     id: '4',
@@ -74,19 +68,13 @@ const mockRoles: RoleDto[] = [
         permissions: [],
       },
     ],
-    permissions: [
-      { name: 'reports.read' },
-      { name: 'analytics.read' },
-    ],
+    permissions: [{ name: 'reports.read' }, { name: 'analytics.read' }],
   },
   {
     id: '5',
     name: 'Support',
     roles: [],
-    permissions: [
-      { name: 'tickets.read' },
-      { name: 'tickets.write' },
-    ],
+    permissions: [{ name: 'tickets.read' }, { name: 'tickets.write' }],
   },
 ];
 
@@ -243,9 +231,10 @@ class MockRoleCrudService implements ICrudService<RoleDto, SaveRoleDto> {
 
   onSearch(term: string): void {
     this._searchTerm.set(term);
-    const filtered = this._items().filter((role) =>
-      role.name.toLowerCase().includes(term.toLowerCase()) ||
-      role.id.toLowerCase().includes(term.toLowerCase())
+    const filtered = this._items().filter(
+      (role) =>
+        role.name.toLowerCase().includes(term.toLowerCase()) ||
+        role.id.toLowerCase().includes(term.toLowerCase()),
     );
     this._filteredItems.set(filtered);
   }
@@ -444,10 +433,7 @@ export const WithInheritedRoles: Story = {
                 id: '1',
                 name: 'Super Admin',
                 roles: [],
-                permissions: [
-                  { name: 'system.admin' },
-                  { name: 'users.manage' },
-                ],
+                permissions: [{ name: 'system.admin' }, { name: 'users.manage' }],
               },
               {
                 id: '2',
@@ -456,10 +442,7 @@ export const WithInheritedRoles: Story = {
                   { id: '3', name: 'User', roles: [], permissions: [] },
                   { id: '4', name: 'Viewer', roles: [], permissions: [] },
                 ],
-                permissions: [
-                  { name: 'team.manage' },
-                  { name: 'reports.create' },
-                ],
+                permissions: [{ name: 'team.manage' }, { name: 'reports.create' }],
               },
             ];
             return new MockRoleCrudService(rolesWithInheritance, false);

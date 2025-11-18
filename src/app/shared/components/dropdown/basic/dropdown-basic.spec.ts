@@ -482,7 +482,9 @@ describe('DropdownBasic', () => {
       trigger.dispatchEvent(new MouseEvent('click', { bubbles: true }));
       TestBed.tick();
 
-      const items = Array.from(overlayElement.querySelectorAll('app-dropdown-basic-item button')) as HTMLButtonElement[];
+      const items = Array.from(
+        overlayElement.querySelectorAll('app-dropdown-basic-item button'),
+      ) as HTMLButtonElement[];
       items[0]?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
       TestBed.tick();
 
@@ -502,7 +504,9 @@ describe('DropdownBasic', () => {
       trigger.dispatchEvent(new MouseEvent('click', { bubbles: true }));
       TestBed.tick();
 
-      const items = Array.from(overlayElement.querySelectorAll('app-dropdown-basic-item button')) as HTMLButtonElement[];
+      const items = Array.from(
+        overlayElement.querySelectorAll('app-dropdown-basic-item button'),
+      ) as HTMLButtonElement[];
       items[0]?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
       TestBed.tick();
 
@@ -523,7 +527,9 @@ describe('DropdownBasic', () => {
       TestBed.tick();
       expect(dropdown.isOpen()).toBe(true);
 
-      const items = Array.from(overlayElement.querySelectorAll('app-dropdown-basic-item button')) as HTMLButtonElement[];
+      const items = Array.from(
+        overlayElement.querySelectorAll('app-dropdown-basic-item button'),
+      ) as HTMLButtonElement[];
       items[0]?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
       TestBed.tick();
 
@@ -543,7 +549,9 @@ describe('DropdownBasic', () => {
       trigger.dispatchEvent(new MouseEvent('click', { bubbles: true }));
       TestBed.tick();
 
-      const items = Array.from(overlayElement.querySelectorAll('app-dropdown-basic-item button')) as HTMLButtonElement[];
+      const items = Array.from(
+        overlayElement.querySelectorAll('app-dropdown-basic-item button'),
+      ) as HTMLButtonElement[];
       const disabledItem = items[2]; // Third item is disabled
 
       disabledItem?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
@@ -564,7 +572,9 @@ describe('DropdownBasic', () => {
       trigger.dispatchEvent(new MouseEvent('click', { bubbles: true }));
       TestBed.tick();
 
-      const items = Array.from(overlayElement.querySelectorAll('app-dropdown-basic-item button')) as HTMLButtonElement[];
+      const items = Array.from(
+        overlayElement.querySelectorAll('app-dropdown-basic-item button'),
+      ) as HTMLButtonElement[];
       const disabledItem = items[2];
 
       expect(disabledItem?.className).toContain('opacity-50');
@@ -656,7 +666,9 @@ describe('DropdownBasic', () => {
 
       const header = overlayElement.querySelector('app-dropdown-basic-header');
       const footer = overlayElement.querySelector('app-dropdown-basic-footer');
-      const items = Array.from(overlayElement.querySelectorAll('app-dropdown-basic-item button')) as HTMLButtonElement[];
+      const items = Array.from(
+        overlayElement.querySelectorAll('app-dropdown-basic-item button'),
+      ) as HTMLButtonElement[];
 
       expect(header).toBeFalsy();
       expect(footer).toBeFalsy();
@@ -774,7 +786,9 @@ describe('DropdownBasic', () => {
       trigger.dispatchEvent(new MouseEvent('click', { bubbles: true }));
       TestBed.tick();
 
-      const items = Array.from(overlayElement.querySelectorAll('app-dropdown-basic-item button')) as HTMLButtonElement[];
+      const items = Array.from(
+        overlayElement.querySelectorAll('app-dropdown-basic-item button'),
+      ) as HTMLButtonElement[];
       const event = new MouseEvent('click', { bubbles: true });
       const stopPropagationSpy = vi.spyOn(event, 'stopPropagation');
 
@@ -879,7 +893,7 @@ describe('DropdownBasic - Hover Strategy', () => {
     const wrapper = trigger.parentElement!;
 
     wrapper.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
-      TestBed.tick();
+    TestBed.tick();
 
     expect(dropdown.isOpen()).toBe(true);
     expect(dropdown.triggerHovering()).toBe(true);
@@ -901,11 +915,11 @@ describe('DropdownBasic - Hover Strategy', () => {
     const wrapper = trigger.parentElement!;
 
     wrapper.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
-      TestBed.tick();
+    TestBed.tick();
     expect(dropdown.isOpen()).toBe(true);
 
     wrapper.dispatchEvent(new MouseEvent('mouseleave', { bubbles: true }));
-      TestBed.tick();
+    TestBed.tick();
     expect(dropdown.triggerHovering()).toBe(false);
 
     // Wait for hover close timeout (80ms)
@@ -931,16 +945,16 @@ describe('DropdownBasic - Hover Strategy', () => {
 
     // Enter
     wrapper.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
-      TestBed.tick();
+    TestBed.tick();
 
     // Leave
     wrapper.dispatchEvent(new MouseEvent('mouseleave', { bubbles: true }));
-      TestBed.tick();
+    TestBed.tick();
 
     // Re-enter before timeout
     await new Promise((resolve) => setTimeout(resolve, 40));
     wrapper.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
-      TestBed.tick();
+    TestBed.tick();
 
     // Wait past original timeout
     await new Promise((resolve) => setTimeout(resolve, 60));
@@ -966,16 +980,16 @@ describe('DropdownBasic - Hover Strategy', () => {
 
     // Open panel
     wrapper.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
-      TestBed.tick();
+    TestBed.tick();
 
     // Leave trigger
     wrapper.dispatchEvent(new MouseEvent('mouseleave', { bubbles: true }));
-      TestBed.tick();
+    TestBed.tick();
 
     // Hover over panel
     const panel = overlayElement.querySelector('.shadow-lg');
     panel?.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
-      TestBed.tick();
+    TestBed.tick();
     expect(dropdown.panelHovering()).toBe(true);
 
     // Wait for timeout
@@ -1002,18 +1016,18 @@ describe('DropdownBasic - Hover Strategy', () => {
 
     // Open panel
     wrapper.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
-      TestBed.tick();
+    TestBed.tick();
 
     // Move to panel
     wrapper.dispatchEvent(new MouseEvent('mouseleave', { bubbles: true }));
-      TestBed.tick();
+    TestBed.tick();
     const panel = overlayElement.querySelector('.shadow-lg');
     panel?.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
-      TestBed.tick();
+    TestBed.tick();
 
     // Leave panel
     panel?.dispatchEvent(new MouseEvent('mouseleave', { bubbles: true }));
-      TestBed.tick();
+    TestBed.tick();
 
     // Wait for timeout
     await new Promise((resolve) => setTimeout(resolve, 100));
@@ -1038,7 +1052,7 @@ describe('DropdownBasic - Hover Strategy', () => {
     expect(dropdown.isOpen()).toBe(false);
 
     trigger.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-      TestBed.tick();
+    TestBed.tick();
 
     expect(dropdown.isOpen()).toBe(false);
   });
@@ -1058,7 +1072,7 @@ describe('DropdownBasic - Hover Strategy', () => {
     const wrapper = trigger.parentElement!;
 
     wrapper.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
-      TestBed.tick();
+    TestBed.tick();
 
     const backdrop = overlayElement.querySelector('.cdk-overlay-backdrop');
     expect(backdrop).toBeFalsy();
@@ -1210,7 +1224,7 @@ describe('DropdownBasic - Different Variants', () => {
 
     // Open dropdown
     trigger.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-      TestBed.tick();
+    TestBed.tick();
     expect(dropdown.isOpen()).toBe(true);
 
     // Click item
@@ -1218,7 +1232,7 @@ describe('DropdownBasic - Different Variants', () => {
       overlayElement.querySelectorAll('app-dropdown-basic-item button'),
     ) as HTMLButtonElement[];
     items[0]?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-      TestBed.tick();
+    TestBed.tick();
 
     expect(dropdown.isOpen()).toBe(true);
   });
@@ -1236,7 +1250,7 @@ describe('DropdownBasic - Different Variants', () => {
 
     const trigger = fixture.nativeElement.querySelector('button');
     trigger.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-      TestBed.tick();
+    TestBed.tick();
 
     const header = overlayElement.querySelector('app-dropdown-basic-header');
     expect(header).toBeTruthy();
@@ -1256,7 +1270,7 @@ describe('DropdownBasic - Different Variants', () => {
 
     const trigger = fixture.nativeElement.querySelector('button');
     trigger.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-      TestBed.tick();
+    TestBed.tick();
 
     const footer = overlayElement.querySelector('app-dropdown-basic-footer');
     expect(footer).toBeTruthy();
@@ -1276,7 +1290,7 @@ describe('DropdownBasic - Different Variants', () => {
 
     const trigger = fixture.nativeElement.querySelector('button');
     trigger.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-      TestBed.tick();
+    TestBed.tick();
 
     const panel = overlayElement.querySelector('.shadow-lg') as HTMLElement;
     expect(panel.style.minWidth).toBe('300px');

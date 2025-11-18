@@ -3,7 +3,6 @@ import {
   Component,
   ElementRef,
   HostListener,
-
   computed,
   inject,
   input,
@@ -14,8 +13,6 @@ import { ConnectedPosition, OverlayModule } from '@angular/cdk/overlay';
 
 type DropdownPlacement = 'bottom-start' | 'bottom-end' | 'top-start' | 'top-end';
 type DropdownOpenStrategy = 'click' | 'hover';
-
-
 
 @Component({
   selector: 'app-dropdown-basic',
@@ -97,7 +94,9 @@ export class DropdownBasic {
     this.dataTestId() ? `${this.dataTestId()}-dropdown-basic` : null,
   );
 
-  readonly triggerTestId = computed(() => (this.dataTestId() ? `${this.dataTestId()}-trigger` : null));
+  readonly triggerTestId = computed(() =>
+    this.dataTestId() ? `${this.dataTestId()}-trigger` : null,
+  );
 
   readonly panelTestId = computed(() => (this.dataTestId() ? `${this.dataTestId()}-panel` : null));
 

@@ -14,10 +14,7 @@ const meta: Meta<CompaniesListComponent> = {
           <story />
         </div>
       `,
-      providers: [
-        provideRouter([]),
-        provideHttpClient(),
-      ],
+      providers: [provideRouter([]), provideHttpClient()],
     }),
   ],
 };

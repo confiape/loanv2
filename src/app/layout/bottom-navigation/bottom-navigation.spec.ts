@@ -1,11 +1,6 @@
 // Angular testing
 import { TestBed } from '@angular/core/testing';
-import {
-  provideZonelessChangeDetection,
-  inputBinding,
-  outputBinding,
-  signal,
-} from '@angular/core';
+import { provideZonelessChangeDetection, inputBinding, outputBinding, signal } from '@angular/core';
 import { provideRouter } from '@angular/router';
 
 // Testing library

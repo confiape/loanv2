@@ -7,18 +7,19 @@
 ## Overview
 
 Angular 20.1 introduces a new testing API for:
+
 - Zoneless change detection
 - Signal-based reactive state
 - Standalone components
 
 **Key Changes:**
 
-| Old | New |
-|-----|-----|
-| `render()` from @testing-library/angular | `TestBed.createComponent()` |
-| Component props | `inputBinding()` / `outputBinding()` |
-| `fixture.detectChanges()` | `TestBed.tick()` |
-| Component creation in `beforeEach` | Test builders for config, create in tests |
+| Old                                      | New                                       |
+| ---------------------------------------- | ----------------------------------------- |
+| `render()` from @testing-library/angular | `TestBed.createComponent()`               |
+| Component props                          | `inputBinding()` / `outputBinding()`      |
+| `fixture.detectChanges()`                | `TestBed.tick()`                          |
+| Component creation in `beforeEach`       | Test builders for config, create in tests |
 
 ---
 
@@ -73,6 +74,7 @@ describe('MyComponent', () => {
 ```
 
 **Important:**
+
 - Always call `TestBed.tick()` after creating component
 - Always call `TestBed.tick()` after signal changes or user interactions
 - Inputs are **read-only** - cannot use `.set()` after binding
@@ -120,9 +122,7 @@ describe('Alert', () => {
   let builder: AlertTestBuilder;
 
   beforeEach(() => {
-    builder = new AlertTestBuilder()
-      .withMessage('Default')
-      .asDismissible();
+    builder = new AlertTestBuilder().withMessage('Default').asDismissible();
   });
 
   it('should render info variant', () => {
@@ -370,8 +370,7 @@ describe('MyComponent', () => {
   let builder: ComponentTestBuilder<MyComponent>;
 
   beforeEach(() => {
-    builder = new ComponentTestBuilder(MyComponent)
-      .withInput('title', 'Default');
+    builder = new ComponentTestBuilder(MyComponent).withInput('title', 'Default');
   });
 
   it('should work', () => {
@@ -407,6 +406,7 @@ describe('MyService', () => {
 ## Summary
 
 **Key Points:**
+
 - Use `TestBed.createComponent()` with `inputBinding()` / `outputBinding()`
 - Use Test Builders to reduce duplication (44% less code)
 - Use `TestBed.tick()` after component creation and signal changes
@@ -415,5 +415,6 @@ describe('MyService', () => {
 - Configure in `beforeEach`, create in tests
 
 **References:**
+
 - `src/app/shared/testing/README.md` - Test Builder guide
 - `src/app/shared/components/*/**.spec.ts` - Component test examples

@@ -1,5 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Component, provideZonelessChangeDetection, signal, DebugElement, inputBinding, outputBinding } from '@angular/core';
+import {
+  Component,
+  provideZonelessChangeDetection,
+  signal,
+  DebugElement,
+  inputBinding,
+  outputBinding,
+} from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { Accordion } from './accordion';
 import { AccordionItemComponent } from './accordion-item';
@@ -145,9 +152,7 @@ describe('Accordion', () => {
       imports: [Accordion],
       providers: [provideZonelessChangeDetection()],
     }).createComponent(Accordion, {
-      bindings: [
-        outputBinding('itemSelected', (itemId: string) => itemSelectedSignal.set(itemId)),
-      ],
+      bindings: [outputBinding('itemSelected', (itemId: string) => itemSelectedSignal.set(itemId))],
     });
     TestBed.tick();
     const component = fixture.componentInstance;

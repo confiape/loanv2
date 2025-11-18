@@ -1,11 +1,6 @@
 // Angular testing
 import { TestBed } from '@angular/core/testing';
-import {
-  provideZonelessChangeDetection,
-  inputBinding,
-  outputBinding,
-  signal,
-} from '@angular/core';
+import { provideZonelessChangeDetection, inputBinding, outputBinding, signal } from '@angular/core';
 
 // Testing library
 import { within } from '@testing-library/dom';
@@ -560,9 +555,8 @@ describe('Table Component', () => {
           inputBinding('columns', () => mockColumns),
           inputBinding('data', () => mockData),
           inputBinding('sortable', () => true),
-          outputBinding(
-            'sortChange',
-            (sort: { key: string; direction: 'asc' | 'desc' | null }) => sortSignal.set(sort),
+          outputBinding('sortChange', (sort: { key: string; direction: 'asc' | 'desc' | null }) =>
+            sortSignal.set(sort),
           ),
         ],
       });

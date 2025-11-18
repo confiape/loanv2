@@ -304,10 +304,7 @@ describe('UserMenuComponent', () => {
     const fixture = TestBed.configureTestingModule({
       providers: defaultProviders,
     }).createComponent(UserMenuComponent, {
-      bindings: [
-        inputBinding('userName', () => ''),
-        inputBinding('userEmail', () => ''),
-      ],
+      bindings: [inputBinding('userName', () => ''), inputBinding('userEmail', () => '')],
     });
     TestBed.tick();
 

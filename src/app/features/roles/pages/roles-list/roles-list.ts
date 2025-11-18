@@ -10,12 +10,7 @@ import { RoleCrudService } from '../../services/role-crud.service';
   selector: 'app-roles-list',
   standalone: true,
   imports: [GenericCrudListComponent],
-  template: `
-    <app-generic-crud-list
-      [service]="service"
-      [dataTestId]="'roles'"
-    />
-  `,
+  template: ` <app-generic-crud-list [service]="service" [dataTestId]="'roles'" /> `,
 })
 export class RolesListComponent {
   readonly service = inject(RoleCrudService);

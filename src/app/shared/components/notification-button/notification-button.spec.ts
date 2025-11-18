@@ -427,7 +427,9 @@ describe('NotificationButtonComponent', () => {
       fixture.componentInstance.toggle();
       TestBed.tick();
 
-      const iconCircle = container.querySelector('div[class*="w-11 h-11 rounded-full"]') as HTMLElement;
+      const iconCircle = container.querySelector(
+        'div[class*="w-11 h-11 rounded-full"]',
+      ) as HTMLElement;
       expect(iconCircle.style.backgroundColor).toBe('var(--color-accent)');
     });
 
@@ -566,9 +568,7 @@ describe('NotificationButtonComponent', () => {
     });
 
     it('handles notification with missing title', () => {
-      const notificationWithoutTitle = [
-        { ...mockNotifications[0], title: '' },
-      ];
+      const notificationWithoutTitle = [{ ...mockNotifications[0], title: '' }];
       const { container, fixture } = renderComponent({ notifications: notificationWithoutTitle });
       fixture.componentInstance.toggle();
       TestBed.tick();
@@ -661,7 +661,9 @@ describe('NotificationButtonComponent', () => {
         maxNotificationsDisplay: 100,
       });
 
-      expect(fixture.componentInstance.displayedNotifications.length).toBe(mockNotifications.length);
+      expect(fixture.componentInstance.displayedNotifications.length).toBe(
+        mockNotifications.length,
+      );
     });
   });
 });

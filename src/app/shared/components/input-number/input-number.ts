@@ -8,7 +8,6 @@ import {
   forwardRef,
   effect,
   inject,
-
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
@@ -20,8 +19,6 @@ import {
   getInputClasses,
   generateInputTestIds,
 } from '@loan/app/shared/components/input/input-helpers';
-
-
 
 @Component({
   selector: 'app-input-number',

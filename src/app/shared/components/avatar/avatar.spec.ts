@@ -72,10 +72,7 @@ describe('Avatar', () => {
       const fixtureXs = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
       }).createComponent(Avatar, {
-        bindings: [
-          inputBinding('variant', () => 'placeholder'),
-          inputBinding('size', () => 'xs'),
-        ],
+        bindings: [inputBinding('variant', () => 'placeholder'), inputBinding('size', () => 'xs')],
       });
       TestBed.tick();
       expect(fixtureXs.componentInstance.placeholderIconClasses()).toContain('w-8 h-8');
@@ -85,10 +82,7 @@ describe('Avatar', () => {
       const fixtureXl = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
       }).createComponent(Avatar, {
-        bindings: [
-          inputBinding('variant', () => 'placeholder'),
-          inputBinding('size', () => 'xl'),
-        ],
+        bindings: [inputBinding('variant', () => 'placeholder'), inputBinding('size', () => 'xl')],
       });
       TestBed.tick();
 
@@ -142,10 +136,7 @@ describe('Avatar', () => {
       const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
       }).createComponent(Avatar, {
-        bindings: [
-          inputBinding('variant', () => 'initials'),
-          inputBinding('initials', () => 'JD'),
-        ],
+        bindings: [inputBinding('variant', () => 'initials'), inputBinding('initials', () => 'JD')],
       });
       TestBed.tick();
       const host = fixture.nativeElement;
@@ -162,10 +153,7 @@ describe('Avatar', () => {
       const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
       }).createComponent(Avatar, {
-        bindings: [
-          inputBinding('variant', () => 'initials'),
-          inputBinding('initials', () => ''),
-        ],
+        bindings: [inputBinding('variant', () => 'initials'), inputBinding('initials', () => '')],
       });
       TestBed.tick();
 
@@ -334,10 +322,7 @@ describe('Avatar', () => {
       const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
       }).createComponent(Avatar, {
-        bindings: [
-          inputBinding('size', () => 'lg'),
-          inputBinding('shape', () => 'sm'),
-        ],
+        bindings: [inputBinding('size', () => 'lg'), inputBinding('shape', () => 'sm')],
       });
       TestBed.tick();
 
@@ -425,10 +410,7 @@ describe('Avatar', () => {
       const fixtureInitials = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
       }).createComponent(Avatar, {
-        bindings: [
-          inputBinding('variant', () => 'initials'),
-          inputBinding('initials', () => 'AB'),
-        ],
+        bindings: [inputBinding('variant', () => 'initials'), inputBinding('initials', () => 'AB')],
       });
       TestBed.tick();
 

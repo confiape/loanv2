@@ -167,7 +167,9 @@ describe('ToastContainerComponent', () => {
       const toast = createMockToast('toast-1', 'info', 'Test message');
       const { host, toastService } = await renderToastContainer({ toasts: [toast] });
 
-      const closeButton = within(host).querySelector('button[aria-label="Close"]') as HTMLButtonElement;
+      const closeButton = within(host).querySelector(
+        'button[aria-label="Close"]',
+      ) as HTMLButtonElement;
       closeButton?.click();
 
       expect(toastService.dismiss).toHaveBeenCalledWith('toast-1');

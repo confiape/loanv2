@@ -1,8 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { generateModalTestIds } from './modal-helpers';
 
-
-
 @Component({
   selector: 'app-modal-footer',
   standalone: true,

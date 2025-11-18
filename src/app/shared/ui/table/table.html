@@ -5,9 +5,7 @@
   <!-- Toolbar: Búsqueda -->
   @if (searchable()) {
     <div class="pb-4 bg-bg-primary">
-      <label [for]="testIds().search ?? 'table-search'" class="sr-only"
-        >Search</label
-      >
+      <label [for]="testIds().search ?? 'table-search'" class="sr-only">Search</label>
       <div class="relative mt-1">
         <div
           class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none"
@@ -47,9 +45,7 @@
     [attr.data-testid]="testIds().table"
   >
     <!-- Encabezado -->
-    <thead
-      class="text-xs text-text-primary uppercase bg-bg-secondary border-b border-border"
-    >
+    <thead class="text-xs text-text-primary uppercase bg-bg-secondary border-b border-border">
       <tr>
         <!-- Columna de selección -->
         @if (selectable()) {
@@ -64,9 +60,7 @@
                 [indeterminate]="partialSelection()"
                 (change)="toggleSelectAll()"
               />
-              <label
-                [for]="testIds().selectAll ?? 'checkbox-all'"
-                class="sr-only"
+              <label [for]="testIds().selectAll ?? 'checkbox-all'" class="sr-only"
                 >Select all</label
               >
             </div>
@@ -89,21 +83,13 @@
                 <span>{{ column.label }}</span>
                 @if (sortState().key === column.key) {
                   @if (sortState().direction === 'asc') {
-                    <svg
-                      class="w-3 h-3"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
+                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                       <path
                         d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z"
                       />
                     </svg>
                   } @else if (sortState().direction === 'desc') {
-                    <svg
-                      class="w-3 h-3"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
+                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                       <path
                         d="M14.707 10.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 12.586V5a1 1 0 012 0v7.586l2.293-2.293a1 1 0 011.414 0z"
                       />
@@ -180,8 +166,7 @@
                     <button
                       type="button"
                       [class]="
-                        'font-medium underline transition-colors ' +
-                        getActionClass(action.variant)
+                        'font-medium underline transition-colors ' + getActionClass(action.variant)
                       "
                       [attr.data-testid]="getActionTestId(action, row, rowIndex)"
                       (click)="executeAction(action, row)"
@@ -198,9 +183,7 @@
         <tr>
           <td
             [attr.colspan]="
-              columns().length +
-              (selectable() ? 1 : 0) +
-              (actions().length > 0 ? 1 : 0)
+              columns().length + (selectable() ? 1 : 0) + (actions().length > 0 ? 1 : 0)
             "
             class="px-6 py-8 text-center text-text-secondary"
           >
@@ -224,16 +207,11 @@
         Showing
         <span class="font-semibold text-text-primary"
           >{{ (pagination().currentPage - 1) * pagination().pageSize + 1 }}-{{
-            Math.min(
-              pagination().currentPage * pagination().pageSize,
-              pagination().totalRecords
-            )
+            Math.min(pagination().currentPage * pagination().pageSize, pagination().totalRecords)
           }}</span
         >
         of
-        <span class="font-semibold text-text-primary">{{
-          pagination().totalRecords
-        }}</span>
+        <span class="font-semibold text-text-primary">{{ pagination().totalRecords }}</span>
       </span>
 
       <ul class="inline-flex -space-x-px rtl:space-x-reverse text-sm h-8">
@@ -259,9 +237,7 @@
                   ? 'flex items-center justify-center px-3 h-8 text-accent border border-border bg-blue-50 hover:bg-blue-100 hover:text-accent transition-colors'
                   : 'flex items-center justify-center px-3 h-8 leading-tight text-text-secondary bg-bg-primary border border-border hover:bg-bg-secondary hover:text-text-primary transition-colors'
               "
-              [attr.aria-current]="
-                pagination().currentPage === page ? 'page' : null
-              "
+              [attr.aria-current]="pagination().currentPage === page ? 'page' : null"
               (click)="goToPage(page)"
             >
               {{ page }}

@@ -1,7 +1,9 @@
 {
   "permissions": {
-    "allow": ["Bash(cat:*)", "Bash(npm run build:*)"],
+    "allow": ["Bash(cat:*)", "Bash(npm run build:*)", "mcp__angular-cli__search_documentation"],
     "deny": [],
     "ask": []
-  }
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": ["angular-cli"]
 }

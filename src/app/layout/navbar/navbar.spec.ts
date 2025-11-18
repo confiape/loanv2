@@ -1,11 +1,6 @@
 // Angular testing
 import { TestBed } from '@angular/core/testing';
-import {
-  provideZonelessChangeDetection,
-  inputBinding,
-  outputBinding,
-  signal,
-} from '@angular/core';
+import { provideZonelessChangeDetection, inputBinding, outputBinding, signal } from '@angular/core';
 import { provideRouter } from '@angular/router';
 
 // Testing library
@@ -328,9 +323,7 @@ describe('NavbarComponent', () => {
       const fixture = TestBed.configureTestingModule({
         providers: defaultProviders(mocks),
       }).createComponent(NavbarComponent, {
-        bindings: [
-          outputBinding('searchSubmit', (query: string) => searchSubmitSignal.set(query)),
-        ],
+        bindings: [outputBinding('searchSubmit', (query: string) => searchSubmitSignal.set(query))],
       });
       TestBed.tick();
       const query = 'submitted query';
@@ -681,9 +674,7 @@ describe('NavbarComponent', () => {
       const fixture = TestBed.configureTestingModule({
         providers: defaultProviders(mocks),
       }).createComponent(NavbarComponent, {
-        bindings: [
-          outputBinding('searchSubmit', (query: string) => searchSubmitSignal.set(query)),
-        ],
+        bindings: [outputBinding('searchSubmit', (query: string) => searchSubmitSignal.set(query))],
       });
       TestBed.tick();
       const specialQuery = '<script>alert("xss")</script>';
@@ -833,7 +824,9 @@ describe('NavbarComponent', () => {
       TestBed.tick();
 
       // Assert
-      const toggleButton = fixture.nativeElement.querySelector('button[aria-label="Toggle sidebar"]');
+      const toggleButton = fixture.nativeElement.querySelector(
+        'button[aria-label="Toggle sidebar"]',
+      );
       expect(toggleButton).toBeTruthy();
     });
   });

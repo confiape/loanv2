@@ -1,8 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { generateModalTestIds } from './modal-helpers';
 
-
-
 @Component({
   selector: 'app-modal-body',
   standalone: true,

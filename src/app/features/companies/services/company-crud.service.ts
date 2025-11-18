@@ -43,9 +43,7 @@ export class CompanyCrudService extends BaseCrudService<CompanyDto, SaveCompanyD
   protected matchesSearch(item: CompanyDto, term: string): boolean {
     const searchableFields = [item.name, item.id];
 
-    return searchableFields.some((field) =>
-      field.toLowerCase().includes(term.toLowerCase())
-    );
+    return searchableFields.some((field) => field.toLowerCase().includes(term.toLowerCase()));
   }
 
   getTableColumns(): TableColumnMetadata<CompanyDto>[] {

@@ -88,7 +88,9 @@ describe('GenericCrudFormComponent', () => {
       });
       TestBed.tick();
 
-      const textInput = fixture.nativeElement.querySelector('input[data-testid="test-form-input-name"]');
+      const textInput = fixture.nativeElement.querySelector(
+        'input[data-testid="test-form-input-name"]',
+      );
       expect(textInput).toBeTruthy();
     });
 
@@ -103,7 +105,9 @@ describe('GenericCrudFormComponent', () => {
       });
       TestBed.tick();
 
-      const emailInput = fixture.nativeElement.querySelector('input[data-testid="test-form-input-email"]');
+      const emailInput = fixture.nativeElement.querySelector(
+        'input[data-testid="test-form-input-email"]',
+      );
       expect(emailInput).toBeTruthy();
     });
 
@@ -118,7 +122,9 @@ describe('GenericCrudFormComponent', () => {
       });
       TestBed.tick();
 
-      const numberInput = fixture.nativeElement.querySelector('input[data-testid="test-form-number-age"]');
+      const numberInput = fixture.nativeElement.querySelector(
+        'input[data-testid="test-form-number-age"]',
+      );
       expect(numberInput).toBeTruthy();
     });
 
@@ -150,7 +156,9 @@ describe('GenericCrudFormComponent', () => {
       });
       TestBed.tick();
 
-      const checkbox = fixture.nativeElement.querySelector('input[data-testid="test-form-checkbox-active"]');
+      const checkbox = fixture.nativeElement.querySelector(
+        'input[data-testid="test-form-checkbox-active"]',
+      );
       expect(checkbox).toBeTruthy();
     });
 
@@ -165,7 +173,9 @@ describe('GenericCrudFormComponent', () => {
       });
       TestBed.tick();
 
-      const select = fixture.nativeElement.querySelector('select[data-testid="test-form-select-role"]');
+      const select = fixture.nativeElement.querySelector(
+        'select[data-testid="test-form-select-role"]',
+      );
       expect(select).toBeTruthy();
     });
 
@@ -214,7 +224,9 @@ describe('GenericCrudFormComponent', () => {
       });
       TestBed.tick();
 
-      const submitBtn = fixture.nativeElement.querySelector('button[data-testid="test-form-btn-submit"]');
+      const submitBtn = fixture.nativeElement.querySelector(
+        'button[data-testid="test-form-btn-submit"]',
+      );
       expect(submitBtn).toBeTruthy();
     });
 
@@ -229,7 +241,9 @@ describe('GenericCrudFormComponent', () => {
       });
       TestBed.tick();
 
-      const cancelBtn = fixture.nativeElement.querySelector('button[data-testid="test-form-btn-cancel"]');
+      const cancelBtn = fixture.nativeElement.querySelector(
+        'button[data-testid="test-form-btn-cancel"]',
+      );
       expect(cancelBtn).toBeTruthy();
     });
 

@@ -1,14 +1,5 @@
-import {
-  Component,
-  input,
-  ChangeDetectionStrategy,
-  computed,
-  inject,
-
-} from '@angular/core';
+import { Component, input, ChangeDetectionStrategy, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-
 
 export type AvatarSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 export type AvatarShape = 'full' | 'sm';
@@ -194,7 +185,9 @@ export class Avatar {
   });
 
   // Test ID computed values
-  readonly componentTestId = computed(() => (this.dataTestId() ? `${this.dataTestId()}-avatar` : null));
+  readonly componentTestId = computed(() =>
+    this.dataTestId() ? `${this.dataTestId()}-avatar` : null,
+  );
 
   readonly imageTestId = computed(() => (this.dataTestId() ? `${this.dataTestId()}-image` : null));
 

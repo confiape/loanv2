@@ -9,12 +9,7 @@ Este ejemplo muestra cómo refactorizar tests existentes para usar `AlertTestBui
 ```typescript
 // alert.spec.ts - ANTES
 import { TestBed } from '@angular/core/testing';
-import {
-  provideZonelessChangeDetection,
-  inputBinding,
-  outputBinding,
-  signal,
-} from '@angular/core';
+import { provideZonelessChangeDetection, inputBinding, outputBinding, signal } from '@angular/core';
 import { within } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect } from 'vitest';
@@ -108,6 +103,7 @@ describe('Alert', () => {
 ```
 
 **Problemas:**
+
 - 🔴 Mucho código repetitivo (TestBed.configureTestingModule, provideZonelessChangeDetection, etc.)
 - 🔴 Difícil de leer y mantener
 - 🔴 Cada test tiene 5-10 líneas de setup
@@ -194,6 +190,7 @@ describe('Alert', () => {
 ```
 
 **Mejoras:**
+
 - ✅ Código mucho más limpio y legible
 - ✅ Setup en 1 línea: `builder.withSuccessVariant().build()`
 - ✅ Métodos descriptivos y type-safe
@@ -238,10 +235,7 @@ describe('Alert Dismissible Variants', () => {
   });
 
   it('should override message for specific test', () => {
-    const fixture = builder
-      .withErrorVariant()
-      .withMessage('Custom error message')
-      .build();
+    const fixture = builder.withErrorVariant().withMessage('Custom error message').build();
     const queries = within(fixture.nativeElement);
 
     expect(queries.getByText('Custom error message')).toBeTruthy();
@@ -255,13 +249,13 @@ describe('Alert Dismissible Variants', () => {
 
 ## 📈 Métricas de Mejora
 
-| Métrica | Antes | Después | Mejora |
-|---------|-------|---------|--------|
-| **Líneas por test** | ~15-20 | ~5-8 | **60% menos** |
-| **Setup duplicado** | 100% | 0% | **100% eliminado** |
-| **Legibilidad** | Baja | Alta | **⬆️ Mucho mejor** |
-| **Mantenibilidad** | Baja | Alta | **⬆️ Mucho mejor** |
-| **Type Safety** | Sí | Sí | **✅ Mantenido** |
+| Métrica                 | Antes  | Después    | Mejora             |
+| ----------------------- | ------ | ---------- | ------------------ |
+| **Líneas por test**     | ~15-20 | ~5-8       | **60% menos**      |
+| **Setup duplicado**     | 100%   | 0%         | **100% eliminado** |
+| **Legibilidad**         | Baja   | Alta       | **⬆️ Mucho mejor** |
+| **Mantenibilidad**      | Baja   | Alta       | **⬆️ Mucho mejor** |
+| **Type Safety**         | Sí     | Sí         | **✅ Mantenido**   |
 | **Independencia tests** | Manual | Automática | **✅ Garantizada** |
 
 ---
@@ -311,24 +305,20 @@ beforeEach(() => {
 ### Paso 5: Refactorizar tests uno por uno
 
 **Antes:**
+
 ```typescript
 const fixture = TestBed.configureTestingModule({
   providers: [provideZonelessChangeDetection()],
 }).createComponent(Alert, {
-  bindings: [
-    inputBinding('variant', () => 'success'),
-    inputBinding('title', () => 'Success!'),
-  ],
+  bindings: [inputBinding('variant', () => 'success'), inputBinding('title', () => 'Success!')],
 });
 TestBed.tick();
 ```
 
 **Después:**
+
 ```typescript
-const fixture = builder
-  .withSuccessVariant()
-  .withMessage('Success!')
-  .build();
+const fixture = builder.withSuccessVariant().withMessage('Success!').build();
 ```
 
 ### Paso 6: Ejecutar tests

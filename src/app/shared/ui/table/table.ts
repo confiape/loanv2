@@ -1,11 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  input,
-  output,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import type {
   TableColumn,
@@ -148,8 +141,10 @@ export class Table<T extends Record<string, any> = Record<string, any>> {
     return this.data().filter((row) =>
       columns.some((col) => {
         const value = row[col.key];
-        return String(value ?? '').toLowerCase().includes(term);
-      })
+        return String(value ?? '')
+          .toLowerCase()
+          .includes(term);
+      }),
     );
   });
 
@@ -480,9 +475,7 @@ export class Table<T extends Record<string, any> = Record<string, any>> {
   /**
    * Obtiene las clases de variante de acción
    */
-  protected getActionClass(
-    variant?: 'primary' | 'secondary' | 'danger' | 'success'
-  ): string {
+  protected getActionClass(variant?: 'primary' | 'secondary' | 'danger' | 'success'): string {
     switch (variant) {
       case 'danger':
         return 'text-red-600 hover:text-red-700';

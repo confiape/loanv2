@@ -1,11 +1,6 @@
 // Angular testing
 import { TestBed } from '@angular/core/testing';
-import {
-  provideZonelessChangeDetection,
-  inputBinding,
-  outputBinding,
-  signal,
-} from '@angular/core';
+import { provideZonelessChangeDetection, inputBinding, outputBinding, signal } from '@angular/core';
 
 // Testing library
 import { within } from '@testing-library/dom';
@@ -205,10 +200,7 @@ describe('Button', () => {
       const fixture = TestBed.configureTestingModule({
         providers: [provideZonelessChangeDetection()],
       }).createComponent(Button, {
-        bindings: [
-          inputBinding('dataTestId', () => 'save'),
-          inputBinding('loading', () => true),
-        ],
+        bindings: [inputBinding('dataTestId', () => 'save'), inputBinding('loading', () => true)],
       });
       TestBed.tick();
       const queries = within(fixture.nativeElement);

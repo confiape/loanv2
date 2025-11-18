@@ -54,7 +54,9 @@ const createMockToast = (overrides?: Partial<Toast>): Toast => ({
 
 const within = (element: HTMLElement) => ({
   getByText: (text: string) => {
-    const node = element.textContent?.includes(text) ? element : element.querySelector(`*:has(${text})`);
+    const node = element.textContent?.includes(text)
+      ? element
+      : element.querySelector(`*:has(${text})`);
     return node || null;
   },
   querySelector: (selector: string) => element.querySelector(selector),
@@ -62,7 +64,6 @@ const within = (element: HTMLElement) => ({
 });
 
 describe('ToastComponent', () => {
-
   describe('Rendering', () => {
     it('should render toast message', async () => {
       await setupTestBed();
@@ -225,7 +226,9 @@ describe('ToastComponent', () => {
       const dismissedIds: string[] = [];
       const subscription = component.dismissed.subscribe((id) => dismissedIds.push(id));
 
-      const closeButton = within(host).querySelector('button[aria-label="Close"]') as HTMLButtonElement;
+      const closeButton = within(host).querySelector(
+        'button[aria-label="Close"]',
+      ) as HTMLButtonElement;
       closeButton?.click();
 
       expect(dismissedIds).toContain('toast-123');

@@ -70,10 +70,7 @@ describe('InputNumber', () => {
         provideIcons({ heroMagnifyingGlass, heroChevronUp, heroChevronDown }),
       ],
     }).createComponent(InputNumber, {
-      bindings: [
-        inputBinding('min', () => 0),
-        inputBinding('max', () => 100),
-      ],
+      bindings: [inputBinding('min', () => 0), inputBinding('max', () => 100)],
     });
     TestBed.tick();
     const queries = within(fixture.nativeElement);
