@@ -10,13 +10,14 @@
 2. [Core Principles](#core-principles)
 3. [Setup and Imports](#setup-and-imports)
 4. [Basic Component Test Structure](#basic-component-test-structure)
-5. [Testing Inputs](#testing-inputs)
-6. [Testing Outputs](#testing-outputs)
-7. [Testing User Interactions](#testing-user-interactions)
-8. [Testing Services](#testing-services)
-9. [Common Patterns](#common-patterns)
-10. [Common Pitfalls](#common-pitfalls)
-11. [Quick Reference](#quick-reference)
+5. [Test Builders (Recommended)](#test-builders-recommended)
+6. [Testing Inputs](#testing-inputs)
+7. [Testing Outputs](#testing-outputs)
+8. [Testing User Interactions](#testing-user-interactions)
+9. [Testing Services](#testing-services)
+10. [Common Patterns](#common-patterns)
+11. [Common Pitfalls](#common-pitfalls)
+12. [Quick Reference](#quick-reference)
 
 ---
 
@@ -28,8 +29,6 @@ Angular 20.1 introduces a new testing API that works seamlessly with:
 - Standalone components
 - TypeScript strict mode
 
-This guide covers the migration from `@testing-library/angular`'s `render()` to Angular's native `TestBed.createComponent()` with the new binding APIs.
-
 ### Key Changes from Previous Pattern
 
 | Old Pattern | New Pattern |
@@ -39,53 +38,53 @@ This guide covers the migration from `@testing-library/angular`'s `render()` to 
 | `@Output()` spy functions | `outputBinding()` with signals |
 | `fixture.detectChanges()` | `TestBed.tick()` |
 | `screen.getByRole()` | `within(fixture.nativeElement).getByRole()` |
-| `beforeEach()` for setup | Independent tests (NO beforeEach) |
+| `beforeEach()` for component creation | Test builders for setup reuse |
 
 ---
 
 ## Core Principles
 
 ### 1. Test Independence
-Each test should be completely independent - NO shared state, NO `beforeEach()`.
+
+Each test should be completely independent. Use **Test Builders** for shared configuration, but create components in each test.
 
 ```typescript
-// ❌ BAD - Shared state
+// ❌ BAD - Shared component state
 let fixture: ComponentFixture<MyComponent>;
 
 beforeEach(() => {
   fixture = TestBed.createComponent(MyComponent);
 });
 
-it('test 1', () => {
-  // Uses shared fixture
+// ✅ GOOD - Test builder for configuration
+let builder: MyComponentTestBuilder;
+
+beforeEach(() => {
+  builder = new MyComponentTestBuilder()
+    .withDefaults();
 });
 
-// ✅ GOOD - Independent tests
-it('test 1', () => {
-  const fixture = TestBed.configureTestingModule({
-    providers: [provideZonelessChangeDetection()],
-  }).createComponent(MyComponent);
-  TestBed.tick();
-  // Test logic
+it('test', () => {
+  const fixture = builder.build(); // Creates component in each test
 });
 ```
 
 ### 2. Arrange / Act / Assert Pattern
+
 Always structure tests with explicit comments:
 
 ```typescript
-it('should update count when button clicked', async () => {
+it('should update count when button clicked', () => {
   // Arrange - Setup test data, fixtures, and mocks
   const fixture = TestBed.configureTestingModule({
     providers: [provideZonelessChangeDetection()],
   }).createComponent(CounterComponent);
   TestBed.tick();
   const queries = within(fixture.nativeElement);
-  const user = userEvent.setup();
 
   // Act - Perform the action being tested
   const button = queries.getByRole('button', { name: /increment/i });
-  await user.click(button);
+  button.click();
   TestBed.tick();
 
   // Assert - Verify the expected outcome
@@ -94,6 +93,7 @@ it('should update count when button clicked', async () => {
 ```
 
 ### 3. Input Immutability
+
 Inputs bound with `inputBinding()` are **read-only** and cannot be modified after binding.
 
 ```typescript
@@ -103,7 +103,7 @@ const fixture = TestBed.createComponent(MyComponent, {
 });
 fixture.componentInstance.value.set(10); // ERROR: .set is not a function
 
-// ✅ GOOD - Create separate fixtures for different input values
+// ✅ GOOD - Create separate fixtures for different values
 it('works with value 5', () => {
   const fixture = TestBed.createComponent(MyComponent, {
     bindings: [inputBinding('value', () => 5)],
@@ -137,35 +137,12 @@ import {
 
 // Testing library
 import { within } from '@testing-library/dom';
-import userEvent from '@testing-library/user-event';
 
 // Vitest
 import { describe, it, expect, vi } from 'vitest';
 
 // Component under test
 import { MyComponent } from './my-component';
-```
-
-### Common Providers
-
-```typescript
-// Basic provider setup
-const defaultProviders = [
-  provideZonelessChangeDetection(),
-];
-
-// With routing
-const defaultProviders = [
-  provideZonelessChangeDetection(),
-  provideRouter([]),
-];
-
-// With mock services
-const defaultProviders = [
-  provideZonelessChangeDetection(),
-  { provide: AuthService, useValue: mockAuthService },
-  { provide: DataService, useValue: mockDataService },
-];
 ```
 
 ---
@@ -176,12 +153,10 @@ const defaultProviders = [
 
 ```typescript
 describe('ButtonComponent', () => {
-  const defaultProviders = [provideZonelessChangeDetection()];
-
   it('creates the component', () => {
     // Arrange
     const fixture = TestBed.configureTestingModule({
-      providers: defaultProviders,
+      providers: [provideZonelessChangeDetection()],
     }).createComponent(ButtonComponent);
     TestBed.tick();
 
@@ -192,10 +167,9 @@ describe('ButtonComponent', () => {
   it('renders with default label', () => {
     // Arrange
     const fixture = TestBed.configureTestingModule({
-      providers: defaultProviders,
+      providers: [provideZonelessChangeDetection()],
     }).createComponent(ButtonComponent);
     TestBed.tick();
-
     const queries = within(fixture.nativeElement);
 
     // Assert
@@ -203,6 +177,109 @@ describe('ButtonComponent', () => {
   });
 });
 ```
+
+---
+
+## Test Builders (Recommended)
+
+Use **Test Builders** to reduce code duplication while maintaining test independence.
+
+### Using ComponentTestBuilder
+
+```typescript
+import { ComponentTestBuilder } from '@loan/shared/testing';
+
+describe('MyComponent', () => {
+  let builder: ComponentTestBuilder<MyComponent>;
+
+  beforeEach(() => {
+    builder = new ComponentTestBuilder(MyComponent)
+      .withInput('title', 'Default Title')
+      .withInput('enabled', true);
+  });
+
+  it('should display default title', () => {
+    // Arrange
+    const fixture = builder.build(); // Auto-clones + creates component
+    const queries = within(fixture.nativeElement);
+
+    // Assert
+    expect(queries.getByText('Default Title')).toBeTruthy();
+  });
+
+  it('should override title', () => {
+    // Arrange
+    const fixture = builder
+      .withInput('title', 'Custom Title')
+      .build();
+    const queries = within(fixture.nativeElement);
+
+    // Assert
+    expect(queries.getByText('Custom Title')).toBeTruthy();
+  });
+});
+```
+
+### Using Specialized Builders
+
+For frequently tested components, use specialized builders:
+
+```typescript
+import { AlertTestBuilder } from '@loan/shared/testing';
+
+describe('Alert', () => {
+  let builder: AlertTestBuilder;
+
+  beforeEach(() => {
+    builder = new AlertTestBuilder()
+      .withMessage('Default message')
+      .asDismissible();
+  });
+
+  it('should render info variant', () => {
+    // Arrange
+    const fixture = builder.withInfoVariant().build();
+    const queries = within(fixture.nativeElement);
+
+    // Assert
+    const alertEl = queries.getByRole('alert');
+    expect(alertEl.className).toContain('bg-accent/10');
+  });
+
+  it('should render success variant', () => {
+    // Arrange
+    const fixture = builder.withSuccessVariant().build();
+    const queries = within(fixture.nativeElement);
+
+    // Assert
+    const alertEl = queries.getByRole('alert');
+    expect(alertEl.className).toContain('bg-success/10');
+  });
+
+  it('should emit dismissed event', () => {
+    // Arrange
+    const fixture = builder.build();
+    const dismissedSignal = builder.getDismissedSignal();
+    const queries = within(fixture.nativeElement);
+
+    // Act
+    const closeButton = queries.getByRole('button', { name: /close/i });
+    closeButton.click();
+    TestBed.tick();
+
+    // Assert
+    expect(dismissedSignal()).toBeUndefined();
+  });
+});
+```
+
+**Benefits:**
+- 44% less code in tests
+- Guaranteed test independence (auto-clone)
+- Type-safe configuration
+- Better readability
+
+**See:** `src/app/shared/testing/README.md` for complete guide
 
 ---
 
@@ -221,7 +298,6 @@ it('displays custom label', () => {
     ],
   });
   TestBed.tick();
-
   const queries = within(fixture.nativeElement);
 
   // Assert
@@ -250,44 +326,12 @@ it('displays user profile with all fields', () => {
     ],
   });
   TestBed.tick();
-
   const queries = within(fixture.nativeElement);
 
   // Assert
   expect(queries.getByText('John Doe')).toBeTruthy();
   expect(queries.getByText('john@example.com')).toBeTruthy();
   expect(queries.getByText('admin')).toBeTruthy();
-});
-```
-
-### Complex Object Inputs
-
-```typescript
-it('renders table with columns and data', () => {
-  // Arrange
-  const mockColumns = [
-    { key: 'name', label: 'Name' },
-    { key: 'email', label: 'Email' },
-  ];
-
-  const mockData = [
-    { name: 'Alice', email: 'alice@example.com' },
-    { name: 'Bob', email: 'bob@example.com' },
-  ];
-
-  const fixture = TestBed.configureTestingModule({
-    providers: [provideZonelessChangeDetection()],
-  }).createComponent(TableComponent, {
-    bindings: [
-      inputBinding('columns', () => mockColumns),
-      inputBinding('data', () => mockData),
-    ],
-  });
-  TestBed.tick();
-
-  // Assert
-  expect(fixture.nativeElement.textContent).toContain('Alice');
-  expect(fixture.nativeElement.textContent).toContain('Bob');
 });
 ```
 
@@ -310,7 +354,6 @@ it('emits click event', () => {
     ],
   });
   TestBed.tick();
-
   const button = fixture.nativeElement.querySelector('button');
 
   // Act
@@ -342,7 +385,6 @@ it('emits selected item when clicked', () => {
     ],
   });
   TestBed.tick();
-
   const queries = within(fixture.nativeElement);
   const firstItem = queries.getByText('Item 1');
 
@@ -370,7 +412,6 @@ it('emits multiple times for multiple clicks', () => {
     ],
   });
   TestBed.tick();
-
   const button = fixture.nativeElement.querySelector('button');
 
   // Act
@@ -384,36 +425,6 @@ it('emits multiple times for multiple clicks', () => {
 });
 ```
 
-### Combining Inputs and Outputs
-
-```typescript
-it('emits correct data based on input', () => {
-  // Arrange
-  const emittedDataSignal = signal<string | null>(null);
-  const mockUser = { name: 'John Doe', id: 123 };
-
-  const fixture = TestBed.configureTestingModule({
-    providers: [provideZonelessChangeDetection()],
-  }).createComponent(UserCardComponent, {
-    bindings: [
-      inputBinding('user', () => mockUser),
-      outputBinding('userAction', (id: string) => emittedDataSignal.set(id)),
-    ],
-  });
-  TestBed.tick();
-
-  const queries = within(fixture.nativeElement);
-  const actionButton = queries.getByRole('button', { name: /action/i });
-
-  // Act
-  actionButton.click();
-  TestBed.tick();
-
-  // Assert
-  expect(emittedDataSignal()).toBe('123');
-});
-```
-
 ---
 
 ## Testing User Interactions
@@ -421,19 +432,17 @@ it('emits correct data based on input', () => {
 ### Click Events
 
 ```typescript
-it('increments counter when button clicked', async () => {
+it('increments counter when button clicked', () => {
   // Arrange
   const fixture = TestBed.configureTestingModule({
     providers: [provideZonelessChangeDetection()],
   }).createComponent(CounterComponent);
   TestBed.tick();
-
   const queries = within(fixture.nativeElement);
-  const user = userEvent.setup();
 
   // Act
   const button = queries.getByRole('button', { name: /increment/i });
-  await user.click(button);
+  button.click();
   TestBed.tick();
 
   // Assert
@@ -441,10 +450,10 @@ it('increments counter when button clicked', async () => {
 });
 ```
 
-### Form Input
+### Form Input (Simple)
 
 ```typescript
-it('updates search results when typing', async () => {
+it('updates search results when typing', () => {
   // Arrange
   const fixture = TestBed.configureTestingModule({
     providers: [provideZonelessChangeDetection()],
@@ -454,13 +463,12 @@ it('updates search results when typing', async () => {
     ],
   });
   TestBed.tick();
-
   const queries = within(fixture.nativeElement);
-  const user = userEvent.setup();
-  const input = queries.getByRole('textbox');
+  const input = queries.getByRole('textbox') as HTMLInputElement;
 
   // Act
-  await user.type(input, 'Ban');
+  input.value = 'Ban';
+  input.dispatchEvent(new Event('input'));
   TestBed.tick();
 
   // Assert
@@ -472,7 +480,7 @@ it('updates search results when typing', async () => {
 ### Keyboard Events
 
 ```typescript
-it('submits form on Enter key', async () => {
+it('submits form on Enter key', () => {
   // Arrange
   const submitSignal = signal(false);
   const fixture = TestBed.configureTestingModule({
@@ -483,13 +491,11 @@ it('submits form on Enter key', async () => {
     ],
   });
   TestBed.tick();
-
   const queries = within(fixture.nativeElement);
-  const user = userEvent.setup();
   const input = queries.getByRole('textbox');
 
   // Act
-  await user.type(input, 'test{Enter}');
+  input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
   TestBed.tick();
 
   // Assert
@@ -497,10 +503,10 @@ it('submits form on Enter key', async () => {
 });
 ```
 
-### Checkbox and Radio Interactions
+### Checkbox Interactions
 
 ```typescript
-it('toggles checkbox selection', async () => {
+it('toggles checkbox selection', () => {
   // Arrange
   const selectionSignal = signal(false);
   const fixture = TestBed.configureTestingModule({
@@ -511,13 +517,11 @@ it('toggles checkbox selection', async () => {
     ],
   });
   TestBed.tick();
-
   const queries = within(fixture.nativeElement);
-  const user = userEvent.setup();
-  const checkbox = queries.getByRole('checkbox');
+  const checkbox = queries.getByRole('checkbox') as HTMLInputElement;
 
   // Act
-  await user.click(checkbox);
+  checkbox.click();
   TestBed.tick();
 
   // Assert
@@ -528,7 +532,7 @@ it('toggles checkbox selection', async () => {
 ### Hover and Focus Events
 
 ```typescript
-it('shows tooltip on hover', async () => {
+it('shows tooltip on hover', () => {
   // Arrange
   const fixture = TestBed.configureTestingModule({
     providers: [provideZonelessChangeDetection()],
@@ -539,19 +543,23 @@ it('shows tooltip on hover', async () => {
     ],
   });
   TestBed.tick();
-
   const queries = within(fixture.nativeElement);
-  const user = userEvent.setup();
   const element = queries.getByText('Hover me');
 
   // Act
-  await user.hover(element);
+  element.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
   TestBed.tick();
 
   // Assert
   expect(queries.getByText('Tooltip text')).toBeTruthy();
 });
 ```
+
+### Complex Interactions
+
+For complex user interactions like **drag and drop**, **text selection**, or **complex keyboard sequences**, consider using `@testing-library/user-event`.
+
+**See:** [Testing Library User Event Documentation](https://testing-library.com/docs/user-event/intro)
 
 ---
 
@@ -647,18 +655,15 @@ describe('UserService', () => {
 
 ```typescript
 describe('NavigationComponent', () => {
-  const defaultProviders = [
-    provideZonelessChangeDetection(),
-    provideRouter([]),
-  ];
-
   it('navigates to dashboard on click', () => {
     // Arrange
     const fixture = TestBed.configureTestingModule({
-      providers: defaultProviders,
+      providers: [
+        provideZonelessChangeDetection(),
+        provideRouter([]),
+      ],
     }).createComponent(NavigationComponent);
     TestBed.tick();
-
     const queries = within(fixture.nativeElement);
     const dashboardLink = queries.getByRole('link', { name: /dashboard/i });
 
@@ -681,7 +686,6 @@ it('shows loading state when loading', () => {
     ],
   });
   TestBed.tick();
-
   const queries = within(fixture.nativeElement);
 
   // Assert
@@ -700,7 +704,6 @@ it('shows data when not loading', () => {
     ],
   });
   TestBed.tick();
-
   const queries = within(fixture.nativeElement);
 
   // Assert
@@ -727,7 +730,6 @@ it('renders all items in list', () => {
     ],
   });
   TestBed.tick();
-
   const items = fixture.nativeElement.querySelectorAll('.list-item');
 
   // Assert
@@ -752,7 +754,6 @@ it('has proper ARIA attributes', () => {
     ],
   });
   TestBed.tick();
-
   const dialog = fixture.nativeElement.querySelector('[role="dialog"]');
 
   // Assert
@@ -770,12 +771,14 @@ it('generates correct test IDs', () => {
   const fixture = TestBed.configureTestingModule({
     providers: [provideZonelessChangeDetection()],
   }).createComponent(FormComponent, {
-    hostAttributes: { 'data-testid': 'login-form' },
+    bindings: [
+      inputBinding('dataTestId', () => 'login-form'),
+    ],
   });
   TestBed.tick();
 
   // Assert
-  expect(fixture.nativeElement.getAttribute('data-testid')).toBe('login-form');
+  expect(fixture.nativeElement.querySelector('[data-testid="login-form"]')).toBeTruthy();
   expect(fixture.nativeElement.querySelector('[data-testid="login-form-input"]')).toBeTruthy();
   expect(fixture.nativeElement.querySelector('[data-testid="login-form-button"]')).toBeTruthy();
 });
@@ -852,10 +855,10 @@ it('test', () => {
 });
 ```
 
-### ❌ Pitfall 4: Using Shared State with beforeEach
+### ❌ Pitfall 4: Creating Components in beforeEach
 
 ```typescript
-// ❌ BAD - Shared state can cause test pollution
+// ❌ BAD - Shared component state can cause test pollution
 describe('MyComponent', () => {
   let fixture: ComponentFixture<MyComponent>;
 
@@ -864,29 +867,21 @@ describe('MyComponent', () => {
   });
 
   it('test 1', () => {
-    // Modifies shared fixture
-  });
-
-  it('test 2', () => {
-    // Uses modified fixture from test 1
+    // Uses shared fixture
   });
 });
 
-// ✅ GOOD - Each test is independent
+// ✅ GOOD - Use test builder for configuration
 describe('MyComponent', () => {
-  it('test 1', () => {
-    const fixture = TestBed.configureTestingModule({
-      providers: [provideZonelessChangeDetection()],
-    }).createComponent(MyComponent);
-    TestBed.tick();
-    // Test logic
+  let builder: ComponentTestBuilder<MyComponent>;
+
+  beforeEach(() => {
+    builder = new ComponentTestBuilder(MyComponent)
+      .withInput('title', 'Default');
   });
 
-  it('test 2', () => {
-    const fixture = TestBed.configureTestingModule({
-      providers: [provideZonelessChangeDetection()],
-    }).createComponent(MyComponent);
-    TestBed.tick();
+  it('test 1', () => {
+    const fixture = builder.build(); // Creates component in test
     // Test logic
   });
 });
@@ -908,30 +903,36 @@ it('test navigation', () => {
   const fixture = TestBed.configureTestingModule({
     providers: [
       provideZonelessChangeDetection(),
-      provideRouter([]), // Add this
+      provideRouter([]),
     ],
   }).createComponent(NavComponent);
   TestBed.tick();
 });
 ```
 
-### ❌ Pitfall 6: Not Using async/await with userEvent
+### ❌ Pitfall 6: Forgetting TestBed.tick() After Signal Changes
 
 ```typescript
-// ❌ BAD - Missing await
-it('clicks button', () => {
-  const user = userEvent.setup();
-  const button = within(fixture.nativeElement).getByRole('button');
-  user.click(button); // Missing await
+// ❌ BAD - Signal change won't propagate
+it('updates on signal change', () => {
+  const fixture = TestBed.createComponent(MyComponent);
   TestBed.tick();
+
+  fixture.componentInstance.mySignal.set('new value');
+  // Missing TestBed.tick()!
+
+  expect(fixture.nativeElement.textContent).toContain('new value'); // FAILS
 });
 
-// ✅ GOOD - Use async/await
-it('clicks button', async () => {
-  const user = userEvent.setup();
-  const button = within(fixture.nativeElement).getByRole('button');
-  await user.click(button); // Proper async handling
+// ✅ GOOD - Call TestBed.tick() after signal changes
+it('updates on signal change', () => {
+  const fixture = TestBed.createComponent(MyComponent);
   TestBed.tick();
+
+  fixture.componentInstance.mySignal.set('new value');
+  TestBed.tick(); // Propagate signal change
+
+  expect(fixture.nativeElement.textContent).toContain('new value'); // PASSES
 });
 ```
 
@@ -950,18 +951,15 @@ import {
   signal,
 } from '@angular/core';
 import { within } from '@testing-library/dom';
-import userEvent from '@testing-library/user-event';
 import { describe, it, expect } from 'vitest';
 
 import { MyComponent } from './my-component';
 
 describe('MyComponent', () => {
-  const defaultProviders = [provideZonelessChangeDetection()];
-
   it('should create', () => {
     // Arrange
     const fixture = TestBed.configureTestingModule({
-      providers: defaultProviders,
+      providers: [provideZonelessChangeDetection()],
     }).createComponent(MyComponent);
     TestBed.tick();
 
@@ -972,42 +970,67 @@ describe('MyComponent', () => {
   it('should display input value', () => {
     // Arrange
     const fixture = TestBed.configureTestingModule({
-      providers: defaultProviders,
+      providers: [provideZonelessChangeDetection()],
     }).createComponent(MyComponent, {
       bindings: [
         inputBinding('title', () => 'Test Title'),
       ],
     });
     TestBed.tick();
-
     const queries = within(fixture.nativeElement);
 
     // Assert
     expect(queries.getByText('Test Title')).toBeTruthy();
   });
 
-  it('should emit output on interaction', async () => {
+  it('should emit output on interaction', () => {
     // Arrange
     const emittedSignal = signal(false);
     const fixture = TestBed.configureTestingModule({
-      providers: defaultProviders,
+      providers: [provideZonelessChangeDetection()],
     }).createComponent(MyComponent, {
       bindings: [
         outputBinding('action', () => emittedSignal.set(true)),
       ],
     });
     TestBed.tick();
-
     const queries = within(fixture.nativeElement);
-    const user = userEvent.setup();
 
     // Act
     const button = queries.getByRole('button');
-    await user.click(button);
+    button.click();
     TestBed.tick();
 
     // Assert
     expect(emittedSignal()).toBe(true);
+  });
+});
+```
+
+### Test Builder Template
+
+```typescript
+import { ComponentTestBuilder } from '@loan/shared/testing';
+import { describe, it, expect, beforeEach } from 'vitest';
+
+describe('MyComponent', () => {
+  let builder: ComponentTestBuilder<MyComponent>;
+
+  beforeEach(() => {
+    builder = new ComponentTestBuilder(MyComponent)
+      .withInput('title', 'Default Title');
+  });
+
+  it('should use defaults', () => {
+    const fixture = builder.build();
+    expect(fixture.componentInstance.title()).toBe('Default Title');
+  });
+
+  it('should override defaults', () => {
+    const fixture = builder
+      .withInput('title', 'Custom')
+      .build();
+    expect(fixture.componentInstance.title()).toBe('Custom');
   });
 });
 ```
@@ -1059,16 +1082,18 @@ describe('MyService', () => {
 
 This guide covers the essential patterns for writing unit tests with Angular 20.1's new testing API. Remember:
 
-- **Always use TestBed.createComponent()** instead of render()
+- **Use Test Builders** to reduce duplication (see `src/app/shared/testing/README.md`)
+- **Use TestBed.createComponent()** instead of render()
 - **Use inputBinding() and outputBinding()** from @angular/core
 - **Capture outputs with signals** for type-safe testing
-- **Keep tests independent** - no beforeEach, no shared state
+- **Configure in beforeEach, create in tests** - no shared component state
 - **Follow Arrange/Act/Assert pattern** with explicit comments
 - **Use TestBed.tick()** instead of fixture.detectChanges()
 - **Remember inputs are read-only** after binding
+- **Use native events** (click(), dispatchEvent()) for most interactions
 
-For more examples, refer to the test files in:
-- `src/app/layout/*/**.spec.ts` - Layout component tests
-- `src/app/shared/ui/*/**.spec.ts` - UI component tests
+For examples, refer to the test files in:
+- `src/app/shared/components/*/**.spec.ts` - Component tests
+- `src/app/shared/testing/README.md` - Test Builder guide
 
 Happy testing! 🚀

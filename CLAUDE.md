@@ -101,13 +101,14 @@
 - **Framework:** Vitest + `@testing-library/dom` (NO `@testing-library/angular`).
 - One `.spec.ts` per component/service.
 - Co-locate tests with source.
-- **NO `beforeEach`** - Each test is independent.
+- **Test Builders:** Use `ComponentTestBuilder` for setup reuse (configure in `beforeEach`, create in tests).
 - Use `TestBed.configureTestingModule()` + `createComponent()` in each test.
 - Use `TestBed.tick()` NOT `fixture.detectChanges()`.
 - Use `inputBinding()` and `outputBinding()` from `@angular/core`.
 - Use **signals** to capture output emissions.
 - Use `within(fixture.nativeElement)` from `@testing-library/dom` for queries.
-- Use `userEvent` from `@testing-library/user-event` for interactions.
+- Use **native events** (`click()`, `dispatchEvent()`) for interactions.
+- For complex interactions (drag & drop), see `@testing-library/user-event` docs.
 - **Arrange / Act / Assert** pattern with comments.
 - Mocks via `vi.fn()` or providers.
 - Use `data-testid` selectors.
@@ -126,7 +127,6 @@ import {
 
 // Testing library
 import { within } from '@testing-library/dom';
-import userEvent from '@testing-library/user-event';
 
 // Vitest
 import { describe, it, expect, vi } from 'vitest';
@@ -135,7 +135,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { MyComponent } from './my-component';
 
 describe('MyComponent', () => {
-  it('should emit output when button clicked', async () => {
+  it('should emit output when button clicked', () => {
     // Arrange
     const emittedValue = signal<string | null>(null);
     const fixture = TestBed.configureTestingModule({
@@ -148,15 +148,39 @@ describe('MyComponent', () => {
     });
     TestBed.tick();
     const queries = within(fixture.nativeElement);
-    const user = userEvent.setup();
 
     // Act
     const button = queries.getByRole('button');
-    await user.click(button);
+    button.click();
     TestBed.tick();
 
     // Assert
     expect(emittedValue()).toBe('clicked');
+  });
+});
+```
+
+### Test Builder Pattern (Recommended for reuse):
+
+```ts
+import { ComponentTestBuilder } from '@loan/shared/testing';
+
+describe('MyComponent', () => {
+  let builder: ComponentTestBuilder<MyComponent>;
+
+  beforeEach(() => {
+    builder = new ComponentTestBuilder(MyComponent)
+      .withInput('label', 'Default Label');
+  });
+
+  it('should use defaults', () => {
+    const fixture = builder.build(); // Auto-clones + creates
+    expect(fixture.componentInstance.label()).toBe('Default Label');
+  });
+
+  it('should override inputs', () => {
+    const fixture = builder.withInput('label', 'Custom').build();
+    expect(fixture.componentInstance.label()).toBe('Custom');
   });
 });
 ```
