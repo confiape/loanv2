@@ -1,0 +1,155 @@
+import { test, expect } from '@playwright/test';
+import { LoginPage } from '../pages/login.page';
+import { DashboardPage } from '../pages/dashboard.page';
+import { loginAsAdmin, loginAs, attemptLoginWithInvalidCredentials } from '../actions/auth.actions';
+import { testUsers, invalidCredentials } from '../fixtures/users';
+
+test.describe('Login Flow', () => {
+  test.beforeEach(async ({ page }) => {
+    // Clear session before each test
+    await page.context().clearCookies();
+  });
+
+  test('should display login page with all elements', async ({ page }) => {
+    // Arrange
+    const loginPage = new LoginPage(page);
+
+    // Act
+    await loginPage.goto();
+
+    // Assert
+    await loginPage.verifyPageLoaded();
+    await expect(loginPage.emailInput).toBeVisible();
+    await expect(loginPage.passwordInput).toBeVisible();
+    await expect(loginPage.submitButton).toBeVisible();
+  });
+
+  test('should successfully login with valid admin credentials', async ({ page }) => {
+    // Arrange
+    const loginPage = new LoginPage(page);
+    const dashboardPage = new DashboardPage(page);
+
+    // Act
+    await loginPage.goto();
+    await loginPage.login(testUsers.admin.email, testUsers.admin.password);
+
+    // Assert
+    await dashboardPage.verifyPageLoaded();
+    await expect(page).toHaveURL(/\/(dashboard)?/);
+  });
+
+  test('should successfully login with valid regular user credentials', async ({ page }) => {
+    // Arrange & Act
+    await loginAs(page, testUsers.regularUser);
+
+    // Assert
+    const dashboardPage = new DashboardPage(page);
+    await dashboardPage.verifyPageLoaded();
+  });
+
+  test('should show error message with invalid password', async ({ page }) => {
+    // Arrange
+    const loginPage = new LoginPage(page);
+
+    // Act
+    await loginPage.goto();
+    await loginPage.login(
+      invalidCredentials.wrongPassword.email,
+      invalidCredentials.wrongPassword.password,
+    );
+
+    // Assert
+    await loginPage.verifyErrorDisplayed();
+    await expect(page).toHaveURL(/\/auth\/login/);
+  });
+
+  test('should show error message with non-existent user', async ({ page }) => {
+    // Arrange & Act
+    await attemptLoginWithInvalidCredentials(
+      page,
+      invalidCredentials.nonExistentUser.email,
+      invalidCredentials.nonExistentUser.password,
+    );
+
+    // Assert - verify still on login page
+    await expect(page).toHaveURL(/\/auth\/login/);
+  });
+
+  test('should not allow login with empty email', async ({ page }) => {
+    // Arrange
+    const loginPage = new LoginPage(page);
+
+    // Act
+    await loginPage.goto();
+    await loginPage.fillEmail(invalidCredentials.emptyEmail.email);
+    await loginPage.fillPassword(invalidCredentials.emptyEmail.password);
+
+    // Assert - submit button should be disabled or form should show validation error
+    const submitButton = loginPage.submitButton;
+
+    // Check if button is disabled OR if error is shown
+    const isDisabled = await submitButton.isDisabled().catch(() => false);
+    if (!isDisabled) {
+      await loginPage.submit();
+      // Should still be on login page
+      await expect(page).toHaveURL(/\/auth\/login/);
+    }
+  });
+
+  test('should not allow login with empty password', async ({ page }) => {
+    // Arrange
+    const loginPage = new LoginPage(page);
+
+    // Act
+    await loginPage.goto();
+    await loginPage.fillEmail(invalidCredentials.emptyPassword.email);
+    await loginPage.fillPassword(invalidCredentials.emptyPassword.password);
+
+    // Assert - submit button should be disabled or form should show validation error
+    const submitButton = loginPage.submitButton;
+
+    // Check if button is disabled OR if error is shown
+    const isDisabled = await submitButton.isDisabled().catch(() => false);
+    if (!isDisabled) {
+      await loginPage.submit();
+      // Should still be on login page
+      await expect(page).toHaveURL(/\/auth\/login/);
+    }
+  });
+
+  test('should persist session after page reload', async ({ page }) => {
+    // Arrange & Act
+    await loginAsAdmin(page);
+    await page.reload();
+
+    // Assert - should still be logged in
+    const dashboardPage = new DashboardPage(page);
+    await dashboardPage.verifyPageLoaded();
+  });
+});
+
+test.describe('Login Navigation', () => {
+  test('should navigate to forgot password page', async ({ page }) => {
+    // Arrange
+    const loginPage = new LoginPage(page);
+
+    // Act
+    await loginPage.goto();
+    await loginPage.clickForgotPassword();
+
+    // Assert
+    await expect(page).toHaveURL(/\/auth\/forgot-password/);
+  });
+
+  test('should navigate to signup page', async ({ page }) => {
+    // Arrange
+    const loginPage = new LoginPage(page);
+
+    // Act
+    await loginPage.goto();
+    await loginPage.clickSignup();
+
+    // Assert
+    await expect(page).toHaveURL(/\/auth\/(signup|register)/);
+  });
+});
