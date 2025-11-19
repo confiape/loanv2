@@ -154,6 +154,32 @@ await loginAsAdmin(page);
 await loginAs(page, testUsers.analyst);
 ```
 
+### Verificar mensajes de error en Toasts
+
+Los mensajes de error/éxito se muestran mediante toasts. Para verificarlos:
+
+```typescript
+import { LoginPage } from '../pages/login.page';
+
+test('should show error on invalid credentials', async ({ page }) => {
+  const loginPage = new LoginPage(page);
+
+  await loginPage.goto();
+  await loginPage.login('invalid@email.com', 'wrongpassword');
+
+  // Verifica que aparezca un toast de error
+  await loginPage.verifyErrorDisplayed();
+
+  // O verifica que contenga un mensaje específico
+  await loginPage.verifyErrorDisplayed('Email o contraseña incorrectos');
+});
+```
+
+**Cómo funciona:**
+- Los toasts tienen `data-testid="toast"` y `data-toast-type="error|success|warning|info"`
+- `verifyErrorDisplayed()` busca toasts con `data-toast-type="error"` visibles
+- Puedes verificar el contenido del mensaje pasando el texto esperado
+
 ### Selectores con data-testid
 
 Todos los selectores están centralizados en `helpers/test-ids.ts`:

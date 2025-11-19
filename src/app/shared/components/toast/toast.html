@@ -1,4 +1,11 @@
-<div [class]="containerClasses()" role="alert" aria-live="assertive" aria-atomic="true">
+<div
+  [class]="containerClasses()"
+  role="alert"
+  aria-live="assertive"
+  aria-atomic="true"
+  data-testid="toast"
+  [attr.data-toast-type]="toast().type"
+>
   <div [class]="iconClasses()">
     {{ icon() }}
   </div>

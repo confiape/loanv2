@@ -39,10 +39,15 @@ export class LoginPage extends BasePage {
   }
 
   async verifyErrorDisplayed(expectedError?: string): Promise<void> {
-    const errorMessage = this.page.getByTestId('login-error');
-    await expect(errorMessage).toBeVisible();
+    // Wait for error toast to appear
+    const errorToasts = this.page.getByTestId('toast').filter({ has: this.page.locator('[data-toast-type="error"]') });
+
+    // Verify at least one error toast is visible
+    await expect(errorToasts.first()).toBeVisible({ timeout: 5000 });
+
     if (expectedError) {
-      await expect(errorMessage).toContainText(expectedError);
+      // Check if any visible toast contains the expected error message
+      await expect(errorToasts.first()).toContainText(expectedError);
     }
   }
 
