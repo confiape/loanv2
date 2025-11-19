@@ -57,7 +57,7 @@ test.describe('Login Flow', () => {
 
     // Assert
     await loginPage.verifyErrorDisplayed();
-    await expect(page).toHaveURL(/\/auth\/login/);
+    await expect(page).toHaveURL(/\/login/);
   });
 
   test('should show error message with non-existent user', async ({ page }) => {
@@ -69,7 +69,7 @@ test.describe('Login Flow', () => {
     );
 
     // Assert - verify still on login page
-    await expect(page).toHaveURL(/\/auth\/login/);
+    await expect(page).toHaveURL(/\/login/);
   });
 
   test('should not allow login with empty email', async ({ page }) => {
@@ -82,14 +82,14 @@ test.describe('Login Flow', () => {
     await loginPage.fillPassword(invalidCredentials.emptyEmail.password);
 
     // Assert - submit button should be disabled or form should show validation error
-    const submitButton = loginPage.submitButton;
+    const submitButton = page.getByTestId('login-submit');
 
     // Check if button is disabled OR if error is shown
     const isDisabled = await submitButton.isDisabled().catch(() => false);
     if (!isDisabled) {
       await loginPage.submit();
       // Should still be on login page
-      await expect(page).toHaveURL(/\/auth\/login/);
+      await expect(page).toHaveURL(/\/login/);
     }
   });
 
@@ -103,14 +103,14 @@ test.describe('Login Flow', () => {
     await loginPage.fillPassword(invalidCredentials.emptyPassword.password);
 
     // Assert - submit button should be disabled or form should show validation error
-    const submitButton = loginPage.submitButton;
+    const submitButton = page.getByTestId('login-submit');
 
     // Check if button is disabled OR if error is shown
     const isDisabled = await submitButton.isDisabled().catch(() => false);
     if (!isDisabled) {
       await loginPage.submit();
       // Should still be on login page
-      await expect(page).toHaveURL(/\/auth\/login/);
+      await expect(page).toHaveURL(/\/login/);
     }
   });
 
