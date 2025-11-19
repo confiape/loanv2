@@ -278,3 +278,31 @@ test('should create loan', async ({ page }) => {
 ### Tests pasan localmente pero fallan en CI
 - Verificar variables de entorno
 - Revisar configuración de `webServer` en config
+
+### Toasts no son detectados
+
+**Problema:** El toast aparece en pantalla pero el test no lo encuentra
+
+**Causa:** Los toasts tienen `pointer-events-none` en el contenedor y se agregan dinámicamente al DOM
+
+**Solución:**
+1. El método `verifyErrorDisplayed()` ya maneja esto automáticamente
+2. Espera hasta 10 segundos a que el toast se adjunte al DOM
+3. Verifica visibilidad real (no solo presencia en DOM)
+
+**Debug manual:**
+```typescript
+import { debugToasts } from '../helpers/base.helper';
+
+test('my test', async ({ page }) => {
+  // ... after action that should show toast
+  await page.waitForTimeout(2000); // Wait for toast
+  await debugToasts(page); // Shows all toasts in console
+});
+```
+
+El output mostrará:
+- Cuántos toasts hay
+- Tipo de cada toast (error, success, warning, info)
+- Si están visibles
+- Su contenido de texto

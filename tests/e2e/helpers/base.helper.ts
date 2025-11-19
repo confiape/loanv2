@@ -52,3 +52,27 @@ export async function clearSession(page: Page): Promise<void> {
     sessionStorage.clear();
   });
 }
+
+/**
+ * Debug helper: Log all toasts currently in the page
+ * Useful for debugging toast-related test failures
+ */
+export async function debugToasts(page: Page): Promise<void> {
+  const toasts = await page.locator('[data-testid="toast"]').all();
+
+  console.log(`\n=== Debug: Found ${toasts.length} toast(s) ===`);
+
+  for (let i = 0; i < toasts.length; i++) {
+    const toast = toasts[i];
+    const type = await toast.getAttribute('data-toast-type');
+    const isVisible = await toast.isVisible();
+    const text = await toast.textContent();
+
+    console.log(`Toast ${i + 1}:`);
+    console.log(`  Type: ${type}`);
+    console.log(`  Visible: ${isVisible}`);
+    console.log(`  Text: ${text?.trim()}`);
+  }
+
+  console.log('=== End Debug ===\n');
+}

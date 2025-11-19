@@ -1,5 +1,6 @@
 import { type Page, expect } from '@playwright/test';
 import { BasePage } from './base.page';
+import { debugToasts } from '../helpers/base.helper';
 
 /**
  * Login Page Object
@@ -39,15 +40,31 @@ export class LoginPage extends BasePage {
   }
 
   async verifyErrorDisplayed(expectedError?: string): Promise<void> {
-    // Wait for error toast to appear
-    const errorToasts = this.page.getByTestId('toast').filter({ has: this.page.locator('[data-toast-type="error"]') });
+    // Strategy: Wait for ANY toast with error type to appear in DOM
+    // The toast container has pointer-events-none, so we need to wait for DOM presence
 
-    // Verify at least one error toast is visible
-    await expect(errorToasts.first()).toBeVisible({ timeout: 5000 });
+    try {
+      // First, wait for at least one error toast to be attached to DOM
+      await this.page.waitForSelector('[data-testid="toast"][data-toast-type="error"]', {
+        state: 'attached',
+        timeout: 10000,
+      });
 
-    if (expectedError) {
-      // Check if any visible toast contains the expected error message
-      await expect(errorToasts.first()).toContainText(expectedError);
+      // Now get all error toasts
+      const errorToast = this.page.locator('[data-testid="toast"][data-toast-type="error"]').first();
+
+      // Verify it's actually visible (not just in DOM)
+      await expect(errorToast).toBeVisible({ timeout: 5000 });
+
+      if (expectedError) {
+        // Check if the toast contains the expected error message
+        await expect(errorToast).toContainText(expectedError);
+      }
+    } catch (error) {
+      // Debug: Show what toasts are actually in the page
+      console.log('\n❌ Failed to find error toast. Debugging...');
+      await debugToasts(this.page);
+      throw error;
     }
   }
 
