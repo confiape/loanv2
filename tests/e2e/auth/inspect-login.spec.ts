@@ -5,10 +5,25 @@ import { test } from '@playwright/test';
  * This test will help us identify the real data-testid attributes
  */
 test('inspect login page elements', async ({ page }) => {
-  await page.goto('https://dev.confiape.org/auth/login');
+  // Intercept API calls to prevent crashes
+  await page.route('**/api/**', (route) => {
+    route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ success: false }),
+    });
+  });
 
-  // Wait for page to load
-  await page.waitForLoadState('networkidle');
+  await page.goto('/home');
+
+  // Wait for an input to appear
+  await page.locator('input').first().waitFor({ timeout: 5000 }).catch(() => {});
+
+  // Log current URL
+  console.log(`\n=== Current URL: ${page.url()} ===`);
+
+  // Log page title
+  console.log(`Page title: ${await page.title()}`);
 
   // Get all elements with data-testid
   const elementsWithTestId = await page.locator('[data-testid]').all();
@@ -29,8 +44,9 @@ test('inspect login page elements', async ({ page }) => {
     const name = await input.getAttribute('name');
     const id = await input.getAttribute('id');
     const placeholder = await input.getAttribute('placeholder');
+    const testId = await input.getAttribute('data-testid');
     console.log(
-      `Input: type="${type}" name="${name}" id="${id}" placeholder="${placeholder}"`,
+      `Input: type="${type}" name="${name}" id="${id}" placeholder="${placeholder}" data-testid="${testId}"`,
     );
   }
 
@@ -43,10 +59,4 @@ test('inspect login page elements', async ({ page }) => {
     const testId = await button.getAttribute('data-testid');
     console.log(`Button: text="${text?.trim()}" type="${type}" data-testid="${testId}"`);
   }
-
-  // Take a screenshot
-  await page.screenshot({ path: 'test-results/login-page-inspection.png', fullPage: true });
-
-  // Pause to allow manual inspection
-  await page.waitForTimeout(2000);
 });
