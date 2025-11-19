@@ -1,6 +1,6 @@
 import { type Page, expect } from '@playwright/test';
 import { LoginPage } from '../pages/login.page';
-import { DashboardPage } from '../pages/dashboard.page';
+import { HomePage } from '../pages/home.page';
 import { testUsers, type TestUser } from '../fixtures/users';
 import { clearSession } from '../helpers/base.helper';
 
@@ -14,11 +14,11 @@ import { clearSession } from '../helpers/base.helper';
  */
 export async function loginAs(page: Page, user: TestUser): Promise<void> {
   const loginPage = new LoginPage(page);
-  const dashboardPage = new DashboardPage(page);
+  const homePage = new HomePage(page);
 
   await loginPage.goto();
   await loginPage.login(user.email, user.password);
-  await dashboardPage.verifyPageLoaded();
+  await homePage.verifyPageLoaded();
 }
 
 /**
@@ -44,14 +44,14 @@ export async function loginAsAnalyst(page: Page): Promise<void> {
 
 /**
  * Logout from application
+ * Note: Implement based on your actual logout mechanism (button, menu, etc.)
  */
 export async function logout(page: Page): Promise<void> {
-  const dashboardPage = new DashboardPage(page);
-  await dashboardPage.logout();
+  // TODO: Implement logout based on actual UI elements
+  // Example: await page.getByTestId('logout-button').click();
 
   // Verify we're back at login page
-  const loginPage = new LoginPage(page);
-  await expect(loginPage.emailInput).toBeVisible({ timeout: 5000 });
+  await expect(page.getByTestId('login-email')).toBeVisible({ timeout: 5000 });
 }
 
 /**

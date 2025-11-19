@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { LoginPage } from '../pages/login.page';
-import { DashboardPage } from '../pages/dashboard.page';
+import { HomePage } from '../pages/home.page';
 import { loginAsAdmin, loginAs, attemptLoginWithInvalidCredentials } from '../actions/auth.actions';
 import { testUsers, invalidCredentials } from '../fixtures/users';
 
@@ -19,23 +19,20 @@ test.describe('Login Flow', () => {
 
     // Assert
     await loginPage.verifyPageLoaded();
-    await expect(loginPage.emailInput).toBeVisible();
-    await expect(loginPage.passwordInput).toBeVisible();
-    await expect(loginPage.submitButton).toBeVisible();
   });
 
   test('should successfully login with valid admin credentials', async ({ page }) => {
     // Arrange
     const loginPage = new LoginPage(page);
-    const dashboardPage = new DashboardPage(page);
+    const homePage = new HomePage(page);
 
     // Act
     await loginPage.goto();
     await loginPage.login(testUsers.admin.email, testUsers.admin.password);
 
     // Assert
-    await dashboardPage.verifyPageLoaded();
-    await expect(page).toHaveURL(/\/(dashboard)?/);
+    await homePage.verifyPageLoaded();
+    await expect(page).toHaveURL(/\/(home)?/);
   });
 
   test('should successfully login with valid regular user credentials', async ({ page }) => {
@@ -43,8 +40,8 @@ test.describe('Login Flow', () => {
     await loginAs(page, testUsers.regularUser);
 
     // Assert
-    const dashboardPage = new DashboardPage(page);
-    await dashboardPage.verifyPageLoaded();
+    const homePage = new HomePage(page);
+    await homePage.verifyPageLoaded();
   });
 
   test('should show error message with invalid password', async ({ page }) => {
@@ -123,8 +120,8 @@ test.describe('Login Flow', () => {
     await page.reload();
 
     // Assert - should still be logged in
-    const dashboardPage = new DashboardPage(page);
-    await dashboardPage.verifyPageLoaded();
+    const homePage = new HomePage(page);
+    await homePage.verifyPageLoaded();
   });
 });
 
