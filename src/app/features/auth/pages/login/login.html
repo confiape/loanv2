@@ -8,21 +8,21 @@
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-6">
       <!-- Email -->
       <app-input
-        data-testid="login-email"
         label="Email"
         type="email"
         placeholder="tu@email.com"
         formControlName="email"
         [inputId]="'email'"
+        dataTestId = "login-email"
       />
 
       <!-- Password -->
       <app-password-input
-        data-testid="login-password"
         label="Contraseña"
         placeholder="••••••••"
         formControlName="password"
         [inputId]="'password'"
+        dataTestId="login-password"
       />
 
       <!-- Submit Button -->
@@ -36,6 +36,7 @@
         [loading]="isLoading()"
         [disabled]="isSubmitDisabled()"
         loadingText="Iniciando sesión..."
+        dataTestId="login-submit"
       >
         Iniciar Sesión
       </app-button>
