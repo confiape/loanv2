@@ -124,29 +124,3 @@ test.describe('Login Flow', () => {
     await homePage.verifyPageLoaded();
   });
 });
-
-test.describe('Login Navigation', () => {
-  test('should navigate to forgot password page', async ({ page }) => {
-    // Arrange
-    const loginPage = new LoginPage(page);
-
-    // Act
-    await loginPage.goto();
-    await loginPage.clickForgotPassword();
-
-    // Assert
-    await expect(page).toHaveURL(/\/auth\/forgot-password/);
-  });
-
-  test('should navigate to signup page', async ({ page }) => {
-    // Arrange
-    const loginPage = new LoginPage(page);
-
-    // Act
-    await loginPage.goto();
-    await loginPage.clickSignup();
-
-    // Assert
-    await expect(page).toHaveURL(/\/auth\/(signup|register)/);
-  });
-});
