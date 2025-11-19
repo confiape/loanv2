@@ -15,8 +15,9 @@ export class CompaniesPage extends BasePage {
   }
 
   async verifyPageLoaded(): Promise<void> {
-    await this.page.waitForURL(/\/companies/, { timeout: 10000 });
-    await expect(this.page.getByTestId('companies-table')).toBeVisible();
+    // goto() already waits for navigation and Angular ready
+    // Just verify the table is visible
+    await expect(this.page.getByTestId('companies-table')).toBeVisible({ timeout: 10000 });
   }
 
   async clickNew(): Promise<void> {
