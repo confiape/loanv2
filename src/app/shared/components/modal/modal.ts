@@ -50,7 +50,7 @@ export class Modal {
   readonly dismissible = input<boolean>(true);
 
   private readonly resolvedTestId = computed(() => this.dataTestId() ?? this.data?.testId ?? null);
-  private readonly testIds = generateModalTestIds(this.resolvedTestId());
+  private readonly testIds = generateModalTestIds(this.resolvedTestId); // Pass signal, not value
   readonly overlayTestId = this.testIds.overlay;
   readonly containerTestId = this.testIds.container;
   readonly contentTestId = this.testIds.content;

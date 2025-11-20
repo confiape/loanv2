@@ -13,7 +13,7 @@ import { generateModalTestIds } from './modal-helpers';
 })
 export class ModalBody {
   readonly dataTestId = input<string | null>(null);
-  private readonly testIds = generateModalTestIds(this.dataTestId());
+  private readonly testIds = generateModalTestIds(this.dataTestId); // Pass signal, not value
 
   readonly bodyTestId = this.testIds.body;
 }
