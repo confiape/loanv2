@@ -1,4 +1,4 @@
-import { type Page } from '@playwright/test';
+import { type Page, expect } from '@playwright/test';
 import { BasePage } from './base.page';
 
 /**
@@ -16,5 +16,8 @@ export class HomePage extends BasePage {
 
   async verifyPageLoaded(): Promise<void> {
     await this.page.waitForURL(/\/(home)?/, { timeout: 10000 });
+    // Wait for MainLayout to load (confirms userResolver completed)
+    // This ensures the user session is fully established before navigating to other pages
+    await expect(this.page.locator('app-navbar')).toBeVisible({ timeout: 10000 });
   }
 }
