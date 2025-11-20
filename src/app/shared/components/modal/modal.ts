@@ -24,7 +24,6 @@ export interface ModalData {
       (keydown.space)="handleBackdropKeydown($event)"
     ></button>
     <div
-      [attr.data-testid]="containerTestId()"
       class="pointer-events-none overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full md:inset-0 h-full max-h-full p-4"
     >
       <div
@@ -52,7 +51,6 @@ export class Modal {
   private readonly resolvedTestId = computed(() => this.dataTestId() ?? this.data?.testId ?? null);
   private readonly testIds = generateModalTestIds(this.resolvedTestId); // Pass signal, not value
   readonly overlayTestId = this.testIds.overlay;
-  readonly containerTestId = this.testIds.container;
   readonly contentTestId = this.testIds.content;
 
   readonly modalClasses = computed(() => {

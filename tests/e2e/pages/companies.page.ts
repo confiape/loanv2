@@ -46,16 +46,16 @@ export class CompaniesPage extends BasePage {
   async fillCompanyName(name: string): Promise<void> {
     // The form uses generic-crud-form which renders based on formFields
     // Field key is 'name', so we look for input with that key
-    await this.page.locator('input[name="name"]').fill(name);
+    await this.page.getByTestId('companies-input-name').fill(name);
   }
 
   async submitForm(): Promise<void> {
     // Generic form has a submit button, typically the primary button in modal footer
-    await this.page.getByTestId('companies-modal').getByRole('button', { name: /save|submit/i }).click();
+    await this.page.getByTestId('companies-btn-submit').click();
   }
 
   async cancelForm(): Promise<void> {
-    await this.page.getByTestId('companies-modal').getByRole('button', { name: /cancel/i }).click();
+    await this.page.getByTestId('companies-btn-cancel-content').click();
   }
 
   async clickEditOnFirstRow(): Promise<void> {
@@ -81,6 +81,7 @@ export class CompaniesPage extends BasePage {
   }
 
   async verifyCompanyInTable(name: string): Promise<void> {
+    this.page.getByTestId("companies-search-input").fill(name);
     const table = this.page.getByTestId('companies-table');
     await expect(table.getByText(name)).toBeVisible();
   }

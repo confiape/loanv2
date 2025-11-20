@@ -4,7 +4,6 @@ export type ModalSize = 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 
 export interface ModalTestIds {
   overlay: Signal<string | null>;
-  container: Signal<string | null>;
   content: Signal<string | null>;
   header: Signal<string | null>;
   closeButton: Signal<string | null>;
@@ -18,7 +17,6 @@ export function generateModalTestIds(hostTestId: Signal<string | null>): ModalTe
       const id = hostTestId();
       return id ? `${id}-overlay` : null;
     }),
-    container: computed(() => hostTestId()),
     content: computed(() => {
       const id = hostTestId();
       return id ? `${id}` : null;
