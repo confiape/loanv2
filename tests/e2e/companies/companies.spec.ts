@@ -48,9 +48,10 @@ test.describe('Companies CRUD', () => {
     await companiesPage.clickNew();
     await companiesPage.verifyModalOpen('New Company');
     await companiesPage.fillCompanyName('');
+    await companiesPage.blurCompanyName();
 
     // Assert - submit button should be disabled or show validation error
-    const submitButton = page.getByTestId('companies-modal').getByRole('button', { name: /save|submit/i });
+    const submitButton = page.getByTestId('companies-btn-submit');
     const isDisabled = await submitButton.isDisabled().catch(() => false);
 
     expect(isDisabled).toBe(true);
@@ -64,9 +65,10 @@ test.describe('Companies CRUD', () => {
     await companiesPage.clickNew();
     await companiesPage.verifyModalOpen('New Company');
     await companiesPage.fillCompanyName('A'); // Only 1 character, min is 2
+    await companiesPage.blurCompanyName();
 
     // Assert
-    const submitButton = page.getByTestId('companies-modal').getByRole('button', { name: /save|submit/i });
+    const submitButton = page.getByTestId('companies-btn-submit');
     const isDisabled = await submitButton.isDisabled().catch(() => false);
 
     expect(isDisabled).toBe(true);
@@ -81,9 +83,10 @@ test.describe('Companies CRUD', () => {
     await companiesPage.clickNew();
     await companiesPage.verifyModalOpen('New Company');
     await companiesPage.fillCompanyName(longName);
+    await companiesPage.blurCompanyName();
 
     // Assert
-    const submitButton = page.getByTestId('companies-modal').getByRole('button', { name: /save|submit/i });
+    const submitButton = page.getByTestId('companies-btn-submit');
     const isDisabled = await submitButton.isDisabled().catch(() => false);
 
     expect(isDisabled).toBe(true);
@@ -98,9 +101,10 @@ test.describe('Companies CRUD', () => {
     await companiesPage.clickNew();
     await companiesPage.verifyModalOpen('New Company');
     await companiesPage.fillCompanyName(nameWithSpecialChars);
+    await companiesPage.blurCompanyName();
 
     // Assert
-    const submitButton = page.getByTestId('companies-modal').getByRole('button', { name: /save|submit/i });
+    const submitButton = page.getByTestId('companies-btn-submit');
     const isDisabled = await submitButton.isDisabled().catch(() => false);
 
     expect(isDisabled).toBe(true);

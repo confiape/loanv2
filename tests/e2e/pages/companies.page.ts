@@ -48,6 +48,12 @@ export class CompaniesPage extends BasePage {
     // Field key is 'name', so we look for input with that key
     await this.page.getByTestId('companies-input-name').fill(name);
   }
+  async blurCompanyName(): Promise<void> {
+    // The form uses generic-crud-form which renders based on formFields
+    // Field key is 'name', so we look for input with that key
+    await this.page.getByTestId('companies-input-name').blur();
+  }
+
 
   async submitForm(): Promise<void> {
     // Generic form has a submit button, typically the primary button in modal footer
