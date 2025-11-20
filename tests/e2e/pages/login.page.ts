@@ -1,6 +1,5 @@
-import { type Page, expect } from '@playwright/test';
-import { BasePage } from './base.page';
-import { debugToasts } from '../helpers/base.helper';
+import {expect, type Page} from '@playwright/test';
+import {BasePage} from './base.page';
 
 /**
  * Login Page Object
@@ -40,33 +39,23 @@ export class LoginPage extends BasePage {
   }
 
   async verifyErrorDisplayed(expectedError?: string): Promise<void> {
-    // Strategy: Wait for ANY toast with error type to appear in DOM
-    // The toast container has pointer-events-none, so we need to wait for DOM presence
+    await this.page.waitForSelector('[data-testid="toast"][data-toast-type="error"]', {
+      state: 'attached',
+      timeout: 10000,
+    });
 
-    try {
-      // First, wait for at least one error toast to be attached to DOM
-      await this.page.waitForSelector('[data-testid="toast"][data-toast-type="error"]', {
-        state: 'attached',
-        timeout: 10000,
-      });
+    // Now get all error toasts
+    const errorToast = this.page.locator('[data-testid="toast"][data-toast-type="error"]').first();
 
-      // Now get all error toasts
-      const errorToast = this.page.locator('[data-testid="toast"][data-toast-type="error"]').first();
+    // Verify it's actually visible (not just in DOM)
+    await expect(errorToast).toBeVisible({timeout: 5000});
 
-      // Verify it's actually visible (not just in DOM)
-      await expect(errorToast).toBeVisible({ timeout: 5000 });
-
-      if (expectedError) {
-        // Check if the toast contains the expected error message
-        await expect(errorToast).toContainText(expectedError);
-      }
-    } catch (error) {
-      // Debug: Show what toasts are actually in the page
-      console.log('\n❌ Failed to find error toast. Debugging...');
-      await debugToasts(this.page);
-      throw error;
+    if (expectedError) {
+      // Check if the toast contains the expected error message
+      await expect(errorToast).toContainText(expectedError);
     }
   }
+
 
   async clickForgotPassword(): Promise<void> {
     await this.page.getByTestId('forgot-password-link').click();

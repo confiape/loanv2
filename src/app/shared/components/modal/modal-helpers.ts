@@ -21,7 +21,7 @@ export function generateModalTestIds(hostTestId: Signal<string | null>): ModalTe
     container: computed(() => hostTestId()),
     content: computed(() => {
       const id = hostTestId();
-      return id ? `${id}-content` : null;
+      return id ? `${id}` : null;
     }),
     header: computed(() => {
       const id = hostTestId();

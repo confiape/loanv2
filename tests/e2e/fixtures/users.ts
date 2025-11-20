@@ -18,20 +18,20 @@ export interface TestUser {
  */
 export const testUsers = {
   admin: {
-    email: 'admin@confiape.org',
-    password: 'Admin123!',
+    email: 'admin@confia.com',
+    password: 'admin@confia.com@@',
     role: 'admin' as const,
     name: 'Admin User',
   },
   regularUser: {
-    email: 'user@confiape.org',
-    password: 'User123!',
+    email: 'admin@confia.com',
+    password: 'admin@confia.com@@',
     role: 'user' as const,
     name: 'Regular User',
   },
   analyst: {
-    email: 'analyst@confiape.org',
-    password: 'Analyst123!',
+    email: 'admin@confia.com',
+    password: 'admin@confia.com@@',
     role: 'analyst' as const,
     name: 'Analyst User',
   },
