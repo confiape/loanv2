@@ -379,7 +379,7 @@ El tiempo de crear el componente con TestBed es **órdenes de magnitud mayor** q
 ### ❌ NO: Crear componente en beforeEach
 
 ```typescript
-// MAL - Rompe independencia de tests
+// MAL - Rompe independencia de e2e
 let fixture: ComponentFixture<Alert>;
 
 beforeEach(() => {
