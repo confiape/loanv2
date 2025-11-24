@@ -4,7 +4,6 @@ export type ModalSize = 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 
 export interface ModalTestIds {
   overlay: Signal<string | null>;
-  container: Signal<string | null>;
   content: Signal<string | null>;
   header: Signal<string | null>;
   closeButton: Signal<string | null>;
@@ -12,15 +11,32 @@ export interface ModalTestIds {
   footer: Signal<string | null>;
 }
 
-export function generateModalTestIds(hostTestId: string | null): ModalTestIds {
+export function generateModalTestIds(hostTestId: Signal<string | null>): ModalTestIds {
   return {
-    overlay: computed(() => (hostTestId ? `${hostTestId}-overlay` : null)),
-    container: computed(() => hostTestId),
-    content: computed(() => (hostTestId ? `${hostTestId}-content` : null)),
-    header: computed(() => (hostTestId ? `${hostTestId}-header` : null)),
-    closeButton: computed(() => (hostTestId ? `${hostTestId}-close-btn` : null)),
-    body: computed(() => (hostTestId ? `${hostTestId}-body` : null)),
-    footer: computed(() => (hostTestId ? `${hostTestId}-footer` : null)),
+    overlay: computed(() => {
+      const id = hostTestId();
+      return id ? `${id}-overlay` : null;
+    }),
+    content: computed(() => {
+      const id = hostTestId();
+      return id ? `${id}` : null;
+    }),
+    header: computed(() => {
+      const id = hostTestId();
+      return id ? `${id}-header` : null;
+    }),
+    closeButton: computed(() => {
+      const id = hostTestId();
+      return id ? `${id}-close-btn` : null;
+    }),
+    body: computed(() => {
+      const id = hostTestId();
+      return id ? `${id}-body` : null;
+    }),
+    footer: computed(() => {
+      const id = hostTestId();
+      return id ? `${id}-footer` : null;
+    }),
   };
 }
 

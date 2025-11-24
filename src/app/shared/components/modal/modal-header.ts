@@ -42,7 +42,7 @@ import { generateModalTestIds } from './modal-helpers';
 })
 export class ModalHeader {
   readonly dataTestId = input<string | null>(null);
-  private readonly testIds = generateModalTestIds(this.dataTestId());
+  private readonly testIds = generateModalTestIds(this.dataTestId); // Pass signal, not value
 
   readonly headerTestId = this.testIds.header;
   readonly closeButtonTestId = this.testIds.closeButton;

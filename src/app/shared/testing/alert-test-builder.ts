@@ -131,7 +131,7 @@ export class AlertTestBuilder extends ComponentTestBuilder<Alert> {
 
   /**
    * Get the signal that tracks dismissed events
-   * Useful for assertions in tests
+   * Useful for assertions in e2e
    */
   getDismissedSignal() {
     return this.dismissedSignal;

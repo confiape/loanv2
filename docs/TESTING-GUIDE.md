@@ -257,7 +257,7 @@ const fixture = TestBed.createComponent(MyComponent, {
 });
 fixture.componentInstance.count.set(10); // ERROR
 
-// ✅ GOOD - Create separate tests
+// ✅ GOOD - Create separate e2e
 it('with count 5', () => {
   const fixture = builder.withInput('count', 5).build();
 });

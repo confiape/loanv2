@@ -52,7 +52,6 @@
     "@angular/build": "^20.3.9",
     "@angular/cli": "^20.3.9",
     "@angular/compiler-cli": "^20.3.0",
-    "@playwright/test": "^1.56.1",
     "@storybook/addon-docs": "^10.0.5",
     "@storybook/addon-onboarding": "^10.0.5",
     "@storybook/addon-themes": "^10.0.7",

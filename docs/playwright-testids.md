@@ -342,7 +342,7 @@ Dynamic values (options, rows, items) are sanitized for test IDs:
 ```
 
 ```typescript
-// Playwright tests
+// Playwright e2e
 await page.getByTestId('email').fill('test@example.com');
 await page.getByTestId('email-suffix-btn').click();
 await expect(page.getByTestId('email-error')).toHaveText('Invalid');
