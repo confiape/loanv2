@@ -132,11 +132,13 @@
   <!-- Table -->
   <app-table
     [data]="service().getTableData()"
+    [allData]="service().items()"
     [columns]="tableColumns()"
     [selectable]="true"
     [actions]="tableActions()"
     [hoverable]="true"
     [sortable]="true"
+    [externalSelectedIds]="service().selectedItems()"
     [dataTestId]="dataTestId() ? dataTestId() + '-table' : null"
     (selectionChange)="onSelectionChange($event)"
   />

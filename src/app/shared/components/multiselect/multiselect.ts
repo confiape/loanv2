@@ -19,7 +19,6 @@ import {
   getLabelClasses,
   generateInputTestIds,
 } from '../input/input-helpers';
-import { generateItemTestId } from '@loan/app/shared/utils/test-id.utils';
 
 export interface MultiSelectOption {
   value: string;
@@ -141,7 +140,6 @@ export interface MultiSelectOption {
                     [value]="option.value"
                     [checked]="isSelected(option.value)"
                     [disabled]="option.disabled"
-                    [attr.data-testid]="getOptionTestId(option.value)"
                     class="w-4 h-4 text-accent bg-bg-secondary border-border rounded-sm focus:ring-accent focus:ring-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     (change)="toggleOption(option.value)"
                     (click)="$event.stopPropagation()"
@@ -409,9 +407,5 @@ export class MultiSelect implements ControlValueAccessor {
 
   protected getOptionId(value: string): string {
     return `${this.multiselectId()}-option-${value}`;
-  }
-
-  protected getOptionTestId(value: string): string | null {
-    return generateItemTestId(this.dataTestId(), 'option', value);
   }
 }

@@ -59,6 +59,7 @@
                 [checked]="allSelected()"
                 [indeterminate]="partialSelection()"
                 (change)="toggleSelectAll()"
+                [attr.data-testid]="testIds().selectAll"
               />
               <label [for]="testIds().selectAll ?? 'checkbox-all'" class="sr-only"
                 >Select all</label
@@ -117,20 +118,21 @@
           class="bg-bg-primary border-b border-border"
           [class.hover:bg-bg-secondary]="hoverable()"
           [class.cursor-pointer]="hoverable()"
-          [attr.data-testid]="getRowTestId(row, rowIndex)"
+          [attr.data-testid]="testIds().body + '-row'"
         >
           <!-- Celda de selección -->
           @if (selectable()) {
             <td class="w-4 p-4">
               <div class="flex items-center">
                 <input
-                  [id]="'checkbox-table-' + rowIndex"
+                  [id]="'checkbox-table-' + row[idField()]"
                   type="checkbox"
                   class="w-4 h-4 text-accent bg-bg-primary border-border rounded-sm focus:ring-accent focus:ring-2"
-                  [checked]="isRowSelected(rowIndex)"
-                  (change)="toggleRow(rowIndex)"
+                  [checked]="isRowSelected(row)"
+                  (change)="toggleRow(row)"
+                  data-testid="checkbox-table"
                 />
-                <label [for]="'checkbox-table-' + rowIndex" class="sr-only"
+                <label [for]="'checkbox-table-' + row[idField()]" class="sr-only"
                   >Select row {{ rowIndex + 1 }}</label
                 >
               </div>
@@ -168,7 +170,6 @@
                       [class]="
                         'font-medium underline transition-colors ' + getActionClass(action.variant)
                       "
-                      [attr.data-testid]="getActionTestId(action, row, rowIndex)"
                       (click)="executeAction(action, row)"
                     >
                       {{ action.label }}
@@ -197,22 +198,41 @@
   <!-- Paginación -->
   @if (paginated() && pagination().totalPages > 1) {
     <nav
-      class="flex items-center flex-column flex-wrap md:flex-row justify-between pt-4 px-4 pb-4 bg-bg-primary"
+      class="flex items-center flex-column flex-wrap md:flex-row justify-between pt-4 px-4 pb-4 bg-bg-primary gap-4"
       [attr.data-testid]="testIds().pagination"
       aria-label="Table navigation"
     >
-      <span
-        class="text-sm font-normal text-text-secondary mb-4 md:mb-0 block w-full md:inline md:w-auto"
-      >
-        Showing
-        <span class="font-semibold text-text-primary"
-          >{{ (pagination().currentPage - 1) * pagination().pageSize + 1 }}-{{
-            Math.min(pagination().currentPage * pagination().pageSize, pagination().totalRecords)
-          }}</span
+      <div class="flex items-center gap-4 flex-wrap">
+        <span
+          class="text-sm font-normal text-text-secondary block"
         >
-        of
-        <span class="font-semibold text-text-primary">{{ pagination().totalRecords }}</span>
-      </span>
+          Showing
+          <span class="font-semibold text-text-primary"
+            >{{ (pagination().currentPage - 1) * pagination().pageSize + 1 }}-{{
+              Math.min(pagination().currentPage * pagination().pageSize, pagination().totalRecords)
+            }}</span
+          >
+          of
+          <span class="font-semibold text-text-primary">{{ pagination().totalRecords }}</span>
+        </span>
+
+        <!-- Page Size Selector -->
+        <div class="flex items-center gap-2">
+          <label for="page-size-select" class="text-sm font-normal text-text-secondary">
+            Items per page:
+          </label>
+          <select
+            id="page-size-select"
+            [value]="pagination().pageSize"
+            (change)="changePageSize(+$any($event.target).value)"
+            class="px-3 py-2 text-sm border border-border rounded-lg bg-bg-secondary text-text-primary focus:ring-accent focus:border-accent outline-none transition-colors"
+          >
+            @for (size of pageSizeOptions(); track size) {
+              <option [value]="size">{{ size }}</option>
+            }
+          </select>
+        </div>
+      </div>
 
       <ul class="inline-flex -space-x-px rtl:space-x-reverse text-sm h-8">
         <!-- Previous -->

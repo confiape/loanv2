@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import type {
   TableColumn,
@@ -8,6 +8,7 @@ import type {
   TableDensity,
 } from './table.models';
 import { generateItemTestId } from '@loan/app/shared/utils/test-id.utils';
+import { Checkbox } from '../../components/checkbox';
 
 /**
  * Componente Table reutilizable
@@ -35,9 +36,16 @@ export class Table<T extends Record<string, any> = Record<string, any>> {
   readonly columns = input.required<TableColumn<T>[]>();
 
   /**
-   * Datos a mostrar
+   * Datos a mostrar (pueden estar paginados)
    */
   readonly data = input.required<T[]>();
+
+  /**
+   * Todos los datos disponibles (sin paginar)
+   * Necesario para sincronización cuando externalSelectedIds cambia
+   * Si no se proporciona, se usa data
+   */
+  readonly allData = input<T[] | null>(null);
 
   /**
    * Acciones disponibles por fila
@@ -84,6 +92,19 @@ export class Table<T extends Record<string, any> = Record<string, any>> {
    */
   readonly sortable = input<boolean>(false);
 
+  /**
+   * Campo usado como identificador único para cada fila
+   * Por defecto usa 'id'
+   */
+  readonly idField = input<string>('id');
+
+  /**
+   * IDs de items seleccionados externamente (desde el servicio)
+   * Usado para sincronizar selección cuando cambia desde afuera
+   * (ej: cuando se presiona "Clear all")
+   */
+  readonly externalSelectedIds = input<Set<string> | null>(null);
+
   // ========== OUTPUTS ==========
 
   /**
@@ -101,6 +122,11 @@ export class Table<T extends Record<string, any> = Record<string, any>> {
    */
   readonly sortChange = output<TableSort>();
 
+  /**
+   * Emite cuando cambia el tamaño de página
+   */
+  readonly pageSizeChange = output<number>();
+
   // ========== STATE (SIGNALS) ==========
 
   /**
@@ -114,9 +140,17 @@ export class Table<T extends Record<string, any> = Record<string, any>> {
   protected readonly currentPage = signal<number>(1);
 
   /**
-   * Conjunto de IDs de filas seleccionadas
+   * Tamaño de página actualmente seleccionado
+   * Se inicializa desde el input pageSize, pero puede cambiar internamente
    */
-  protected readonly selectedRows = signal<Set<number>>(new Set());
+  protected readonly currentPageSize = signal<number>(this.pageSize());
+
+  /**
+   * Mapa de filas seleccionadas: ID -> objeto completo
+   * Se almacena el objeto completo para poder emitir la selección
+   * independientemente de los datos paginados que se reciben como input
+   */
+  protected readonly selectedRows = signal<Map<string, T>>(new Map());
 
   /**
    * Estado de ordenamiento actual
@@ -179,7 +213,7 @@ export class Table<T extends Record<string, any> = Record<string, any>> {
     }
 
     const page = this.currentPage();
-    const size = this.pageSize();
+    const size = this.currentPageSize();
     const start = (page - 1) * size;
     const end = start + size;
 
@@ -191,7 +225,7 @@ export class Table<T extends Record<string, any> = Record<string, any>> {
    */
   protected readonly pagination = computed<TablePagination>(() => {
     const totalRecords = this.filteredData().length;
-    const size = this.pageSize();
+    const size = this.currentPageSize();
     const totalPages = Math.ceil(totalRecords / size) || 1;
     const currentPage = this.currentPage();
 
@@ -210,7 +244,11 @@ export class Table<T extends Record<string, any> = Record<string, any>> {
     if (!this.selectable()) return false;
     const visible = this.visibleData();
     const selected = this.selectedRows();
-    return visible.length > 0 && visible.every((_, i) => selected.has(i));
+    const idField = this.idField();
+    return visible.length > 0 && visible.every((row) => {
+      const rowId = String(row[idField]);
+      return selected.has(rowId);
+    });
   });
 
   /**
@@ -220,7 +258,11 @@ export class Table<T extends Record<string, any> = Record<string, any>> {
     if (!this.selectable()) return false;
     const visible = this.visibleData();
     const selected = this.selectedRows();
-    const count = visible.filter((_, i) => selected.has(i)).length;
+    const idField = this.idField();
+    const count = visible.filter((row) => {
+      const rowId = String(row[idField]);
+      return selected.has(rowId);
+    }).length;
     return count > 0 && count < visible.length;
   });
 
@@ -248,52 +290,16 @@ export class Table<T extends Record<string, any> = Record<string, any>> {
       header: `${base}-header`,
       body: `${base}-body`,
       selectAll: `${base}-select-all`,
-      pagination: `${base}-pagination`,
+      pagination: `${base}-pagination`
     };
   });
 
   /**
-   * Generate test ID for a table row
-   * Uses row ID if available, otherwise uses index
+   * Opciones disponibles para tamaño de página
    */
-  protected getRowTestId(row: T, index: number): string | null {
-    const base = this.dataTestId();
-    if (!base) {
-      return null;
-    }
-
-    // Try to use 'id' property from row if available
-    const rowId = (row as any).id;
-    if (rowId !== undefined && rowId !== null) {
-      return generateItemTestId(base, 'row', rowId);
-    }
-
-    // Fall back to index
-    return generateItemTestId(base, 'row', index);
-  }
-
-  /**
-   * Generate test ID for an action button
-   * Uses row ID if available, otherwise uses index
-   */
-  protected getActionTestId(action: TableAction<T>, row: T, index: number): string | null {
-    const base = this.dataTestId();
-    if (!base) {
-      return null;
-    }
-
-    // Sanitize action label to create a valid test ID
-    const actionLabel = action.label.toLowerCase().replace(/\s+/g, '-');
-
-    // Try to use 'id' property from row if available
-    const rowId = (row as any).id;
-    if (rowId !== undefined && rowId !== null) {
-      return `${base}-action-${actionLabel}-row-${rowId}`;
-    }
-
-    // Fall back to index
-    return `${base}-action-${actionLabel}-row-${index}`;
-  }
+  protected readonly pageSizeOptions = computed(() => {
+    return [10, 25, 50, 100];
+  });
 
   /**
    * Clases de densidad
@@ -308,6 +314,41 @@ export class Table<T extends Record<string, any> = Record<string, any>> {
       case 'comfortable':
       default:
         return 'px-6 py-4 text-sm';
+    }
+  });
+
+  // ========== SYNCHRONIZATION EFFECT ==========
+
+  /**
+   * Sincroniza selectedRows cuando externalSelectedIds cambia
+   * Esto es necesario para que cambios externos (como "Clear all")
+   * se reflejen en los checkboxes de la tabla
+   */
+  protected syncExternalSelection = effect(() => {
+    const externalIds = this.externalSelectedIds();
+    const idField = this.idField();
+
+    if (externalIds === null) {
+      // No hay sincronización externa
+      return;
+    }
+
+    const allAvailable = this.allData() || this.data();
+    const newSelected = new Map<string, T>();
+
+    // Reconstruir el Map con solo los items que están en externalIds
+    allAvailable.forEach((row) => {
+      const rowId = String(row[idField]);
+      if (externalIds.has(rowId)) {
+        newSelected.set(rowId, row);
+      }
+    });
+
+    // Actualizar solo si cambió
+    const current = this.selectedRows();
+    if (current.size !== newSelected.size ||
+        Array.from(newSelected.keys()).some(id => !current.has(id))) {
+      this.selectedRows.set(newSelected);
     }
   });
 
@@ -334,18 +375,33 @@ export class Table<T extends Record<string, any> = Record<string, any>> {
   }
 
   /**
+   * Cambia el tamaño de página
+   */
+  protected changePageSize(newSize: number): void {
+    this.currentPageSize.set(newSize);
+    this.currentPage.set(1); // Reset a primera página
+    this.pageSizeChange.emit(newSize);
+  }
+
+  /**
    * Togglea la selección de todas las filas visibles
    */
   protected toggleSelectAll(): void {
     const visible = this.visibleData();
-    const selected = new Set(this.selectedRows());
+    const selected = new Map(this.selectedRows());
+    const idField = this.idField();
 
     if (this.allSelected()) {
       // Deseleccionar todas
-      visible.forEach((_, i) => selected.delete(i));
+      visible.forEach((row) => {
+        selected.delete(String(row[idField]));
+      });
     } else {
       // Seleccionar todas
-      visible.forEach((_, i) => selected.add(i));
+      visible.forEach((row) => {
+        const rowId = String(row[idField]);
+        selected.set(rowId, row);
+      });
     }
 
     this.selectedRows.set(selected);
@@ -355,13 +411,15 @@ export class Table<T extends Record<string, any> = Record<string, any>> {
   /**
    * Togglea la selección de una fila
    */
-  protected toggleRow(index: number): void {
-    const selected = new Set(this.selectedRows());
+  protected toggleRow(row: T): void {
+    const selected = new Map(this.selectedRows());
+    const idField = this.idField();
+    const rowId = String(row[idField]);
 
-    if (selected.has(index)) {
-      selected.delete(index);
+    if (selected.has(rowId)) {
+      selected.delete(rowId);
     } else {
-      selected.add(index);
+      selected.set(rowId, row);
     }
 
     this.selectedRows.set(selected);
@@ -371,17 +429,21 @@ export class Table<T extends Record<string, any> = Record<string, any>> {
   /**
    * Verifica si una fila está seleccionada
    */
-  protected isRowSelected(index: number): boolean {
-    return this.selectedRows().has(index);
+  protected isRowSelected(row: T): boolean {
+    const idField = this.idField();
+    const rowId = String(row[idField]);
+    return this.selectedRows().has(rowId);
   }
 
   /**
    * Emite el cambio de selección
+   * Emite directamente los objetos almacenados en el Map
+   * Sin necesidad de buscar en this.data(), funciona correctamente
+   * incluso cuando los datos paginados cambian
    */
   private emitSelection(): void {
-    const selected = Array.from(this.selectedRows())
-      .map((i) => this.data()[i])
-      .filter(Boolean);
+    const selectedMap = this.selectedRows();
+    const selected = Array.from(selectedMap.values());
     this.selectionChange.emit(selected);
   }
 
