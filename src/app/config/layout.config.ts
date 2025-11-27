@@ -60,6 +60,12 @@ export const SIDENAV_ITEMS: SidenavItem[] = [
     routerLink: '/roles',
   },
   {
+    label: 'Users',
+    icon: 'heroUsers',
+    value: 'users',
+    routerLink: '/users',
+  },
+  {
     label: 'Reports',
     icon: 'heroChartBar',
     value: 'reports',

@@ -105,6 +105,22 @@ export class Table<T extends Record<string, any> = Record<string, any>> {
    */
   readonly externalSelectedIds = input<Set<string> | null>(null);
 
+  /**
+   * Función para obtener el nombre a mostrar de cada item
+   * Usado en los badges de selección
+   */
+  readonly getItemDisplayName = input<(item: T) => string>((item) => String(item['name'] || ''));
+
+  /**
+   * Callback cuando se hace bulk delete
+   */
+  readonly onBulkDelete = input<(() => void) | null>(null);
+
+  /**
+   * Callback cuando se remueve un item de la selección
+   */
+  readonly onRemoveFromSelection = input<((id: string) => void) | null>(null);
+
   // ========== OUTPUTS ==========
 
   /**
@@ -302,6 +318,20 @@ export class Table<T extends Record<string, any> = Record<string, any>> {
   });
 
   /**
+   * Array de objetos seleccionados para usar en el template
+   */
+  protected readonly selectedItemsData = computed(() => {
+    return Array.from(this.selectedRows().values());
+  });
+
+  /**
+   * Indica si hay selección activa
+   */
+  protected readonly hasSelection = computed(() => {
+    return this.selectedRows().size > 0;
+  });
+
+  /**
    * Clases de densidad
    */
   protected readonly densityClasses = computed(() => {
@@ -381,6 +411,47 @@ export class Table<T extends Record<string, any> = Record<string, any>> {
     this.currentPageSize.set(newSize);
     this.currentPage.set(1); // Reset a primera página
     this.pageSizeChange.emit(newSize);
+  }
+
+  /**
+   * Limpia toda la selección
+   */
+  protected clearSelection(): void {
+    this.selectedRows.set(new Map());
+    this.emitSelection();
+  }
+
+  /**
+   * Remueve un item específico de la selección
+   */
+  protected removeFromSelection(id: string): void {
+    const selected = new Map(this.selectedRows());
+    selected.delete(id);
+    this.selectedRows.set(selected);
+    this.emitSelection();
+
+    // Llamar al callback si existe
+    const callback = this.onRemoveFromSelection();
+    if (callback) {
+      callback(id);
+    }
+  }
+
+  /**
+   * Ejecuta el callback de bulk delete
+   */
+  protected onBulkDeleteClick(): void {
+    const callback = this.onBulkDelete();
+    if (callback) {
+      callback();
+    }
+  }
+
+  /**
+   * Convierte a string un ID
+   */
+  protected getStringId(id: any): string {
+    return String(id);
   }
 
   /**
