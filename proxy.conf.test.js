@@ -12,7 +12,7 @@ const keepaliveAgent = new https.Agent({
 
 const PROXY_CONFIG = {
   '/api': {
-    target: 'https://dev.confiape.org',
+    target: 'https://test.confiape.org',
     secure: false,
     changeOrigin: true,
     logLevel: 'debug',

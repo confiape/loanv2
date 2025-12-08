@@ -53,13 +53,7 @@ export class CompanyCrudService extends BaseCrudService<CompanyDto, SaveCompanyD
         label: 'Name',
         sortable: true,
         align: 'left',
-      },
-      {
-        key: 'id',
-        label: 'ID',
-        sortable: true,
-        align: 'left',
-      },
+      }
     ];
   }
 

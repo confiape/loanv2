@@ -53,13 +53,7 @@ export class RoleCrudService extends BaseCrudService<RoleDto, SaveRoleDto> {
         label: 'Name',
         sortable: true,
         align: 'left',
-      },
-      {
-        key: 'id',
-        label: 'ID',
-        sortable: true,
-        align: 'left',
-      },
+      }
     ];
   }
 

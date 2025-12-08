@@ -31,11 +31,11 @@ export class LoginComponent {
   private readonly destroyRef = inject(DestroyRef);
 
   readonly loginForm = new FormGroup({
-    email: new FormControl<string>('', {
+    email: new FormControl<string>('admin@confia.com', {
       nonNullable: true,
       validators: [Validators.required, Validators.email],
     }),
-    password: new FormControl<string>('', {
+    password: new FormControl<string>('admin@confia.com@@', {
       nonNullable: true,
       validators: [Validators.required, Validators.minLength(6)],
     }),

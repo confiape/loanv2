@@ -1,5 +1,5 @@
 <nav class="bg-bg-primary border-b border-border px-4 py-2.5 flex items-center w-full h-16">
-  <div class="flex flex-wrap justify-between items-center w-full">
+  <div class="flex  justify-between items-center w-full">
     <!-- Left section: Menu button (mobile) + Logo + Search -->
     <div class="flex justify-start items-center gap-2">
       <!-- Mobile menu toggle button -->
@@ -73,10 +73,8 @@
         (notificationClick)="onNotificationClick($event)"
       />
 
-      Apps Menu
       <app-apps-menu [apps]="apps()" (appClick)="onAppClick($event)" />
 
-      User Menu
       <app-user-menu
         [userName]="userState.userName() || ''"
         [userEmail]="userState.userEmail() || ''"
