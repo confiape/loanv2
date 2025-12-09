@@ -11,7 +11,7 @@
       [variant]="'solid'"
       [tone]="'primary'"
       [dataTestId]="dataTestId() ? dataTestId() + '-btn-new' : null"
-      (buttonClick)="service().onNewItem()"
+      (buttonClick)="onNewItem()"
     >
       <svg
         class="w-4 h-4"
@@ -53,9 +53,10 @@
     [dataTestId]="dataTestId() ? dataTestId() + '-table' : null"
     (selectionChange)="onSelectionChange($event)"
     (pageChange)="service().onPageChange($event)"
+    (rowClick)="onRowClick($event)"
   />
 
-  <!-- Form Modal -->
+  <!-- Modal (View/Edit/New) -->
   @if (service().showModal()) {
     <app-modal
       [size]="'2xl'"
@@ -66,15 +67,28 @@
         {{ modalTitle() }}
       </app-modal-header>
       <app-modal-body>
-        <app-generic-crud-form
-          [item]="service().editingItem()"
-          [fields]="service().getFormFields()"
-          [loading]="formLoading()"
-          [error]="formError()"
-          [dataTestId]="dataTestId()"
-          (formSubmit)="onFormSave($event)"
-          (formCancel)="onFormCancel()"
-        />
+        @if (modalMode() === 'view') {
+          <!-- View Mode -->
+          <app-generic-crud-view
+            [item]="service().editingItem()!"
+            [fields]="service().getDisplayFields()"
+            [itemTypeName]="service().getItemTypeName()"
+            [dataTestId]="dataTestId()"
+            (editClick)="onViewEditClick()"
+            (deleteClick)="onViewDeleteClick()"
+          />
+        } @else {
+          <!-- Edit/New Mode -->
+          <app-generic-crud-form
+            [item]="service().editingItem()"
+            [fields]="service().getFormFields()"
+            [loading]="formLoading()"
+            [error]="formError()"
+            [dataTestId]="dataTestId()"
+            (formSubmit)="onFormSave($event)"
+            (formCancel)="onFormCancel()"
+          />
+        }
       </app-modal-body>
     </app-modal>
   }

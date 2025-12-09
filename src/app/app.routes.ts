@@ -35,7 +35,15 @@ export const routes: Routes = [
         component: CompaniesListComponent,
       },
       {
+        path: 'companies/new',
+        component: CompaniesListComponent,
+      },
+      {
         path: 'companies/:id',
+        component: CompaniesListComponent,
+      },
+      {
+        path: 'companies/:id/edit',
         component: CompaniesListComponent,
       },
       {
@@ -43,7 +51,15 @@ export const routes: Routes = [
         component: RolesListComponent,
       },
       {
+        path: 'roles/new',
+        component: RolesListComponent,
+      },
+      {
         path: 'roles/:id',
+        component: RolesListComponent,
+      },
+      {
+        path: 'roles/:id/edit',
         component: RolesListComponent,
       },
       {
@@ -51,7 +67,15 @@ export const routes: Routes = [
         component: UsersListComponent,
       },
       {
+        path: 'users/new',
+        component: UsersListComponent,
+      },
+      {
         path: 'users/:id',
+        component: UsersListComponent,
+      },
+      {
+        path: 'users/:id/edit',
         component: UsersListComponent,
       },
     ],

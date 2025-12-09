@@ -143,6 +143,11 @@ export class Table<T extends Record<string, any> = Record<string, any>> {
    */
   readonly pageSizeChange = output<number>();
 
+  /**
+   * Emite cuando se hace click en una fila
+   */
+  readonly rowClick = output<T>();
+
   // ========== STATE (SIGNALS) ==========
 
   /**
@@ -620,5 +625,12 @@ export class Table<T extends Record<string, any> = Record<string, any>> {
       default:
         return 'text-accent hover:text-accent-hover';
     }
+  }
+
+  /**
+   * Maneja el click en una fila
+   */
+  protected onRowClick(row: T): void {
+    this.rowClick.emit(row);
   }
 }

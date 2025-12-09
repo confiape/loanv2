@@ -3,10 +3,15 @@ import { Router } from '@angular/router';
 import { Observable, map, of } from 'rxjs';
 import { Validators } from '@angular/forms';
 import { BaseCrudService } from '@loan/app/core/services/base-crud.service';
-import { TableColumnMetadata, FormFieldMetadata } from '@loan/app/core/models/form-metadata';
+import {
+  TableColumnMetadata,
+  FormFieldMetadata,
+  DisplayFieldMetadata,
+} from '@loan/app/core/models/form-metadata';
 import { UserDto, SaveUserDto, UserApiService } from '@loan/app/shared/openapi';
 import { CompanyApiService } from '@loan/app/shared/openapi/api/company.service';
 import { emailValidator } from '../validators/user.validators';
+import { formatBoolean, formatList, formatDate } from '@loan/app/shared/utils/formatters';
 
 /**
  * CRUD service for User entities
@@ -236,6 +241,96 @@ export class UserCrudService extends BaseCrudService<UserDto, SaveUserDto> {
     ];
   }
 
+  getDisplayFields(): DisplayFieldMetadata[] {
+    return [
+      {
+        key: 'id',
+        label: 'ID',
+      },
+      {
+        key: 'email',
+        label: 'Email',
+      },
+      {
+        key: 'isActive',
+        label: 'Active',
+        valueGetter: (item: unknown) => {
+          const userItem = item as UserDto;
+          return userItem.isActive;
+        },
+        formatter: (value) => formatBoolean(value),
+      },
+      {
+        key: 'person.name',
+        label: 'Full Name',
+        valueGetter: (item: unknown) => {
+          const userItem = item as UserDto;
+          return userItem.person?.name || 'N/A';
+        },
+      },
+      {
+        key: 'person.dni',
+        label: 'DNI',
+        valueGetter: (item: unknown) => {
+          const userItem = item as UserDto;
+          return userItem.person?.dni || 'N/A';
+        },
+      },
+      {
+        key: 'person.phoneNumber',
+        label: 'Phone Number',
+        valueGetter: (item: unknown) => {
+          const userItem = item as UserDto;
+          return userItem.person?.phoneNumber || 'N/A';
+        },
+      },
+      {
+        key: 'person.birthday',
+        label: 'Birthday',
+        valueGetter: (item: unknown) => {
+          const userItem = item as UserDto;
+          return userItem.person?.birthday;
+        },
+        formatter: (value) => formatDate(value),
+      },
+      {
+        key: 'person.address',
+        label: 'Address',
+        valueGetter: (item: unknown) => {
+          const userItem = item as UserDto;
+          return userItem.person?.address || 'N/A';
+        },
+      },
+      {
+        key: 'roles',
+        label: 'Roles',
+        valueGetter: (item: unknown) => {
+          const userItem = item as UserDto;
+          return userItem.roles?.map((r) => r.name) || [];
+        },
+        formatter: (value) => formatList(value),
+      },
+      {
+        key: 'permissions',
+        label: 'Permissions',
+        valueGetter: (item: unknown) => {
+          const userItem = item as UserDto;
+          return userItem.permissions?.map((p) => p.name) || [];
+        },
+        formatter: (value) => formatList(value),
+      },
+      {
+        key: 'companies',
+        label: 'Companies',
+        valueGetter: (item: unknown) => {
+          const userItem = item as UserDto;
+          return userItem.companies?.map((c) => c.name) || [];
+        },
+        formatter: (value) => formatList(value),
+      },
+    ];
+  }
+
   getRouteBasePath(): string {
     return '/users';
   }
@@ -255,18 +350,17 @@ export class UserCrudService extends BaseCrudService<UserDto, SaveUserDto> {
   // ========== UI ACTION OVERRIDES (for routing) ==========
 
   /**
-   * Override to navigate to edit route instead of opening modal directly
+   * Override to navigate to new route
    */
-  override onEditItem(item: UserDto): void {
-    this.router.navigate([this.getRouteBasePath(), item.id]);
+  override onNewItem(): void {
+    this.router.navigate([this.getRouteBasePath(), 'new']);
   }
 
   /**
-   * Override to navigate to base route when opening new item form
+   * Override to navigate to edit route
    */
-  override onNewItem(): void {
-    this._editingItem.set(null);
-    this._showModal.set(true);
+  override onEditItem(item: UserDto): void {
+    this.router.navigate([this.getRouteBasePath(), item.id, 'edit']);
   }
 
   /**

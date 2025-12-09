@@ -178,7 +178,6 @@
         <tr
           class="bg-bg-primary border-b border-border"
           [class.hover:bg-bg-secondary]="hoverable()"
-          [class.cursor-pointer]="hoverable()"
           [attr.data-testid]="testIds().body + '-row'"
         >
           <!-- Celda de selección -->
@@ -207,14 +206,18 @@
                 scope="row"
                 [class]="
                   densityClasses() +
-                  ' font-medium text-text-primary whitespace-nowrap ' +
+                  ' font-medium text-text-primary whitespace-nowrap cursor-pointer ' +
                   getAlignClass(column.align)
                 "
+                (click)="onRowClick(row)"
               >
                 {{ getCellValue(row, column) }}
               </th>
             } @else {
-              <td [class]="densityClasses() + ' ' + getAlignClass(column.align)">
+              <td
+                [class]="densityClasses() + ' cursor-pointer ' + getAlignClass(column.align)"
+                (click)="onRowClick(row)"
+              >
                 {{ getCellValue(row, column) }}
               </td>
             }

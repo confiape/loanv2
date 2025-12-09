@@ -105,3 +105,20 @@ export interface TableColumnMetadata<T> {
   /** Column alignment */
   align?: 'left' | 'center' | 'right';
 }
+
+/**
+ * Metadata for defining display fields in view mode
+ */
+export interface DisplayFieldMetadata {
+  /** Field key (matches DTO property) */
+  key: string;
+
+  /** Field label */
+  label: string;
+
+  /** Custom value getter */
+  valueGetter?: (item: unknown) => unknown;
+
+  /** Custom value formatter */
+  formatter?: (value: unknown) => string;
+}

@@ -1,6 +1,6 @@
 import { Signal } from '@angular/core';
 import { Observable } from 'rxjs';
-import { TableColumnMetadata, FormFieldMetadata } from '@loan/app/core/models/form-metadata';
+import { TableColumnMetadata, FormFieldMetadata, DisplayFieldMetadata } from '@loan/app/core/models/form-metadata';
 
 /**
  * Interface that all CRUD services must implement
@@ -58,6 +58,9 @@ export interface ICrudService<TDto extends { id: string }, TSaveDto = TDto> {
   /** Get form field configuration */
   getFormFields(): FormFieldMetadata[];
 
+  /** Get display field configuration for view mode */
+  getDisplayFields(): DisplayFieldMetadata[];
+
   /** Get base route path (e.g., '/companies') */
   getRouteBasePath(): string;
 
@@ -83,6 +86,12 @@ export interface ICrudService<TDto extends { id: string }, TSaveDto = TDto> {
 
   /** Open edit modal directly (without router) */
   openEditModal(item: TDto): void;
+
+  /** Open new modal directly (without router) */
+  openNewModal(): void;
+
+  /** Open view modal directly (without router) */
+  openViewModal(item: TDto): void;
 
   /** Handle delete item button click */
   onDeleteItem(item: TDto): void;

@@ -3,9 +3,14 @@ import { Router } from '@angular/router';
 import { Observable, map } from 'rxjs';
 import { Validators } from '@angular/forms';
 import { BaseCrudService } from '@loan/app/core/services/base-crud.service';
-import { TableColumnMetadata, FormFieldMetadata } from '@loan/app/core/models/form-metadata';
+import {
+  TableColumnMetadata,
+  FormFieldMetadata,
+  DisplayFieldMetadata,
+} from '@loan/app/core/models/form-metadata';
 import { RoleDto, SaveRoleDto, UserApiService } from '@loan/app/shared/openapi';
 import { noSpecialCharactersValidator } from '../validators/role.validators';
+import { formatList } from '@loan/app/shared/utils/formatters';
 
 /**
  * CRUD service for Role entities
@@ -115,6 +120,37 @@ export class RoleCrudService extends BaseCrudService<RoleDto, SaveRoleDto> {
     ];
   }
 
+  getDisplayFields(): DisplayFieldMetadata[] {
+    return [
+      {
+        key: 'id',
+        label: 'ID',
+      },
+      {
+        key: 'name',
+        label: 'Role Name',
+      },
+      {
+        key: 'roles',
+        label: 'Inherited Roles',
+        valueGetter: (item: unknown) => {
+          const roleItem = item as RoleDto;
+          return roleItem.roles?.map((r) => r.name) || [];
+        },
+        formatter: (value) => formatList(value),
+      },
+      {
+        key: 'permissions',
+        label: 'Permissions',
+        valueGetter: (item: unknown) => {
+          const roleItem = item as RoleDto;
+          return roleItem.permissions?.map((p) => p.name) || [];
+        },
+        formatter: (value) => formatList(value),
+      },
+    ];
+  }
+
   getRouteBasePath(): string {
     return '/roles';
   }
@@ -134,18 +170,17 @@ export class RoleCrudService extends BaseCrudService<RoleDto, SaveRoleDto> {
   // ========== UI ACTION OVERRIDES (for routing) ==========
 
   /**
-   * Override to navigate to edit route instead of opening modal directly
+   * Override to navigate to new route
    */
-  override onEditItem(item: RoleDto): void {
-    this.router.navigate([this.getRouteBasePath(), item.id]);
+  override onNewItem(): void {
+    this.router.navigate([this.getRouteBasePath(), 'new']);
   }
 
   /**
-   * Override to navigate to base route when opening new item form
+   * Override to navigate to edit route
    */
-  override onNewItem(): void {
-    this._editingItem.set(null);
-    this._showModal.set(true);
+  override onEditItem(item: RoleDto): void {
+    this.router.navigate([this.getRouteBasePath(), item.id, 'edit']);
   }
 
   /**

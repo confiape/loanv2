@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, input, effect, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs';
 import { Table } from '@loan/app/shared/ui/table/table';
 import { TableColumn, TableAction } from '@loan/app/shared/ui/table/table.models';
 import { Modal } from '@loan/app/shared/components/modal/modal';
@@ -8,6 +9,7 @@ import { ModalHeader } from '@loan/app/shared/components/modal/modal-header';
 import { ModalBody } from '@loan/app/shared/components/modal/modal-body';
 import { Button } from '@loan/app/shared/components/button/button';
 import { GenericCrudFormComponent } from '../generic-crud-form/generic-crud-form';
+import { GenericCrudViewComponent } from '../generic-crud-view/generic-crud-view';
 import { ICrudService } from '@loan/app/core/services/crud.interface';
 import { TableColumnMetadata } from '@loan/app/core/models/form-metadata';
 
@@ -32,7 +34,16 @@ import { TableColumnMetadata } from '@loan/app/core/models/form-metadata';
 @Component({
   selector: 'app-generic-crud-list',
   standalone: true,
-  imports: [CommonModule, Table, Modal, ModalHeader, ModalBody, Button, GenericCrudFormComponent],
+  imports: [
+    CommonModule,
+    Table,
+    Modal,
+    ModalHeader,
+    ModalBody,
+    Button,
+    GenericCrudFormComponent,
+    GenericCrudViewComponent,
+  ],
   templateUrl: './generic-crud-list.html',
 })
 export class GenericCrudListComponent<TDto extends { id: string }> implements OnInit {
@@ -56,42 +67,60 @@ export class GenericCrudListComponent<TDto extends { id: string }> implements On
   formLoading = signal(false);
   formError = signal<string | null>(null);
 
-  // Track current route param ID
+  // Modal mode: 'view' | 'edit' | 'new'
+  modalMode = signal<'view' | 'edit' | 'new'>('new');
+
+  // Track current route param ID and action
   private currentRouteId = signal<string | null>(null);
+  private currentRouteAction = signal<'view' | 'edit' | 'new' | null>(null);
 
   // Computed modal title
   readonly modalTitle = computed(() => {
     const itemTypeName = this.service().getItemTypeName();
-    const isEdit = this.service().editingItem() !== null;
+    const mode = this.modalMode();
     const capitalizedName = itemTypeName.charAt(0).toUpperCase() + itemTypeName.slice(1);
-    return isEdit ? `Edit ${capitalizedName}` : `New ${capitalizedName}`;
+
+    switch (mode) {
+      case 'view':
+        return `View ${capitalizedName}`;
+      case 'edit':
+        return `Edit ${capitalizedName}`;
+      case 'new':
+        return `New ${capitalizedName}`;
+    }
   });
 
   constructor() {
-    // Watch for changes in items and route ID to open modal
+    // Watch for changes in items and route parameters to open modal
     effect(() => {
       const items = this.service().items();
       const routeId = this.currentRouteId();
+      const action = this.currentRouteAction();
       const srv = this.service();
 
-      if (routeId && items.length > 0) {
+      if (action === 'new') {
+        // New item mode
+        this.modalMode.set('new');
+        srv.openNewModal();
+      } else if (routeId && items.length > 0) {
+        // View or Edit mode
         const item = items.find((i) => i.id === routeId);
         if (item) {
-          // Only open modal if not already showing this item
-          const currentEditingId = srv.editingItem()?.id;
-          const isModalOpen = srv.showModal();
-
-          if (!isModalOpen || currentEditingId !== item.id) {
-            // Use openEditModal to bypass router navigation and directly open modal
-            srv.openEditModal(item);
+          if (action === 'edit') {
+            this.modalMode.set('edit');
+            srv.openViewModal(item);
+          } else {
+            // Default to view mode when only ID is present
+            this.modalMode.set('view');
+            srv.openViewModal(item);
           }
         } else {
           // Item not found, navigate back to list
           this.router.navigate([srv.getRouteBasePath()]);
         }
-      } else if (!routeId) {
-        // No ID in route, close modal if open
-        if (srv.showModal() && srv.editingItem()) {
+      } else if (!routeId && !action) {
+        // No ID or action in route, close modal if open
+        if (srv.showModal()) {
           srv.onFormCancel();
         }
       }
@@ -102,10 +131,39 @@ export class GenericCrudListComponent<TDto extends { id: string }> implements On
     this.setupTableConfig();
     this.service().loadItems();
 
-    // Subscribe to route params and update signal
-    this.route.params.subscribe((params) => {
-      this.currentRouteId.set(params['id'] || null);
-    });
+    // Update route state on navigation
+    const updateRouteState = () => {
+      const id = this.route.snapshot.params['id'];
+      const url = this.router.url;
+
+      if (url.endsWith('/new')) {
+        // New mode: /companies/new
+        this.currentRouteId.set(null);
+        this.currentRouteAction.set('new');
+      } else if (id && url.endsWith('/edit')) {
+        // Edit mode: /companies/:id/edit
+        this.currentRouteId.set(id);
+        this.currentRouteAction.set('edit');
+      } else if (id) {
+        // View mode: /companies/:id
+        this.currentRouteId.set(id);
+        this.currentRouteAction.set(null);
+      } else {
+        // Base route: /companies
+        this.currentRouteId.set(null);
+        this.currentRouteAction.set(null);
+      }
+    };
+
+    // Initial state
+    updateRouteState();
+
+    // Listen to navigation events
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe(() => {
+        updateRouteState();
+      });
   }
 
   /**
@@ -118,20 +176,8 @@ export class GenericCrudListComponent<TDto extends { id: string }> implements On
     const columns = columnMetadata.map((col) => this.convertColumnMetadata(col));
     this.tableColumns.set(columns);
 
-    // Setup table actions
-    const actions: TableAction<TDto>[] = [
-      {
-        label: 'Edit',
-        variant: 'primary',
-        handler: (item) => this.service().onEditItem(item),
-      },
-      {
-        label: 'Delete',
-        variant: 'danger',
-        handler: (item) => this.service().onDeleteItem(item),
-      },
-    ];
-    this.tableActions.set(actions);
+    // No actions needed - using rowClick instead
+    this.tableActions.set([]);
   }
 
   /**
@@ -228,5 +274,42 @@ export class GenericCrudListComponent<TDto extends { id: string }> implements On
    */
   confirmDelete(): void {
     this.service().confirmDelete();
+  }
+
+  /**
+   * Handle new item button click - navigate to new route
+   */
+  onNewItem(): void {
+    const basePath = this.service().getRouteBasePath();
+    this.router.navigate([basePath, 'new']);
+  }
+
+  /**
+   * Handle row click - navigate to view mode
+   */
+  onRowClick(item: TDto): void {
+    const basePath = this.service().getRouteBasePath();
+    this.router.navigate([basePath, item.id]);
+  }
+
+  /**
+   * Handle Edit button click from view modal
+   */
+  onViewEditClick(): void {
+    const item = this.service().editingItem();
+    if (item) {
+      const basePath = this.service().getRouteBasePath();
+      this.router.navigate([basePath, item.id, 'edit']);
+    }
+  }
+
+  /**
+   * Handle Delete button click from view modal
+   */
+  onViewDeleteClick(): void {
+    const item = this.service().editingItem();
+    if (item) {
+      this.service().onDeleteItem(item);
+    }
   }
 }

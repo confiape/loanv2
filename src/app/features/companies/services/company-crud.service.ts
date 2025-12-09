@@ -3,7 +3,11 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Validators } from '@angular/forms';
 import { BaseCrudService } from '@loan/app/core/services/base-crud.service';
-import { TableColumnMetadata, FormFieldMetadata } from '@loan/app/core/models/form-metadata';
+import {
+  TableColumnMetadata,
+  FormFieldMetadata,
+  DisplayFieldMetadata,
+} from '@loan/app/core/models/form-metadata';
 import { CompanyDto, SaveCompanyDto, CompanyApiService } from '@loan/app/shared/openapi';
 import { noSpecialCharactersValidator } from '../validators/company.validators';
 
@@ -75,6 +79,19 @@ export class CompanyCrudService extends BaseCrudService<CompanyDto, SaveCompanyD
     ];
   }
 
+  getDisplayFields(): DisplayFieldMetadata[] {
+    return [
+      {
+        key: 'id',
+        label: 'ID',
+      },
+      {
+        key: 'name',
+        label: 'Company Name',
+      },
+    ];
+  }
+
   getRouteBasePath(): string {
     return '/companies';
   }
@@ -94,18 +111,17 @@ export class CompanyCrudService extends BaseCrudService<CompanyDto, SaveCompanyD
   // ========== UI ACTION OVERRIDES (for routing) ==========
 
   /**
-   * Override to navigate to edit route instead of opening modal directly
+   * Override to navigate to new route
    */
-  override onEditItem(item: CompanyDto): void {
-    this.router.navigate([this.getRouteBasePath(), item.id]);
+  override onNewItem(): void {
+    this.router.navigate([this.getRouteBasePath(), 'new']);
   }
 
   /**
-   * Override to navigate to base route when opening new item form
+   * Override to navigate to edit route
    */
-  override onNewItem(): void {
-    this._editingItem.set(null);
-    this._showModal.set(true);
+  override onEditItem(item: CompanyDto): void {
+    this.router.navigate([this.getRouteBasePath(), item.id, 'edit']);
   }
 
   /**

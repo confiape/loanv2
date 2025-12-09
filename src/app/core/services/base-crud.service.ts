@@ -2,7 +2,7 @@ import { signal, computed, Signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ICrudService } from './crud.interface';
-import { TableColumnMetadata, FormFieldMetadata } from '@loan/app/core/models/form-metadata';
+import { TableColumnMetadata, FormFieldMetadata, DisplayFieldMetadata } from '@loan/app/core/models/form-metadata';
 
 /**
  * Base CRUD service implementation
@@ -84,6 +84,9 @@ export abstract class BaseCrudService<TDto extends { id: string }, TSaveDto = TD
   /** Get form fields configuration */
   abstract getFormFields(): FormFieldMetadata[];
 
+  /** Get display fields configuration for view mode */
+  abstract getDisplayFields(): DisplayFieldMetadata[];
+
   /** Get route base path */
   abstract getRouteBasePath(): string;
 
@@ -158,6 +161,22 @@ export abstract class BaseCrudService<TDto extends { id: string }, TSaveDto = TD
   }
 
   openEditModal(item: TDto): void {
+    this._editingItem.set(item);
+    this._showModal.set(true);
+  }
+
+  /**
+   * Open modal directly for new item (without navigation)
+   */
+  openNewModal(): void {
+    this._editingItem.set(null);
+    this._showModal.set(true);
+  }
+
+  /**
+   * Open modal directly for viewing/editing item (without navigation)
+   */
+  openViewModal(item: TDto): void {
     this._editingItem.set(item);
     this._showModal.set(true);
   }
