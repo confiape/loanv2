@@ -96,8 +96,59 @@
     </div>
   }
 
+<!-- Mobile Cards View -->
+@if (mobileView() === 'cards') {
+  <div class="md:hidden space-y-2" [attr.data-testid]="testIds().wrapper + '-cards'">
+    @for (row of visibleData(); track $index; let rowIndex = $index) {
+      <div
+        class="bg-bg-primary border border-border rounded-lg p-3 shadow-sm"
+        [class.ring-2]="isRowSelected(row)"
+        [class.ring-accent]="isRowSelected(row)"
+        [attr.data-testid]="testIds().body + '-card'"
+      >
+        <!-- Card Header: Checkbox + First Column -->
+        <div class="flex items-start gap-2 mb-2">
+          @if (selectable()) {
+            <input
+              [id]="'checkbox-card-' + row[idField()]"
+              type="checkbox"
+              class="w-4 h-4 mt-0.5 text-accent bg-bg-primary border-border rounded-sm focus:ring-accent focus:ring-2 flex-shrink-0"
+              [checked]="isRowSelected(row)"
+              (change)="toggleRow(row)"
+              (click)="$event.stopPropagation()"
+              [attr.data-testid]="'checkbox-card'"
+            />
+          }
+          <div class="flex-1 min-w-0" (click)="onRowClick(row)">
+            <h3 class="font-semibold text-sm text-text-primary truncate">
+              {{ getCellValue(row, columns()[0]) }}
+            </h3>
+          </div>
+        </div>
+
+        <!-- Card Body: Remaining Columns -->
+        <div class="space-y-1" (click)="onRowClick(row)">
+          @for (column of columns().slice(1); track column.key) {
+            <div class="flex justify-between items-start text-xs gap-2">
+              <span class="text-text-secondary font-medium whitespace-nowrap">{{ column.label }}:</span>
+              <span class="text-text-primary text-right break-words">{{ getCellValue(row, column) }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    } @empty {
+      <div class="text-center py-6 text-text-secondary text-sm">
+        No data available
+      </div>
+    }
+  </div>
+}
+
+<!-- Desktop Table View -->
 <div
   class="relative overflow-x-auto shadow-md sm:rounded-lg"
+  [class.md:block]="mobileView() === 'cards'"
+  [class.hidden]="mobileView() === 'cards'"
   [attr.data-testid]="testIds().wrapper"
 >
   <!-- Tabla -->

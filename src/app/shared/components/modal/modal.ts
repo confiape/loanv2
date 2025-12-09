@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { DialogModule, DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { ModalSize, generateModalTestIds, getModalSizeClasses } from './modal-helpers';
 
@@ -48,6 +48,9 @@ export class Modal {
   readonly size = input<ModalSize>('2xl');
   readonly dismissible = input<boolean>(true);
 
+  // Emite cuando se hace click en el backdrop
+  readonly backdropClick = output<void>();
+
   private readonly resolvedTestId = computed(() => this.dataTestId() ?? this.data?.testId ?? null);
   private readonly testIds = generateModalTestIds(this.resolvedTestId); // Pass signal, not value
   readonly overlayTestId = this.testIds.overlay;
@@ -61,8 +64,16 @@ export class Modal {
   });
 
   protected handleBackdropClick(): void {
-    if (this.dismissible() && this.dialogRef) {
+    if (!this.dismissible()) {
+      return;
+    }
+
+    if (this.dialogRef) {
+      // Cuando se usa con Dialog service de CDK
       this.dialogRef.close();
+    } else {
+      // Cuando se usa directamente con @if
+      this.backdropClick.emit();
     }
   }
 

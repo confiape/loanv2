@@ -24,6 +24,7 @@ export abstract class BaseCrudService<TDto extends { id: string }, TSaveDto = TD
   protected _searchTerm = signal('');
   protected _currentPage = signal(1);
   protected _pageSize = signal(10);
+  protected _deleteLoading = signal(false);
 
   // Public read-only signals
   readonly items = this._items.asReadonly();
@@ -35,6 +36,7 @@ export abstract class BaseCrudService<TDto extends { id: string }, TSaveDto = TD
   readonly searchTerm = this._searchTerm.asReadonly();
   readonly currentPage = this._currentPage.asReadonly();
   readonly pageSize = this._pageSize.asReadonly();
+  readonly deleteLoading = this._deleteLoading.asReadonly();
 
   // Computed signals
   readonly filteredItems = computed(() => {
@@ -196,18 +198,42 @@ export abstract class BaseCrudService<TDto extends { id: string }, TSaveDto = TD
     const target = this._deleteTarget();
     const selected = this._selectedItems();
 
+    this._deleteLoading.set(true);
+
     if (selected.size > 1) {
       // Bulk delete
-      this.performBulkDelete(Array.from(selected));
+      const deleteIds = Array.from(selected);
+      const deleteObservables = deleteIds.map((id) => this.deleteItem(id));
+
+      let completed = 0;
+      deleteObservables.forEach((obs) => {
+        obs.subscribe({
+          next: () => {
+            completed++;
+            if (completed === deleteObservables.length) {
+              this._deleteLoading.set(false);
+              this._showDeleteConfirm.set(false);
+              this._selectedItems.set(new Set());
+            }
+          },
+          error: (err) => {
+            console.error('Delete failed:', err);
+            this._deleteLoading.set(false);
+            this._showDeleteConfirm.set(false);
+          },
+        });
+      });
     } else if (target) {
       // Single delete
       this.deleteItem(target.id).subscribe({
         next: () => {
+          this._deleteLoading.set(false);
           this._showDeleteConfirm.set(false);
           this._deleteTarget.set(null);
         },
         error: (err) => {
           console.error('Delete failed:', err);
+          this._deleteLoading.set(false);
           this._showDeleteConfirm.set(false);
         },
       });

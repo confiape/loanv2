@@ -24,6 +24,9 @@ export interface ICrudService<TDto extends { id: string }, TSaveDto = TDto> {
   /** Delete confirmation modal visibility */
   showDeleteConfirm: Signal<boolean>;
 
+  /** Delete operation loading state */
+  deleteLoading: Signal<boolean>;
+
   /** Selected items (for bulk operations) */
   selectedItems: Signal<Set<string>>;
 

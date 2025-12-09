@@ -270,13 +270,6 @@ export class GenericCrudListComponent<TDto extends { id: string }> implements On
   }
 
   /**
-   * Confirm delete
-   */
-  confirmDelete(): void {
-    this.service().confirmDelete();
-  }
-
-  /**
    * Handle new item button click - navigate to new route
    */
   onNewItem(): void {

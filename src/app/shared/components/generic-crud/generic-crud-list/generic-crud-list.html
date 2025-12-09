@@ -62,6 +62,7 @@
       [size]="'2xl'"
       [dismissible]="true"
       [dataTestId]="dataTestId() ? dataTestId() + '-modal' : null"
+      (backdropClick)="closeFormModal()"
     >
       <app-modal-header (closeClick)="closeFormModal()">
         {{ modalTitle() }}
@@ -99,6 +100,7 @@
       [size]="'sm'"
       [dismissible]="true"
       [dataTestId]="dataTestId() ? dataTestId() + '-delete-modal' : null"
+      (backdropClick)="closeDeleteModal()"
     >
       <app-modal-header (closeClick)="closeDeleteModal()"> Confirm Delete </app-modal-header>
       <app-modal-body>
@@ -125,6 +127,7 @@
             <app-button
               [variant]="'outline'"
               [tone]="'neutral'"
+              [disabled]="service().deleteLoading()"
               [dataTestId]="dataTestId() ? dataTestId() + '-btn-cancel-delete' : null"
               (buttonClick)="closeDeleteModal()"
             >
@@ -133,8 +136,10 @@
             <app-button
               [variant]="'solid'"
               [tone]="'danger'"
+              [loading]="service().deleteLoading()"
+              [disabled]="service().deleteLoading()"
               [dataTestId]="dataTestId() ? dataTestId() + '-btn-confirm-delete' : null"
-              (buttonClick)="confirmDelete()"
+              (buttonClick)="service().confirmDelete()"
             >
               Delete
             </app-button>

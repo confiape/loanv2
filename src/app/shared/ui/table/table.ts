@@ -83,6 +83,11 @@ export class Table<T extends Record<string, any> = Record<string, any>> {
   readonly density = input<TableDensity>('comfortable');
 
   /**
+   * Vista en móvil: 'cards' muestra cards, 'table' mantiene tabla
+   */
+  readonly mobileView = input<'cards' | 'table'>('cards');
+
+  /**
    * Placeholder del campo de búsqueda
    */
   readonly searchPlaceholder = input<string>('Search...');

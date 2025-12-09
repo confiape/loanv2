@@ -81,6 +81,7 @@ export class UserCrudService extends BaseCrudService<UserDto, SaveUserDto> {
         label: 'Name',
         sortable: true,
         align: 'left',
+        valueGetter: (item) => item.person?.name || 'N/A',
       },
       {
         key: 'email',
@@ -93,12 +94,14 @@ export class UserCrudService extends BaseCrudService<UserDto, SaveUserDto> {
         label: 'DNI',
         sortable: true,
         align: 'left',
+        valueGetter: (item) => item.person?.dni || 'N/A',
       },
       {
         key: 'isActive',
         label: 'Active',
         sortable: true,
         align: 'center',
+        formatter: (value) => formatBoolean(value),
       },
       {
         key: 'id',
