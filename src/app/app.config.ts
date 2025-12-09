@@ -40,6 +40,9 @@ import {
   heroArchiveBox,
   heroClock,
   heroCheckBadge,
+  heroHome,
+  heroBriefcase,
+  heroCreditCard,
 } from '@ng-icons/heroicons/outline';
 
 export const appConfig: ApplicationConfig = {
@@ -79,6 +82,9 @@ export const appConfig: ApplicationConfig = {
       heroArchiveBox,
       heroClock,
       heroCheckBadge,
+      heroHome,
+      heroBriefcase,
+      heroCreditCard,
     }),
   ],
 };

@@ -6,6 +6,7 @@ import { userResolver } from '@loan/app/core/resolvers/user.resolver';
 import { CompaniesListComponent } from '@loan/app/features/companies/pages/companies-list/companies-list';
 import { RolesListComponent } from '@loan/app/features/roles/pages/roles-list/roles-list';
 import { UsersListComponent } from '@loan/app/features/users/pages/users-list/users-list';
+import {Home} from '@loan/app/features/home';
 
 export const routes: Routes = [
   {
@@ -27,7 +28,7 @@ export const routes: Routes = [
       },
       {
         path: 'home',
-        component: LoginComponent,
+        component: Home,
       },
       {
         path: 'companies',

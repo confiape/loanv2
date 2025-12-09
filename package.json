@@ -12,7 +12,8 @@
     "build-storybook": "ng run loan:build-storybook",
     "lint": "ng lint --quiet",
     "prettier": "npx prettier --write . --log-level=error",
-    "coverage": "vitest run --coverage"
+    "coverage": "vitest run --coverage",
+    "api": "rimraf src/app/shared/openapi && openapi-generator-cli generate -i http://localhost:3000/swagger/v1/swagger.json -g typescript-angular -o src/app/shared/openapi --additional-properties=serviceSuffix=ApiService"
   },
   "prettier": {
     "printWidth": 100,
@@ -72,6 +73,8 @@
     "prettier-plugin-organize-imports": "^4.3.0",
     "storybook": "^10.0.5",
     "typescript": "~5.9.2",
-    "vitest": "^3.2.4"
+    "vitest": "^3.2.4",
+    "rimraf": "^6.0.1",
+    "@openapitools/openapi-generator-cli": "^2.13.4"
   }
 }

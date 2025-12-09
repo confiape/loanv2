@@ -7,10 +7,10 @@ import {
 } from '@loan/app/layout/bottom-navigation/bottom-navigation';
 
 const items: BottomNavItem[] = [
-  { id: 'home', label: 'Inicio', icon: '<span>🏠</span>', routerLink: '/' },
-  { id: 'accounts', label: 'Cuentas', icon: '<span>💼</span>', routerLink: '/accounts' },
-  { id: 'cards', label: 'Tarjetas', icon: '<span>💳</span>', routerLink: '/cards' },
-  { id: 'settings', label: 'Ajustes', icon: '<span>⚙️</span>', routerLink: '/settings' },
+  { id: 'home', label: 'Inicio', icon: 'heroHome', routerLink: '/' },
+  { id: 'accounts', label: 'Cuentas', icon: 'heroBriefcase', routerLink: '/accounts' },
+  { id: 'cards', label: 'Tarjetas', icon: 'heroCreditCard', routerLink: '/cards' },
+  { id: 'settings', label: 'Ajustes', icon: 'heroCog6Tooth', routerLink: '/settings' },
 ];
 
 const meta: Meta<BottomNavigationComponent> = {

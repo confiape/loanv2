@@ -18,15 +18,4 @@ export * from './reports.service';
 import { ReportsApiService } from './reports.service';
 export * from './user.service';
 import { UserApiService } from './user.service';
-export const APIS = [
-  AuthenticationApiService,
-  BorrowerApiService,
-  CompanyApiService,
-  DefaultApiService,
-  FileApiService,
-  InOutBalanceApiService,
-  LoanApiService,
-  PaymentApiService,
-  ReportsApiService,
-  UserApiService,
-];
+export const APIS = [AuthenticationApiService, BorrowerApiService, CompanyApiService, DefaultApiService, FileApiService, InOutBalanceApiService, LoanApiService, PaymentApiService, ReportsApiService, UserApiService];

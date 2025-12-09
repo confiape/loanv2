@@ -48,23 +48,33 @@ export const SIDENAV_ITEMS: SidenavItem[] = [
     routerLink: '/customers',
   },
   {
+    label: 'Users',
+    icon: 'heroUsers',
+    value: 'users',
+    routerLink: '/users',
+    badge: '12',
+    children:[
+      {
+        label: 'Roles',
+        icon: 'heroUserGroup',
+        value: 'roles',
+        routerLink: '/roles',
+      },
+      {
+        label: 'Users',
+        icon: 'heroUsers',
+        value: 'users',
+        routerLink: '/users',
+      },
+    ]
+  },
+  {
     label: 'Companies',
     icon: 'heroBuildingOffice2',
     value: 'companies',
     routerLink: '/companies',
   },
-  {
-    label: 'Roles',
-    icon: 'heroUserGroup',
-    value: 'roles',
-    routerLink: '/roles',
-  },
-  {
-    label: 'Users',
-    icon: 'heroUsers',
-    value: 'users',
-    routerLink: '/users',
-  },
+
   {
     label: 'Reports',
     icon: 'heroChartBar',
@@ -215,12 +225,6 @@ export const MOCK_NOTIFICATIONS: Notification[] = [
 
 // Bottom Navigation Items Configuration (Mobile)
 export const BOTTOM_NAV_ITEMS: BottomNavItem[] = [
-  {
-    id: 'dashboard',
-    label: 'Dashboard',
-    icon: 'heroChartPie',
-    routerLink: '/dashboard',
-  },
   {
     id: 'loans',
     label: 'Loans',

@@ -3,6 +3,16 @@ import { TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection, inputBinding, outputBinding, signal } from '@angular/core';
 import { provideRouter } from '@angular/router';
 
+// Icons
+import { provideIcons } from '@ng-icons/core';
+import {
+  heroHome,
+  heroDocumentText,
+  heroUsers,
+  heroChartBar,
+  heroCog6Tooth,
+} from '@ng-icons/heroicons/outline';
+
 // Testing library
 import { within } from '@testing-library/dom';
 
@@ -20,25 +30,25 @@ describe('BottomNavigationComponent', () => {
     {
       id: 'dashboard',
       label: 'Dashboard',
-      icon: '<svg>dashboard</svg>',
+      icon: 'heroHome',
       routerLink: '/dashboard',
     },
     {
       id: 'loans',
       label: 'Loans',
-      icon: '<svg>loans</svg>',
+      icon: 'heroDocumentText',
       routerLink: '/loans',
     },
     {
       id: 'customers',
       label: 'Customers',
-      icon: '<svg>customers</svg>',
+      icon: 'heroUsers',
       routerLink: '/customers',
     },
     {
       id: 'reports',
       label: 'Reports',
-      icon: '<svg>reports</svg>',
+      icon: 'heroChartBar',
       routerLink: '/reports',
     },
   ];
@@ -51,6 +61,13 @@ describe('BottomNavigationComponent', () => {
       { path: 'customers', component: class {} },
       { path: 'reports', component: class {} },
     ]),
+    provideIcons({
+      heroHome,
+      heroDocumentText,
+      heroUsers,
+      heroChartBar,
+      heroCog6Tooth,
+    }),
   ];
 
   describe('initialization', () => {
@@ -98,7 +115,7 @@ describe('BottomNavigationComponent', () => {
       }).createComponent(BottomNavigationComponent);
       TestBed.tick();
 
-      const emptyMessage = fixture.nativeElement.querySelector('.col-span-4');
+      const emptyMessage = fixture.nativeElement.querySelector('.w-full');
 
       // Assert
       expect(emptyMessage?.textContent?.trim()).toBe('No navigation items');
@@ -155,7 +172,7 @@ describe('BottomNavigationComponent', () => {
       });
     });
 
-    it('renders icons using innerHTML', () => {
+    it('renders icons using ng-icon component', () => {
       // Arrange
       const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
@@ -164,11 +181,14 @@ describe('BottomNavigationComponent', () => {
       });
       TestBed.tick();
 
-      const icons = fixture.nativeElement.querySelectorAll('span[class*="w-5 h-5"]');
+      const icons = fixture.nativeElement.querySelectorAll('ng-icon');
 
       // Assert
       expect(icons.length).toBe(mockItems.length);
-      expect(icons[0].innerHTML).toContain('dashboard');
+      // Verify that ng-icon elements are rendered
+      icons.forEach((icon: HTMLElement) => {
+        expect(icon.tagName.toLowerCase()).toBe('ng-icon');
+      });
     });
 
     it('sets aria-label for each link', () => {
@@ -188,7 +208,7 @@ describe('BottomNavigationComponent', () => {
       });
     });
 
-    it('applies 4-column grid layout', () => {
+    it('uses flexbox layout that adapts to any number of items', () => {
       // Arrange
       const fixture = TestBed.configureTestingModule({
         providers: defaultProviders,
@@ -197,10 +217,14 @@ describe('BottomNavigationComponent', () => {
       });
       TestBed.tick();
 
-      const grid = fixture.nativeElement.querySelector('.grid-cols-4');
+      const container = fixture.nativeElement.querySelector('.flex');
+      const links = fixture.nativeElement.querySelectorAll('a');
 
       // Assert
-      expect(grid).toBeTruthy();
+      expect(container).toBeTruthy();
+      links.forEach((link: HTMLElement) => {
+        expect(link.className).toContain('flex-1');
+      });
     });
   });
 

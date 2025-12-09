@@ -1,6 +1,7 @@
 .gitignore
 .openapi-generator-ignore
 README.md
+api.base.service.ts
 api.module.ts
 api/api.ts
 api/authentication.service.ts
@@ -19,11 +20,13 @@ git_push.sh
 index.ts
 model/basicLoanAndPersonDto.ts
 model/basicLoanDto.ts
+model/borrowerClientInformation.ts
 model/borrowerClientWithActiveLoansDto.ts
 model/companyDto.ts
 model/createBorrowerDto.ts
 model/inOutBalanceDto.ts
 model/inOutBalanceType.ts
+model/lastPayment.ts
 model/loanAndPaymentDto.ts
 model/loanDto.ts
 model/loanStatus.ts
@@ -53,4 +56,5 @@ model/tokenDto.ts
 model/userDto.ts
 model/userToRegister.ts
 param.ts
+provide-api.ts
 variables.ts

@@ -1,5 +1,6 @@
 import { Component, input, output } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { NgIconComponent } from '@ng-icons/core';
 
 export interface BottomNavItem {
   id: string;
@@ -11,26 +12,27 @@ export interface BottomNavItem {
 @Component({
   selector: 'app-bottom-navigation',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive, NgIconComponent],
   template: `
     <nav
       class="bg-bg-primary border-t border-border w-full h-16 flex items-center justify-center lg:hidden"
       role="navigation"
       aria-label="Bottom navigation"
     >
-      <div class="grid grid-cols-4 h-full max-w-lg font-medium w-full">
+      <div class="flex h-full max-w-lg font-medium w-full">
         @for (item of items(); track item.id) {
           <a
             [routerLink]="item.routerLink"
             routerLinkActive="router-link-active"
-            class="inline-flex flex-col items-center justify-center px-5 hover:bg-bg-secondary transition-colors group"
+            class="flex-1 inline-flex flex-col items-center justify-center px-5 hover:bg-bg-secondary transition-colors group"
             (click)="onItemClick(item)"
             [attr.aria-label]="item.label"
           >
-            <span
-              class="w-5 h-5 mb-2 text-text-secondary group-hover:text-accent transition-colors [&.router-link-active]:text-accent"
-              [innerHTML]="item.icon"
-            ></span>
+            <ng-icon
+              [name]="item.icon"
+              size="20"
+              class="mb-2 text-text-secondary group-hover:text-accent transition-colors [&.router-link-active]:text-accent"
+            ></ng-icon>
             <span
               class="text-sm text-text-secondary group-hover:text-accent transition-colors [&.router-link-active]:text-accent"
             >
@@ -38,7 +40,7 @@ export interface BottomNavItem {
             </span>
           </a>
         } @empty {
-          <div class="col-span-4 flex items-center justify-center text-text-secondary text-sm">
+          <div class="flex items-center justify-center text-text-secondary text-sm w-full">
             No navigation items
           </div>
         }
@@ -48,6 +50,7 @@ export interface BottomNavItem {
   styles: [
     `
       /* Active state for router link */
+      :host ::ng-deep .router-link-active ng-icon,
       :host ::ng-deep .router-link-active span {
         color: var(--color-accent) !important;
       }

@@ -7,16 +7,17 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { LoanAndPaymentDto } from './loanAndPaymentDto';
+import { LastPayment } from './lastPayment';
 import { PersonDto } from './personDto';
-import { CompanyDto } from './companyDto';
 
 
-export interface BorrowerClientWithActiveLoansDto { 
+export interface BorrowerClientInformation { 
     id: string;
     person: PersonDto;
     displayName: string;
-    company: CompanyDto;
-    loans: Array<LoanAndPaymentDto>;
+    companyName: string;
+    totalAmountLoaned: number;
+    outstandingAmount: number;
+    lastPayments: Array<LastPayment>;
 }
 
