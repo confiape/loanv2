@@ -1,12 +1,12 @@
-<form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-6">
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-3">
   <!-- Error message -->
   @if (error()) {
     <div
-      class="flex items-center p-4 mb-4 text-sm text-error bg-bg-error border border-error rounded-lg"
+      class="flex items-center p-3 text-sm text-error bg-bg-error border border-error rounded-lg"
       role="alert"
     >
       <svg
-        class="flex-shrink-0 inline w-4 h-4 me-3"
+        class="flex-shrink-0 inline w-4 h-4 me-2"
         aria-hidden="true"
         xmlns="http://www.w3.org/2000/svg"
         fill="currentColor"
@@ -23,214 +23,440 @@
     </div>
   }
 
-  <!-- Form fields -->
-  @for (field of fields(); track field.key) {
-    @if (shouldShowField(field)) {
-      <div [class]="'form-group ' + (field.cssClass || '')">
-        <!-- Text, Email inputs -->
-        @if (field.type === 'text' || field.type === 'email') {
-          <app-input
-            [formControlName]="field.key"
-            [type]="field.type"
-            [label]="field.label"
-            [placeholder]="field.placeholder || ''"
-            [helpText]="field.helpText || ''"
-            [validationState]="getValidationState(field.key)"
-            [errorMessage]="getFieldError(field.key) || ''"
-            [disabled]="field.disabled || false"
-            [readonly]="field.readonly || false"
-            [dataTestId]="dataTestId() ? dataTestId() + '-input-' + field.key : null"
-          />
-        }
+  <!-- Ungrouped fields (displayed directly without accordion) -->
+  @if (ungroupedFields().length > 0) {
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+      @for (field of ungroupedFields(); track field.key) {
+        @if (shouldShowField(field)) {
+          <div [class]="getFieldGridClass(field)">
+            <!-- Text, Email inputs -->
+            @if (field.type === 'text' || field.type === 'email') {
+              <app-input
+                [formControlName]="field.key"
+                [type]="field.type"
+                [label]="field.label"
+                [placeholder]="field.placeholder || ''"
+                [helpText]="field.helpText || ''"
+                [validationState]="getValidationState(field.key)"
+                [errorMessage]="getFieldError(field.key) || ''"
+                [disabled]="field.disabled || false"
+                [readonly]="field.readonly || false"
+                [dataTestId]="dataTestId() ? dataTestId() + '-input-' + field.key : null"
+              />
+            }
 
-        <!-- Password input -->
-        @if (field.type === 'password') {
-          <app-password-input
-            [formControlName]="field.key"
-            [label]="field.label"
-            [placeholder]="field.placeholder || ''"
-            [helpText]="field.helpText || ''"
-            [validationState]="getValidationState(field.key)"
-            [errorMessage]="getFieldError(field.key) || ''"
-            [disabled]="field.disabled || false"
-            [readonly]="field.readonly || false"
-            [dataTestId]="dataTestId() ? dataTestId() + '-password-' + field.key : null"
-          />
-        }
+            <!-- Password input -->
+            @if (field.type === 'password') {
+              <app-password-input
+                [formControlName]="field.key"
+                [label]="field.label"
+                [placeholder]="field.placeholder || ''"
+                [helpText]="field.helpText || ''"
+                [validationState]="getValidationState(field.key)"
+                [errorMessage]="getFieldError(field.key) || ''"
+                [disabled]="field.disabled || false"
+                [readonly]="field.readonly || false"
+                [dataTestId]="dataTestId() ? dataTestId() + '-password-' + field.key : null"
+              />
+            }
 
-        <!-- Number input -->
-        @if (field.type === 'number') {
-          <app-input-number
-            [formControlName]="field.key"
-            [label]="field.label"
-            [placeholder]="field.placeholder || ''"
-            [helpText]="field.helpText || ''"
-            [validationState]="getValidationState(field.key)"
-            [errorMessage]="getFieldError(field.key) || ''"
-            [disabled]="field.disabled || false"
-            [readonly]="field.readonly || false"
-            [min]="$any(field.min)"
-            [max]="$any(field.max)"
-            [step]="field.step || 1"
-            [dataTestId]="dataTestId() ? dataTestId() + '-number-' + field.key : null"
-          />
-        }
+            <!-- Number input -->
+            @if (field.type === 'number') {
+              <app-input-number
+                [formControlName]="field.key"
+                [label]="field.label"
+                [placeholder]="field.placeholder || ''"
+                [helpText]="field.helpText || ''"
+                [validationState]="getValidationState(field.key)"
+                [errorMessage]="getFieldError(field.key) || ''"
+                [disabled]="field.disabled || false"
+                [readonly]="field.readonly || false"
+                [min]="$any(field.min)"
+                [max]="$any(field.max)"
+                [step]="field.step || 1"
+                [dataTestId]="dataTestId() ? dataTestId() + '-number-' + field.key : null"
+              />
+            }
 
-        <!-- Date input -->
-        @if (field.type === 'date') {
-          <app-date-input
-            [formControlName]="field.key"
-            [label]="field.label"
-            [placeholder]="field.placeholder || ''"
-            [helpText]="field.helpText || ''"
-            [validationState]="getValidationState(field.key)"
-            [errorMessage]="getFieldError(field.key) || ''"
-            [disabled]="field.disabled || false"
-            [readonly]="field.readonly || false"
-            [min]="$any(field.min)"
-            [max]="$any(field.max)"
-            [dataTestId]="dataTestId() ? dataTestId() + '-date-' + field.key : null"
-          />
-        }
+            <!-- Date input -->
+            @if (field.type === 'date') {
+              <app-date-input
+                [formControlName]="field.key"
+                [label]="field.label"
+                [placeholder]="field.placeholder || ''"
+                [helpText]="field.helpText || ''"
+                [validationState]="getValidationState(field.key)"
+                [errorMessage]="getFieldError(field.key) || ''"
+                [disabled]="field.disabled || false"
+                [readonly]="field.readonly || false"
+                [min]="$any(field.min)"
+                [max]="$any(field.max)"
+                [dataTestId]="dataTestId() ? dataTestId() + '-date-' + field.key : null"
+              />
+            }
 
-        <!-- Checkbox -->
-        @if (field.type === 'checkbox') {
-          <app-checkbox
-            [formControlName]="field.key"
-            [label]="field.label"
-            [helpText]="field.helpText || ''"
-            [validationState]="getValidationState(field.key)"
-            [errorMessage]="getFieldError(field.key) || ''"
-            [disabled]="field.disabled || false"
-            [dataTestId]="dataTestId() ? dataTestId() + '-checkbox-' + field.key : null"
-          />
-        }
+            <!-- Checkbox -->
+            @if (field.type === 'checkbox') {
+              <app-checkbox
+                [formControlName]="field.key"
+                [label]="field.label"
+                [helpText]="field.helpText || ''"
+                [validationState]="getValidationState(field.key)"
+                [errorMessage]="getFieldError(field.key) || ''"
+                [disabled]="field.disabled || false"
+                [dataTestId]="dataTestId() ? dataTestId() + '-checkbox-' + field.key : null"
+              />
+            }
 
-        <!-- Radio buttons -->
-        @if (field.type === 'radio') {
-          <app-radio-group
-            [formControlName]="field.key"
-            [label]="field.label"
-            [helpText]="field.helpText || ''"
-            [validationState]="getValidationState(field.key)"
-            [errorMessage]="getFieldError(field.key) || ''"
-            [disabled]="field.disabled || false || loadingOptions()"
-            [options]="getOptions(field.key)"
-            [dataTestId]="dataTestId() ? dataTestId() + '-radio-' + field.key : null"
-          />
-          @if (loadingOptions()) {
-            <p class="mt-1 text-sm text-accent flex items-center">
-              <svg
-                class="animate-spin -ml-1 mr-2 h-4 w-4 inline"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  class="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  stroke-width="4"
-                ></circle>
-                <path
-                  class="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                ></path>
-              </svg>
-              Loading options...
-            </p>
-          }
-        }
+            <!-- Radio buttons -->
+            @if (field.type === 'radio') {
+              <app-radio-group
+                [formControlName]="field.key"
+                [label]="field.label"
+                [helpText]="field.helpText || ''"
+                [validationState]="getValidationState(field.key)"
+                [errorMessage]="getFieldError(field.key) || ''"
+                [disabled]="field.disabled || false || loadingOptions()"
+                [options]="getOptions(field.key)"
+                [dataTestId]="dataTestId() ? dataTestId() + '-radio-' + field.key : null"
+              />
+              @if (loadingOptions()) {
+                <p class="mt-1 text-xs text-accent flex items-center">
+                  <svg
+                    class="animate-spin -ml-1 mr-2 h-3 w-3 inline"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      class="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      stroke-width="4"
+                    ></circle>
+                    <path
+                      class="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  Loading options...
+                </p>
+              }
+            }
 
-        <!-- Select (simple) -->
-        @if (field.type === 'select') {
-          <app-select
-            [formControlName]="field.key"
-            [label]="field.label"
-            [placeholder]="field.placeholder || 'Select an option'"
-            [helpText]="field.helpText || ''"
-            [validationState]="getValidationState(field.key)"
-            [errorMessage]="getFieldError(field.key) || ''"
-            [disabled]="field.disabled || false || loadingOptions()"
-            [options]="getOptions(field.key)"
-            [dataTestId]="dataTestId() ? dataTestId() + '-select-' + field.key : null"
-          />
-          @if (loadingOptions()) {
-            <p class="mt-1 text-sm text-accent flex items-center">
-              <svg
-                class="animate-spin -ml-1 mr-2 h-4 w-4 inline"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  class="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  stroke-width="4"
-                ></circle>
-                <path
-                  class="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                ></path>
-              </svg>
-              Loading options...
-            </p>
-          }
-        }
+            <!-- Select (simple) -->
+            @if (field.type === 'select') {
+              <app-select
+                [formControlName]="field.key"
+                [label]="field.label"
+                [placeholder]="field.placeholder || 'Select an option'"
+                [helpText]="field.helpText || ''"
+                [validationState]="getValidationState(field.key)"
+                [errorMessage]="getFieldError(field.key) || ''"
+                [disabled]="field.disabled || false || loadingOptions()"
+                [options]="getOptions(field.key)"
+                [dataTestId]="dataTestId() ? dataTestId() + '-select-' + field.key : null"
+              />
+              @if (loadingOptions()) {
+                <p class="mt-1 text-xs text-accent flex items-center">
+                  <svg
+                    class="animate-spin -ml-1 mr-2 h-3 w-3 inline"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      class="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      stroke-width="4"
+                    ></circle>
+                    <path
+                      class="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  Loading options...
+                </p>
+              }
+            }
 
-        <!-- MultiSelect -->
-        @if (field.type === 'multiselect') {
-          <app-multiselect
-            [formControlName]="field.key"
-            [label]="field.label"
-            [placeholder]="field.placeholder || 'Select options'"
-            [helpText]="field.helpText || ''"
-            [validationState]="getValidationState(field.key)"
-            [errorMessage]="getFieldError(field.key) || ''"
-            [disabled]="field.disabled || false || loadingOptions()"
-            [options]="getOptions(field.key)"
-            [searchable]="true"
-            [dataTestId]="dataTestId() ? dataTestId() + '-multiselect-' + field.key : null"
-          />
-          @if (loadingOptions()) {
-            <p class="mt-1 text-sm text-accent flex items-center">
-              <svg
-                class="animate-spin -ml-1 mr-2 h-4 w-4 inline"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  class="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  stroke-width="4"
-                ></circle>
-                <path
-                  class="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                ></path>
-              </svg>
-              Loading options...
-            </p>
+            <!-- MultiSelect -->
+            @if (field.type === 'multiselect') {
+              <app-multiselect
+                [formControlName]="field.key"
+                [label]="field.label"
+                [placeholder]="field.placeholder || 'Select options'"
+                [helpText]="field.helpText || ''"
+                [validationState]="getValidationState(field.key)"
+                [errorMessage]="getFieldError(field.key) || ''"
+                [disabled]="field.disabled || false || loadingOptions()"
+                [options]="getOptions(field.key)"
+                [searchable]="true"
+                [dataTestId]="dataTestId() ? dataTestId() + '-multiselect-' + field.key : null"
+              />
+              @if (loadingOptions()) {
+                <p class="mt-1 text-xs text-accent flex items-center">
+                  <svg
+                    class="animate-spin -ml-1 mr-2 h-3 w-3 inline"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      class="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      stroke-width="4"
+                    ></circle>
+                    <path
+                      class="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  Loading options...
+                </p>
+              }
+            }
+          </div>
+        }
+      }
+    </div>
+  }
+
+  <!-- Grouped fields with accordions -->
+  @for (group of groupedFields(); track group.name) {
+    <details class="border border-border rounded-lg overflow-hidden" open>
+      <summary
+        class="cursor-pointer px-4 py-2.5 bg-bg-secondary hover:bg-bg-tertiary font-medium text-sm flex items-center justify-between select-none"
+      >
+        <span>{{ group.name }}</span>
+        <span class="text-xs text-text-secondary font-normal">
+          {{ group.fields.length }} {{ group.fields.length === 1 ? 'field' : 'fields' }}
+        </span>
+      </summary>
+
+      <!-- Fields grid - compact 2 column layout -->
+      <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-3">
+        @for (field of group.fields; track field.key) {
+          @if (shouldShowField(field)) {
+            <div [class]="getFieldGridClass(field)">
+              <!-- Text, Email inputs -->
+              @if (field.type === 'text' || field.type === 'email') {
+                <app-input
+                  [formControlName]="field.key"
+                  [type]="field.type"
+                  [label]="field.label"
+                  [placeholder]="field.placeholder || ''"
+                  [helpText]="field.helpText || ''"
+                  [validationState]="getValidationState(field.key)"
+                  [errorMessage]="getFieldError(field.key) || ''"
+                  [disabled]="field.disabled || false"
+                  [readonly]="field.readonly || false"
+                  [dataTestId]="dataTestId() ? dataTestId() + '-input-' + field.key : null"
+                />
+              }
+
+              <!-- Password input -->
+              @if (field.type === 'password') {
+                <app-password-input
+                  [formControlName]="field.key"
+                  [label]="field.label"
+                  [placeholder]="field.placeholder || ''"
+                  [helpText]="field.helpText || ''"
+                  [validationState]="getValidationState(field.key)"
+                  [errorMessage]="getFieldError(field.key) || ''"
+                  [disabled]="field.disabled || false"
+                  [readonly]="field.readonly || false"
+                  [dataTestId]="dataTestId() ? dataTestId() + '-password-' + field.key : null"
+                />
+              }
+
+              <!-- Number input -->
+              @if (field.type === 'number') {
+                <app-input-number
+                  [formControlName]="field.key"
+                  [label]="field.label"
+                  [placeholder]="field.placeholder || ''"
+                  [helpText]="field.helpText || ''"
+                  [validationState]="getValidationState(field.key)"
+                  [errorMessage]="getFieldError(field.key) || ''"
+                  [disabled]="field.disabled || false"
+                  [readonly]="field.readonly || false"
+                  [min]="$any(field.min)"
+                  [max]="$any(field.max)"
+                  [step]="field.step || 1"
+                  [dataTestId]="dataTestId() ? dataTestId() + '-number-' + field.key : null"
+                />
+              }
+
+              <!-- Date input -->
+              @if (field.type === 'date') {
+                <app-date-input
+                  [formControlName]="field.key"
+                  [label]="field.label"
+                  [placeholder]="field.placeholder || ''"
+                  [helpText]="field.helpText || ''"
+                  [validationState]="getValidationState(field.key)"
+                  [errorMessage]="getFieldError(field.key) || ''"
+                  [disabled]="field.disabled || false"
+                  [readonly]="field.readonly || false"
+                  [min]="$any(field.min)"
+                  [max]="$any(field.max)"
+                  [dataTestId]="dataTestId() ? dataTestId() + '-date-' + field.key : null"
+                />
+              }
+
+              <!-- Checkbox -->
+              @if (field.type === 'checkbox') {
+                <app-checkbox
+                  [formControlName]="field.key"
+                  [label]="field.label"
+                  [helpText]="field.helpText || ''"
+                  [validationState]="getValidationState(field.key)"
+                  [errorMessage]="getFieldError(field.key) || ''"
+                  [disabled]="field.disabled || false"
+                  [dataTestId]="dataTestId() ? dataTestId() + '-checkbox-' + field.key : null"
+                />
+              }
+
+              <!-- Radio buttons -->
+              @if (field.type === 'radio') {
+                <app-radio-group
+                  [formControlName]="field.key"
+                  [label]="field.label"
+                  [helpText]="field.helpText || ''"
+                  [validationState]="getValidationState(field.key)"
+                  [errorMessage]="getFieldError(field.key) || ''"
+                  [disabled]="field.disabled || false || loadingOptions()"
+                  [options]="getOptions(field.key)"
+                  [dataTestId]="dataTestId() ? dataTestId() + '-radio-' + field.key : null"
+                />
+                @if (loadingOptions()) {
+                  <p class="mt-1 text-xs text-accent flex items-center">
+                    <svg
+                      class="animate-spin -ml-1 mr-2 h-3 w-3 inline"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        class="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        stroke-width="4"
+                      ></circle>
+                      <path
+                        class="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
+                    </svg>
+                    Loading options...
+                  </p>
+                }
+              }
+
+              <!-- Select (simple) -->
+              @if (field.type === 'select') {
+                <app-select
+                  [formControlName]="field.key"
+                  [label]="field.label"
+                  [placeholder]="field.placeholder || 'Select an option'"
+                  [helpText]="field.helpText || ''"
+                  [validationState]="getValidationState(field.key)"
+                  [errorMessage]="getFieldError(field.key) || ''"
+                  [disabled]="field.disabled || false || loadingOptions()"
+                  [options]="getOptions(field.key)"
+                  [dataTestId]="dataTestId() ? dataTestId() + '-select-' + field.key : null"
+                />
+                @if (loadingOptions()) {
+                  <p class="mt-1 text-xs text-accent flex items-center">
+                    <svg
+                      class="animate-spin -ml-1 mr-2 h-3 w-3 inline"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        class="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        stroke-width="4"
+                      ></circle>
+                      <path
+                        class="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
+                    </svg>
+                    Loading options...
+                  </p>
+                }
+              }
+
+              <!-- MultiSelect -->
+              @if (field.type === 'multiselect') {
+                <app-multiselect
+                  [formControlName]="field.key"
+                  [label]="field.label"
+                  [placeholder]="field.placeholder || 'Select options'"
+                  [helpText]="field.helpText || ''"
+                  [validationState]="getValidationState(field.key)"
+                  [errorMessage]="getFieldError(field.key) || ''"
+                  [disabled]="field.disabled || false || loadingOptions()"
+                  [options]="getOptions(field.key)"
+                  [searchable]="true"
+                  [dataTestId]="dataTestId() ? dataTestId() + '-multiselect-' + field.key : null"
+                />
+                @if (loadingOptions()) {
+                  <p class="mt-1 text-xs text-accent flex items-center">
+                    <svg
+                      class="animate-spin -ml-1 mr-2 h-3 w-3 inline"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        class="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        stroke-width="4"
+                      ></circle>
+                      <path
+                        class="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
+                    </svg>
+                    Loading options...
+                  </p>
+                }
+              }
+            </div>
           }
         }
       </div>
-    }
+    </details>
   }
 
   <!-- Form actions -->
-  <div class="flex justify-end gap-3 pt-4 border-t border-border">
+  <div class="flex justify-end gap-3 pt-3 border-t border-border">
     <app-button
       type="button"
       [variant]="'outline'"

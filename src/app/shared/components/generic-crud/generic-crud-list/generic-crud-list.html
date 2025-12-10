@@ -59,7 +59,7 @@
   <!-- Modal (View/Edit/New) -->
   @if (service().showModal()) {
     <app-modal
-      [size]="'2xl'"
+      [size]="'4xl'"
       [dismissible]="true"
       [dataTestId]="dataTestId() ? dataTestId() + '-modal' : null"
       (backdropClick)="closeFormModal()"

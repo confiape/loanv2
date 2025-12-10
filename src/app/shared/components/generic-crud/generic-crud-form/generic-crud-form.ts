@@ -1,4 +1,4 @@
-import { Component, input, output, effect, signal, inject, OnInit } from '@angular/core';
+import { Component, input, output, effect, signal, inject, OnInit, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
@@ -19,6 +19,14 @@ import { RadioGroup } from '@loan/app/shared/components/radio/radio';
 import { DateInput } from '@loan/app/shared/components/date-input/date-input';
 import { Button } from '@loan/app/shared/components/button/button';
 import { FormFieldMetadata, SelectOption } from '@loan/app/core/models/form-metadata';
+
+/**
+ * Interface for grouped fields
+ */
+export interface FieldGroup {
+  name: string;
+  fields: FormFieldMetadata[];
+}
 
 /**
  * Generic form component that generates form fields based on metadata
@@ -73,6 +81,34 @@ export class GenericCrudFormComponent implements OnInit {
 
   private lastItemId: string | null = null;
 
+  /**
+   * Fields without group (displayed directly, not in accordion)
+   */
+  protected ungroupedFields = computed<FormFieldMetadata[]>(() => {
+    return this.fields().filter((field) => !field.group);
+  });
+
+  /**
+   * Fields with group (displayed in accordions)
+   */
+  protected groupedFields = computed<FieldGroup[]>(() => {
+    const groups = new Map<string, FormFieldMetadata[]>();
+
+    this.fields().forEach((field) => {
+      if (field.group) {
+        if (!groups.has(field.group)) {
+          groups.set(field.group, []);
+        }
+        groups.get(field.group)!.push(field);
+      }
+    });
+
+    return Array.from(groups.entries()).map(([name, fields]) => ({
+      name,
+      fields,
+    }));
+  });
+
   constructor() {
     // Update form when item changes - must be in constructor for injection context
     effect(() => {
@@ -86,12 +122,19 @@ export class GenericCrudFormComponent implements OnInit {
       this.lastItemId = itemId;
 
       if (currentItem) {
-        // Transform values using valueTransformer if provided
+        // Transform values using valueTransformer if provided, or extract from dtoPath
         const transformedValues: Record<string, unknown> = {};
         this.fields().forEach((field) => {
           if (field.valueTransformer) {
+            // Use custom transformer if provided
             transformedValues[field.key] = field.valueTransformer(currentItem);
+          } else if (field.dtoPath) {
+            // Extract value from nested path (support read/write paths)
+            const readPath = this.getReadPath(field.dtoPath);
+            const value = this.getNestedValue(currentItem, readPath);
+            transformedValues[field.key] = value;
           } else if (currentItem[field.key] !== undefined) {
+            // Fallback to direct key access
             transformedValues[field.key] = currentItem[field.key];
           }
         });
@@ -222,10 +265,91 @@ export class GenericCrudFormComponent implements OnInit {
     const formValue = this.form.value;
     const currentItem = this.item();
 
+    // Transform flat form values to nested DTO structure using dtoPath
+    const transformedDto = this.transformFormValueToDto(formValue);
+
     // Merge with existing item if editing
-    const dto = currentItem ? { ...currentItem, ...formValue } : formValue;
+    const dto = currentItem ? { ...currentItem, ...transformedDto } : transformedDto;
 
     this.formSubmit.emit(dto);
+  }
+
+  /**
+   * Transform flat form values to nested DTO structure
+   * Uses dtoPath from field metadata to create nested objects
+   */
+  private transformFormValueToDto(formValue: Record<string, unknown>): Record<string, unknown> {
+    const dto: Record<string, unknown> = {};
+
+    this.fields().forEach((field) => {
+      const value = formValue[field.key];
+      const writePath = this.getWritePath(field.dtoPath || field.key);
+
+      // Set value in nested path
+      this.setNestedValue(dto, writePath, value);
+    });
+
+    return dto;
+  }
+
+  /**
+   * Get the read path from dtoPath (for loading values into form)
+   */
+  private getReadPath(dtoPath: string | { read: string; write: string }): string {
+    if (typeof dtoPath === 'string') {
+      return dtoPath;
+    }
+    return dtoPath.read;
+  }
+
+  /**
+   * Get the write path from dtoPath (for saving form values to DTO)
+   */
+  private getWritePath(dtoPath: string | { read: string; write: string }): string {
+    if (typeof dtoPath === 'string') {
+      return dtoPath;
+    }
+    return dtoPath.write;
+  }
+
+  /**
+   * Set a value in a nested object using dot notation path
+   * Example: setNestedValue(obj, 'personDto.name', 'John') creates obj.personDto.name = 'John'
+   */
+  private setNestedValue(obj: Record<string, unknown>, path: string, value: unknown): void {
+    const parts = path.split('.');
+    let current = obj;
+
+    // Navigate/create nested structure
+    for (let i = 0; i < parts.length - 1; i++) {
+      const part = parts[i];
+      if (!current[part] || typeof current[part] !== 'object') {
+        current[part] = {};
+      }
+      current = current[part] as Record<string, unknown>;
+    }
+
+    // Set the final value
+    current[parts[parts.length - 1]] = value;
+  }
+
+  /**
+   * Get a value from a nested object using dot notation path
+   * Example: getNestedValue(obj, 'personDto.name') returns obj.personDto.name
+   */
+  private getNestedValue(obj: Record<string, unknown>, path: string): unknown {
+    const parts = path.split('.');
+    let current: unknown = obj;
+
+    for (const part of parts) {
+      if (current && typeof current === 'object' && part in current) {
+        current = (current as Record<string, unknown>)[part];
+      } else {
+        return undefined;
+      }
+    }
+
+    return current;
   }
 
   /**
@@ -302,5 +426,20 @@ export class GenericCrudFormComponent implements OnInit {
     const control = this.getControl(fieldKey);
     if (!control || !control.touched) return 'none';
     return control.invalid ? 'error' : 'none';
+  }
+
+  /**
+   * Get CSS classes for field grid layout
+   */
+  protected getFieldGridClass(field: FormFieldMetadata): string {
+    const colSpan = field.colSpan || 1;
+    const baseClass = field.cssClass || '';
+
+    // Full-width types or colSpan 2
+    if (colSpan === 2 || field.type === 'multiselect') {
+      return `col-span-full ${baseClass}`.trim();
+    }
+
+    return `col-span-1 ${baseClass}`.trim();
   }
 }

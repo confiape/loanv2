@@ -114,6 +114,7 @@ export class UserCrudService extends BaseCrudService<UserDto, SaveUserDto> {
 
   getFormFields(): FormFieldMetadata[] {
     return [
+      // Main fields (always visible - no group)
       {
         key: 'email',
         label: 'Email',
@@ -121,6 +122,7 @@ export class UserCrudService extends BaseCrudService<UserDto, SaveUserDto> {
         placeholder: 'Enter user email',
         validators: [Validators.required, Validators.email],
         helpText: 'Must be a valid email address',
+        // No group - displayed directly
       },
       {
         key: 'password',
@@ -129,12 +131,7 @@ export class UserCrudService extends BaseCrudService<UserDto, SaveUserDto> {
         placeholder: 'Enter password',
         validators: [Validators.minLength(6)],
         helpText: 'Password must be at least 6 characters (optional for edit)',
-      },
-      {
-        key: 'isActive',
-        label: 'Active',
-        type: 'checkbox',
-        helpText: 'Whether this user account is active',
+        // No group - displayed directly
       },
       {
         key: 'personName',
@@ -143,7 +140,17 @@ export class UserCrudService extends BaseCrudService<UserDto, SaveUserDto> {
         placeholder: 'Enter full name',
         validators: [Validators.required, Validators.minLength(2)],
         helpText: 'Person full name',
+        // No group - displayed directly
       },
+      {
+        key: 'isActive',
+        label: 'Active',
+        type: 'checkbox',
+        helpText: 'Whether this user account is active',
+        // No group - displayed directly
+      },
+
+      // Personal Information (in accordion)
       {
         key: 'personDni',
         label: 'DNI',
@@ -151,6 +158,7 @@ export class UserCrudService extends BaseCrudService<UserDto, SaveUserDto> {
         placeholder: 'Enter DNI',
         validators: [Validators.required],
         helpText: 'National ID number',
+        group: 'Personal Information',
       },
       {
         key: 'personPhoneNumber',
@@ -159,6 +167,7 @@ export class UserCrudService extends BaseCrudService<UserDto, SaveUserDto> {
         placeholder: 'Enter phone number',
         validators: [Validators.required],
         helpText: 'Contact phone number',
+        group: 'Personal Information',
       },
       {
         key: 'personBirthday',
@@ -166,6 +175,7 @@ export class UserCrudService extends BaseCrudService<UserDto, SaveUserDto> {
         type: 'text',
         placeholder: 'YYYY-MM-DD',
         helpText: 'Date of birth (optional)',
+        group: 'Personal Information',
       },
       {
         key: 'personAddress',
@@ -173,6 +183,8 @@ export class UserCrudService extends BaseCrudService<UserDto, SaveUserDto> {
         type: 'text',
         placeholder: 'Enter address',
         helpText: 'Residential address (optional)',
+        group: 'Personal Information',
+        colSpan: 2,
       },
       {
         key: 'personNotes',
@@ -180,13 +192,19 @@ export class UserCrudService extends BaseCrudService<UserDto, SaveUserDto> {
         type: 'text',
         placeholder: 'Enter notes',
         helpText: 'Additional notes (optional)',
+        group: 'Personal Information',
+        colSpan: 2,
       },
+
+      // Access & Permissions (in accordion)
       {
         key: 'rolesId',
         label: 'Roles',
         type: 'multiselect',
         placeholder: 'Select roles',
         helpText: 'Assign roles to this user',
+        group: 'Access & Permissions',
+        colSpan: 2,
         loadOptions: () => of(this.commonDataCache.getRoleOptions()),
         valueTransformer: (item: unknown) => {
           const userItem = item as UserDto;
@@ -199,6 +217,8 @@ export class UserCrudService extends BaseCrudService<UserDto, SaveUserDto> {
         type: 'multiselect',
         placeholder: 'Select permissions',
         helpText: 'Assign permissions to this user',
+        group: 'Access & Permissions',
+        colSpan: 2,
         loadOptions: () => of(this.commonDataCache.getPermissionOptions()),
         valueTransformer: (item: unknown) => {
           const userItem = item as UserDto;
@@ -211,6 +231,8 @@ export class UserCrudService extends BaseCrudService<UserDto, SaveUserDto> {
         type: 'multiselect',
         placeholder: 'Select companies',
         helpText: 'Assign companies to this user',
+        group: 'Access & Permissions',
+        colSpan: 2,
         loadOptions: () => of(this.commonDataCache.getCompanyOptions()),
         valueTransformer: (item: unknown) => {
           const userItem = item as UserDto;

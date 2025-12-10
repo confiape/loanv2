@@ -5,7 +5,10 @@ import { generateModalTestIds } from './modal-helpers';
   selector: 'app-modal-body',
   standalone: true,
   template: `
-    <div [attr.data-testid]="bodyTestId()" class="p-4 md:p-5 space-y-4">
+    <div
+      [attr.data-testid]="bodyTestId()"
+      class="p-4 md:p-5 overflow-y-auto max-h-[70vh]"
+    >
       <ng-content />
     </div>
   `,

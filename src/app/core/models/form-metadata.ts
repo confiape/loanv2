@@ -28,7 +28,7 @@ export interface SelectOption {
  * Metadata for defining form fields dynamically
  */
 export interface FormFieldMetadata {
-  /** Field key (matches DTO property) */
+  /** Field key (matches form control name) */
   key: string;
 
   /** Field label */
@@ -36,6 +36,21 @@ export interface FormFieldMetadata {
 
   /** Field type */
   type: FormFieldType;
+
+  /**
+   * Path in the DTO structure for nested objects
+   * Examples:
+   * - 'displayName' (flat field)
+   * - 'personDto.name' (nested field)
+   * - 'address.street.name' (deeply nested)
+   *
+   * If not provided, defaults to using 'key' as the DTO path
+   *
+   * Can be a string (same path for read/write) or an object with separate paths:
+   * - string: 'personDto.name' (read and write from same path)
+   * - object: { read: 'person.name', write: 'personDto.name' }
+   */
+  dtoPath?: string | { read: string; write: string };
 
   /** Synchronous validators */
   validators?: ValidatorFn[];
@@ -78,6 +93,12 @@ export interface FormFieldMetadata {
 
   /** Step value (for number fields) */
   step?: number;
+
+  /** Group name for organizing fields in sections */
+  group?: string;
+
+  /** Column span in grid layout (1 or 2 columns) */
+  colSpan?: 1 | 2;
 }
 
 /**

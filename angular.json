@@ -74,7 +74,9 @@
           },
           "defaultConfiguration": "development",
           "options": {
-            "proxyConfig": "proxy.conf.json"
+            "proxyConfig": "proxy.conf.json",
+            "allowedHosts": ["837c7e80b5c9.ngrok-free.app"]
+
           }
         },
         "test": {

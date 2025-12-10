@@ -48,7 +48,6 @@ export interface SelectOption {
           [attr.aria-invalid]="validationState() === 'error'"
           [attr.data-testid]="selectTestId()"
           [class]="selectClasses()"
-          [value]="value()"
           (change)="onChange($event)"
           (blur)="onTouched()"
         >
@@ -59,6 +58,7 @@ export interface SelectOption {
             <option
               [value]="option.value"
               [disabled]="option.disabled || false"
+              [selected]="option.value === value()"
               [attr.data-testid]="getOptionTestId(option.value)"
             >
               {{ option.label }}
@@ -204,15 +204,7 @@ export class Select implements ControlValueAccessor {
 
   readonly helpTextId = computed(() => `${this.selectId()}-help`);
 
-  constructor() {
-    // Sync disabled state changes
-    effect(() => {
-      const isDisabled = this.isDisabled();
-      if (isDisabled) {
-        this.onTouched();
-      }
-    });
-  }
+  // No constructor needed - removed unnecessary effects
 
   // ControlValueAccessor implementation
   writeValue(value: string): void {

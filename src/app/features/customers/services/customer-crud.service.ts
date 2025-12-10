@@ -154,10 +154,8 @@ export class CustomerCrudService extends BaseCrudService<
         validators: [Validators.required],
         helpText: 'Select the company this customer belongs to',
         loadOptions: () => of(this.commonDataCache.getCompanyOptions()),
-        valueTransformer: (item: unknown) => {
-          const customerItem = item as BorrowerClientInformation;
-          return customerItem.company?.id || '';
-        },
+        // Read from company.id (BorrowerClientInformation), write to companyId (CreateBorrowerDto)
+        dtoPath: { read: 'company.id', write: 'companyId' },
       },
       {
         key: 'personName',
@@ -166,10 +164,8 @@ export class CustomerCrudService extends BaseCrudService<
         placeholder: 'Enter full name',
         validators: [Validators.required, Validators.minLength(2)],
         helpText: 'Customer full name',
-        valueTransformer: (item: unknown) => {
-          const customerItem = item as BorrowerClientInformation;
-          return customerItem.person?.name || '';
-        },
+        // Read from person.name (BorrowerClientInformation), write to personDto.name (CreateBorrowerDto)
+        dtoPath: { read: 'person.name', write: 'personDto.name' },
       },
       {
         key: 'personDni',
@@ -178,10 +174,8 @@ export class CustomerCrudService extends BaseCrudService<
         placeholder: 'Enter DNI',
         validators: [Validators.required],
         helpText: 'National ID number',
-        valueTransformer: (item: unknown) => {
-          const customerItem = item as BorrowerClientInformation;
-          return customerItem.person?.dni || '';
-        },
+        // Read from person.dni (BorrowerClientInformation), write to personDto.dni (CreateBorrowerDto)
+        dtoPath: { read: 'person.dni', write: 'personDto.dni' },
       },
       {
         key: 'personPhoneNumber',
@@ -190,10 +184,8 @@ export class CustomerCrudService extends BaseCrudService<
         placeholder: 'Enter phone number',
         validators: [Validators.required],
         helpText: 'Contact phone number',
-        valueTransformer: (item: unknown) => {
-          const customerItem = item as BorrowerClientInformation;
-          return customerItem.person?.phoneNumber || '';
-        },
+        // Read from person.phoneNumber (BorrowerClientInformation), write to personDto.phoneNumber (CreateBorrowerDto)
+        dtoPath: { read: 'person.phoneNumber', write: 'personDto.phoneNumber' },
       },
       {
         key: 'personNotes',
@@ -201,10 +193,8 @@ export class CustomerCrudService extends BaseCrudService<
         type: 'text',
         placeholder: 'Enter notes',
         helpText: 'Additional notes (optional)',
-        valueTransformer: (item: unknown) => {
-          const customerItem = item as BorrowerClientInformation;
-          return customerItem.person?.notes || '';
-        },
+        // Read from person.notes (BorrowerClientInformation), write to personDto.notes (CreateBorrowerDto)
+        dtoPath: { read: 'person.notes', write: 'personDto.notes' },
       },
     ];
   }
@@ -314,41 +304,5 @@ export class CustomerCrudService extends BaseCrudService<
     this._showModal.set(false);
     this._editingItem.set(null);
     this.router.navigate([this.getRouteBasePath()]);
-  }
-
-  /**
-   * Transform a BorrowerClientInformation into a CreateBorrowerDto for the form
-   * Flattens nested objects into individual form fields
-   */
-  transformItemToFormData(
-    item: BorrowerClientInformation
-  ): Partial<CreateBorrowerDto> & Record<string, unknown> {
-    return {
-      displayName: item.displayName,
-      companyId: item.company?.id || '',
-      personName: item.person?.name,
-      personDni: item.person?.dni,
-      personPhoneNumber: item.person?.phoneNumber,
-      personNotes: item.person?.notes,
-    };
-  }
-
-  /**
-   * Transform form data back into CreateBorrowerDto structure
-   * Reconstructs nested objects from individual form fields
-   */
-  transformFormDataToItem(formData: Record<string, unknown>): CreateBorrowerDto {
-    return {
-      displayName: (formData['displayName'] as string) || '',
-      companyId: (formData['companyId'] as string) || '',
-      personDto: {
-        name: (formData['personName'] as string) || '',
-        dni: (formData['personDni'] as string) || '',
-        phoneNumber: (formData['personPhoneNumber'] as string) || '',
-        birthday: null,
-        address: null,
-        notes: (formData['personNotes'] as string) || null,
-      },
-    };
   }
 }

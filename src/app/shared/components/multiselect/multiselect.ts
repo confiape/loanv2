@@ -115,6 +115,7 @@ export interface MultiSelectOption {
                   class="block w-full p-2 ps-10 text-sm text-text-primary border border-border rounded-lg bg-bg-secondary focus:ring-accent focus:border-accent focus:outline-none transition-colors"
                   (input)="onSearchChange($event)"
                   (click)="$event.stopPropagation()"
+
                 />
               </div>
             </div>
@@ -143,6 +144,7 @@ export interface MultiSelectOption {
                     class="w-4 h-4 text-accent bg-bg-secondary border-border rounded-sm focus:ring-accent focus:ring-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     (change)="toggleOption(option.value)"
                     (click)="$event.stopPropagation()"
+                    [attr.data-testid]="listTestId()+'-option'"
                   />
                   <label
                     [for]="getOptionId(option.value)"

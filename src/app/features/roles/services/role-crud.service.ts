@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, map, of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { Validators } from '@angular/forms';
 import { BaseCrudService } from '@loan/app/core/services/base-crud.service';
 import {
@@ -10,8 +10,9 @@ import {
 } from '@loan/app/core/models/form-metadata';
 import { RoleDto, SaveRoleDto, UserApiService } from '@loan/app/shared/openapi';
 import { CommonDataCacheService } from '@loan/app/core/services/cache/common-data-cache.service';
-import { noSpecialCharactersValidator } from '../validators/role.validators';
+import { noSpecialCharactersValidator } from '@loan/app/features/roles';
 import { formatList } from '@loan/app/shared/utils/formatters';
+import {maxLengthTrimmed, minLengthTrimmed} from '@loan/app/core/utils/validators';
 
 /**
  * CRUD service for Role entities
@@ -73,8 +74,8 @@ export class RoleCrudService extends BaseCrudService<RoleDto, SaveRoleDto> {
         placeholder: 'Enter role name',
         validators: [
           Validators.required,
-          Validators.minLength(2),
-          Validators.maxLength(40),
+          minLengthTrimmed(2),
+          maxLengthTrimmed(40),
           noSpecialCharactersValidator(),
         ],
         helpText: 'Role name must be between 2-40 characters with no special characters',
