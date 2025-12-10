@@ -9,13 +9,14 @@
  */
 import { LastPayment } from './lastPayment';
 import { PersonDto } from './personDto';
+import { CompanyDto } from './companyDto';
 
 
 export interface BorrowerClientInformation { 
     id: string;
     person: PersonDto;
     displayName: string;
-    companyName: string;
+    company: CompanyDto;
     totalAmountLoaned: number;
     outstandingAmount: number;
     lastPayments: Array<LastPayment>;

@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, map } from 'rxjs';
+import { Observable, map, of } from 'rxjs';
 import { Validators } from '@angular/forms';
 import { BaseCrudService } from '@loan/app/core/services/base-crud.service';
 import {
@@ -9,6 +9,7 @@ import {
   DisplayFieldMetadata,
 } from '@loan/app/core/models/form-metadata';
 import { RoleDto, SaveRoleDto, UserApiService } from '@loan/app/shared/openapi';
+import { CommonDataCacheService } from '@loan/app/core/services/cache/common-data-cache.service';
 import { noSpecialCharactersValidator } from '../validators/role.validators';
 import { formatList } from '@loan/app/shared/utils/formatters';
 
@@ -21,6 +22,7 @@ import { formatList } from '@loan/app/shared/utils/formatters';
 })
 export class RoleCrudService extends BaseCrudService<RoleDto, SaveRoleDto> {
   private apiService = inject(UserApiService);
+  private commonDataCache = inject(CommonDataCacheService);
   private router = inject(Router);
 
   // ========== ABSTRACT METHOD IMPLEMENTATIONS ==========
@@ -83,15 +85,7 @@ export class RoleCrudService extends BaseCrudService<RoleDto, SaveRoleDto> {
         type: 'multiselect',
         placeholder: 'Select inherited roles',
         helpText: 'Select other roles to inherit permissions from',
-        loadOptions: () =>
-          this.apiService.getAllRoles().pipe(
-            map((roles) =>
-              roles.map((role) => ({
-                value: role.id,
-                label: role.name,
-              })),
-            ),
-          ),
+        loadOptions: () => of(this.commonDataCache.getRoleOptions()),
         valueTransformer: (item: unknown) => {
           const roleItem = item as RoleDto;
           return roleItem.roles?.map((r) => r.id) || [];
@@ -103,15 +97,7 @@ export class RoleCrudService extends BaseCrudService<RoleDto, SaveRoleDto> {
         type: 'multiselect',
         placeholder: 'Select permissions',
         helpText: 'Select permissions for this role',
-        loadOptions: () =>
-          this.apiService.getAllPermissions().pipe(
-            map((permissions) =>
-              permissions.map((permission) => ({
-                value: permission.name,
-                label: permission.name,
-              })),
-            ),
-          ),
+        loadOptions: () => of(this.commonDataCache.getPermissionOptions()),
         valueTransformer: (item: unknown) => {
           const roleItem = item as RoleDto;
           return roleItem.permissions?.map((p) => p.name) || [];

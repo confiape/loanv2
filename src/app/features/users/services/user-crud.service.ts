@@ -9,7 +9,7 @@ import {
   DisplayFieldMetadata,
 } from '@loan/app/core/models/form-metadata';
 import { UserDto, SaveUserDto, UserApiService } from '@loan/app/shared/openapi';
-import { CompanyApiService } from '@loan/app/shared/openapi/api/company.service';
+import { CommonDataCacheService } from '@loan/app/core/services/cache/common-data-cache.service';
 import { emailValidator } from '../validators/user.validators';
 import { formatBoolean, formatList, formatDate } from '@loan/app/shared/utils/formatters';
 
@@ -22,7 +22,7 @@ import { formatBoolean, formatList, formatDate } from '@loan/app/shared/utils/fo
 })
 export class UserCrudService extends BaseCrudService<UserDto, SaveUserDto> {
   private apiService = inject(UserApiService);
-  private companyApiService = inject(CompanyApiService);
+  private commonDataCache = inject(CommonDataCacheService);
   private router = inject(Router);
 
   // ========== ABSTRACT METHOD IMPLEMENTATIONS ==========
@@ -187,15 +187,7 @@ export class UserCrudService extends BaseCrudService<UserDto, SaveUserDto> {
         type: 'multiselect',
         placeholder: 'Select roles',
         helpText: 'Assign roles to this user',
-        loadOptions: () =>
-          this.apiService.getAllRoles().pipe(
-            map((roles) =>
-              roles.map((role) => ({
-                value: role.id,
-                label: role.name,
-              })),
-            ),
-          ),
+        loadOptions: () => of(this.commonDataCache.getRoleOptions()),
         valueTransformer: (item: unknown) => {
           const userItem = item as UserDto;
           return userItem.roles?.map((r) => r.id) || [];
@@ -207,15 +199,7 @@ export class UserCrudService extends BaseCrudService<UserDto, SaveUserDto> {
         type: 'multiselect',
         placeholder: 'Select permissions',
         helpText: 'Assign permissions to this user',
-        loadOptions: () =>
-          this.apiService.getAllPermissions().pipe(
-            map((permissions) =>
-              permissions.map((permission) => ({
-                value: permission.name,
-                label: permission.name,
-              })),
-            ),
-          ),
+        loadOptions: () => of(this.commonDataCache.getPermissionOptions()),
         valueTransformer: (item: unknown) => {
           const userItem = item as UserDto;
           return userItem.permissions?.map((p) => p.name) || [];
@@ -227,15 +211,7 @@ export class UserCrudService extends BaseCrudService<UserDto, SaveUserDto> {
         type: 'multiselect',
         placeholder: 'Select companies',
         helpText: 'Assign companies to this user',
-        loadOptions: () =>
-          this.companyApiService.getAllCompanies().pipe(
-            map((companies) =>
-              companies.map((company) => ({
-                value: company.id,
-                label: company.name,
-              })),
-            ),
-          ),
+        loadOptions: () => of(this.commonDataCache.getCompanyOptions()),
         valueTransformer: (item: unknown) => {
           const userItem = item as UserDto;
           return userItem.companies?.map((c) => c.id) || [];

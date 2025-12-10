@@ -53,7 +53,7 @@ export interface SelectOption {
           (blur)="onTouched()"
         >
           @if (placeholder()) {
-            <option value="" disabled selected>{{ placeholder() }}</option>
+            <option value="" disabled [selected]="!value()">{{ placeholder() }}</option>
           }
           @for (option of options(); track option.value) {
             <option

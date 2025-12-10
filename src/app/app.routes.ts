@@ -3,9 +3,11 @@ import { MainLayoutComponent } from './layout/main-layout/main-layout';
 import { LoginComponent } from '@loan/app/features/auth/pages/login/login';
 import { loginGuard } from '@loan/app/features/auth/guards/login.guard';
 import { userResolver } from '@loan/app/core/resolvers/user.resolver';
+import { commonDataResolver } from '@loan/app/core/resolvers/common-data.resolver';
 import { CompaniesListComponent } from '@loan/app/features/companies/pages/companies-list/companies-list';
 import { RolesListComponent } from '@loan/app/features/roles/pages/roles-list/roles-list';
 import { UsersListComponent } from '@loan/app/features/users/pages/users-list/users-list';
+import { CustomersListComponent } from '@loan/app/features/customers/pages/customers-list/customers-list';
 import {Home} from '@loan/app/features/home';
 
 export const routes: Routes = [
@@ -19,6 +21,7 @@ export const routes: Routes = [
     component: MainLayoutComponent,
     resolve: {
       currentUser: userResolver,
+      commonData: commonDataResolver,
     },
     children: [
       {
@@ -77,6 +80,22 @@ export const routes: Routes = [
       {
         path: 'users/:id/edit',
         component: UsersListComponent,
+      },
+      {
+        path: 'customers',
+        component: CustomersListComponent,
+      },
+      {
+        path: 'customers/new',
+        component: CustomersListComponent,
+      },
+      {
+        path: 'customers/:id',
+        component: CustomersListComponent,
+      },
+      {
+        path: 'customers/:id/edit',
+        component: CustomersListComponent,
       },
     ],
   },
